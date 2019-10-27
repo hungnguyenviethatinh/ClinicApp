@@ -1,4 +1,4 @@
-import Users from '../mocks';
+import { Users } from '../mocks';
 
 const Login = (user) => {
     const matchedUser = Users.find(u => (u.username === user.username && u.password === user.password));
