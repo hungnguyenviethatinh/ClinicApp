@@ -1,6 +1,9 @@
-import { boundObjectGet, boundObjectPost } from './chromely.service.js';
+import ChromelyService from './chromely.service';
+import LoginService from './login.service';
+import AuthService from './auth.service';
 
 export { 
-    boundObjectGet,
-    boundObjectPost
+    ChromelyService,
+    LoginService,
+    AuthService
 }

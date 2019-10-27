@@ -1,9 +1,12 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { CssBaseline, Typography, Container, Grid, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
 import TextField from '../_shared/textfield';
+
+import { LoginService } from '../../services';
 
 const useStyles = makeStyles(theme => ({
     '@global': {
@@ -55,21 +58,20 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function Login() {
+const Login = (props) => {
     const classes = useStyles();
 
+    const { from } = props.location.state || { from: { pathname: '/' } };
+    const [redirectToReferrer , setRedirectToReferrer ] = React.useState(false);
     const [values, setValues] = React.useState({
         username: '',
         password: '',
     });
-
     const [errors, setErrors] = React.useState({
         invalidUsername: false,
         invalidPassword: false,
     });
-
     const [isProgressing, setIsProgressing] = React.useState(false);
-
     const [errorMessage, setErrorMessage] = React.useState('');
 
     const handleChangeUsername = event => {
@@ -77,7 +79,6 @@ export default function Login() {
         setValues({ ...values, username: value });
         setErrors({...errors, invalidUsername: value === ''});
     };
-
     const handleChangePassword = event => {
         const { value } = event.target;
         setValues({ ...values, password: value });
@@ -90,7 +91,6 @@ export default function Login() {
         setIsProgressing(true);
         setErrorMessage('');
     };
-
     const hideProgress = () => {
         document.getElementById('progress').style.width = '0%';
         document.getElementById('progress').style.opacity = 0;
@@ -98,10 +98,14 @@ export default function Login() {
     };
 
     const handleLogin = user => {
-        console.log('user: ', user);
         hideProgress();
+        const { ok, message } = LoginService.Login(user);
+        if (ok) {
+            setRedirectToReferrer(true);
+        } else {
+            setErrorMessage(message);
+        }
     };
-
     const handleSubmit = event => {
         event.preventDefault();
 
@@ -116,6 +120,12 @@ export default function Login() {
             setErrors({invalidUsername: values.username === '', invalidPassword: values.password === ''});
         }
     };
+
+    if (redirectToReferrer) {
+        return (
+            <Redirect to={from} />
+        );
+    }
 
     return (
         <Grid container justify="center" alignItems="center" className={classes.container}>
@@ -177,3 +187,5 @@ export default function Login() {
         </Grid>
     );
 }
+
+export default Login;
