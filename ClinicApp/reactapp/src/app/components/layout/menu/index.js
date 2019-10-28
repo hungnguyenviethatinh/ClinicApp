@@ -4,15 +4,15 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Collapse from '@material-ui/core/Collapse';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import HomeIcon from '@material-ui/icons/Home';
+// import Collapse from '@material-ui/core/Collapse';
+// import ExpandLess from '@material-ui/icons/ExpandLess';
+// import ExpandMore from '@material-ui/icons/ExpandMore';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import TrendingUp from '@material-ui/icons/TrendingUp';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
+// import FileCopyIcon from '@material-ui/icons/FileCopy';
 import ViewListIcon from '@material-ui/icons/ViewList';
 import { makeStyles } from '@material-ui/core/styles';
-import Popover from '@material-ui/core/Popover';
+// import Popover from '@material-ui/core/Popover';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -35,21 +35,21 @@ const Menu = (props) => {
     const classes = useStyles();
     const { currentIndex, changeCurrentIndex } = props;
 
-    const [open, setOpen] = React.useState(props.open);
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    // const [open, setOpen] = React.useState(props.open);
+    // const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const handleClick = event => {
-        setOpen(!open);
-        if (!props.open) {
-            setAnchorEl(event.currentTarget);
-        }
-    };
+    // const handleClick = event => {
+    //     setOpen(!open);
+    //     if (!props.open) {
+    //         setAnchorEl(event.currentTarget);
+    //     }
+    // };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    // const handleClose = () => {
+    //     setAnchorEl(null);
+    // };
 
-    const openPopover = Boolean(anchorEl) && !props.open;
+    // const openPopover = Boolean(anchorEl) && !props.open;
 
     return (
         <List
@@ -60,34 +60,34 @@ const Menu = (props) => {
             <ListItemLink
                 to="/"
                 selected={currentIndex === 0}
-                onClick={(index) => changeCurrentIndex(0)}
+                onClick={() => changeCurrentIndex(0)}
             >
                 <ListItemIcon>
-                    <HomeIcon />
+                    <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Overview" />
+                <ListItemText primary="Bảng điều khiển" />
             </ListItemLink>
             <ListItemLink
                 to="/policy-list"
                 selected={currentIndex === 1}
-                onClick={(index) => changeCurrentIndex(1)}
+                onClick={() => changeCurrentIndex(1)}
             >
                 <ListItemIcon>
                     <ViewListIcon />
                 </ListItemIcon>
-                <ListItemText primary="Policy List" />
+                <ListItemText primary="Quản lý bệnh nhân" />
             </ListItemLink>
             <ListItemLink
                 to="/traceability"
                 selected={currentIndex === 2}
-                onClick={(index) => changeCurrentIndex(2)}
+                onClick={() => changeCurrentIndex(2)}
             >
                 <ListItemIcon>
                     <TrendingUp />
                 </ListItemIcon>
-                <ListItemText primary="Traceability" />
+                <ListItemText primary="Quản lý hóa đơn" />
             </ListItemLink>
-            <ListItem button component="a" onClick={handleClick}>
+            {/* <ListItem button component="a" onClick={handleClick}>
                 <ListItemIcon>
                     <FileCopyIcon />
                 </ListItemIcon>
@@ -161,7 +161,7 @@ const Menu = (props) => {
                         <ListItemText primary="Summary of reject" />
                     </ListItemLink>
                 </List>
-            </Collapse>
+            </Collapse> */}
         </List>
     );
 }
