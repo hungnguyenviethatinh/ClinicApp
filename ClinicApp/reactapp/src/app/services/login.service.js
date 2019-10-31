@@ -1,9 +1,10 @@
 import { Users } from '../mocks';
+import { GLOBALITEMS } from '../configs';
 
 const Login = (user) => {
     const matchedUser = Users.find(u => (u.username === user.username && u.password === user.password));
     if (matchedUser) {
-        localStorage.setItem('Credentials', JSON.stringify({
+        localStorage.setItem(GLOBALITEMS.CREDENTIAL, JSON.stringify({
             IsLogined: true,
             User: matchedUser,
             ExpiredAt: (86400 * 1000) + new Date().getTime(),
@@ -15,7 +16,7 @@ const Login = (user) => {
 }
 
 const Logout = () => {
-    localStorage.removeItem('Credentials');
+    localStorage.removeItem(GLOBALITEMS.CREDENTIAL);
     
     return { ok: true, message: 'Bạn đã đăng xuất!' };
 }

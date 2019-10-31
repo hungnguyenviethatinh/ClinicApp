@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import { useMediaQuery } from '@material-ui/core';
@@ -78,9 +77,5 @@ const Layout = props => {
         )} />
     );
 }
-
-Layout.propTypes = {
-    component: PropTypes.node
-};
 
 export default Layout;

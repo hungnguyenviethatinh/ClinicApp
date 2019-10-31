@@ -5,14 +5,15 @@ import { makeStyles } from '@material-ui/styles';
 import { Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
-import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
-import TextFieldsIcon from '@material-ui/icons/TextFields';
-import ImageIcon from '@material-ui/icons/Image';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import SettingsIcon from '@material-ui/icons/Settings';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
+import EqualizerIcon from '@material-ui/icons/Equalizer';
+import StoreIcon from '@material-ui/icons/Store';
+import ReceiptIcon from '@material-ui/icons/Receipt';
+import PermContactCalendarIcon from '@material-ui/icons/PermContactCalendar';
+import ViewListIcon from '@material-ui/icons/ViewList';
 
 import Menu from '../menu';
+import { UserService } from '../../../services';
+import { ROLES } from '../../../configs';
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -34,53 +35,104 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const adminMenus = [
+    {
+        title: 'Bảng điều khiển',
+        href: '/dashboard',
+        icon: <DashboardIcon />
+    },
+    {
+        title: 'Quản lí người dùng',
+        href: '/user',
+        icon: <PeopleIcon />
+    },
+    {
+        title: 'Quản lí kho',
+        href: '/store',
+        icon: <StoreIcon />
+    },
+    {
+        title: 'Thống kê',
+        href: '/statistic',
+        icon: <EqualizerIcon />
+    },
+];
+
+const doctorMenus = [
+    {
+        title: 'Bảng điều khiển',
+        href: '/dashboard',
+        icon: <DashboardIcon />
+    },
+    {
+        title: 'Danh sách bệnh nhân',
+        href: '/client',
+        icon: <ViewListIcon />
+    },
+    {
+        title: 'Hồ sơ bệnh nhân',
+        href: '/patient',
+        icon: <PermContactCalendarIcon />
+    },
+    {
+        title: 'Danh sách hóa đơn',
+        href: '/invoice',
+        icon: <ReceiptIcon />
+    },
+];
+
+const receptionistMenus = [
+    {
+        title: 'Bảng điều khiển',
+        href: '/dashboard',
+        icon: <DashboardIcon />
+    },
+    {
+        title: 'Danh sách bệnh nhân',
+        href: '/client',
+        icon: <ViewListIcon />
+    },
+    {
+        title: 'Danh sách bác sĩ',
+        href: '/doctor',
+        icon: <ViewListIcon />
+    },
+    {
+        title: 'Danh sách hóa đơn',
+        href: '/invoice',
+        icon: <ReceiptIcon />
+    },
+];
+
 const Sidebar = props => {
     const { open, variant, onClose, className, ...rest } = props;
 
     const classes = useStyles();
 
-    const menus = [
-        {
-            title: 'Dashboard',
-            href: '/dashboard',
-            icon: <DashboardIcon />
-        },
-        {
-            title: 'Users',
-            href: '/users',
-            icon: <PeopleIcon />
-        },
-        {
-            title: 'Products',
-            href: '/products',
-            icon: <ShoppingBasketIcon />
-        },
-        {
-            title: 'Authentication',
-            href: '/sign-in',
-            icon: <LockOpenIcon />
-        },
-        {
-            title: 'Typography',
-            href: '/typography',
-            icon: <TextFieldsIcon />
-        },
-        {
-            title: 'Icons',
-            href: '/icons',
-            icon: <ImageIcon />
-        },
-        {
-            title: 'Account',
-            href: '/account',
-            icon: <AccountBoxIcon />
-        },
-        {
-            title: 'Settings',
-            href: '/settings',
-            icon: <SettingsIcon />
+    const [menus, setMenus] = React.useState([]);
+
+    const prepareMenus = () => {
+        const user = UserService.GetCurrentUser();
+        const role = user.role || '';
+
+        switch (role) {
+            case ROLES.ADMIN:
+                setMenus(adminMenus);
+                break;
+            case ROLES.DOCTOR:
+                setMenus(doctorMenus);
+                break;
+            case ROLES.RECEPTIONIST:
+                setMenus(receptionistMenus);
+                break;
+            default:
+                break;
         }
-    ];
+    };
+
+    React.useEffect(() => {
+        prepareMenus();
+    }, []);
 
     return (
         <Drawer

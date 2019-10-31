@@ -1,14 +1,14 @@
 import { GLOBALITEMS } from '../configs';
 
-const IsAuthenticated = () => {
+const GetCurrentUser = () => {
     const credential = JSON.parse(localStorage.getItem(GLOBALITEMS.CREDENTIAL));
     if (!credential) {
-        return false;
+        return {};
     }
-    
-    return credential.IsLogined && new Date().getTime() < credential.ExpiredAt;
+
+    return credential.User;
 }
 
 export default {
-    IsAuthenticated
+    GetCurrentUser,
 }
