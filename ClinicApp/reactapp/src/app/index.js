@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import Dashboard from './components/dashboard';
 import Login from './components/login';
 import PrivateRoute from './routes';
@@ -8,9 +8,10 @@ const App = () => {
     return (
         <Router>
             <Switch>
-                <PrivateRoute exact path="/" component={Dashboard} />
-                <Route path="/login" component={Login} />
-                <PrivateRoute path="*" component={Dashboard} />
+                <Redirect exact from="/" to="/dashboard" />
+                <PrivateRoute exact path="/dashboard" component={Dashboard} />
+                <Route exact path="/login" component={Login} />
+                <Redirect to="/dashboard" />
             </Switch>
         </Router>
     );

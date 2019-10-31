@@ -1,169 +1,86 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-// import Collapse from '@material-ui/core/Collapse';
-// import ExpandLess from '@material-ui/icons/ExpandLess';
-// import ExpandMore from '@material-ui/icons/ExpandMore';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import TrendingUp from '@material-ui/icons/TrendingUp';
-// import FileCopyIcon from '@material-ui/icons/FileCopy';
-import ViewListIcon from '@material-ui/icons/ViewList';
-import { makeStyles } from '@material-ui/core/styles';
-// import Popover from '@material-ui/core/Popover';
+import React, { forwardRef } from 'react';
+import { NavLink as RouterLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/styles';
+import { List, ListItem, Button, colors } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-    root: {
-        width: '100%',
-        maxWidth: 360,
-        backgroundColor: theme.palette.background.paper,
+    root: {},
+    item: {
+        display: 'flex',
         paddingTop: 0,
+        paddingBottom: 0
     },
-
-    nested: {
-        paddingLeft: theme.spacing(4),
+    button: {
+        color: colors.blueGrey[800],
+        padding: '10px 8px',
+        justifyContent: 'flex-start',
+        textTransform: 'none',
+        letterSpacing: 0,
+        width: '100%',
+        fontWeight: theme.typography.fontWeightMedium
     },
+    icon: {
+        color: theme.palette.icon,
+        width: 24,
+        height: 24,
+        display: 'flex',
+        alignItems: 'center',
+        marginRight: theme.spacing(1)
+    },
+    active: {
+        color: theme.palette.primary.main,
+        fontWeight: theme.typography.fontWeightMedium,
+        '& $icon': {
+            color: theme.palette.primary.main
+        }
+    }
 }));
 
-const ListItemLink = props => {
-    return <ListItem button component={Link} {...props} />;
-}
+const CustomRouterLink = forwardRef((props, ref) => (
+    <div
+        ref={ref}
+        style={{ flexGrow: 1 }}
+    >
+        <RouterLink {...props} />
+    </div>
+));
 
-const Menu = (props) => {
+const Menu = props => {
+    const { menus, className, ...rest } = props;
+
     const classes = useStyles();
-    const { currentIndex, changeCurrentIndex } = props;
-
-    // const [open, setOpen] = React.useState(props.open);
-    // const [anchorEl, setAnchorEl] = React.useState(null);
-
-    // const handleClick = event => {
-    //     setOpen(!open);
-    //     if (!props.open) {
-    //         setAnchorEl(event.currentTarget);
-    //     }
-    // };
-
-    // const handleClose = () => {
-    //     setAnchorEl(null);
-    // };
-
-    // const openPopover = Boolean(anchorEl) && !props.open;
 
     return (
         <List
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-            className={classes.root}
+            {...rest}
+            className={clsx(classes.root, className)}
         >
-            <ListItemLink
-                to="/"
-                selected={currentIndex === 0}
-                onClick={() => changeCurrentIndex(0)}
-            >
-                <ListItemIcon>
-                    <DashboardIcon />
-                </ListItemIcon>
-                <ListItemText primary="Bảng điều khiển" />
-            </ListItemLink>
-            <ListItemLink
-                to="/policy-list"
-                selected={currentIndex === 1}
-                onClick={() => changeCurrentIndex(1)}
-            >
-                <ListItemIcon>
-                    <ViewListIcon />
-                </ListItemIcon>
-                <ListItemText primary="Quản lý bệnh nhân" />
-            </ListItemLink>
-            <ListItemLink
-                to="/traceability"
-                selected={currentIndex === 2}
-                onClick={() => changeCurrentIndex(2)}
-            >
-                <ListItemIcon>
-                    <TrendingUp />
-                </ListItemIcon>
-                <ListItemText primary="Quản lý hóa đơn" />
-            </ListItemLink>
-            {/* <ListItem button component="a" onClick={handleClick}>
-                <ListItemIcon>
-                    <FileCopyIcon />
-                </ListItemIcon>
-                <ListItemText primary="Reports" />
-                {(props.open && open) ? <ExpandLess /> : <ExpandMore />}
-            </ListItem>
-            <Popover
-                open={openPopover}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-            >
-                <List component="div" disablePadding>
-                    <ListItemLink
-                        className={classes.nested}
-                        to="/stp"
-                        selected={currentIndex === 3}
-                        onClick={(index) => changeCurrentIndex(3)}
+            {menus.map(menu => (
+                <ListItem
+                    className={classes.item}
+                    disableGutters
+                    key={menu.title}
+                >
+                    <Button
+                        activeClassName={classes.active}
+                        className={classes.button}
+                        component={CustomRouterLink}
+                        to={menu.href}
                     >
-                        <ListItemText primary="STP" />
-                    </ListItemLink>
-                    <ListItemLink
-                        className={classes.nested}
-                        to="/tree-summary"
-                        selected={currentIndex === 4}
-                        onClick={(index) => changeCurrentIndex(4)}
-                    >
-                        <ListItemText primary="Tree Summary" />
-                    </ListItemLink>
-                    <ListItemLink
-                        className={classes.nested}
-                        to="/summary-of-reject"
-                        selected={currentIndex === 5}
-                        onClick={(index) => changeCurrentIndex(5)}
-                    >
-                        <ListItemText primary="Summary of reject" />
-                    </ListItemLink>
-                </List>
-            </Popover>
-            <Collapse in={(props.open && open)} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                    <ListItemLink
-                        className={classes.nested}
-                        to="/stp"
-                        selected={currentIndex === 3}
-                        onClick={(index) => changeCurrentIndex(3)}
-                    >
-                        <ListItemText primary="STP" />
-                    </ListItemLink>
-                    <ListItemLink
-                        className={classes.nested}
-                        to="/tree-summary"
-                        selected={currentIndex === 4}
-                        onClick={(index) => changeCurrentIndex(4)}
-                    >
-                        <ListItemText primary="Tree Summary" />
-                    </ListItemLink>
-                    <ListItemLink
-                        className={classes.nested}
-                        to="/summary-of-reject"
-                        selected={currentIndex === 5}
-                        onClick={(index) => changeCurrentIndex(5)}
-                    >
-                        <ListItemText primary="Summary of reject" />
-                    </ListItemLink>
-                </List>
-            </Collapse> */}
+                        <div className={classes.icon}>{menu.icon}</div>
+                        {menu.title}
+                    </Button>
+                </ListItem>
+            ))}
         </List>
     );
-}
+};
+
+Menu.propTypes = {
+    className: PropTypes.string,
+    menus: PropTypes.array.isRequired
+};
 
 export default Menu;

@@ -62,7 +62,7 @@ const Login = (props) => {
     const classes = useStyles();
 
     const { from } = props.location.state || { from: { pathname: '/' } };
-    const [redirectToReferrer , setRedirectToReferrer ] = React.useState(false);
+    const [redirectToReferrer, setRedirectToReferrer] = React.useState(false);
     const [values, setValues] = React.useState({
         username: '',
         password: '',
@@ -77,12 +77,12 @@ const Login = (props) => {
     const handleChangeUsername = event => {
         const { value } = event.target;
         setValues({ ...values, username: value });
-        setErrors({...errors, invalidUsername: value === ''});
+        setErrors({ ...errors, invalidUsername: value === '' });
     };
     const handleChangePassword = event => {
         const { value } = event.target;
         setValues({ ...values, password: value });
-        setErrors({...errors, invalidPassword: value === ''});
+        setErrors({ ...errors, invalidPassword: value === '' });
     };
 
     const showProgress = () => {
@@ -117,7 +117,7 @@ const Login = (props) => {
             showProgress();
             setTimeout(() => { handleLogin(user) }, 5000);
         } else {
-            setErrors({invalidUsername: values.username === '', invalidPassword: values.password === ''});
+            setErrors({ invalidUsername: values.username === '', invalidPassword: values.password === '' });
         }
     };
 
@@ -136,7 +136,7 @@ const Login = (props) => {
                         <div id="progress"></div>
                     </div>
                     <div className={clsx(classes.paper, classes.head)}>
-                        <Typography color="primary" component="h6" variant="h6">
+                        <Typography color="primary" component="h4" variant="h4">
                             ĐĂNG NHẬP HỆ THỐNG
                         </Typography>
                     </div>

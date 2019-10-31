@@ -1,112 +1,109 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
+import React, { useState } from 'react';
+import { Link as RouterLink, withRouter } from 'react-router-dom';
+import clsx from 'clsx';
+import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/styles';
+import { AppBar, Button, Toolbar, Badge, Hidden, IconButton, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import Avatar from '@material-ui/core/Avatar';
 import logo from '../../../../assets/images/logo.png';
 
 import { LoginService } from '../../../services';
 
 const useStyles = makeStyles(theme => ({
-	toolbar: {
-		paddingRight: 24,
+	root: {
+		boxShadow: 'none'
 	},
-
-	appBar: {
-		zIndex: theme.zIndex.drawer + 1,
-		transition: theme.transitions.create(['width', 'margin'], {
-			easing: theme.transitions.easing.sharp,
-			duration: theme.transitions.duration.leavingScreen,
-		}),
+	flexGrow: {
+		flexGrow: 1
 	},
-
-	avatar: {
-		width: "60px",
-		height: "auto",
+	signOutButton: {
+		marginLeft: theme.spacing(1),
+		textTransform: 'none',
 	},
-
-	menuButton: {
-		marginRight: 15,
-	},
-
-	'@media screen and (max-width: 560px)': {
-		title: {
-			display: 'none',
-		},
-		avatar: {
-			display: 'none',
-		},
-		toolbar: {
-			paddingRight: 0,
-		},
-	},
-
-	title: {
+	appTitle: {
 		flexGrow: 1,
 		marginLeft: theme.spacing(2),
 		marginRight: theme.spacing(2),
 	},
-	
-	btnLogout: {
-		marginLeft: 'auto',
-		textTransform: 'none',
-	},
-
-	icon: {
+	signOutIcon: {
 		marginLeft: 10,
 	}
 }));
 
 const LogoutButton = withRouter((props) => {
-    const { classes, history } = props;
+	const { classes, history } = props;
 
-    const handlLogout = () => {
-        const { ok } = LoginService.Logout();
-        if (ok) {
-            history.push('/');
-        }
-    };
+	const handleLogout = () => {
+		const { ok } = LoginService.Logout();
+		if (ok) {
+			history.push('/');
+		}
+	};
 
-    return (
-        <Button color="inherit" variant="text" className={classes.btnLogout} onClick={handlLogout}>
-            Đăng xuất
-			<ExitToAppIcon className={classes.icon} />
-        </Button>
-    );
+	return (
+		<Button color="inherit" variant="text" className={classes.signOutButton} onClick={handleLogout}>
+			Đăng xuất
+			<ExitToAppIcon className={classes.signOutIcon} />
+		</Button>
+	);
 });
 
 const Header = (props) => {
-    const classes = useStyles();
+	const { className, onSidebarOpen, ...rest } = props;
 
-    return (
-        <AppBar position="absolute" className={classes.appBar}>
-			<Toolbar className={classes.toolbar}>
-				<IconButton
-					edge="start"
-					color="inherit"
-					aria-label="open drawer"
-					onClick={props.toggleSidebar}
-					className={classes.menuButton}
-				>
-					<MenuIcon />
-				</IconButton>
-				<Avatar className={classes.avatar}
-					alt="Hệ Thống Quản Lý Phòng Khám"
-					src={logo}
-				/>
-				<Typography component="h6" variant="h6" color="inherit" noWrap className={classes.title}>
-					Hệ Thống Quản Lý Phòng Khám
-        		</Typography>
-				<LogoutButton classes={classes} />
+	const classes = useStyles();
+
+	const [notifications, setNotifications] = useState([]);
+
+	return (
+		<AppBar
+			{...rest}
+			className={clsx(classes.root, className)}
+		>
+			<Toolbar>
+				<RouterLink to="/">
+					<img
+						alt="Hệ Thống Quản Lý Phòng Khám"
+						src={logo}
+						style={{ width: "60px", height: "auto" }}
+					/>
+				</RouterLink>
+				<Hidden mdDown>
+					<Typography component="h5" variant="h5" color="inherit" noWrap className={classes.appTitle}>
+						Hệ Thống Quản Lý Phòng Khám
+					</Typography>
+				</Hidden>
+				<div className={classes.flexGrow} />
+				<Hidden mdDown>
+					<IconButton color="inherit">
+						<Badge
+							badgeContent={notifications.length}
+							color="primary"
+							variant="dot"
+						>
+							<NotificationsIcon />
+						</Badge>
+					</IconButton>
+					<LogoutButton classes={classes} />
+				</Hidden>
+				<Hidden lgUp>
+					<IconButton
+						color="inherit"
+						onClick={onSidebarOpen}
+					>
+						<MenuIcon />
+					</IconButton>
+				</Hidden>
 			</Toolbar>
 		</AppBar>
-    );
-}
+	);
+};
+
+Header.propTypes = {
+	className: PropTypes.string,
+	onSidebarOpen: PropTypes.func
+};
 
 export default Header;

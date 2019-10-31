@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import PropTypes from 'prop-types';
+import clsx from 'clsx';
+import { makeStyles, useTheme } from '@material-ui/styles';
+import { useMediaQuery } from '@material-ui/core';
+
 import Header from './header';
 import Sidebar from './sidebar';
 import Footer from './footer';
@@ -9,53 +12,65 @@ import Footer from './footer';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        display: 'flex',
+        paddingTop: 56,
+        height: '100%',
+        [theme.breakpoints.up('sm')]: {
+            paddingTop: 64
+        }
     },
-
-    appBarSpacer: theme.mixins.toolbar,
-
+    shiftContent: {
+        paddingLeft: 240
+    },
     content: {
         display: 'flex',
-        'flex-direction': 'column',
+        flexDirection: 'column',
         flex: 1,
-        height: '100vh',
-        overflow: 'auto',
+        height: '100%',
     },
-
-    container: {
-        display: 'flex',
+    childComponent: {
         'flex-grow': 1,
         padding: theme.spacing(3),
     },
-
 }));
 
-const Layout = ({
-    component: Component,
-    ...rest
-}) => {
+const Layout = props => {
+    const { component: Component, ...rest } = props;
+
     const classes = useStyles();
+    const theme = useTheme();
+    const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), {
+        defaultMatches: true
+    });
 
-    const [open, setOpen] = React.useState(true);
-    const toggleSidebar = () => {
-        setOpen(!open);
+    const [openSidebar, setOpenSidebar] = useState(false);
+
+    const handleSidebarOpen = () => {
+        setOpenSidebar(true);
     };
 
-    const [currentIndex, setCurrentIndex] = React.useState(0);
-    const changeCurrentIndex = (index) => {
-        setCurrentIndex(index);
+    const handleSidebarClose = () => {
+        setOpenSidebar(false);
     };
+
+    const shouldOpenSidebar = isDesktop ? true : openSidebar;
 
     return (
-        <Route {...rest} render={props => (
-            <div className={classes.root}>
-                <CssBaseline />
-                <Header toggleSidebar={toggleSidebar} />
-                <Sidebar open={open} currentIndex={currentIndex} changeCurrentIndex={changeCurrentIndex}/>
+        <Route {...rest} render={matchProps => (
+            <div
+                className={clsx({
+                    [classes.root]: true,
+                    [classes.shiftContent]: isDesktop
+                })}
+            >
+                <Header onSidebarOpen={handleSidebarOpen} />
+                <Sidebar
+                    onClose={handleSidebarClose}
+                    open={shouldOpenSidebar}
+                    variant={isDesktop ? 'persistent' : 'temporary'}
+                />
                 <main className={classes.content}>
-                    <div className={classes.appBarSpacer} />
-                    <div className={classes.container}>
-                        <Component {...props} />
+                    <div className={classes.childComponent} >
+                        <Component {...matchProps} />
                     </div>
                     <Footer />
                 </main>
@@ -63,5 +78,9 @@ const Layout = ({
         )} />
     );
 }
+
+Layout.propTypes = {
+    component: PropTypes.node
+};
 
 export default Layout;

@@ -6,6 +6,7 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import Theme from './app/themes';
 import App from './app';
+import './assets/scss/styles.scss';
 
 const root = document.getElementById('root');
 ReactDom.render(
