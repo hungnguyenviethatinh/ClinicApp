@@ -64,21 +64,21 @@ const doctorMenus = [
         href: '/dashboard',
         icon: <DashboardIcon />
     },
-    {
-        title: 'Danh sách bệnh nhân',
-        href: '/client',
-        icon: <ViewListIcon />
-    },
+    // {
+    //     title: 'Danh sách bệnh nhân',
+    //     href: '/client',
+    //     icon: <ViewListIcon />
+    // },
     {
         title: 'Hồ sơ bệnh nhân',
         href: '/patient',
         icon: <PermContactCalendarIcon />
     },
-    {
-        title: 'Danh sách hóa đơn',
-        href: '/invoice',
-        icon: <ReceiptIcon />
-    },
+    // {
+    //     title: 'Danh sách hóa đơn',
+    //     href: '/invoice',
+    //     icon: <ReceiptIcon />
+    // },
 ];
 
 const receptionistMenus = [
@@ -87,18 +87,18 @@ const receptionistMenus = [
         href: '/dashboard',
         icon: <DashboardIcon />
     },
+    // {
+    //     title: 'Danh sách bệnh nhân',
+    //     href: '/client',
+    //     icon: <ViewListIcon />
+    // },
+    // {
+    //     title: 'Danh sách bác sĩ',
+    //     href: '/doctor',
+    //     icon: <ViewListIcon />
+    // },
     {
-        title: 'Danh sách bệnh nhân',
-        href: '/client',
-        icon: <ViewListIcon />
-    },
-    {
-        title: 'Danh sách bác sĩ',
-        href: '/doctor',
-        icon: <ViewListIcon />
-    },
-    {
-        title: 'Danh sách hóa đơn',
+        title: 'Danh sách đơn thuốc',
         href: '/invoice',
         icon: <ReceiptIcon />
     },

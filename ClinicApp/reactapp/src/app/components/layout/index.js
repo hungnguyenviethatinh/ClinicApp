@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     },
     childComponent: {
         'flex-grow': 1,
-        padding: theme.spacing(3),
+        padding: theme.spacing(4),
     },
 }));
 
