@@ -14,7 +14,6 @@ import {
 import Table from '../../_shared/table';
 import CustomStatusBullet from '../../_shared/customstatusbullet';
 import Button from '../../_shared/button';
-import { AddClientForm, EditClientForm } from '../form';
 
 import { ClientService } from '../../../services';
 
@@ -32,7 +31,6 @@ const columns = [
     { title: 'STT', field: 'order', type: 'numeric', defaultSort: 'asc' },
     { title: 'Họ và Tên', field: 'name' },
     { title: 'Số CMT', field: 'id_no' },
-    { title: 'Bác sĩ khám', field: 'doctor' },
     {
         title: 'Trạng thái', field: 'status',
         render: rowData => <CustomStatusBullet status={rowData.status} />,
@@ -45,7 +43,7 @@ const ClientTable = props => {
 
     const [data, setData] = React.useState([]);
     const getClients = () => {
-        const clients = ClientService.GetClient();
+        const clients = ClientService.GetClientByDoctor('Bác sĩ A');
         setData(clients);
     };
 
@@ -58,35 +56,12 @@ const ClientTable = props => {
         }
     };
 
-    const [openAddClientForm, setOpenAddClientForm] = React.useState(false);
-    const handleOpenAddClientForm = () => {
-        setOpenAddClientForm(true);
-    };
-    const handleCloseAddClientForm = () => {
-        setOpenAddClientForm(false);
-        getClients();
-    };
-
-    const [openEditClientForm, setOpenEditClientForm] = React.useState(false);
-    const handleOpenEditClientForm = () => {
-        setOpenEditClientForm(true);
-    };
-    const handleCloseEditClientForm = () => {
-        setOpenEditClientForm(false);
-        getClients();
-    };
-
     const handleAdd = () => {
         handleOpenAddClientForm();
     };
 
-    const handleDelete = () => {
-        ClientService.Remove(selectedRow.order);
-        getClients();
-    };
+    const handleUpdateStatus = () => {
 
-    const handleEdit = () => {
-        handleOpenEditClientForm();
     };
 
     React.useEffect(() => {
@@ -104,27 +79,19 @@ const ClientTable = props => {
                         <Grid container spacing={1}>
                             <Grid item>
                                 <Button
-                                    color="danger"
-                                    children="Xóa"
-                                    iconName="delete"
-                                    disabled={selectedRow === null}
-                                    onClick={handleDelete}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <Button
                                     color="primary"
-                                    children="Sửa"
+                                    children="Khám xong"
                                     iconName="edit"
-                                    disabled={selectedRow === null}
-                                    onClick={handleEdit}
+                                    disabled={selectedRow === null || selectedRow.status === 'Đang chờ'}
+                                    onClick={handleUpdateStatus}
                                 />
                             </Grid>
                             <Grid item>
                                 <Button
                                     color="success"
-                                    children="Thêm"
+                                    children="Gọi vào khám"
                                     iconName="add"
+                                    disabled={selectedRow === null || selectedRow.status === 'Đang khám'}
                                     onClick={handleAdd}
                                 />
                             </Grid>
@@ -144,13 +111,6 @@ const ClientTable = props => {
                     </PerfectScrollbar>
                 </CardContent>
             </Card>
-            <AddClientForm
-                open={openAddClientForm}
-                handleClose={handleCloseAddClientForm} />
-            <EditClientForm
-                open={openEditClientForm}
-                handleClose={handleCloseEditClientForm}
-                value={selectedRow? selectedRow : {}} />
         </React.Fragment>
     );
 };

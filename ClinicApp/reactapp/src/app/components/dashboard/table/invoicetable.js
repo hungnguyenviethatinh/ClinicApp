@@ -7,12 +7,13 @@ import {
     Card,
     CardHeader,
     CardContent,
-    Button,
     Divider
 } from '@material-ui/core';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
 import Table from '../../_shared/table';
 import CustomStatusBullet from '../../_shared/customstatusbullet';
+import Button from '../../_shared/routerlinkbutton';
 
 import { InvoiceService } from '../../../services';
 
@@ -35,7 +36,7 @@ const columns = [
     },
 ];
 
-const DoctorTable = props => {
+const InvoiceTable = props => {
     const { className, ...rest } = props;
     const classes = useStyles();
 
@@ -56,13 +57,11 @@ const DoctorTable = props => {
         >
             <CardHeader
                 action={
-                    <Button
-                        color="primary"
-                        size="small"
-                        variant="outlined"
-                    >
-                        New entry
-                </Button>
+                    <Button 
+                        title="Xem tất cả"
+                        href="/invoice"
+                        icon={<VisibilityIcon />}
+                    />
                 }
                 title="DANH SÁCH ĐƠN THUỐC"
             />
@@ -79,8 +78,8 @@ const DoctorTable = props => {
     );
 };
 
-DoctorTable.propTypes = {
+InvoiceTable.propTypes = {
     className: PropTypes.string
 };
 
-export default DoctorTable;
+export default InvoiceTable;

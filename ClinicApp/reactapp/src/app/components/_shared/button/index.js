@@ -2,7 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
-import { Add, Edit, Delete, Save, Print } from '@material-ui/icons';
+import { Add, Edit, Delete, Save, Print, Visibility } from '@material-ui/icons';
 import { FormControl } from '@material-ui/core';
 
 const styledBy = (property, mapping) => props => mapping[props[property]];
@@ -23,7 +23,7 @@ const CustomButton = withStyles({
         }),
         color: 'white',
         textTransform: 'capitalize',
-        width: 100,
+        width: 'auto',
     },
 })(({ classes, color, ...other }) => <Button className={classes.root} {...other} />);
 
@@ -40,6 +40,8 @@ const Icon = props => {
             return <Save style={{ marginRight: 'auto' }} />;
         case 'print':
             return <Print style={{ marginRight: 'auto' }} />;
+        case 'view': 
+            return <Visibility style={{ marginRight: 'auto' }} />
         default:
             return <React.Fragment />
     }
@@ -78,7 +80,7 @@ ButtonComponent.propTypes = {
     disabled: PropTypes.bool,
     size: PropTypes.string,
     style: PropTypes.object,
-    handleClick: PropTypes.func,
+    onClick: PropTypes.func,
 }
 
 ButtonComponent.defaultProps = {
@@ -90,7 +92,7 @@ ButtonComponent.defaultProps = {
     disabled: false,
     size: 'small',
     style: null,
-    handleClick: () => { console.log('Button clicked!'); },
+    onClick: () => { console.log('Button clicked!'); },
 }
 
 export default ButtonComponent;

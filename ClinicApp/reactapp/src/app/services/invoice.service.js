@@ -5,6 +5,7 @@ let Invoices = [
             name: 'Bệnh nhân A',
             address: 'TP. HCM',
             dob: '2000',
+            phone: '000024244',
             gender: 'Nam',
         },
         drugs: [
@@ -26,6 +27,7 @@ let Invoices = [
             name: 'Bệnh nhân B',
             address: 'TP. HCM',
             dob: '2000',
+            phone: '000024244',
             gender: 'Nam',
         },
         drugs: [
@@ -46,6 +48,7 @@ let Invoices = [
         customer: {
             name: 'Bệnh nhân C',
             address: 'TP. HCM',
+            phone: '000024244',
             dob: '2000',
             gender: 'Nam',
         },
@@ -68,6 +71,7 @@ let Invoices = [
             name: 'Bệnh nhân D',
             address: 'TP. HCM',
             dob: '2000',
+            phone: '000024244',
             gender: 'Nam',
         },
         drugs: [
@@ -88,6 +92,7 @@ let Invoices = [
         customer: {
             name: 'Bệnh nhân B',
             address: 'TP. HCM',
+            phone: '000024244',
             dob: '2000',
             gender: 'Nam',
         },
@@ -113,6 +118,10 @@ const GetInvoice = () => {
 
 const GetInvoiceByStatus = (status) => {
     return Invoices.filter(i => i.status === status);
+}
+
+const GetInvoiceByDoctor = (doctor) => {
+    return Invoices.filter(i => i.doctor === doctor);
 }
 
 const Count = () => {
@@ -147,6 +156,7 @@ const Update = (invoice) => {
 export default {
     GetInvoice,
     GetInvoiceByStatus,
+    GetInvoiceByDoctor,
     Count,
     CountByStatus,
     Add,

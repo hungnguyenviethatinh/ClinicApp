@@ -19,6 +19,10 @@ const GetClientByStatus = (status) => {
     return Clients.filter(c => c.status === status);
 }
 
+const GetClientByDoctor = (doctor) => {
+    return Clients.filter(c => c.doctor === doctor);
+}
+
 const Count = () => {
     return Clients.length;
 }
@@ -28,6 +32,8 @@ const CountByStatus = (status) => {
 }
 
 const Add = (client) => {
+    client.order = Clients.length + 1;
+    client.status = 'Đang chờ'
     Clients.push(client);
 }
 
@@ -49,6 +55,7 @@ const Update = (client) => {
 export default {
     GetClient,
     GetClientByStatus,
+    GetClientByDoctor,
     Count,
     CountByStatus,
     Add,

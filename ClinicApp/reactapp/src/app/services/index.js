@@ -5,6 +5,7 @@ import UserService from './user.service';
 import ClientService from './client.service';
 import DoctorServie from './doctor.service';
 import InvoiceService from './invoice.service';
+import PatientService from './patient.service';
 
 export { 
     ChromelyService,
@@ -14,4 +15,5 @@ export {
     ClientService,
     DoctorServie,
     InvoiceService,
+    PatientService
 }

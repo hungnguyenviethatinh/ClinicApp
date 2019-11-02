@@ -21,6 +21,13 @@ const useStyles = makeStyles(theme => ({
         marginLeft: theme.spacing(2),
         flex: 1,
     },
+    container: {
+        height: '100%',
+    },
+    content: {
+        paddingTop: 32,
+        paddingBottom: 32,
+    }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -30,39 +37,41 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const FullScreenDialog = props => {
     const classes = useStyles();
 
-    const { open, children, title, buttons, handleClose } = props;
+    const { open, children, title, buttons, handleClose, maxWidth, containerStyle } = props;
 
     return (
         <React.Fragment>
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
                 <AppBar className={classes.appBar}>
                     <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-                            <CloseIcon />
-                        </IconButton>
-                        <Typography variant="h6" className={classes.title}>
+                        <Typography color="inherit" variant="h5" className={classes.title}>
                             {title}
                         </Typography>
                         {
-                            buttons.map(button => {
+                            buttons.map((button, index) => {
                                 return (
                                     <Button
+                                        key={index}
                                         autoFocus
                                         color="inherit"
                                         variant="text"
                                         children={button.children}
                                         iconName={button.iconName}
                                         onClick={button.onClick}
+                                        style={{margin: '0 8px'}}
                                     />
                                 )
                             })
                         }
+                        <IconButton edge="end" color="inherit" onClick={handleClose} aria-label="close">
+                            <CloseIcon />
+                        </IconButton>
                     </Toolbar>
                 </AppBar>
                 <CssBaseline />
-                <Grid container spacing={3} justify="center">
+                <Grid container justify="center" className={classes.container}>
                     <Grid item sm={12}>
-                        <Container maxWidth="sm">
+                        <Container maxWidth={maxWidth} className={classes.content} style={containerStyle}>
                             <CssBaseline />
                             {children}
                         </Container>
@@ -79,6 +88,16 @@ FullScreenDialog.propTypes = {
     title: PropTypes.string,
     buttons: PropTypes.array,
     handleClose: PropTypes.func,
+    maxWidth: PropTypes.string,
+}
+
+FullScreenDialog.defaultProps = {
+    open: false,
+    children: <React.Fragment />,
+    title: '',
+    buttons: [],
+    handleClose: () => { console.log('Close diaglog!') },
+    maxWidth: 'sm',
 }
 
 export default FullScreenDialog;

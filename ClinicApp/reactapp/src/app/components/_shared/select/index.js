@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 const styles = {
     textField: {
-        width: 200,
+        width: '100%',
     },
     menu: {
         width: '100%',
@@ -13,7 +13,7 @@ const styles = {
 };
 
 const SelectComponent = props => {
-    const { classes, id, label, value, onChange, options, autoFocus, style, fullWidth } = props;
+    const { classes, id, label, value, onChange, options, autoFocus, style, fullWidth, required } = props;
 
     return(
         <FormControl
@@ -35,6 +35,7 @@ const SelectComponent = props => {
                 margin="dense"
                 variant="outlined"
                 autoFocus={autoFocus}
+                required={required}
             >
                 {options.map((option, index) => (
                     <MenuItem key={index} value={option.value}>
@@ -59,6 +60,7 @@ SelectComponent.propTypes = {
     })),
     autoFocus: PropTypes.bool,
     style: PropTypes.object,
+    required: PropTypes.bool,
 }
 
 SelectComponent.defaultProps = {
@@ -71,6 +73,7 @@ SelectComponent.defaultProps = {
     options: [{}],
     autoFocus: false,
     style: null,
+    required: false,
 }
 
 export default withStyles(styles)(SelectComponent);

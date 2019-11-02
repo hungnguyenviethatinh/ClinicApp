@@ -13,8 +13,10 @@ namespace ChromelyReactCefSharp.Controllers
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-
+    using System.IO;
+    using System.Text;
     using Chromely.Core.RestfulService;
+    using IronPdf;
 
     /// <summary>
     /// The demo controller.
@@ -29,6 +31,7 @@ namespace ChromelyReactCefSharp.Controllers
         {
             this.RegisterGetRequest("/democontroller/movies", this.GetMovies);
             this.RegisterPostRequest("/democontroller/savemovies", this.SaveMovies);
+            this.RegisterPostRequest("/democontroller/print", this.Print);
         }
 
         /// <summary>
@@ -92,6 +95,81 @@ namespace ChromelyReactCefSharp.Controllers
 
             return response;
         }
+
+        private ChromelyResponse Print(ChromelyRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            if (request.PostData == null)
+            {
+                throw new Exception("Post data is null or invalid.");
+            }
+
+            ChromelyResponse response = new ChromelyResponse();
+            var postDataJson = request.PostData.ToObjectDictionary();
+            Print(postDataJson);
+
+            response.Data = "Printed.";
+
+            return response;
+        }
+
+        private void Print(Object data)
+        {
+            //string root = AppDomain.CurrentDomain.BaseDirectory;
+            string templateFile = "templates\\invoice.html";
+            string content = "";
+            using (StreamReader sr = new StreamReader(templateFile, Encoding.UTF8))
+            {
+                content = sr.ReadToEnd();
+            }
+
+            content = content.Replace("{content}", "Nội dung sẽ ở đây!");
+
+            HtmlToPdf render = new HtmlToPdf();
+            PdfDocument pdf = render.RenderHtmlAsPdf(content);
+            //pdf.SaveAs("test.pdf");
+
+            System.Drawing.Printing.PrintDocument print = pdf.GetPrintDocument();
+            print.Print();
+
+            //using (StreamWriter sw = new StreamWriter(templateFile))
+            //{
+            //    sw.WriteLine(content);
+            //}
+        }
+    }
+
+    public class Customer
+    {
+        public string name { get; set; }
+        public string address { get; set; }
+        public string phone { get; set; }
+        public string dob { get; set; }
+        public string gender { get; set; }
+    }
+
+    public class Drug
+    {
+        public string name { get; set; }
+        public string quantity { get; set; }
+        public string unit { get; set; }
+        public string usage { get; set; }
+    }
+
+    public class Invoice
+    {
+        public int id { get; set; }
+        public Customer customer { get; set; }
+        public List<Drug> drugs { get; set; }
+        public string result { get; set; }
+        public string doctor { get; set; }
+        public string date { get; set; }
+        public string status { get; set; }
+
     }
 
     /// <summary>

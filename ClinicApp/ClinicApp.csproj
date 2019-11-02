@@ -21,12 +21,20 @@
     <None Update="app.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="templates\invoice.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CefSharp.Common" Version="71.0.2" />
     <PackageReference Include="Chromely.CefSharp.Winapi" Version="4.0.71" />
     <PackageReference Include="Chromely.Core" Version="4.0.0" />
+    <PackageReference Include="IronPdf" Version="2019.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="templates\" />
   </ItemGroup>
 
   <Target Name="DependsOn" DependsOnTargets="ValidateChromelyApp">

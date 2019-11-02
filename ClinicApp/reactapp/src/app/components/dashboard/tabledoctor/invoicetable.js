@@ -14,9 +14,8 @@ import {
 import Table from '../../_shared/table';
 import CustomStatusBullet from '../../_shared/customstatusbullet';
 import Button from '../../_shared/button';
-import { AddClientForm, EditClientForm } from '../form';
 
-import { ClientService } from '../../../services';
+import { InvoiceService } from '../../../services';
 
 const useStyles = makeStyles(theme => ({
     root: {},
@@ -29,24 +28,22 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const columns = [
-    { title: 'STT', field: 'order', type: 'numeric', defaultSort: 'asc' },
-    { title: 'Họ và Tên', field: 'name' },
-    { title: 'Số CMT', field: 'id_no' },
-    { title: 'Bác sĩ khám', field: 'doctor' },
+    { title: 'No', type: 'numeric', field: 'id', defaultSort: 'asc' },
+    { title: 'Người kê đơn', field: 'doctor' },
     {
         title: 'Trạng thái', field: 'status',
         render: rowData => <CustomStatusBullet status={rowData.status} />,
     },
 ];
 
-const ClientTable = props => {
+const InvoiceTable = props => {
     const { className, ...rest } = props;
     const classes = useStyles();
 
     const [data, setData] = React.useState([]);
-    const getClients = () => {
-        const clients = ClientService.GetClient();
-        setData(clients);
+    const getInvoices = () => {
+        const invoices = InvoiceService.GetInvoiceByDoctor('Bác sĩ A');
+        setData(invoices);
     };
 
     const [selectedRow, setSelectedRow] = React.useState(null);
@@ -58,50 +55,30 @@ const ClientTable = props => {
         }
     };
 
-    const [openAddClientForm, setOpenAddClientForm] = React.useState(false);
-    const handleOpenAddClientForm = () => {
-        setOpenAddClientForm(true);
-    };
-    const handleCloseAddClientForm = () => {
-        setOpenAddClientForm(false);
-        getClients();
-    };
-
-    const [openEditClientForm, setOpenEditClientForm] = React.useState(false);
-    const handleOpenEditClientForm = () => {
-        setOpenEditClientForm(true);
-    };
-    const handleCloseEditClientForm = () => {
-        setOpenEditClientForm(false);
-        getClients();
-    };
-
     const handleAdd = () => {
-        handleOpenAddClientForm();
+
     };
 
     const handleDelete = () => {
-        ClientService.Remove(selectedRow.order);
-        getClients();
+
     };
 
     const handleEdit = () => {
-        handleOpenEditClientForm();
+
     };
 
     React.useEffect(() => {
-        getClients();
+        getInvoices();
     }, []);
 
     return (
-        <React.Fragment>
-            <Card
-                {...rest}
-                className={clsx(classes.root, className)}
-            >
-                <CardHeader
-                    action={
-                        <Grid container spacing={1}>
+        <Card
+            {...rest}
+            className={clsx(classes.root, className)}
+        >
+            <CardHeader
+                action={
+                    <Grid container spacing={1}>
                             <Grid item>
                                 <Button
                                     color="danger"
@@ -129,34 +106,26 @@ const ClientTable = props => {
                                 />
                             </Grid>
                         </Grid>
-                    }
-                    title="DANH SÁCH KHÁCH HÀNG"
-                />
-                <Divider />
-                <CardContent className={classes.content}>
-                    <PerfectScrollbar>
-                        <Table
-                            columns={columns}
-                            data={data}
-                            onRowClick={handleSelectRow}
-                            selectedRow={selectedRow}
-                        />
-                    </PerfectScrollbar>
-                </CardContent>
-            </Card>
-            <AddClientForm
-                open={openAddClientForm}
-                handleClose={handleCloseAddClientForm} />
-            <EditClientForm
-                open={openEditClientForm}
-                handleClose={handleCloseEditClientForm}
-                value={selectedRow? selectedRow : {}} />
-        </React.Fragment>
+                }
+                title="DANH SÁCH ĐƠN THUỐC"
+            />
+            <Divider />
+            <CardContent className={classes.content}>
+                <PerfectScrollbar>
+                    <Table
+                        columns={columns}
+                        data={data}
+                        onRowClick={handleSelectRow}
+                        selectedRow={selectedRow}
+                    />
+                </PerfectScrollbar>
+            </CardContent>
+        </Card>
     );
 };
 
-ClientTable.propTypes = {
+InvoiceTable.propTypes = {
     className: PropTypes.string
 };
 
-export default ClientTable;
+export default InvoiceTable;
