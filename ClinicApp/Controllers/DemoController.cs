@@ -16,7 +16,8 @@ namespace ChromelyReactCefSharp.Controllers
     using System.IO;
     using System.Text;
     using Chromely.Core.RestfulService;
-    using IronPdf;
+    //using IronPdf;
+    using SelectPdf;
 
     /// <summary>
     /// The demo controller.
@@ -109,17 +110,8 @@ namespace ChromelyReactCefSharp.Controllers
             }
 
             ChromelyResponse response = new ChromelyResponse();
-            var postDataJson = request.PostData.ToObjectDictionary();
-            Print(postDataJson);
+            var postDataJson = request.PostData;
 
-            response.Data = "Printed.";
-
-            return response;
-        }
-
-        private void Print(Object data)
-        {
-            //string root = AppDomain.CurrentDomain.BaseDirectory;
             string templateFile = "templates\\invoice.html";
             string content = "";
             using (StreamReader sr = new StreamReader(templateFile, Encoding.UTF8))
@@ -127,20 +119,46 @@ namespace ChromelyReactCefSharp.Controllers
                 content = sr.ReadToEnd();
             }
 
-            content = content.Replace("{content}", "Nội dung sẽ ở đây!");
+            content = content.Replace("{content}", "Nội dung đơn thuốc sẽ ở đây!");
 
-            HtmlToPdf render = new HtmlToPdf();
-            PdfDocument pdf = render.RenderHtmlAsPdf(content);
+            HtmlToPdf converter = new HtmlToPdf();
+            converter.Options.PdfPageSize = PdfPageSize.A4;
+            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
+            converter.Options.WebPageWidth = 1024;
+            converter.Options.WebPageHeight = 0;
+
+            PdfDocument pdf = converter.ConvertHtmlString(content);
+            pdf.Save("invoices\\test.pdf");
+            pdf.Close();
+            response.Data = "Printed.";
+
+            return response;
+        }
+
+        //private void Print(Object data)
+        //{
+            //string root = AppDomain.CurrentDomain.BaseDirectory;
+            //string templateFile = "templates\\invoice.html";
+            //string content = "";
+            //using (StreamReader sr = new StreamReader(templateFile, Encoding.UTF8))
+            //{
+            //    content = sr.ReadToEnd();
+            //}
+
+            //content = content.Replace("{content}", "Nội dung sẽ ở đây!");
+
+            //HtmlToPdf render = new HtmlToPdf();
+            //PdfDocument pdf = render.RenderHtmlAsPdf(content);
             //pdf.SaveAs("test.pdf");
 
-            System.Drawing.Printing.PrintDocument print = pdf.GetPrintDocument();
-            print.Print();
+            //System.Drawing.Printing.PrintDocument print = pdf.GetPrintDocument();
+            //print.Print();
 
             //using (StreamWriter sw = new StreamWriter(templateFile))
             //{
             //    sw.WriteLine(content);
             //}
-        }
+        //}
     }
 
     public class Customer

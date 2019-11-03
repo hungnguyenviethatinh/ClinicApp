@@ -46,7 +46,7 @@ namespace ChromelyReactCefSharp
                                               .WithAppArgs(args)
                                               .WithHostSize(1200, 900)
                                               .WithHostMode(WindowState.Maximize, true)
-                                              .WithHostTitle("Hệ thống Quản lý Phòng khám")
+                                              .WithHostTitle("Dr.KHOA Clinic")
                                               .WithHostIconFile("app.ico")
                                               .WithStartUrl(startUrl)
                                               .WithLogFile("logs\\app.log")

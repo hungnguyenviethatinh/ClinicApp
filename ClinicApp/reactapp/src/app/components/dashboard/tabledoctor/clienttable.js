@@ -97,7 +97,7 @@ const ClientTable = props => {
                             </Grid>
                         </Grid>
                     }
-                    title="DANH SÁCH KHÁCH HÀNG"
+                    title="DANH SÁCH BỆNH NHÂN"
                 />
                 <Divider />
                 <CardContent className={classes.content}>

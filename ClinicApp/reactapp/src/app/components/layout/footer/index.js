@@ -17,7 +17,7 @@ const Footer = () => {
             {new Date().getFullYear()}
             {' '}
             <Link color="inherit" to="/" >
-                Hệ Thống Quản lý Phòng khám
+                Dr.KHOA Clinic
             </Link>{' '}
             {'.'}
         </Typography>

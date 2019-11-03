@@ -30,7 +30,7 @@
     <PackageReference Include="CefSharp.Common" Version="71.0.2" />
     <PackageReference Include="Chromely.CefSharp.Winapi" Version="4.0.71" />
     <PackageReference Include="Chromely.Core" Version="4.0.0" />
-    <PackageReference Include="IronPdf" Version="2019.7.0" />
+    <PackageReference Include="Select.HtmlToPdf" Version="19.2.0" />
   </ItemGroup>
 
   <ItemGroup>
