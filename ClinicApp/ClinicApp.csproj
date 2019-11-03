@@ -31,6 +31,7 @@
     <PackageReference Include="Chromely.CefSharp.Winapi" Version="4.0.71" />
     <PackageReference Include="Chromely.Core" Version="4.0.0" />
     <PackageReference Include="Select.HtmlToPdf" Version="19.2.0" />
+    <PackageReference Include="System.Text.Json" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>

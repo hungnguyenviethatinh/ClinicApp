@@ -33,8 +33,7 @@ const PrintForm = props => {
     const handlePrint = () => {
         const data = { ...value }
         delete data.tableData;
-        console.log(JSON.stringify(data));
-        ChromelyService.Post('/democontroller/print', null, data, response => {
+        ChromelyService.Post('/democontroller/print', null, JSON.stringify(data), response => {
             const jsonData = JSON.parse(response.ResponseText);
             if (jsonData.ReadyState == 4 && jsonData.Status == 200) {
                 handleSnackbarOption('success', 'Toa thuốc đã được lưu trong file invoices/test.pdf!');

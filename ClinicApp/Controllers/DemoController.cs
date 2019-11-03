@@ -12,12 +12,14 @@ namespace ChromelyReactCefSharp.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Text;
     using Chromely.Core.RestfulService;
-    //using IronPdf;
     using SelectPdf;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
 
     /// <summary>
     /// The demo controller.
@@ -110,7 +112,11 @@ namespace ChromelyReactCefSharp.Controllers
             }
 
             ChromelyResponse response = new ChromelyResponse();
-            var postDataJson = request.PostData;
+            string postDataJson = request.PostData.ToString();
+            Invoice invoice = JsonSerializer.Deserialize<Invoice>(postDataJson, new JsonSerializerOptions
+            {
+                AllowTrailingCommas = true
+            });
 
             string templateFile = "templates\\invoice.html";
             string content = "";
@@ -130,6 +136,12 @@ namespace ChromelyReactCefSharp.Controllers
             PdfDocument pdf = converter.ConvertHtmlString(content);
             pdf.Save("invoices\\test.pdf");
             pdf.Close();
+
+            ProcessStartInfo info = new ProcessStartInfo("invoices\\test.pdf");
+            info.Verb = "Print";
+            info.CreateNoWindow = true;
+            info.WindowStyle = ProcessWindowStyle.Hidden;
+            Process.Start(info);
             response.Data = "Printed.";
 
             return response;
