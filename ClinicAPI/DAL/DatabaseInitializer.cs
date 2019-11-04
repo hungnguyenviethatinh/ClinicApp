@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace ClinicAPI.DAL
@@ -7,12 +8,14 @@ namespace ClinicAPI.DAL
     {
         Task SeedAsync();
     }
-    public class DatabaseInitializer
+    public class DatabaseInitializer : IDatabaseInitializer
     {
         private readonly ClinicDbContext _context;
-        public DatabaseInitializer(ClinicDbContext context)
+        private readonly ILogger _logger;
+        public DatabaseInitializer(ClinicDbContext context, ILogger logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task SeedAsync()
@@ -21,6 +24,9 @@ namespace ClinicAPI.DAL
 
             if (!await _context.Users.AnyAsync())
             {
+                _logger.LogInformation("Generating inbuilt accounts");
+
+                _logger.LogInformation("Inbuilt account generation completed");
             }
         }
     }

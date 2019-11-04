@@ -35,10 +35,6 @@ namespace ClinicAPI.DAL
             modelBuilder.Entity<Role>().HasMany(r => r.Rights)
                 .WithOne().HasForeignKey(r => r.RoleID).IsRequired().OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<User>().Property(u => u.ID).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Role>().Property(r => r.ID).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Right>().Property(r => r.ID).ValueGeneratedOnAdd();
-
             modelBuilder.Entity<User>().HasIndex(u => u.UserName).IsUnique();
             modelBuilder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
             modelBuilder.Entity<Right>().HasIndex(r => r.Name).IsUnique();
