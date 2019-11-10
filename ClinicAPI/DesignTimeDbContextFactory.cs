@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using ClinicAPI.DAL;
+using DAL;
 
-namespace QuickApp
+namespace ClinicAPI
 {
-    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ClinicDbContext>
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
-        public ClinicDbContext CreateDbContext(string[] args)
+        public ApplicationDbContext CreateDbContext(string[] args)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -16,11 +16,11 @@ namespace QuickApp
                 .AddJsonFile("appsettings.Development.json", optional: true)
                 .Build();
 
-            var builder = new DbContextOptionsBuilder<ClinicDbContext>();
+            var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
             builder.UseSqlServer(configuration["ConnectionStrings:DefaultConnection"], b => b.MigrationsAssembly("ClinicAPI"));
 
-            return new ClinicDbContext(builder.Options);
+            return new ApplicationDbContext(builder.Options);
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Security.Cryptography;
-using System.Text;
-using System.Globalization;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using System.Security.Claims;
+using IdentityModel;
+using System.Linq;
 
 namespace ClinicAPI.Helpers
 {
@@ -43,26 +43,17 @@ namespace ClinicAPI.Helpers
             }
         }
 
-        public static string ToMD5Hash(this string text)
+        public static string GetUserId(ClaimsPrincipal user)
         {
-            using (MD5 md5 = MD5.Create())
-            {
-                byte[] computeHash = md5.ComputeHash(Encoding.UTF8.GetBytes(text));
-
-                StringBuilder hash = new StringBuilder();
-                foreach (byte element in computeHash)
-                {
-                    hash.Append(element.ToString("x2", CultureInfo.CurrentCulture));
-                }
-
-                return hash.ToString();
-            }
+            return user.FindFirst(JwtClaimTypes.Subject)?.Value?.Trim();
         }
 
-        public static bool VerifyMD5Hash(this string text, string md5Hash)
+        public static string[] GetRoles(ClaimsPrincipal identity)
         {
-            StringComparer comparer = StringComparer.CurrentCultureIgnoreCase;
-            return comparer.Compare(text.ToMD5Hash(), md5Hash) == 0;
+            return identity.Claims
+                .Where(c => c.Type == JwtClaimTypes.Role)
+                .Select(c => c.Value)
+                .ToArray();
         }
     }
 }

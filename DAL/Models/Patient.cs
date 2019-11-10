@@ -1,0 +1,30 @@
+﻿using DAL.Models.Interfaces;
+using System;
+using System.Collections.Generic;
+
+namespace DAL.Models
+{
+    public class Patient : IAuditableEntity
+    {
+        public string ID { get; set; }
+        public string FullName { get; set; }
+        public int YoB { get; set; }
+        public virtual int Age
+        {
+            get
+            {
+                return DateTime.Now.Year - YoB;
+            }
+        }
+        public string Gender { get; set; }
+        public string Address { get; set; }
+        public string PhoneNumber { get; set; }
+        public string HealthCheckReason { get; set; }
+        public string CreatedBy { get; set; }
+        public string UpdatedBy { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
+
+        public virtual ICollection<HealthCheckRecord> HealthCheckRecords  { get; }
+    }
+}

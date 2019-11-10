@@ -1,5 +1,5 @@
 using System;
-using ClinicAPI.DAL;
+using DAL;
 using ClinicAPI.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
