@@ -13,6 +13,15 @@ namespace DAL
     {
         public string CurrentUserId { get; set; }
 
+        public DbSet<Patient> Patients { get; set; }
+        public DbSet<Prescription> Prescriptions { get; set; }
+        public DbSet<Medicine> Medicines { get; set; }
+        public DbSet<Drug> Drugs { get; set; }
+        public DbSet<Request> Requests { get; set; }
+        public DbSet<History> Histories { get; set; }
+        public DbSet<Photo> Photos { get; set; }
+        public DbSet<Queue> Queues { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -36,6 +45,45 @@ namespace DAL
                 .HasMany(r => r.Users)
                 .WithOne().HasForeignKey(r => r.RoleId).IsRequired().OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<User>().Property(u => u.StatusCode).HasDefaultValue(0);
+            builder.Entity<User>().Property(u => u.IsDeleted).HasDefaultValue(false);
+
+            builder.Entity<Patient>().HasKey(p => p.ID);
+            builder.Entity<Patient>()
+                .HasMany(p => p.Histories)
+                .WithOne().HasForeignKey(h => h.PatientID).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Patient>()
+                .HasMany(p => p.Photos)
+                .WithOne().HasForeignKey(p => p.PatientID).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Patient>()
+                .HasMany(p => p.Prescriptions)
+                .WithOne().HasForeignKey(p => p.PatientID).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Patient>().ToTable("DanhSachBenhNhan");
+
+            builder.Entity<Prescription>().HasKey(p => p.ID);
+            builder.Entity<Prescription>().ToTable("DanhSachToaThuoc");
+
+            builder.Entity<Medicine>().HasKey(m => m.ID);
+            builder.Entity<Medicine>().ToTable("DanhSachThuoc");
+
+            builder.Entity<Drug>().HasKey(d => d.ID);
+            builder.Entity<Drug>().Property(d => d.ID).ValueGeneratedOnAdd();
+            builder.Entity<Drug>().ToTable("DonThuoc");
+
+            builder.Entity<Request>().HasKey(r => r.ID);
+            builder.Entity<Request>().Property(r => r.ID).ValueGeneratedOnAdd();
+            builder.Entity<Request>().ToTable("DonChiDinh");
+
+            builder.Entity<History>().HasKey(h => h.ID);
+            builder.Entity<History>().Property(h => h.ID).ValueGeneratedOnAdd();
+            builder.Entity<History>().ToTable("LichSuKhamBenh");
+
+            builder.Entity<Photo>().HasKey(p => p.ID);
+            builder.Entity<Photo>().Property(p => p.ID).ValueGeneratedOnAdd();
+            builder.Entity<Photo>().ToTable("HinhAnh");
+
+            builder.Entity<Queue>().HasKey(q => q.ID);
+            builder.Entity<Queue>().ToTable("HangChoKhamBenh");
         }
 
         public override int SaveChanges()

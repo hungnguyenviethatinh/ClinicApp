@@ -5,10 +5,11 @@ using System.Text;
 
 namespace DAL.Models
 {
-    public class Drug : IAuditableEntity
+    public class Request : IAuditableEntity
     {
         public int ID { get; set; }
-        public string MedicineID { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public string PrescriptionID { get; set; }
 
         public string CreatedBy { get; set; }

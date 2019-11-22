@@ -8,22 +8,90 @@ namespace DAL.Core
     {
         public static ReadOnlyCollection<ApplicationPermission> AllPermissions;
 
-        public const string AdminPermissionGroupName = "Administrator Permissions";
-        public static ApplicationPermission AdminPermissions = new ApplicationPermission("Administrator Permissions", "administrator", AdminPermissionGroupName);
+        public const string UsersPermissionGroupName = "User Permissions";
+        public static ApplicationPermission ViewUsers = new ApplicationPermission(
+            "View Users",
+            "users.view",
+            UsersPermissionGroupName,
+            "Permission to view other users account details");
+        public static ApplicationPermission ManageUsers = new ApplicationPermission(
+            "Manage Users",
+            "users.manage",
+            UsersPermissionGroupName,
+            "Permission to create, delete and modify other users account details");
 
-        public const string DoctorPermissionGroupName = "Doctor Permissions";
-        public static ApplicationPermission DoctorPermissions = new ApplicationPermission("Doctor Permissions", "doctor", DoctorPermissionGroupName);
+        public const string RolesPermissionGroupName = "Role Permissions";
+        public static ApplicationPermission ViewRoles = new ApplicationPermission(
+            "View Roles",
+            "roles.view",
+            RolesPermissionGroupName,
+            "Permission to view available roles");
+        public static ApplicationPermission ManageRoles = new ApplicationPermission(
+            "Manage Roles",
+            "roles.manage",
+            RolesPermissionGroupName,
+            "Permission to create, delete and modify roles");
+        public static ApplicationPermission AssignRoles = new ApplicationPermission(
+            "Assign Roles",
+            "roles.assign",
+            RolesPermissionGroupName,
+            "Permission to assign roles to users");
 
-        public const string ReceptionistPermissionGroupName = "Receptionist Permissions";
-        public static ApplicationPermission ReceptionistPermissions = new ApplicationPermission("Receptionist Permissions", "receptionist", ReceptionistPermissionGroupName);
+        public const string PatientPermissionGroupName = "Patient Permissions";
+        public static ApplicationPermission ViewPatients = new ApplicationPermission(
+            "View Patients",
+            "patients.view",
+            PatientPermissionGroupName,
+            "Permission to view patients details");
+        public static ApplicationPermission ManagePatients = new ApplicationPermission(
+            "Manage Patients",
+            "patients.manage",
+            PatientPermissionGroupName,
+            "Permission to create, delete and modify patients details");
+
+        public const string PrescriptionPermissionGroupName = "Prescription Permissions";
+        public static ApplicationPermission ViewPrescriptions = new ApplicationPermission(
+            "View Prescriptions",
+            "prescriptions.view",
+            PrescriptionPermissionGroupName,
+            "Permission to view prescriptions details");
+        public static ApplicationPermission ManagePrescriptions = new ApplicationPermission(
+            "Manage Prescriptions",
+            "prescriptions.manage",
+            PrescriptionPermissionGroupName,
+            "Permission to create, delete and modify prescriptions details");
+
+        public const string DrugPermissionGroupName = "Drug Permissions";
+        public static ApplicationPermission ViewDrugs = new ApplicationPermission(
+            "View Drugs",
+            "drugs.view",
+            DrugPermissionGroupName,
+            "Permission to view drugs details");
+        public static ApplicationPermission ManageDrugs = new ApplicationPermission(
+            "Manage Drugs",
+            "drugs.manage",
+            DrugPermissionGroupName,
+            "Permission to create, delete and modify drugs details");
 
         static ApplicationPermissions()
         {
             List<ApplicationPermission> allPermissions = new List<ApplicationPermission>()
             {
-                AdminPermissions,
-                DoctorPermissions,
-                ReceptionistPermissions
+                ViewUsers,
+                ManageUsers,
+
+                ViewRoles,
+                ManageRoles,
+                AssignRoles,
+
+                ViewPatients,
+                ManagePatients,
+
+                ViewPrescriptions,
+                ManagePrescriptions,
+
+                ViewDrugs,
+                ManageDrugs,
             };
 
             AllPermissions = allPermissions.AsReadOnly();
@@ -46,17 +114,41 @@ namespace DAL.Core
 
         public static string[] GetAdministrativePermissionValues()
         {
-            return new string[] { AdminPermissions };
+            return new string[] {
+                ViewUsers,
+                ManageUsers,
+
+                ViewRoles,
+                ManageRoles,
+                AssignRoles,
+
+                ViewPatients,
+
+                ViewPrescriptions,
+
+                ViewDrugs,
+                ManageDrugs,
+            };
         }
 
         public static string[] GetDoctorPermissionValues()
         {
-            return new string[] { DoctorPermissions };
+            return new string[] {
+                ViewPatients,
+
+                ViewPrescriptions,
+                ManagePrescriptions,
+            };
         }
 
         public static string[] GetReceptionistPermissionValues()
         {
-            return new string[] { ReceptionistPermissions };
+            return new string[] {
+                ViewPatients,
+                ManagePatients,
+
+                ViewPrescriptions,
+            };
         }
     }
 
@@ -65,16 +157,18 @@ namespace DAL.Core
         public ApplicationPermission()
         { }
 
-        public ApplicationPermission(string name, string value, string groupName)
+        public ApplicationPermission(string name, string value, string groupName, string description = null)
         {
             Name = name;
             Value = value;
             GroupName = groupName;
+            Description = description;
         }
 
         public string Name { get; set; }
         public string Value { get; set; }
         public string GroupName { get; set; }
+        public string Description { get; set; }
 
         public override string ToString()
         {

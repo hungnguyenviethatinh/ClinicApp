@@ -19,7 +19,10 @@ namespace DAL
         private readonly IAccountManager _accountManager;
         private readonly ILogger _logger;
 
-        public DatabaseInitializer(ApplicationDbContext context, IAccountManager accountManager, ILogger<DatabaseInitializer> logger)
+        public DatabaseInitializer(
+            ApplicationDbContext context, 
+            IAccountManager accountManager, 
+            ILogger<DatabaseInitializer> logger)
         {
             _accountManager = accountManager;
             _context = context;
@@ -42,15 +45,11 @@ namespace DAL
                 await EnsureRoleAsync(doctorRoleName, ApplicationPermissions.GetDoctorPermissionValues());
                 await EnsureRoleAsync(receptionistRoleName, ApplicationPermissions.GetReceptionistPermissionValues());
 
-                await CreateUserAsync("admin", "admin", "Inbuilt Administrator", new string[] { adminRoleName });
-                await CreateUserAsync("bacsi", "bacsi", "Inbuilt Doctor", new string[] { doctorRoleName });
-                await CreateUserAsync("letan", "letan", "Inbuilt Receptionist", new string[] { receptionistRoleName });
+                await CreateUserAsync("admin", "admin@123", "Inbuilt Administrator", new string[] { adminRoleName });
 
                 _logger.LogInformation("Inbuilt account generation completed");
             }
         }
-
-
 
         private async Task EnsureRoleAsync(string roleName, string[] claims)
         {

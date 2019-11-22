@@ -84,9 +84,32 @@ namespace ClinicAPI
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(Policies.AdminPolicy, policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.AdminPermissions));
-                options.AddPolicy(Policies.DoctorPolicy, policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.DoctorPermissions));
-                options.AddPolicy(Policies.ReceptionistPolicy, policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ReceptionistPermissions));
+                options.AddPolicy(Policies.ViewAllUsersPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ViewUsers));
+                options.AddPolicy(Policies.ManageAllUsersPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ManageUsers));
+
+                options.AddPolicy(Policies.ViewAllRolesPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ViewRoles));
+                options.AddPolicy(Policies.ManageAllRolesPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ManageRoles));
+                options.AddPolicy(Policies.AssignAllRolesPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.AssignRoles));
+
+                options.AddPolicy(Policies.ViewAllPatientsPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ViewPatients));
+                options.AddPolicy(Policies.ManageAllPatientsPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ManagePatients));
+
+                options.AddPolicy(Policies.ViewAllPrescriptionsPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ViewPrescriptions));
+                options.AddPolicy(Policies.ManageAllPrescriptionsPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ManagePrescriptions));
+
+                options.AddPolicy(Policies.ViewAllDrugsPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ViewDrugs));
+                options.AddPolicy(Policies.ManageAllDrugsPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ManageDrugs));
             });
 
             services.AddSwaggerGen(c =>
