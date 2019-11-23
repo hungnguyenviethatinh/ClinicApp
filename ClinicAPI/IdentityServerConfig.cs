@@ -21,10 +21,12 @@ namespace ClinicAPI
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
+                new IdentityResources.Phone(),
+                new IdentityResources.Email(),
                 new IdentityResource(ScopeConstants.Roles, new List<string> { JwtClaimTypes.Role })
             };
         }
-        
+
         public static IEnumerable<ApiResource> GetApiResources()
         {
             return new List<ApiResource>
@@ -32,6 +34,8 @@ namespace ClinicAPI
                 new ApiResource(ApiName) {
                     UserClaims = {
                         JwtClaimTypes.Name,
+                        JwtClaimTypes.Email,
+                        JwtClaimTypes.PhoneNumber,
                         JwtClaimTypes.Role,
                         ClaimConstants.Permission
                     }
@@ -49,10 +53,12 @@ namespace ClinicAPI
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AllowAccessTokensViaBrowser = true,
                     RequireClientSecret = false,
-                    
+
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Phone,
+                        IdentityServerConstants.StandardScopes.Email,
                         ScopeConstants.Roles,
                         ApiName
                     },

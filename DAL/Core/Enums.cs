@@ -23,7 +23,6 @@
     {
         Waiting,
         Checking,
-        Checked,
     }
 
     public enum PrescriptionStatus

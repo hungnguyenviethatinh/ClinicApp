@@ -1,4 +1,5 @@
-﻿using DAL.Models.Interfaces;
+﻿using DAL.Core;
+using DAL.Models.Interfaces;
 using System;
 
 namespace DAL.Models
@@ -8,7 +9,7 @@ namespace DAL.Models
         public int ID { get; set; }
         public string PatientID { get; set; }
         public string DoctorID { get; set; }
-        public string StatusCode { get; set; }
+        public QueueStatus StatusCode { get; set; }
 
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }

@@ -20,8 +20,8 @@ namespace DAL
         private readonly ILogger _logger;
 
         public DatabaseInitializer(
-            ApplicationDbContext context, 
-            IAccountManager accountManager, 
+            ApplicationDbContext context,
+            IAccountManager accountManager,
             ILogger<DatabaseInitializer> logger)
         {
             _accountManager = accountManager;
@@ -35,19 +35,19 @@ namespace DAL
 
             if (!await _context.Users.AnyAsync())
             {
-                _logger.LogInformation("Generating inbuilt accounts");
+                _logger.LogInformation("Generating inbuilt accounts...");
 
-                const string adminRoleName = "administrator";
-                const string receptionistRoleName = "receptionist";
-                const string doctorRoleName = "doctor";
+                await EnsureRoleAsync(
+                    RoleConstants.AdministratorRoleName, ApplicationPermissions.GetAdministrativePermissionValues());
+                await EnsureRoleAsync(
+                    RoleConstants.DoctorRoleName, ApplicationPermissions.GetDoctorPermissionValues());
+                await EnsureRoleAsync(
+                    RoleConstants.ReceptionistRoleName, ApplicationPermissions.GetReceptionistPermissionValues());
 
-                await EnsureRoleAsync(adminRoleName, ApplicationPermissions.GetAdministrativePermissionValues());
-                await EnsureRoleAsync(doctorRoleName, ApplicationPermissions.GetDoctorPermissionValues());
-                await EnsureRoleAsync(receptionistRoleName, ApplicationPermissions.GetReceptionistPermissionValues());
+                await CreateUserAsync(
+                    "admin", "admin", "Inbuilt Administrator", new string[] { RoleConstants.AdministratorRoleName });
 
-                await CreateUserAsync("admin", "admin@123", "Inbuilt Administrator", new string[] { adminRoleName });
-
-                _logger.LogInformation("Inbuilt account generation completed");
+                _logger.LogInformation("Inbuilt account generation completed.");
             }
         }
 
@@ -61,7 +61,8 @@ namespace DAL
 
                 if (!Succeeded)
                 {
-                    throw new Exception($"Seeding \"{roleName}\" role failed. Errors: {string.Join(Environment.NewLine, Errors)}");
+                    throw new Exception(
+                        $"Seeding \"{roleName}\" role failed. Errors: {string.Join(Environment.NewLine, Errors)}");
                 }
             }
         }
@@ -78,7 +79,8 @@ namespace DAL
 
             if (!Succeeded)
             {
-                throw new Exception($"Seeding \"{userName}\" user failed. Errors: {string.Join(Environment.NewLine, Errors)}");
+                throw new Exception(
+                    $"Seeding \"{userName}\" user failed. Errors: {string.Join(Environment.NewLine, Errors)}");
             }
 
             return applicationUser;

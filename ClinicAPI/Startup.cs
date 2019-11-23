@@ -23,11 +23,13 @@ namespace ClinicAPI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
+            _env = env;
             Configuration = configuration;
         }
 
+        private readonly IWebHostEnvironment _env;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -46,13 +48,13 @@ namespace ClinicAPI
 
             services.Configure<IdentityOptions>(options =>
             {
-                options.User.RequireUniqueEmail = false;
+                options.User.RequireUniqueEmail = true;
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 4;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
-                options.Lockout.DefaultLockoutTimeSpan = System.TimeSpan.FromHours(24);
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(24);
                 options.Lockout.MaxFailedAccessAttempts = 10;
             });
 
