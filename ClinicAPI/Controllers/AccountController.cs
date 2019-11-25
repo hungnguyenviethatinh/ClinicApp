@@ -10,6 +10,7 @@ namespace ClinicAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
+    [ApiController]
     public class AccountController : ControllerBase
     {
         private readonly IAccountManager _accountManager;
@@ -22,11 +23,12 @@ namespace ClinicAPI.Controllers
         }
 
         [HttpGet]
-        [Route("users/me")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var me = await _accountManager.GetUserByIdAsync(Utilities.GetUserId(User)).ConfigureAwait(false);
-            return Ok(new { Me = me });
+            string id = Utilities.GetUserId(User);
+            var currentUser = await _accountManager.GetUserByIdAsync(id);
+            
+            return Ok(currentUser);
         }
     }
 }
