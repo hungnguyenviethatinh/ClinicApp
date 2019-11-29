@@ -6,18 +6,20 @@ namespace DAL.Models
 {
     public class Prescription : IAuditableEntity
     {
-        public string ID { get; set; }
-        public string TypeCode { get; set; }
-        public string DoctorID { get; set; }
-        public string PatientID { get; set; }
-        public int HistoryID { get; set; }
+        public int Id { get; set; }
+        public string Status { get; set; }
+
+        public int PatientId { get; set; }
+        public Patient Patient { get; set; }
+
+        public string DoctorId { get; set; }
+        public User Doctor { get; set; }
 
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
 
-        public virtual ICollection<Drug> Drugs { get; }
-        public virtual ICollection<Request> Requests { get; }
+        public ICollection<PrescriptionMedicine> PrescriptionMedicines { get; }
     }
 }

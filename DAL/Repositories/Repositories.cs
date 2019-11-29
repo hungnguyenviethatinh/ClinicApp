@@ -3,19 +3,6 @@ using DAL.Repositories.Interfaces;
 
 namespace DAL.Repositories
 {
-    public interface IDrugRepository : IRepository<Drug>
-    {
-
-    }
-
-    public class DrugRepository : Repository<Drug>, IDrugRepository
-    {
-        public DrugRepository(ApplicationDbContext context) : base(context)
-        {
-
-        }
-    }
-
     public interface IHistoryRepository : IRepository<History>
     {
 
@@ -29,40 +16,27 @@ namespace DAL.Repositories
         }
     }
 
-    public interface IPhotoRepository : IRepository<Photo>
+    public interface IXRayImageRepository : IRepository<XRayImage>
     {
 
     }
 
-    public class PhotoRepository : Repository<Photo>, IPhotoRepository
+    public class XRayImageRepository : Repository<XRayImage>, IXRayImageRepository
     {
-        public PhotoRepository(ApplicationDbContext context) : base(context)
+        public XRayImageRepository(ApplicationDbContext context) : base(context)
         {
 
         }
     }
 
-    public interface IQueueRepository : IRepository<Queue>
+    public interface IPrescriptionMedicineRepository : IRepository<PrescriptionMedicine>
     {
 
     }
 
-    public class QueueRepository : Repository<Queue>, IQueueRepository
+    public class PrescriptionMedicineRepository : Repository<PrescriptionMedicine>, IPrescriptionMedicineRepository
     {
-        public QueueRepository(ApplicationDbContext context) : base(context)
-        {
-
-        }
-    }
-
-    public interface IRequestRepository : IRepository<Request>
-    {
-
-    }
-
-    public class RequestRepository : Repository<Request>, IRequestRepository
-    {
-        public RequestRepository(ApplicationDbContext context) : base(context)
+        public PrescriptionMedicineRepository(ApplicationDbContext context) : base(context)
         {
 
         }

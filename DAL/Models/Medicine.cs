@@ -5,11 +5,11 @@ namespace DAL.Models
 {
     public class Medicine : IAuditableEntity
     {
-        public string ID { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
-        public int Amount { get; set; }
+        public int Quantity { get; set; }
         public string Unit { get; set; }
-        public int Price { get; set; }
+        public decimal Price { get; set; }
 
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }

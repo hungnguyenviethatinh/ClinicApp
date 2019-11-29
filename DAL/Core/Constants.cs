@@ -25,4 +25,26 @@
         
         public const string DoctorRoleName = "Doctor";
     }
+
+    public static class PatientStatusConstants
+    {
+        public const string IsNew = "Mới";
+
+        public const string IsAppointed = "Đặt lịch hẹn";
+
+        public const string IsChecking = "Đang khám";
+
+        public const string IsChecked = "Đã khám";
+
+        public const string IsRechecking = "Tái khám";
+    }
+
+    public static class PrescriptionStatusConstants
+    {
+        public const string IsNew = "Mới";
+
+        public const string IsPending = "Đang hoãn";
+
+        public const string IsPrinted = "Đã in";
+    }
 }

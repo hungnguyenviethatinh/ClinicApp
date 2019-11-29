@@ -16,11 +16,9 @@ namespace DAL
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<Medicine> Medicines { get; set; }
-        public DbSet<Drug> Drugs { get; set; }
-        public DbSet<Request> Requests { get; set; }
         public DbSet<History> Histories { get; set; }
-        public DbSet<Photo> Photos { get; set; }
-        public DbSet<Queue> Queues { get; set; }
+        public DbSet<PrescriptionMedicine> PrescriptionMedicines { get; set; }
+        public DbSet<XRayImage> XRayImages { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -30,6 +28,7 @@ namespace DAL
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            const string decimalType = "decimal(18,2)";
 
             builder.Entity<User>()
                 .HasMany(u => u.Claims)
@@ -45,45 +44,43 @@ namespace DAL
                 .HasMany(r => r.Users)
                 .WithOne().HasForeignKey(r => r.RoleId).IsRequired().OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<User>().Property(u => u.StatusCode).HasDefaultValue(0);
-            builder.Entity<User>().Property(u => u.IsDeleted).HasDefaultValue(false);
-
-            builder.Entity<Patient>().HasKey(p => p.ID);
+            builder.Entity<Patient>()
+                .Property(p => p.FullName).IsRequired().HasMaxLength(30);
+            builder.Entity<Patient>()
+                .Property(p => p.Address).HasMaxLength(150);
+            builder.Entity<Patient>()
+                .Property(p => p.Email).HasMaxLength(50);
+            builder.Entity<Patient>()
+                .Property(p => p.PhoneNumber).IsUnicode(false).HasMaxLength(20);
             builder.Entity<Patient>()
                 .HasMany(p => p.Histories)
-                .WithOne().HasForeignKey(h => h.PatientID).IsRequired().OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<Patient>()
-                .HasMany(p => p.Photos)
-                .WithOne().HasForeignKey(p => p.PatientID).IsRequired().OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<Patient>()
-                .HasMany(p => p.Prescriptions)
-                .WithOne().HasForeignKey(p => p.PatientID).IsRequired().OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<Patient>().ToTable("DanhSachBenhNhan");
+                .WithOne().HasForeignKey(h => h.PatientId).IsRequired().OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Prescription>().HasKey(p => p.ID);
-            builder.Entity<Prescription>().ToTable("DanhSachToaThuoc");
+            builder.Entity<Prescription>()
+                .HasMany(p => p.PrescriptionMedicines)
+                .WithOne().HasForeignKey(pm => pm.PrescriptionId).IsRequired().OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Medicine>().HasKey(m => m.ID);
-            builder.Entity<Medicine>().ToTable("DanhSachThuoc");
+            builder.Entity<Medicine>()
+                .Property(m => m.Name).IsRequired().HasMaxLength(100);
+            builder.Entity<Medicine>()
+                .HasIndex(m => m.Name).IsUnique();
+            builder.Entity<Medicine>()
+                .Property(m => m.Price).HasColumnType(decimalType);
 
-            builder.Entity<Drug>().HasKey(d => d.ID);
-            builder.Entity<Drug>().Property(d => d.ID).ValueGeneratedOnAdd();
-            builder.Entity<Drug>().ToTable("DonThuoc");
+            builder.Entity<History>()
+                .Property(h => h.HeartBeat).HasColumnType(decimalType);
+            builder.Entity<History>()
+                .Property(h => h.BloodPresure).HasColumnType(decimalType);
+            builder.Entity<History>()
+                .Property(h => h.Pulse).HasColumnType(decimalType);
 
-            builder.Entity<Request>().HasKey(r => r.ID);
-            builder.Entity<Request>().Property(r => r.ID).ValueGeneratedOnAdd();
-            builder.Entity<Request>().ToTable("DonChiDinh");
+            builder.Entity<PrescriptionMedicine>()
+                .HasKey(pm => new { pm.PrescriptionId, pm.MedicineId });
+            builder.Entity<PrescriptionMedicine>()
+                .Property(pm => pm.Price).HasColumnType(decimalType);
 
-            builder.Entity<History>().HasKey(h => h.ID);
-            builder.Entity<History>().Property(h => h.ID).ValueGeneratedOnAdd();
-            builder.Entity<History>().ToTable("LichSuKhamBenh");
-
-            builder.Entity<Photo>().HasKey(p => p.ID);
-            builder.Entity<Photo>().Property(p => p.ID).ValueGeneratedOnAdd();
-            builder.Entity<Photo>().ToTable("HinhAnh");
-
-            builder.Entity<Queue>().HasKey(q => q.ID);
-            builder.Entity<Queue>().ToTable("HangChoKhamBenh");
+            builder.Entity<XRayImage>()
+                .Property(x => x.Image).IsUnicode(false).IsRequired();
         }
 
         public override int SaveChanges()

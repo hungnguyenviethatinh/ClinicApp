@@ -10,11 +10,9 @@ namespace DAL
         IPatientRepository Patients { get; }
         IPrescriptionRepository Prescriptions { get; }
         IMedicineRepository Medicines { get; }
-        IDrugRepository Drugs { get; }
         IHistoryRepository Histories { get; }
-        IPhotoRepository Photos { get; }
-        IQueueRepository Queues { get; }
-        IRequestRepository Requests { get; }
+        IPrescriptionMedicineRepository PrescriptionMedicines { get; }
+        IXRayImageRepository XRayImages { get; }
 
         int SaveChanges();
         Task<int> SaveChangesAsync();

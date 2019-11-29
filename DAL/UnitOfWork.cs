@@ -11,11 +11,9 @@ namespace DAL
         private IPatientRepository _patients;
         private IPrescriptionRepository _prescriptions;
         private IMedicineRepository _medicines;
-        private IDrugRepository _drugs;
         private IHistoryRepository _histories;
-        private IPhotoRepository _photos;
-        private IQueueRepository _queues;
-        private IRequestRepository _requests;
+        private IPrescriptionMedicineRepository _prescriptionMedicines;
+        private IXRayImageRepository _xRayImages;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -60,6 +58,7 @@ namespace DAL
                 return _patients;
             }
         }
+
         public IPrescriptionRepository Prescriptions
         {
             get
@@ -72,6 +71,7 @@ namespace DAL
                 return _prescriptions;
             }
         }
+
         public IMedicineRepository Medicines
         {
             get
@@ -84,18 +84,7 @@ namespace DAL
                 return _medicines;
             }
         }
-        public IDrugRepository Drugs
-        {
-            get
-            {
-                if (_drugs == null)
-                {
-                    _drugs = new DrugRepository(_context);
-                }
 
-                return _drugs;
-            }
-        }
         public IHistoryRepository Histories
         {
             get
@@ -108,40 +97,30 @@ namespace DAL
                 return _histories;
             }
         }
-        public IPhotoRepository Photos
+
+        public IPrescriptionMedicineRepository PrescriptionMedicines
         {
             get
             {
-                if (_photos == null)
+                if (_prescriptionMedicines == null)
                 {
-                    _photos = new PhotoRepository(_context);
+                    _prescriptionMedicines = new PrescriptionMedicineRepository(_context);
                 }
 
-                return _photos;
+                return _prescriptionMedicines;
             }
         }
-        public IQueueRepository Queues
+
+        public IXRayImageRepository XRayImages
         {
             get
             {
-                if (_queues == null)
+                if (_xRayImages == null)
                 {
-                    _queues = new QueueRepository(_context);
+                    _xRayImages = new XRayImageRepository(_context);
                 }
 
-                return _queues;
-            }
-        }
-        public IRequestRepository Requests
-        {
-            get
-            {
-                if (_requests == null)
-                {
-                    _requests = new RequestRepository(_context);
-                }
-
-                return _requests;
+                return _xRayImages;
             }
         }
 

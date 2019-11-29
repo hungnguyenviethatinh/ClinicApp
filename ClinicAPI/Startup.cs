@@ -108,10 +108,10 @@ namespace ClinicAPI
                 options.AddPolicy(Policies.ManageAllPrescriptionsPolicy,
                     policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ManagePrescriptions));
 
-                options.AddPolicy(Policies.ViewAllDrugsPolicy,
-                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ViewDrugs));
-                options.AddPolicy(Policies.ManageAllDrugsPolicy,
-                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ManageDrugs));
+                options.AddPolicy(Policies.ViewAllMedicinesPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ViewMedicines));
+                options.AddPolicy(Policies.ManageAllMedicinesPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ManageMedicines));
             });
 
             services.AddSwaggerGen(c =>

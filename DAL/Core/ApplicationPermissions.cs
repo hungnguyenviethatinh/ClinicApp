@@ -61,17 +61,17 @@ namespace DAL.Core
             PrescriptionPermissionGroupName,
             "Permission to create, delete and modify prescriptions details");
 
-        public const string DrugPermissionGroupName = "Drug Permissions";
-        public static ApplicationPermission ViewDrugs = new ApplicationPermission(
-            "View Drugs",
-            "drugs.view",
-            DrugPermissionGroupName,
-            "Permission to view drugs details");
-        public static ApplicationPermission ManageDrugs = new ApplicationPermission(
-            "Manage Drugs",
-            "drugs.manage",
-            DrugPermissionGroupName,
-            "Permission to create, delete and modify drugs details");
+        public const string MedicinePermissionGroupName = "Drug Permissions";
+        public static ApplicationPermission ViewMedicines = new ApplicationPermission(
+            "View Medicines",
+            "medicines.view",
+            MedicinePermissionGroupName,
+            "Permission to view medicines details");
+        public static ApplicationPermission ManageMedicines = new ApplicationPermission(
+            "Manage Medicines",
+            "medicines.manage",
+            MedicinePermissionGroupName,
+            "Permission to create, delete and modify medicines details");
 
         static ApplicationPermissions()
         {
@@ -90,8 +90,8 @@ namespace DAL.Core
                 ViewPrescriptions,
                 ManagePrescriptions,
 
-                ViewDrugs,
-                ManageDrugs,
+                ViewMedicines,
+                ManageMedicines,
             };
 
             AllPermissions = allPermissions.AsReadOnly();
@@ -126,8 +126,8 @@ namespace DAL.Core
 
                 ViewPrescriptions,
 
-                ViewDrugs,
-                ManageDrugs,
+                ViewMedicines,
+                ManageMedicines,
             };
         }
 
