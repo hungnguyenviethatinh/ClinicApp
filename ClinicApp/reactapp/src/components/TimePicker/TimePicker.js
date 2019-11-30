@@ -1,7 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
-import { KeyboardDatePicker } from "@material-ui/pickers";
+import { KeyboardTimePicker } from "@material-ui/pickers";
 import PropTypes from 'prop-types';
 
 const styles = {
@@ -10,14 +10,14 @@ const styles = {
     }
 };
 
-const DatePickerComponent = props => {
-    const { 
-        classes, 
-        format, 
-        views, 
-        id, 
+const TimePickerComponent = props => {
+    const {
+        classes,
+        format,
+        views,
+        id,
         label,
-        value, 
+        value,
         onChange,
         style,
         variant,
@@ -34,10 +34,11 @@ const DatePickerComponent = props => {
             fullWidth={fullWidth}
             style={style}
         >
-            <KeyboardDatePicker
+            <KeyboardTimePicker
                 className={classes.picker}
                 autoOk
                 disableToolbar
+                ampm={false}
                 variant={variant}
                 format={format}
                 margin="dense"
@@ -48,7 +49,7 @@ const DatePickerComponent = props => {
                 value={value}
                 onChange={onChange}
                 KeyboardButtonProps={{
-                    "aria-label": `${id}_datepicker-label`
+                    "aria-label": `${id}_timepicker-label`
                 }}
                 // minDate={minDate}
                 // minDateMessage={minDateMessage}
@@ -60,7 +61,7 @@ const DatePickerComponent = props => {
     );
 };
 
-DatePickerComponent.protoTypes = {
+TimePickerComponent.protoTypes = {
     classes: PropTypes.object,
     format: PropTypes.string,
     views: PropTypes.arrayOf(PropTypes.string),
@@ -77,10 +78,10 @@ DatePickerComponent.protoTypes = {
     // maxDateMessage: PropTypes.string,
 };
 
-DatePickerComponent.defaultProps = {
+TimePickerComponent.defaultProps = {
     classes: null,
-    format: 'DD-MM-YYYY',
-    views: ['date', 'month', 'year'],
+    format: 'HH:mm',
+    views: ['hours', 'minutes'],
     id: '',
     label: '',
     value: '',
@@ -94,4 +95,4 @@ DatePickerComponent.defaultProps = {
     // maxDateMessage: '',
 };
 
-export default withStyles(styles)(DatePickerComponent);
+export default withStyles(styles)(DateTimePickerComponent);

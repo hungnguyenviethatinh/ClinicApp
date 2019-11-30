@@ -6,7 +6,8 @@ import {
     CardContent,
     Divider,
     Grid,
-    Paper
+    Paper,
+    Typography,
 } from '@material-ui/core';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import BlockUi from 'react-block-ui';
@@ -19,6 +20,10 @@ import { Select } from '../../components/Select';
 import { Snackbar } from '../../components/Snackbar';
 import { DropZone } from '../../components/DropZone';
 import { Button } from '../../components/Button';
+import { DatePicker } from '../../components/DatePicker';
+import { DateTimePicker } from '../../components/DateTimePicker';
+import { CheckBox } from '../../components/CheckBox';
+import { Label } from '../../components/Label';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -124,21 +129,41 @@ const PatientManagement = () => {
     }
 
     const [values, setValues] = React.useState({
-        ID: '',
         FullName: '',
-        YearOfBirth: '',
-        Gender: 0,
-        PhoneNumber: '',
-        Address: '',
+        DateOfBirth: null,
+        Gender: '',
+        HouseNo: '',
+        Street: '',
+        Ward: '',
+        District: '',
+        City: '',
         Job: '',
-        DoctorID: '',
-        StatusID: 0,
+        PhoneNumber: '',
+        Email: '',
+        AppointmentDate: null,
+
+        HeartBeat: '',
+        BloodPresure: '',
+        Pulse: '',
+        DoctorId: '',
     });
     const handleValueChange = prop => event => {
         setValues({
             ...values,
             [prop]: event.target.value,
         })
+    };
+    const handleDateoBirthChange = date => {
+        setValues({
+            ...values,
+            DateOfBirth: date,
+        });
+    };
+    const handleAppointmentDateChange = date => {
+        setValues({
+            ...values,
+            AppointmentDate: date,
+        });
     };
     const handleAddValue = () => {
         setValues({
@@ -210,7 +235,7 @@ const PatientManagement = () => {
 
     return (
         <Grid container spacing={3} >
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <Card
                     className={classes.card}
                 >
@@ -221,38 +246,32 @@ const PatientManagement = () => {
                     <Divider />
                     <CardContent className={classes.content}>
                         <Paper elevation={0} className={classes.paper}>
-                            <Grid container spacing={2} >
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                    <TextField
-                                        id="ID"
-                                        label="Mã Bệnh Nhân"
-                                        value={values.ID}
-                                        onChange={handleValueChange('ID')}
-                                        readOnly
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                            <Typography 
+                                variant="caption" 
+                                component="p" 
+                                children="THÔNG TIN BỆNH NHÂN (*)" 
+                            />
+                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
                                         autoFocus
                                         id="FullName"
-                                        label="Họ & Tên"
+                                        label="Họ tên BN"
                                         value={values.FullName}
                                         onChange={handleValueChange('FullName')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                    <TextField
+                                <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
+                                    <DatePicker
                                         fullWidth
-                                        id="YearOfBirth"
-                                        label="Năm sinh"
-                                        value={values.YearOfBirth}
-                                        maxLength={4}
-                                        onChange={handleValueChange('YearOfBirth')}
+                                        id="DateOfBirth"
+                                        label="Ngày, tháng, năm sinh"
+                                        value={values.DateOfBirth}
+                                        onChange={(date) => handleDateoBirthChange(date)}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Select
                                         fullWidth
                                         id="Gender"
@@ -262,26 +281,61 @@ const PatientManagement = () => {
                                         options={genderListOptions}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                    <TextField
-                                        fullWidth
-                                        id="PhoneNumber"
-                                        label="Số điện thoại"
-                                        value={values.PhoneNumber}
-                                        onChange={handleValueChange('PhoneNumber')}
-                                        maxLength={10}
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                    <Typography
+                                        variant="caption"
+                                        component="p"
+                                        children="Địa chỉ: (Ghi theo hộ khẩu thường trú)"
                                     />
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                            <TextField
+                                                fullWidth
+                                                id="HouseNo"
+                                                label="Số nhà"
+                                                value={values.HouseNo}
+                                                onChange={handleValueChange('HouseNo')}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
+                                            <TextField
+                                                fullWidth
+                                                id="Street"
+                                                label="Đường/ Ấp (Thôn)"
+                                                value={values.Street}
+                                                onChange={handleValueChange('Street')}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                            <TextField
+                                                fullWidth
+                                                id="Ward"
+                                                label="Phường (Xã)"
+                                                value={values.Ward}
+                                                onChange={handleValueChange('Ward')}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                            <TextField
+                                                fullWidth
+                                                id="District"
+                                                label="Quận (Huyện)"
+                                                value={values.District}
+                                                onChange={handleValueChange('District')}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                            <TextField
+                                                fullWidth
+                                                id="City"
+                                                label="Thành phố (Tỉnh)"
+                                                value={values.City}
+                                                onChange={handleValueChange('City')}
+                                            />
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                    <TextField
-                                        fullWidth
-                                        id="Address"
-                                        label="Địa chỉ"
-                                        value={values.Address}
-                                        onChange={handleValueChange('Address')}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
                                         id="Job"
@@ -290,76 +344,134 @@ const PatientManagement = () => {
                                         onChange={handleValueChange('Job')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                    <Select
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                    <TextField
                                         fullWidth
-                                        id="StatusID"
-                                        label="Trạng thái"
-                                        value={values.StatusID}
-                                        options={statusListOptions}
-                                        onChange={handleValueChange('StatusID')}
+                                        id="PhoneNumber"
+                                        label="Điện thoại"
+                                        value={values.PhoneNumber}
+                                        onChange={handleValueChange('PhoneNumber')}
+                                        maxLength={10}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                    <Select
+                                    <TextField
                                         fullWidth
-                                        id="DoctorID"
-                                        label="Bác sĩ khám"
-                                        value={values.DoctorID}
-                                        options={doctorListOptions}
-                                        onChange={handleValueChange('DoctorID')}
+                                        id="Email"
+                                        label="Email"
+                                        value={values.Email}
+                                        onChange={handleValueChange('Email')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                    <Grid 
-                                        container 
-                                        justify="flex-end" 
-                                        spacing={2}
-                                        style={{ width: '100%', margin: 0 }}
-                                    >
-                                        <Grid item>
-                                            <Button
-                                                color="info"
-                                                children="Đặt lại"
-                                                iconName="reset"
-                                                onClick={handleResetValue}
-                                            />
-                                        </Grid>
-                                        <Grid item>
-                                            <Button
-                                                color="primary"
-                                                children="Lưu"
-                                                iconName="save"
-                                                onClick={handleSaveValue}
-                                            />
-                                        </Grid>
-                                        <Grid item>
-                                            <Button
-                                                color="success"
-                                                children="Thêm"
-                                                iconName="add"
-                                                onClick={handleAddValue}
-                                            />
-                                        </Grid>
-                                    </Grid>
+                            </Grid>
+                            <Typography 
+                                variant="caption" 
+                                component="p" 
+                                children="ĐĂNG KÍ KHÁM BỆNH (*)" 
+                            />
+                            <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <DateTimePicker 
+                                        fullWidth
+                                        id="AppointmentDate"
+                                        label="Ngày giờ hẹn (nếu có)"
+                                        value={values.AppointmentDate}
+                                        onChange={(date) => handleAppointmentDateChange(date)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+                                    <CheckBox
+                                        label="Khám lần đầu"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+                                    <CheckBox
+                                        label="Tái khám"
+                                    />
+                                </Grid>
+                                <Grid 
+                                    container 
+                                    item 
+                                    alignItems="center" 
+                                    xs={12} sm={12} md={6} lg={6} xl={6} >
+                                    <Label label="Cung cấp XQ vùng bệnh:" />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
+                                    <CheckBox
+                                        label="Có"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
+                                    <CheckBox
+                                        label="Không"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <DropZone onDropFile={handleFiles} />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    
                                 </Grid>
                             </Grid>
-                            <Grid container spacing={2} >
+                            <Typography 
+                                variant="caption" 
+                                component="p" 
+                                children="* Thực hiện các bước cận lâm sàng:" 
+                            />
+                            <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
+                                    <TextField
+                                        fullWidth
+                                        id="HeartBeat"
+                                        label="Nhịp tim"
+                                        value={values.HeartBeat}
+                                        onChange={handleValueChange('HeartBeat')}
+                                        placeholder=".......lần/phút"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
+                                    <TextField
+                                        fullWidth
+                                        id="BloodPresure"
+                                        label="Huyết áp"
+                                        value={values.BloodPresure}
+                                        onChange={handleValueChange('BloodPresure')}
+                                        placeholder=".../...mmHg"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
+                                    <TextField
+                                        fullWidth
+                                        id="Pulse"
+                                        label="Mạch"
+                                        value={values.Pulse}
+                                        onChange={handleValueChange('Pulse')}
+                                        placeholder=".......lần/phút"
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Typography 
+                                variant="caption" 
+                                component="p" 
+                                children="* Nhân viên hướng dẫn, kiểm tra, tiếp nhận Bệnh" 
+                            />
+                            <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                                    <BlockUi
-                                        tag="div"
-                                        blocking={false}
-                                        message="Hình ảnh đang được tải lên"
-                                    >
-                                        <DropZone onDropFile={handleFiles} />
-                                    </BlockUi>
+                                    <Select
+                                        fullWidth
+                                        id="DoctorId"
+                                        label="Bác sĩ khám"
+                                        value={values.DoctorId}
+                                        options={doctorListOptions}
+                                        onChange={handleValueChange('DoctorId')}
+                                    />
                                 </Grid>
                             </Grid>
                         </Paper>
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <Card
                     className={classes.card}
                 >

@@ -18,12 +18,13 @@ const SelectComponent = props => {
     const {
         classes, className, id, label, value, onChange,
         options, autoFocus, fullWidth, required, style,
+        placeholder,
     } = props;
 
     return (
         <FormControl
             fullWidth={fullWidth}
-            margin="dense"
+            // margin="dense"
             className={clsx(classes.root, className)}
             style={style}
         >
@@ -33,6 +34,7 @@ const SelectComponent = props => {
                 label={label}
                 className={clsx(classes.root, classes.textField)}
                 value={value}
+                placeholder={placeholder}
                 onChange={onChange}
                 SelectProps={{
                     MenuProps: {
@@ -70,6 +72,7 @@ SelectComponent.propTypes = {
     autoFocus: PropTypes.bool,
     style: PropTypes.object,
     required: PropTypes.bool,
+    placeholder: PropTypes.string,
 }
 
 SelectComponent.defaultProps = {
@@ -84,6 +87,7 @@ SelectComponent.defaultProps = {
     autoFocus: false,
     style: null,
     required: false,
+    placeholder: '',
 }
 
 export default withStyles(styles)(SelectComponent);

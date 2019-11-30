@@ -17,7 +17,8 @@ const styles = {
 const TextFieldComponent = props => {
     const { 
         classes, className, autoFocus, error, fullWidth, helperText, style,
-        id, label, name, onChange, required, readOnly, value, maxLength
+        id, label, name, onChange, required, readOnly, value, maxLength,
+        placeholder,
     } = props;
 
     const [showPassword, setShowPassword] = React.useState(false);
@@ -49,6 +50,7 @@ const TextFieldComponent = props => {
                 type={type}
                 id={id}
                 value={value}
+                placeholder={placeholder}
                 onChange={onChange}
                 inputProps={{
                     maxLength,
@@ -94,6 +96,7 @@ TextFieldComponent.propTypes = {
     value: PropTypes.string,
     maxLength: PropTypes.number,
     style: PropTypes.object,
+    placeholder: PropTypes.string,
 };
 
 TextFieldComponent.defaultProps = {
@@ -112,6 +115,7 @@ TextFieldComponent.defaultProps = {
     value: '',
     maxLength: 100,
     style: null,
+    placeholder: '',
 };
 
 export default withStyles(styles)(TextFieldComponent);
