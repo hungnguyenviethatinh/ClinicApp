@@ -2,7 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
-import { Add, Autorenew, Edit, Delete, Save, Print, Visibility, Search } from '@material-ui/icons';
+import { Add, Autorenew, Edit, Delete, Done, Save, Print, Visibility, Search } from '@material-ui/icons';
 import { FormControl } from '@material-ui/core';
 
 const styledBy = (property, mapping) => props => mapping[props[property]];
@@ -31,21 +31,23 @@ const Icon = props => {
     const { name } = props;
     switch (name) {
         case 'add':
-            return <Add style={{ marginRight: 'auto' }} />;
+            return <Add style={{ marginRight: 16 }} />;
         case 'edit':
-            return <Edit style={{ marginRight: 'auto' }} />;
+            return <Edit style={{ marginRight: 16 }} />;
         case 'delete':
-            return <Delete style={{ marginRight: 'auto' }} />;
+            return <Delete style={{ marginRight: 16 }} />;
         case 'save':
-            return <Save style={{ marginRight: 'auto' }} />;
+            return <Save style={{ marginRight: 16 }} />;
         case 'print':
-            return <Print style={{ marginRight: 'auto' }} />;
+            return <Print style={{ marginRight: 16 }} />;
         case 'view':
-            return <Visibility style={{ marginRight: 'auto' }} />
+            return <Visibility style={{ marginRight: 16 }} />
         case 'reset':
-            return <Autorenew style={{ marginRight: 'auto' }} />
+            return <Autorenew style={{ marginRight: 16 }} />
         case 'search':
-            return <Search style={{ marginRight: 'auto' }} />;
+            return <Search style={{ marginRight: 16 }} />;
+        case 'done':
+            return <Done style={{ marginRight: 16 }} />;
         default:
             return <React.Fragment />
     }

@@ -10,7 +10,6 @@ import {
     Typography,
 } from '@material-ui/core';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import BlockUi from 'react-block-ui';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -24,6 +23,7 @@ import { DatePicker } from '../../components/DatePicker';
 import { DateTimePicker } from '../../components/DateTimePicker';
 import { CheckBox } from '../../components/CheckBox';
 import { Label } from '../../components/Label';
+import { PatientStatus } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -103,30 +103,25 @@ const PatientManagement = () => {
     const classes = useStyles();
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
-	const handleSnackbarClose = (event, reason) => {
-		if (reason === 'clickaway') {
-			return;
-		}
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
 
-		setOpenSnackbar(false);
-	};
+        setOpenSnackbar(false);
+    };
 
-	const [snackbarOption, setSnackbarOption] = React.useState({
-		variant: 'success',
-		message: 'Data loaded successfully!',
-	});
-	const handleSnackbarOption = (variant, message) => {
-		setSnackbarOption({
-			variant,
-			message,
+    const [snackbarOption, setSnackbarOption] = React.useState({
+        variant: 'success',
+        message: 'Data loaded successfully!',
+    });
+    const handleSnackbarOption = (variant, message) => {
+        setSnackbarOption({
+            variant,
+            message,
         });
         setOpenSnackbar(true);
-	};
-
-    const [images, setImages] = React.useState([]);
-    const handleFiles = (files) => {
-        setImages(files);
-    }
+    };
 
     const [values, setValues] = React.useState({
         FullName: '',
@@ -141,7 +136,8 @@ const PatientManagement = () => {
         PhoneNumber: '',
         Email: '',
         AppointmentDate: null,
-
+        Status: PatientStatus.IsNew,
+        XRayImages: [],
         HeartBeat: '',
         BloodPresure: '',
         Pulse: '',
@@ -165,19 +161,40 @@ const PatientManagement = () => {
             AppointmentDate: date,
         });
     };
-    const handleAddValue = () => {
+    const handleUploadXRayImage = images => {
         setValues({
-            ID: `DKC-BN${moment().format('YYMMDDHHmmss')}`,
-            Gender: 0,
-            StatusID: 0,
-        })
+            ...values,
+            XRayImages: [...images],
+        });
+    };
+
+    const handleStatusChange = event => {
+        setValues({
+            ...values,
+            Status: event.target.value,
+        });
+    };
+
+    const [hasXRay, setHasXRay] = React.useState(false);
+    const handleHasXRayChange = event => {
+        setHasXRay(!hasXRay);
+        if (event.target.value === 'No') {
+            setValues({
+                ...values,
+                XRayImages: [],
+            });
+        }
+    };
+
+    const handleDone = () => {
+        console.log('values: ', values);
     };
 
     const [patientData, setPatientData] = React.useState([]);
     const handleSaveValue = () => {
         if (
             !values.ID.trim() || !values.FullName.trim() || !values.YearOfBirth.trim() ||
-            !values.PhoneNumber.trim() || !values.Address.trim() || !values.Job.trim() || 
+            !values.PhoneNumber.trim() || !values.Address.trim() || !values.Job.trim() ||
             !values.DoctorID.trim()
         ) {
             handleSnackbarOption('error', 'Vui lòng nhập đầy đủ thông tin vào các ô trên!');
@@ -196,23 +213,33 @@ const PatientManagement = () => {
             patientData.map(p => {
                 p.ID === values.ID && Object.assign(p, values)
             });
-            setPatientData([ ...patientData ]);
+            setPatientData([...patientData]);
             handleSnackbarOption('info', 'Cập nhật thông tin bệnh nhân thành công!');
         }
     };
 
-    const handleResetValue = () => {
+    const handleReset = () => {
         setValues({
-            ID: '',
             FullName: '',
-            YearOfBirth: '',
-            Gender: 0,
-            PhoneNumber: '',
-            Address: '',
+            DateOfBirth: null,
+            Gender: '',
+            HouseNo: '',
+            Street: '',
+            Ward: '',
+            District: '',
+            City: '',
             Job: '',
-            DoctorID: '',
-            StatusID: 0,
+            PhoneNumber: '',
+            Email: '',
+            AppointmentDate: null,
+            Status: PatientStatus.IsNew,
+            XRayImages: [],
+            HeartBeat: '',
+            BloodPresure: '',
+            Pulse: '',
+            DoctorId: '',
         });
+        setHasXRay(false);
     };
 
     const [selectedRow, setSelectedRow] = React.useState(null);
@@ -224,13 +251,12 @@ const PatientManagement = () => {
             });
         } else {
             setSelectedRow(null);
-            handleResetValue();
+            handleReset();
         }
     };
 
     React.useEffect(() => {
         // console.log('values', values);
-        // console.log('images', images);
     });
 
     return (
@@ -246,10 +272,10 @@ const PatientManagement = () => {
                     <Divider />
                     <CardContent className={classes.content}>
                         <Paper elevation={0} className={classes.paper}>
-                            <Typography 
-                                variant="caption" 
-                                component="p" 
-                                children="THÔNG TIN BỆNH NHÂN (*)" 
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="THÔNG TIN BỆNH NHÂN (*)"
                             />
                             <Grid container spacing={2} style={{ marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -364,14 +390,14 @@ const PatientManagement = () => {
                                     />
                                 </Grid>
                             </Grid>
-                            <Typography 
-                                variant="caption" 
-                                component="p" 
-                                children="ĐĂNG KÍ KHÁM BỆNH (*)" 
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="ĐĂNG KÍ KHÁM BỆNH (*)"
                             />
                             <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                                    <DateTimePicker 
+                                    <DateTimePicker
                                         fullWidth
                                         id="AppointmentDate"
                                         label="Ngày giờ hẹn (nếu có)"
@@ -382,41 +408,55 @@ const PatientManagement = () => {
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                                     <CheckBox
                                         label="Khám lần đầu"
+                                        checked={values.Status === PatientStatus.IsNew}
+                                        disabled={values.Status !== PatientStatus.IsNew}
+                                        value={PatientStatus.IsNew}
+                                        onChange={handleStatusChange}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                                     <CheckBox
                                         label="Tái khám"
+                                        checked={values.Status !== PatientStatus.IsNew}
+                                        disabled={values.Status === PatientStatus.IsNew}
+                                        value={PatientStatus.IsRechecking}
+                                        onChange={handleStatusChange}
                                     />
                                 </Grid>
-                                <Grid 
-                                    container 
-                                    item 
-                                    alignItems="center" 
+                                <Grid
+                                    container
+                                    item
+                                    alignItems="center"
                                     xs={12} sm={12} md={6} lg={6} xl={6} >
                                     <Label label="Cung cấp XQ vùng bệnh:" />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
                                     <CheckBox
                                         label="Có"
+                                        checked={hasXRay}
+                                        value="Yes"
+                                        onChange={handleHasXRayChange}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
                                     <CheckBox
                                         label="Không"
+                                        checked={!hasXRay}
+                                        value="No"
+                                        onChange={handleHasXRayChange}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                                    <DropZone onDropFile={handleFiles} />
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                                    
-                                </Grid>
+                                {
+                                    hasXRay &&
+                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                        <DropZone onDropFile={handleUploadXRayImage} />
+                                    </Grid>
+                                }
                             </Grid>
-                            <Typography 
-                                variant="caption" 
-                                component="p" 
-                                children="* Thực hiện các bước cận lâm sàng:" 
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="* Thực hiện các bước cận lâm sàng:"
                             />
                             <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
@@ -450,10 +490,10 @@ const PatientManagement = () => {
                                     />
                                 </Grid>
                             </Grid>
-                            <Typography 
-                                variant="caption" 
-                                component="p" 
-                                children="* Nhân viên hướng dẫn, kiểm tra, tiếp nhận Bệnh" 
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="* Nhân viên hướng dẫn, kiểm tra, tiếp nhận Bệnh"
                             />
                             <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
@@ -464,6 +504,31 @@ const PatientManagement = () => {
                                         value={values.DoctorId}
                                         options={doctorListOptions}
                                         onChange={handleValueChange('DoctorId')}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid
+                                container
+                                spacing={2}
+                                justify="flex-end"
+                                style={{ marginTop: 8 }}
+                            >
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Button
+                                        fullWidth
+                                        color="info"
+                                        children="Đặt lại"
+                                        iconName="reset"
+                                        onClick={handleReset}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Button
+                                        fullWidth
+                                        color="success"
+                                        children="Hoàn tất"
+                                        iconName="add"
+                                        onClick={handleDone}
                                     />
                                 </Grid>
                             </Grid>

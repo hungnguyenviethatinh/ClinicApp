@@ -20,6 +20,7 @@ const CheckBoxComponent = props => {
         value,
         checked,
         onChange,
+        disabled,
         ...rest
     } = props;
 
@@ -37,6 +38,7 @@ const CheckBoxComponent = props => {
                         checked={checked}
                         value={value}
                         onChange={onChange}
+                        disabled={disabled}
                     />
                 }
                 label={label}
@@ -55,6 +57,7 @@ CheckBoxComponent.propTypes = {
     value: PropTypes.any,
     checked: PropTypes.bool,
     onChange: PropTypes.func,
+    disabled: PropTypes.bool,
 };
 
 CheckBoxComponent.defaultProps = {
@@ -65,6 +68,7 @@ CheckBoxComponent.defaultProps = {
     value: '',
     checked: false,
     onChange: () => { },
+    disabled: false,
 };
 
 export default withStyles(styles)(CheckBoxComponent);
