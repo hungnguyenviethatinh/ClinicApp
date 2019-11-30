@@ -4,9 +4,10 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import Theme from './app/themes';
-import App from './app';
+import Theme from './theme';
+import App from './App';
 import './assets/scss/styles.scss';
+// import 'typeface-roboto';
 
 const root = document.getElementById('root');
 ReactDom.render(
