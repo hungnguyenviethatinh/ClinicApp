@@ -28,6 +28,9 @@ const useStyles = makeStyles(theme => ({
 	primary: {
 		backgroundColor: theme.palette.primary.main
 	},
+	secondary: {
+		backgroundColor: theme.palette.secondary.main
+	},
 	info: {
 		backgroundColor: theme.palette.info.main
 	},
@@ -39,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	success: {
 		backgroundColor: theme.palette.success.main
-	}
+	},
 }));
 
 const StatusBullet = props => {
@@ -67,6 +70,7 @@ StatusBullet.propTypes = {
 	color: PropTypes.oneOf([
 		'neutral',
 		'primary',
+		'secondary',
 		'info',
 		'success',
 		'warning',

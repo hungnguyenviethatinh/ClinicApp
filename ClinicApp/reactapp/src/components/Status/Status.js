@@ -3,6 +3,13 @@ import { makeStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 
 import { StatusBullet } from '../StatusBullet';
+import { 
+    color,
+    DrugStatus,
+    PatientStatus,
+    PrescriptionStatus,
+    UserStatus,
+} from '../../constants';
 
 const useStyles = makeStyles(theme => ({
     statusContainer: {
@@ -15,14 +22,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const statusColors = {
-	'Mới': 'success',
-	'Khám': 'primary',
-    'Tái khám': 'info',
-    'Đã in': 'danger',
-    'Có mặt': 'success',
-    'Vắng mặt': 'danger',
-    'Còn': 'success',
-    'Hết': 'danger',
+    [PatientStatus.IsNew]: color.success,
+    [PatientStatus.IsAppointed]: color.neutral,
+    [PatientStatus.IsChecking]: color.primary,
+    [PatientStatus.IsChecked]: color.danger,
+    [PatientStatus.IsRechecking]: color.info,
+    [PrescriptionStatus.IsNew]: color.success,
+    [PrescriptionStatus.IsPrinted]: color.danger,
+    [PrescriptionStatus.IsPending]: color.warning,
+    [UserStatus.Active]: color.success,
+    [UserStatus.Inactive]: color.warning,
+    [DrugStatus.Yes]: color.success,
+    [DrugStatus.No]: color.danger,
 };
 
 const Status = props => {

@@ -7,3 +7,6 @@ export const encodeFileToBase64 = (file) => {
         reader.readAsDataURL(file);
     });
 };
+
+
+export { default } from './AxiosInstance';

@@ -9,7 +9,6 @@ import {
     Paper,
     Typography,
 } from '@material-ui/core';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -24,6 +23,7 @@ import { DateTimePicker } from '../../components/DateTimePicker';
 import { CheckBox } from '../../components/CheckBox';
 import { Label } from '../../components/Label';
 import { PatientStatus } from '../../constants';
+import { SearchInput } from '../../components/SearchInput';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -48,20 +48,11 @@ const genderListOptions = [
     { label: 'Khác', value: 2 },
 ];
 
-const statusListOptions = [
-    { label: 'Mới', value: 0 },
-    { label: 'Tái khám', value: 1 },
-    { label: 'Khám', value: 2 },
-];
-
 const doctorListOptions = [
     { label: 'Nguyễn A', value: 'DKC-BS01' },
     { label: 'Nguyễn B', value: 'DKC-BS02' },
     { label: 'Nguyễn C', value: 'DKC-BS03' },
 ];
-
-
-let imageList = [];
 
 const patientColumns = [
     {
@@ -113,7 +104,7 @@ const PatientManagement = () => {
 
     const [snackbarOption, setSnackbarOption] = React.useState({
         variant: 'success',
-        message: 'Data loaded successfully!',
+        message: '',
     });
     const handleSnackbarOption = (variant, message) => {
         setSnackbarOption({
@@ -187,36 +178,39 @@ const PatientManagement = () => {
     };
 
     const handleDone = () => {
+        if (!values.FullName.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
+            return;
+        }
+        if (!moment(values.DateOfBirth).isValid) {
+            handleSnackbarOption('error', 'Yêu cầu nhập ngày tháng năm sinh!');
+            return;
+        }
+        if (!values.Gender.toString().trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập giới tính!');
+            return;
+        }
+        if (!values.City.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập thành phố (tỉnh)!');
+            return;
+        }
+        if (!_.isFinite(_.toNumber(values.PhoneNumber))) {
+            handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại (hợp lệ)!');
+            return;
+        }
+        if (hasXRay && _.isEmpty(values.XRayImages)) {
+            handleSnackbarOption('error', 'Yêu cầu nhập cung cấp XQ!');
+            return;
+        }
+        if (!values.DoctorId.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu chọn bác sĩ phụ trách khám!');
+            return;
+        }
+
         console.log('values: ', values);
     };
 
     const [patientData, setPatientData] = React.useState([]);
-    const handleSaveValue = () => {
-        if (
-            !values.ID.trim() || !values.FullName.trim() || !values.YearOfBirth.trim() ||
-            !values.PhoneNumber.trim() || !values.Address.trim() || !values.Job.trim() ||
-            !values.DoctorID.trim()
-        ) {
-            handleSnackbarOption('error', 'Vui lòng nhập đầy đủ thông tin vào các ô trên!');
-            return;
-        }
-
-        if (!_.isNumber(parseInt(values.YearOfBirth)) || !_.isNumber(parseInt(values.PhoneNumber))) {
-            handleSnackbarOption('error', 'Vui lòng nhập Số với ô Năm sinh và Số điện thoại!');
-            return;
-        }
-
-        if (patientData.findIndex(p => p.ID === values.ID) === -1) {
-            setPatientData([...patientData, values]);
-            handleSnackbarOption('success', 'Thêm mới bệnh nhân thành công!');
-        } else {
-            patientData.map(p => {
-                p.ID === values.ID && Object.assign(p, values)
-            });
-            setPatientData([...patientData]);
-            handleSnackbarOption('info', 'Cập nhật thông tin bệnh nhân thành công!');
-        }
-    };
 
     const handleReset = () => {
         setValues({
@@ -242,6 +236,15 @@ const PatientManagement = () => {
         setHasXRay(false);
     };
 
+    const [searchValue, setSearchValue] = React.useState('');
+    const handleSearchChange = event => {
+        setSearchValue(event.target.value);
+    };
+    const handleSearch = event => {
+        event.preventDefault();
+        console.log('Search: ', searchValue);
+    }
+
     const [selectedRow, setSelectedRow] = React.useState(null);
     const handleSelectRow = (event, rowData) => {
         if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
@@ -266,8 +269,8 @@ const PatientManagement = () => {
                     className={classes.card}
                 >
                     <CardHeader
-                        title="THÔNG TIN BỆNH NHÂN"
-                        subheader="Thêm, xóa, cập nhật thông tin bệnh nhân"
+                        title="PHIẾU GHI THÔNG TIN BỆNH NHÂN"
+                        subheader="Tiếp nhận bệnh nhân mới hoặc lấy bệnh nhân từ DANH SÁCH BỆNH NHÂN"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
@@ -500,7 +503,7 @@ const PatientManagement = () => {
                                     <Select
                                         fullWidth
                                         id="DoctorId"
-                                        label="Bác sĩ khám"
+                                        label="Bác sĩ phụ trách khám"
                                         value={values.DoctorId}
                                         options={doctorListOptions}
                                         onChange={handleValueChange('DoctorId')}
@@ -527,7 +530,7 @@ const PatientManagement = () => {
                                         fullWidth
                                         color="success"
                                         children="Hoàn tất"
-                                        iconName="add"
+                                        iconName="done"
                                         onClick={handleDone}
                                     />
                                 </Grid>
@@ -541,34 +544,38 @@ const PatientManagement = () => {
                     className={classes.card}
                 >
                     <CardHeader
-                        action={
-                            <Grid container spacing={1}>
-                                <Grid item>
-                                    <Button
-                                        color="danger"
-                                        children="Xóa"
-                                        iconName="delete"
-                                        disabled={selectedRow === null}
-                                    />
-                                </Grid>
-                            </Grid>
-                        }
                         title="DANH SÁCH BỆNH NHÂN"
-                        subheader="Tìm kiếm bệnh nhân"
+                        subheader="Danh sách bệnh nhân đã có dữ liệu trên hệ thống"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        <PerfectScrollbar>
-                            <Table
-                                customOptions={{
-                                    filtering: true,
-                                }}
-                                columns={patientColumns}
-                                data={patientData}
-                                onRowClick={handleSelectRow}
-                                selectedRow={selectedRow}
+                        <Paper 
+                            elevation={0} 
+                            className={classes.paper}
+                            style={{ paddingBottom: 10 }}
+                        >
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="TÌM KIẾM BỆNH NHÂN"
                             />
-                        </PerfectScrollbar>
+                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <SearchInput
+                                        placeholder="Nhập mã số, tên hoặc sđt của bệnh nhân"
+                                        value={searchValue}
+                                        onChange={handleSearchChange}
+                                        onSearch={handleSearch}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                        <Table
+                            columns={patientColumns}
+                            data={patientData}
+                            onRowClick={handleSelectRow}
+                            selectedRow={selectedRow}
+                        />
                     </CardContent>
                 </Card>
             </Grid>
