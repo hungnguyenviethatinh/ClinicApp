@@ -1,7 +1,10 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyWebPackPlugin = require('copy-webpack-plugin');
 const path = require('path');
+const { parsed: localEnv } = require('dotenv').config();
+const webpack = require('webpack');
 
 module.exports = (env, argv) => {
     const IsDevelopment = argv.mode === 'development';
@@ -18,7 +21,15 @@ module.exports = (env, argv) => {
 
     const CleanWebpack = new CleanWebpackPlugin();
 
+    const CopyWebPack = new CopyWebPackPlugin([
+        { from: 'public/app.ico', to: 'static/images/' }
+    ]);
+
+    const DotEnv = new webpack.EnvironmentPlugin(localEnv);
+
     const plugins = [
+        DotEnv,
+        CopyWebPack,
         CleanWebpack,
         MiniCssExtract,
         Index,
@@ -81,7 +92,7 @@ module.exports = (env, argv) => {
                 },
             ]
         },
-        plugins: plugins,
+        plugins,
         optimization: {
             splitChunks: {
                 cacheGroups: {
