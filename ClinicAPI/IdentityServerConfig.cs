@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Security.Authentication;
 using DAL.Core;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace ClinicAPI
 {
@@ -45,6 +47,13 @@ namespace ClinicAPI
 
         public static IEnumerable<Client> GetClients()
         {
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.Development.json", optional: true)
+                .Build();
+            string clientSecret = configuration["ClientSecret"];
+
             return new List<Client>
             {
                 new Client
@@ -52,7 +61,13 @@ namespace ClinicAPI
                     ClientId = ClinicAppClientID,
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AllowAccessTokensViaBrowser = true,
-                    RequireClientSecret = false,
+
+                    // For not using ClientSecrets, replace this with
+                    // RequireClientSecret = false,
+                    ClientSecrets =
+                    {
+                        new Secret(clientSecret.Sha256()),
+                    },
 
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -62,6 +77,7 @@ namespace ClinicAPI
                         ScopeConstants.Roles,
                         ApiName
                     },
+
                     AllowOfflineAccess = true,
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     RefreshTokenUsage = TokenUsage.OneTimeOnly,
