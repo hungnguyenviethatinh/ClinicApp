@@ -9,8 +9,18 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import axios from 'axios';
+import qs from 'querystring';
 
 import { TextField } from '../../components/TextField';
+
+import { 
+    ApiUrl, 
+    Audiance,
+    ClientId,
+    ClientSecret, 
+    LoginUrl 
+} from '../../config';
 
 const useStyles = makeStyles(theme => ({
     '@global': {
@@ -62,21 +72,6 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const users = [
-    {
-        id: 'DKC-U001', username: 'admin', name: 'Administrator', password: 'admin', role: 'admin',
-        email: 'admin@gmail.com', phonenumber: '0987777889',
-    },
-    {
-        id: 'DKC-U002', username: 'letan', name: 'Lễ Tân', password: 'letan', role: 'letan',
-        email: 'letan@gmail.com', phonenumber: '0987777889',
-    },
-    {
-        id: 'DK-U003', username: 'bacsi', name: 'Bác Sĩ', password: 'bacsi', role: 'bacsi',
-        email: 'bacsi@gmail.com', phonenumber: '0987777889',
-    },
-];
-
 const Login = (props) => {
     const classes = useStyles();
 
@@ -118,13 +113,50 @@ const Login = (props) => {
 
     const handleLogin = user => {
         hideProgress();
-        const match = users.find(u => (u.username === user.username && u.password === user.password));
-        if (match) {
-            localStorage.setItem('user', JSON.stringify(match));
-            setIsLogined(true);
-        } else {
-            setErrorMessage('Tài khoản hoặc mật khẩu không đúng.');
-        }
+
+        const url = ApiUrl + LoginUrl;
+        const data = {
+            grant_type: 'password',
+            scope: `openid profile phone email roles ${Audiance}`,
+            username: user.username,
+            password: user.password,
+            client_id: ClientId,
+            client_secret: ClientSecret,
+        };
+        const config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        };
+
+        axios.post(url, qs.stringify(data), config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { access_token } = data;
+                setIsLogined(true);
+                localStorage.setItem('access_token', access_token);
+            }
+        }).catch((reason) => {
+            if (reason.response) {
+                const { status, data } = reason.response;
+                if (status === 400) {
+                    const { error } = data;
+                    if (error === 'invalid_grant') {
+                        setErrorMessage('Tài khoản hoặc mật khẩu không đúng.');
+                        console.log('data: ', data);
+                    } else {
+                        setErrorMessage('Có lỗi xảy ra. Vui lòng thử lại sau!');
+                        console.log('reponse: ', reason.response);
+                    }
+                } else {
+                    setErrorMessage('Có lỗi xảy ra. Vui lòng thử lại sau!');
+                    console.log('reponse: ', reason.response);
+                }
+            } else {
+                setErrorMessage('Có lỗi xảy ra. Vui lòng thử lại sau!');
+                console.error(reason);
+            }
+        });
     };
     const handleSubmit = event => {
         event.preventDefault();
@@ -135,11 +167,11 @@ const Login = (props) => {
                 password: values.password,
             };
             showProgress();
-            setTimeout(() => { handleLogin(user) }, 5000);
+            handleLogin(user);
         } else {
-            setErrors({ 
-                invalidUsername: values.username.trim() === '', 
-                invalidPassword: values.password.trim() === '',
+            setErrors({
+                invalidUsername: !values.username.trim(),
+                invalidPassword: !values.password.trim(),
             });
         }
     };
