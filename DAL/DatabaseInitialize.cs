@@ -45,11 +45,14 @@ namespace DAL
                     RoleConstants.ReceptionistRoleName, ApplicationPermissions.GetReceptionistPermissionValues());
 
                 await CreateUserAsync(
-                    "admin", "pass@123", "Inbuilt Administrator", new string[] { RoleConstants.AdministratorRoleName });
+                    "admin", "pass@123", "Inbuilt Administrator", "admin@gmail.com", "09999999", 
+                    new string[] { RoleConstants.AdministratorRoleName });
                 await CreateUserAsync(
-                    "doctor", "pass@123", "Inbuilt Doctor", new string[] { RoleConstants.DoctorRoleName });
+                    "doctor", "pass@123", "Inbuilt Doctor", "doctor@gmail.com", "09999999", 
+                    new string[] { RoleConstants.DoctorRoleName });
                 await CreateUserAsync(
-                    "receptionist", "pass@123", "Inbuilt Receptionist", new string[] { RoleConstants.ReceptionistRoleName });
+                    "receptionist", "pass@123", "Inbuilt Receptionist", "receptionist@gmail.com", "09999999", 
+                    new string[] { RoleConstants.ReceptionistRoleName });
 
                 _logger.LogInformation("Inbuilt account generation completed.");
             }
@@ -71,12 +74,21 @@ namespace DAL
             }
         }
 
-        private async Task<User> CreateUserAsync(string userName, string password, string fullName, string[] roles)
+        private async Task<User> CreateUserAsync(
+            string userName, 
+            string password, 
+            string fullName,
+            string email, 
+            string phoneNumber,
+            string[] roles)
         {
             User applicationUser = new User
             {
                 UserName = userName,
                 FullName = fullName,
+                Email = email,
+                PhoneNumber = phoneNumber,
+                EmailConfirmed = true,
             };
 
             var (Succeeded, Errors) = await _accountManager.CreateUserAsync(applicationUser, roles, password);
