@@ -17,7 +17,7 @@ namespace DAL.Models
         public string Email { get; set; }
 
         public DateTime AppointmentDate { get; set; }
-        public string Status { get; set; }
+        public PatientStatus Status { get; set; }
 
         public string DoctorId { get; set; }
         public User Doctor { get; set; }
@@ -28,5 +28,7 @@ namespace DAL.Models
         public DateTime UpdatedDate { get; set; }
 
         public ICollection<History> Histories { get; set; }
+        public ICollection<Prescription> Prescriptions { get; set; }
+        public ICollection<XRayImage> XRayImages { get; set; }
     }
 }

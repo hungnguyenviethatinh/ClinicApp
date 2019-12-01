@@ -32,17 +32,40 @@ namespace DAL
 
             builder.Entity<User>()
                 .HasMany(u => u.Claims)
-                .WithOne().HasForeignKey(c => c.UserId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .WithOne()
+                .HasForeignKey(c => c.UserId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
             builder.Entity<User>()
                 .HasMany(u => u.Roles)
-                .WithOne().HasForeignKey(r => r.UserId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .WithOne()
+                .HasForeignKey(r => r.UserId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<User>()
+                .HasMany(u => u.Patients)
+                .WithOne(p => p.Doctor)
+                .HasForeignKey(p => p.DoctorId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<User>()
+                .HasMany(u => u.Prescriptions)
+                .WithOne(p => p.Doctor)
+                .HasForeignKey(p => p.DoctorId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<User>()
+                .HasMany(u => u.Histories)
+                .WithOne(h => h.Doctor)
+                .HasForeignKey(h => h.DoctorId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Role>()
                 .HasMany(r => r.Claims)
-                .WithOne().HasForeignKey(c => c.RoleId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .WithOne()
+                .HasForeignKey(c => c.RoleId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Role>()
                 .HasMany(r => r.Users)
-                .WithOne().HasForeignKey(r => r.RoleId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .WithOne()
+                .HasForeignKey(r => r.RoleId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Patient>()
                 .Property(p => p.FullName).IsRequired().HasMaxLength(30);
@@ -53,12 +76,46 @@ namespace DAL
             builder.Entity<Patient>()
                 .Property(p => p.PhoneNumber).IsUnicode(false).HasMaxLength(20);
             builder.Entity<Patient>()
+                .HasOne(p => p.Doctor)
+                .WithMany(d => d.Patients)
+                .HasForeignKey(p => p.DoctorId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Patient>()
                 .HasMany(p => p.Histories)
-                .WithOne().HasForeignKey(h => h.PatientId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .WithOne(h => h.Patient)
+                .HasForeignKey(h => h.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Patient>()
+                .HasMany(p => p.Prescriptions)
+                .WithOne(pr => pr.Patient)
+                .HasForeignKey(pr => pr.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Patient>()
+                .HasMany(p => p.XRayImages)
+                .WithOne(x => x.Patient)
+                .HasForeignKey(x => x.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Prescription>()
+                .HasOne(p => p.Patient)
+                .WithMany(pt => pt.Prescriptions)
+                .HasForeignKey(p => p.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Prescription>()
+                .HasOne(p => p.Doctor)
+                .WithMany(d => d.Prescriptions)
+                .HasForeignKey(p => p.DoctorId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Prescription>()
+                .HasOne(p => p.History)
+                .WithMany(h => h.Prescriptions)
+                .HasForeignKey(p => p.HistoryId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Prescription>()
                 .HasMany(p => p.PrescriptionMedicines)
-                .WithOne().HasForeignKey(pm => pm.PrescriptionId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .WithOne(pm => pm.Prescription)
+                .HasForeignKey(pm => pm.PrescriptionId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Medicine>()
                 .Property(m => m.Name).IsRequired().HasMaxLength(100);
@@ -66,6 +123,11 @@ namespace DAL
                 .HasIndex(m => m.Name).IsUnique();
             builder.Entity<Medicine>()
                 .Property(m => m.Price).HasColumnType(decimalType);
+            builder.Entity<Medicine>()
+                .HasMany(m => m.PrescriptionMedicines)
+                .WithOne(pm => pm.Medicine)
+                .HasForeignKey(pm => pm.MedicineId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<History>()
                 .Property(h => h.HeartBeat).HasColumnType(decimalType);
@@ -73,14 +135,54 @@ namespace DAL
                 .Property(h => h.BloodPresure).HasColumnType(decimalType);
             builder.Entity<History>()
                 .Property(h => h.Pulse).HasColumnType(decimalType);
+            builder.Entity<History>()
+                .HasOne(h => h.Doctor)
+                .WithMany(d => d.Histories)
+                .HasForeignKey(h => h.DoctorId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<History>()
+                .HasOne(h => h.Patient)
+                .WithMany(p => p.Histories)
+                .HasForeignKey(h => h.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<History>()
+                .HasMany(h => h.Prescriptions)
+                .WithOne(p => p.History)
+                .HasForeignKey(p => p.HistoryId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<History>()
+                .HasMany(h => h.XRayImages)
+                .WithOne(x => x.History)
+                .HasForeignKey(x => x.HistoryId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<PrescriptionMedicine>()
                 .HasKey(pm => new { pm.PrescriptionId, pm.MedicineId });
             builder.Entity<PrescriptionMedicine>()
                 .Property(pm => pm.Price).HasColumnType(decimalType);
+            builder.Entity<PrescriptionMedicine>()
+                .HasOne(pm => pm.Prescription)
+                .WithMany(p => p.PrescriptionMedicines)
+                .HasForeignKey(pm => pm.PrescriptionId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<PrescriptionMedicine>()
+                .HasOne(pm => pm.Medicine)
+                .WithMany(p => p.PrescriptionMedicines)
+                .HasForeignKey(pm => pm.MedicineId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<XRayImage>()
-                .Property(x => x.Image).IsUnicode(false).IsRequired();
+                .Property(x => x.Data).IsUnicode(false).IsRequired();
+            builder.Entity<XRayImage>()
+                .HasOne(x => x.Patient)
+                .WithMany(p => p.XRayImages)
+                .HasForeignKey(x => x.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<XRayImage>()
+                .HasOne(x => x.History)
+                .WithMany(h => h.XRayImages)
+                .HasForeignKey(x => x.HistoryId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
         }
 
         public override int SaveChanges()

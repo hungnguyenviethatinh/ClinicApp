@@ -6,4 +6,20 @@
         Female,
         Male,
     }
+
+    public enum PatientStatus
+    {
+        IsNew,
+        IsAppointed,
+        IsChecking,
+        IsChecked,
+        IsRechecking,
+    }
+
+    public enum PrescriptionStatus
+    {
+        IsNew,
+        IsPending,
+        IsPrinted,
+    }
 }

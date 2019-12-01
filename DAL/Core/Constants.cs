@@ -26,6 +26,15 @@
         public const string DoctorRoleName = "Doctor";
     }
 
+    public static class GenderConstants
+    {
+        public const string None = "Khác";
+        
+        public const string Male = "Nam";
+
+        public const string Female = "Nữ";
+    }
+
     public static class PatientStatusConstants
     {
         public const string IsNew = "Mới";

@@ -18,5 +18,9 @@ namespace DAL.Models
 
         public virtual ICollection<IdentityUserRole<string>> Roles { get; set; }
         public virtual ICollection<IdentityUserClaim<string>> Claims { get; set; }
+
+        public ICollection<Patient> Patients { get; set; }
+        public ICollection<Prescription> Prescriptions { get; set; }
+        public ICollection<History> Histories { get; set; }
     }
 }

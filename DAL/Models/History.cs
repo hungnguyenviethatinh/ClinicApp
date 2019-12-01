@@ -18,12 +18,12 @@ namespace DAL.Models
         public int PatientId { get; set; }
         public Patient Patient { get; set; }
 
-        public int PrescriptionId { get; set; }
-        public Prescription Prescription { get; set; }
-
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
+
+        public ICollection<Prescription> Prescriptions { get; set; }
+        public ICollection<XRayImage> XRayImages { get; set; }
     }
 }
