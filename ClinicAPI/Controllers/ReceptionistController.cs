@@ -20,7 +20,7 @@ namespace ClinicAPI.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public ReceptionistController(IUnitOfWork unitOfWork, ILogger logger)
+        public ReceptionistController(IUnitOfWork unitOfWork, ILogger<ReceptionistController> logger)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;

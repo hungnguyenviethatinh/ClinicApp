@@ -74,12 +74,14 @@ namespace DAL
             builder.Entity<Patient>()
                 .Property(p => p.Email).HasMaxLength(50);
             builder.Entity<Patient>()
+                .Property(p => p.Job).HasMaxLength(100);
+            builder.Entity<Patient>()
                 .Property(p => p.PhoneNumber).IsUnicode(false).HasMaxLength(20);
             builder.Entity<Patient>()
                 .HasOne(p => p.Doctor)
                 .WithMany(d => d.Patients)
                 .HasForeignKey(p => p.DoctorId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Patient>()
                 .HasMany(p => p.Histories)
                 .WithOne(h => h.Patient)
@@ -100,17 +102,17 @@ namespace DAL
                 .HasOne(p => p.Patient)
                 .WithMany(pt => pt.Prescriptions)
                 .HasForeignKey(p => p.PatientId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Prescription>()
                 .HasOne(p => p.Doctor)
                 .WithMany(d => d.Prescriptions)
                 .HasForeignKey(p => p.DoctorId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Prescription>()
                 .HasOne(p => p.History)
                 .WithMany(h => h.Prescriptions)
                 .HasForeignKey(p => p.HistoryId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Prescription>()
                 .HasMany(p => p.PrescriptionMedicines)
                 .WithOne(pm => pm.Prescription)
@@ -139,12 +141,12 @@ namespace DAL
                 .HasOne(h => h.Doctor)
                 .WithMany(d => d.Histories)
                 .HasForeignKey(h => h.DoctorId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<History>()
                 .HasOne(h => h.Patient)
                 .WithMany(p => p.Histories)
                 .HasForeignKey(h => h.PatientId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<History>()
                 .HasMany(h => h.Prescriptions)
                 .WithOne(p => p.History)
@@ -164,25 +166,27 @@ namespace DAL
                 .HasOne(pm => pm.Prescription)
                 .WithMany(p => p.PrescriptionMedicines)
                 .HasForeignKey(pm => pm.PrescriptionId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<PrescriptionMedicine>()
                 .HasOne(pm => pm.Medicine)
                 .WithMany(p => p.PrescriptionMedicines)
                 .HasForeignKey(pm => pm.MedicineId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<XRayImage>()
+                .Property(x => x.Name).IsRequired().HasMaxLength(100);
             builder.Entity<XRayImage>()
                 .Property(x => x.Data).IsUnicode(false).IsRequired();
             builder.Entity<XRayImage>()
                 .HasOne(x => x.Patient)
                 .WithMany(p => p.XRayImages)
                 .HasForeignKey(x => x.PatientId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<XRayImage>()
                 .HasOne(x => x.History)
                 .WithMany(h => h.XRayImages)
                 .HasForeignKey(x => x.HistoryId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
         }
 
         public override int SaveChanges()

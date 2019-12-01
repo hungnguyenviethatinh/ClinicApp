@@ -21,7 +21,7 @@ namespace ClinicAPI.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public DoctorController(IUnitOfWork unitOfWork, ILogger logger)
+        public DoctorController(IUnitOfWork unitOfWork, ILogger<DoctorController> logger)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
