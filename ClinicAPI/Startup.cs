@@ -18,6 +18,7 @@ using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System;
 using Microsoft.IdentityModel.Logging;
+using AutoMapper;
 
 namespace ClinicAPI
 {
@@ -135,9 +136,13 @@ namespace ClinicAPI
                 });
             });
 
-            services.AddControllers();
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(config => config.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddCors();
+
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IUnitOfWork, HttpUnitOfWork>();
 

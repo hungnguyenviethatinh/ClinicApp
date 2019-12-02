@@ -189,13 +189,13 @@ namespace ClinicAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(maxLength: 30, nullable: false),
+                    FullName = table.Column<string>(maxLength: 100, nullable: false),
                     DateOfBirth = table.Column<DateTime>(nullable: false),
                     Gender = table.Column<int>(nullable: false),
-                    Address = table.Column<string>(maxLength: 150, nullable: true),
+                    Address = table.Column<string>(maxLength: 200, nullable: true),
                     Job = table.Column<string>(maxLength: 100, nullable: true),
-                    PhoneNumber = table.Column<string>(unicode: false, maxLength: 20, nullable: true),
-                    Email = table.Column<string>(maxLength: 50, nullable: true),
+                    PhoneNumber = table.Column<string>(unicode: false, maxLength: 100, nullable: true),
+                    Email = table.Column<string>(maxLength: 100, nullable: true),
                     AppointmentDate = table.Column<DateTime>(nullable: false),
                     Status = table.Column<int>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),
@@ -221,9 +221,9 @@ namespace ClinicAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    HeartBeat = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    BloodPresure = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Pulse = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    HeartBeat = table.Column<string>(maxLength: 100, nullable: true),
+                    BloodPresure = table.Column<string>(maxLength: 100, nullable: true),
+                    Pulse = table.Column<string>(maxLength: 100, nullable: true),
                     IsChecked = table.Column<bool>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
@@ -293,7 +293,7 @@ namespace ClinicAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(maxLength: 100, nullable: true),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
                     Data = table.Column<string>(unicode: false, nullable: false),
                     LastModifiedDate = table.Column<DateTime>(nullable: false),
                     HistoryId = table.Column<int>(nullable: false),

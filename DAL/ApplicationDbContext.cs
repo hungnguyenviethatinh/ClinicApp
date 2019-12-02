@@ -68,15 +68,15 @@ namespace DAL
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Patient>()
-                .Property(p => p.FullName).IsRequired().HasMaxLength(30);
+                .Property(p => p.FullName).IsRequired().HasMaxLength(100);
             builder.Entity<Patient>()
-                .Property(p => p.Address).HasMaxLength(150);
+                .Property(p => p.Address).HasMaxLength(200);
             builder.Entity<Patient>()
-                .Property(p => p.Email).HasMaxLength(50);
+                .Property(p => p.Email).HasMaxLength(100);
             builder.Entity<Patient>()
                 .Property(p => p.Job).HasMaxLength(100);
             builder.Entity<Patient>()
-                .Property(p => p.PhoneNumber).IsUnicode(false).HasMaxLength(20);
+                .Property(p => p.PhoneNumber).IsUnicode(false).HasMaxLength(100);
             builder.Entity<Patient>()
                 .HasOne(p => p.Doctor)
                 .WithMany(d => d.Patients)
@@ -132,11 +132,11 @@ namespace DAL
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<History>()
-                .Property(h => h.HeartBeat).HasColumnType(decimalType);
+                .Property(h => h.HeartBeat).HasMaxLength(100);
             builder.Entity<History>()
-                .Property(h => h.BloodPresure).HasColumnType(decimalType);
+                .Property(h => h.BloodPresure).HasMaxLength(100);
             builder.Entity<History>()
-                .Property(h => h.Pulse).HasColumnType(decimalType);
+                .Property(h => h.Pulse).HasMaxLength(100);
             builder.Entity<History>()
                 .HasOne(h => h.Doctor)
                 .WithMany(d => d.Histories)

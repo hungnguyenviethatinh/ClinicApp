@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using ClinicAPI.Authorization;
+using ClinicAPI.ViewModels;
 using DAL;
 using DAL.Core;
 using DAL.Core.Interfaces;
+using DAL.Models;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +22,14 @@ namespace ClinicAPI.Controllers
     public class ReceptionistController : ControllerBase
     {
         private readonly IAccountManager _accountManager;
+        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public ReceptionistController(IAccountManager accountManager, IUnitOfWork unitOfWork, ILogger<ReceptionistController> logger)
+        public ReceptionistController(IAccountManager accountManager, IMapper mapper, IUnitOfWork unitOfWork, ILogger<ReceptionistController> logger)
         {
             _accountManager = accountManager;
+            _mapper = mapper;
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
@@ -68,14 +73,82 @@ namespace ClinicAPI.Controllers
 
         [HttpPost("patients")]
         [Authorize(Policies.ManageAllPatientsPolicy)]
-        public IActionResult AddPatient()
+        public async Task<IActionResult> AddPatient([FromBody] PatientModel patientModel)
         {
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                if (patientModel == null)
+                {
+                    return BadRequest($"{nameof(patientModel)} can not be null.");
+                }
+
+                Patient patient = _mapper.Map<Patient>(patientModel);
+                _unitOfWork.Patients.Add(patient);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(patient);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("histories")]
+        [Authorize(Policies.ManageAllPatientsPolicy)]
+        public async Task<IActionResult> AddHistory([FromBody] HistoryModel historyModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (historyModel == null)
+                {
+                    return BadRequest($"{nameof(historyModel)} can not be null.");
+                }
+
+                History history = _mapper.Map<History>(historyModel);
+                _unitOfWork.Histories.Add(history);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(history);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("xrays")]
+        [Authorize(Policies.ManageAllPatientsPolicy)]
+        public async Task<IActionResult> AddXRay([FromBody] XRayModel xRayModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (xRayModel == null)
+                {
+                    return BadRequest($"{nameof(xRayModel)} can not be null.");
+                }
+
+                XRayImage xRayImage = _mapper.Map<XRayImage>(xRayModel);
+                _unitOfWork.XRayImages.Add(xRayImage);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(xRayImage);
+            }
+
+            return BadRequest(ModelState);
         }
 
         [HttpPut("patients/{id}")]
         [Authorize(Policies.ManageAllPatientsPolicy)]
-        public async Task<IActionResult> UpdatePatient(int id)
+        public async Task<IActionResult> UpdatePatient(int id, [FromBody] PatientModel patientModel)
         {
             var patient = _unitOfWork.Patients.Find(id);
             if (patient == null)
@@ -83,12 +156,13 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
+            _mapper.Map(patientModel, patient);
             _unitOfWork.Patients.Update(patient);
 
             int result = await _unitOfWork.SaveChangesAsync();
-            if (result < 0)
+            if (result < 1)
             {
-                throw new Exception($"Error(s) occurred while deleting patient {id}.");
+                return NoContent();
             }
 
             return Ok(patient);
