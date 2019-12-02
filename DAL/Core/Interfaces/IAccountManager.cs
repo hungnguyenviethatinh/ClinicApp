@@ -34,6 +34,8 @@ namespace DAL.Core.Interfaces
 
         Task<User> GetUserByUserNameAsync(string userName);
 
+        Task<IEnumerable<User>> GetUsersByRoleNameAsync(string roleName);
+
         Task<IList<string>> GetUserRolesAsync(User user);
 
         Task<(bool Succeeded, string[] Errors)> ResetPasswordAsync(User user, string newPassword);

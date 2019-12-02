@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ClinicAPI.Authorization;
 using DAL;
 using DAL.Core;
+using DAL.Core.Interfaces;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,23 @@ namespace ClinicAPI.Controllers
     [ApiController]
     public class ReceptionistController : ControllerBase
     {
+        private readonly IAccountManager _accountManager;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public ReceptionistController(IUnitOfWork unitOfWork, ILogger<ReceptionistController> logger)
+        public ReceptionistController(IAccountManager accountManager, IUnitOfWork unitOfWork, ILogger<ReceptionistController> logger)
         {
+            _accountManager = accountManager;
             _unitOfWork = unitOfWork;
             _logger = logger;
+        }
+
+        [HttpGet("doctors")]
+        public async Task<IActionResult> GetDoctors()
+        {
+            var doctors = await _accountManager.GetUsersByRoleNameAsync(RoleConstants.DoctorRoleName);
+
+            return Ok(doctors);
         }
 
         [HttpGet("patients")]

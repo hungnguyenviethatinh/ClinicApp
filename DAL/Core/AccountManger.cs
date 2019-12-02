@@ -44,6 +44,15 @@ namespace DAL.Core
             return await _userManager.FindByEmailAsync(email);
         }
 
+        public async Task<IEnumerable<User>> GetUsersByRoleNameAsync(string roleName)
+        {
+            var role = await GetRoleByNameAsync(roleName);
+            var users = _context.Users
+                .Where(u => u.Roles.Select(r => r.RoleId).Contains(role.Id))
+                .ToList();
+            return users;
+        }
+
         public async Task<IList<string>> GetUserRolesAsync(User user)
         {
             return await _userManager.GetRolesAsync(user);
