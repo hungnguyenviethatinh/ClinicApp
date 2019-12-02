@@ -112,8 +112,6 @@ const Login = (props) => {
     };
 
     const handleLogin = user => {
-        hideProgress();
-
         const url = ApiUrl + LoginUrl;
         const data = {
             grant_type: 'password',
@@ -133,9 +131,10 @@ const Login = (props) => {
             const { status, data } = response;
             if (status === 200) {
                 const { access_token } = data;
-                setIsLogined(true);
                 localStorage.setItem('access_token', access_token);
+                setIsLogined(true);
             }
+            hideProgress();
         }).catch((reason) => {
             if (reason.response) {
                 const { status, data } = reason.response;
@@ -156,6 +155,7 @@ const Login = (props) => {
                 setErrorMessage('Có lỗi xảy ra. Vui lòng thử lại sau!');
                 console.error(reason);
             }
+            hideProgress();
         });
     };
     const handleSubmit = event => {

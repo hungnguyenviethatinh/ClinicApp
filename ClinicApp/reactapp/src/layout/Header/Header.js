@@ -41,7 +41,7 @@ const LogoutButton = withRouter((props) => {
     const { classes, history } = props;
 
     const handleLogout = () => {
-        localStorage.removeItem('user');
+        localStorage.removeItem('access_token');
         history.push('/login');
     };
 

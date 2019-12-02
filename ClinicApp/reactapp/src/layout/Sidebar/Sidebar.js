@@ -13,6 +13,9 @@ import ViewListIcon from '@material-ui/icons/ViewList';
 import { Menu } from '../Menu';
 import Profile from '../Profile';
 
+import { verifyJWT } from '../../common';
+import { RoleConstants } from '../../constants';
+
 const useStyles = makeStyles(theme => ({
     drawer: {
         width: 240,
@@ -103,14 +106,11 @@ const Sidebar = props => {
     const [menus, setMenus] = React.useState([]);
 
     const prepareMenus = () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user) {
-            return;
-        }
+        const token = localStorage.getItem('access_token');
         
-        user.role === 'admin' && setMenus(adminMenus);
-        user.role === 'bacsi' && setMenus(doctorMenus);
-        user.role === 'letan' && setMenus(receptionistMenus);
+        verifyJWT(token, RoleConstants.AdministratorRoleName) && setMenus(adminMenus);
+        verifyJWT(token, RoleConstants.DoctorRoleName) && setMenus(doctorMenus);
+        verifyJWT(token, RoleConstants.ReceptionistRoleName) && setMenus(receptionistMenus);
     };
 
     React.useEffect(() => {

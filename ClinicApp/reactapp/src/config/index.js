@@ -5,3 +5,5 @@ export const Audiance = 'clinicapi';
 export const ClientId = 'clinicapp';
 
 export const LoginUrl = '/connect/token';
+export const EndSessionUrl = '/connect/endsession';
+export const UserInfoUrl = '/connect/userinfo';

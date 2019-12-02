@@ -1,3 +1,9 @@
+export const RoleConstants = {
+    AdministratorRoleName: 'Administrator',
+    ReceptionistRoleName: 'Receptionist',
+    DoctorRoleName: 'Doctor',
+};
+
 export const PatientStatus = {
     IsNew: 'Mới',
     IsAppointed: 'Đặt lịch hẹn',

@@ -4,14 +4,17 @@ import { ReceptionistView } from './Receptionist';
 import { DoctorView } from './Doctor';
 import { AdminView } from './Admin';
 
+import { verifyJWT } from '../../common';
+import { RoleConstants } from '../../constants';
+
 const Dashboard = () => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('access_token');
 
     return (
         <React.Fragment>
-            { user.role === 'admin' && <AdminView /> }
-            { user.role === 'letan' && <ReceptionistView /> }
-            { user.role === 'bacsi' && <DoctorView /> }
+            { verifyJWT(token, RoleConstants.AdministratorRoleName) && <AdminView /> }
+            { verifyJWT(token, RoleConstants.DoctorRoleName) && <DoctorView /> }
+            { verifyJWT(token, RoleConstants.ReceptionistRoleName) && <ReceptionistView /> }
         </React.Fragment>
     );
 }
