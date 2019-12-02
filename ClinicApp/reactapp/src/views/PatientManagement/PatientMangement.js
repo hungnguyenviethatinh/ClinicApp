@@ -22,8 +22,10 @@ import { DatePicker } from '../../components/DatePicker';
 import { DateTimePicker } from '../../components/DateTimePicker';
 import { CheckBox } from '../../components/CheckBox';
 import { Label } from '../../components/Label';
-import { PatientStatus } from '../../constants';
+import { PatientStatus, GenderEnum, Gender } from '../../constants';
 import { SearchInput } from '../../components/SearchInput';
+import Axios from '../../common';
+import { GetDoctorsUrl } from '../../config';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -42,16 +44,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const genderListOptions = [
-    { label: 'Nam', value: 0 },
-    { label: 'Nữ', value: 1 },
-    { label: 'Khác', value: 2 },
-];
-
-const doctorListOptions = [
-    { label: 'Nguyễn A', value: 'DKC-BS01' },
-    { label: 'Nguyễn B', value: 'DKC-BS02' },
-    { label: 'Nguyễn C', value: 'DKC-BS03' },
+const genderOptions = [
+    { label: Gender.Male, value: GenderEnum[Gender.Male] },
+    { label: Gender.Female, value: GenderEnum[Gender.Female] },
+    { label: Gender.None, value: GenderEnum[Gender.None] },
 ];
 
 const patientColumns = [
@@ -258,9 +254,29 @@ const PatientManagement = () => {
         }
     };
 
+    const [doctorOptions, setDoctorOptions] = React.useState([{
+        label: '',
+        value: '',
+    }]);
+    const getDoctorOptions = () => {
+        Axios.get(GetDoctorsUrl).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const options = [];
+                data.map(({ fullName, id }) => options.push({
+                    label: fullName,
+                    value: id,
+                }));
+                setDoctorOptions(options);
+            }
+        }).catch((reason) => {
+            console.log(reason);
+        });
+    };
+
     React.useEffect(() => {
-        // console.log('values', values);
-    });
+        getDoctorOptions();
+    }, []);
 
     return (
         <Grid container spacing={3} >
@@ -307,7 +323,7 @@ const PatientManagement = () => {
                                         label="Giới tính"
                                         value={values.Gender}
                                         onChange={handleValueChange('Gender')}
-                                        options={genderListOptions}
+                                        options={genderOptions}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -505,7 +521,7 @@ const PatientManagement = () => {
                                         id="DoctorId"
                                         label="Bác sĩ phụ trách khám"
                                         value={values.DoctorId}
-                                        options={doctorListOptions}
+                                        options={doctorOptions}
                                         onChange={handleValueChange('DoctorId')}
                                     />
                                 </Grid>

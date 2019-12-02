@@ -7,3 +7,6 @@ export const ClientId = 'clinicapp';
 export const LoginUrl = '/connect/token';
 export const EndSessionUrl = '/connect/endsession';
 export const UserInfoUrl = '/connect/userinfo';
+
+// Receptionist Api:
+export const GetDoctorsUrl = '/api/receptionist/doctors';
