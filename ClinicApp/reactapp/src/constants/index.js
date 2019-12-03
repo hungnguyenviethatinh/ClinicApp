@@ -63,3 +63,9 @@ export const color = {
     warning: 'warning',
     danger: 'danger',
 };
+
+export const IdPrefix = {
+    Patient: 'DKC-BN',
+};
+
+export const ExpiredSessionMsg = 'Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại!';

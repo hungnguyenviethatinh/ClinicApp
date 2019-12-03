@@ -9,8 +9,6 @@ import {
     Paper,
     Typography,
 } from '@material-ui/core';
-import _ from 'lodash';
-import moment from 'moment';
 
 import { Table } from '../../components/Table';
 import { TextField } from '../../components/TextField';
@@ -22,10 +20,28 @@ import { DatePicker } from '../../components/DatePicker';
 import { DateTimePicker } from '../../components/DateTimePicker';
 import { CheckBox } from '../../components/CheckBox';
 import { Label } from '../../components/Label';
-import { PatientStatus, GenderEnum, Gender } from '../../constants';
 import { SearchInput } from '../../components/SearchInput';
+
+import _ from 'lodash';
+import moment from 'moment';
+
 import Axios from '../../common';
-import { GetDoctorsUrl } from '../../config';
+import { 
+    PatientStatus, 
+    GenderEnum, 
+    Gender, 
+    PatientStatusEnum, 
+    IdPrefix,
+    ExpiredSessionMsg,
+} from '../../constants';
+import { 
+    GetDoctorsUrl, 
+    AddPatientUrl, 
+    AddHistoryUrl,
+    AddXrayUrl, 
+    GetPatientUrl,
+} from '../../config';
+import { encodeId, decodeId } from '../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -52,42 +68,42 @@ const genderOptions = [
 
 const patientColumns = [
     {
-        title: 'Mã BN', field: 'ID',
+        title: 'Mã BN', field: 'id', defaultSort: 'asc',
+        render: rowData => encodeId(rowData.id, IdPrefix.Patient),
     },
     {
-        title: 'Họ & Tên', field: 'FullName',
+        title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Năm sinh', field: 'YearOfBirth', type: 'numeric',
+        title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
+        render: rowData => moment(rowData.dateOfBirth).year(),
     },
     {
-        title: 'Giới tính', field: 'Gender', type: 'numeric',
-        cellStyle: { minWidth: 100 },
-        filterCellStyle: { marginTop: 0 },
-        lookup: { 0: 'Nam', 1: 'Nữ', 2: 'Khác' },
+        title: 'Giới tính', field: 'gender', type: 'numeric',
+        render: rowData => [Gender.None, Gender.Male, Gender.Female][rowData.gender],
     },
     {
-        title: 'Số ĐT', field: 'PhoneNumber',
+        title: 'Số ĐT', field: 'phoneNumber',
     },
     {
-        title: 'Địa chỉ', field: 'Address',
-    },
-    {
-        title: 'Nghề nghiệp', field: 'Job',
-    },
-    {
-        title: 'Bác sĩ khám', field: 'DoctorID',
-        hidden: true,
-    },
-    {
-        title: 'Trạng thái', field: 'StatusID', type: 'numeric',
-        hidden: true,
+        title: 'Địa chỉ', field: 'address',
+        render: rowData => _.last(rowData.address.split(',')),
     },
 ];
+
+const config = {
+    headers: {
+        'Content-Type': 'application/json',
+    }
+};
 
 const PatientManagement = () => {
 
     const classes = useStyles();
+    const tableRef = React.createRef();
+    const refreshData = () => {
+        tableRef.current && tableRef.current.onQueryChange();
+    };
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -203,10 +219,88 @@ const PatientManagement = () => {
             return;
         }
 
-        console.log('values: ', values);
+        const patientModel = {
+            FullName: values.FullName,
+            DateOfBirth: values.DateOfBirth.format('YYYY-MM-DD'),
+            Gender: values.Gender,
+            Address: [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(', '),
+            Job: values.Job,
+            PhoneNumber: values.PhoneNumber,
+            Email: values.Email,
+            AppointmentDate: values.AppointmentDate,
+            Status: PatientStatusEnum[values.Status],
+            DoctorId: values.DoctorId,
+        };
+        addPatient(patientModel);
     };
 
-    const [patientData, setPatientData] = React.useState([]);
+    const addPatient = (patientModel) => {
+        Axios.post(AddPatientUrl, patientModel, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { id } = data;
+                handleSnackbarOption('success', 'Bệnh nhân được tạo thành công.');
+                refreshData();
+                const historyModel = {
+                    HeartBeat: values.HeartBeat,
+                    BloodPresure: values.BloodPresure,
+                    Pulse: values.Pulse,
+                    IsChecked: false,
+                    DoctorId: values.DoctorId,
+                    PatientId: id,
+                };
+                addHistory(historyModel);
+            } else {
+                console.log('[Add Patient Response] ', response);
+                handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân .');
+            }
+        }).catch((reason) => {
+            console.log('[Add Patient Error] ', reason);
+            handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân.');
+        });
+    };
+
+    const addHistory = (historyModel) => {
+        Axios.post(AddHistoryUrl, historyModel, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { id, patientId } = data;
+                handleSnackbarOption('success', 'Hồ sơ bệnh nhân được tạo thành công.');
+                if (!_.isEmpty(values.XRayImages)) {
+                    const xRayModels = [];
+                    values.XRayImages.map((xRayImage) => xRayModels.push({
+                        Name: xRayImage.name,
+                        Data: xRayImage.data,
+                        LastModifiedDate: xRayImage.lastModifiedDate,
+                        HistoryId: id,
+                        PatientId: patientId,
+                    }));
+                    addXrays(xRayModels);
+                }
+            } else {
+                console.log('[Add History Response] ', response);
+                handleSnackbarOption('error', 'Có lỗi khi tạo hồ sơ cho bệnh nhân.');
+            }
+        }).catch((reason) => {
+            console.log('[Add History Error] ', reason);
+            handleSnackbarOption('error', 'Có lỗi khi tạo hồ sơ cho bệnh nhân.');
+        });
+    };
+
+    const addXrays = (xRayModels) => {
+        Axios.post(AddXrayUrl, xRayModels, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Lưu trữ XQ của bệnh thành công.');
+            } else {
+                console.log('[Add XRays Response] ', response);
+                handleSnackbarOption('error', 'Có lỗi khi lưu trữ XQ của bệnh nhân.');
+            }
+        }).catch((reason) => {
+            console.log('[Add XRays Error] ', reason);
+            handleSnackbarOption('error', 'Có lỗi khi lưu trữ XQ của bệnh nhân.');
+        });
+    };
 
     const handleReset = () => {
         setValues({
@@ -234,20 +328,22 @@ const PatientManagement = () => {
 
     const [searchValue, setSearchValue] = React.useState('');
     const handleSearchChange = event => {
-        setSearchValue(event.target.value);
+        let value = event.target.value;
+        if (value.toLowerCase().startsWith(IdPrefix.Patient)) {
+            value = decodeId(value, IdPrefix.Patient);
+        }
+        setSearchValue(value);
     };
     const handleSearch = event => {
         event.preventDefault();
-        console.log('Search: ', searchValue);
+        refreshData();
     }
 
     const [selectedRow, setSelectedRow] = React.useState(null);
     const handleSelectRow = (event, rowData) => {
         if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
             setSelectedRow(rowData);
-            setValues({
-                ...rowData,
-            });
+            
         } else {
             setSelectedRow(null);
             handleReset();
@@ -270,7 +366,83 @@ const PatientManagement = () => {
                 setDoctorOptions(options);
             }
         }).catch((reason) => {
-            console.log(reason);
+            console.log('[Get Doctor Options Error] ', reason);
+        });
+    };
+
+    const getPatient = (id) => {
+        const url = `${GetPatientUrl}/${id}`;
+        Axios.get(url).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { 
+                    fullName, 
+                    dateOfBirth,
+                    gender, 
+                    address,
+                    job, 
+                    phoneNumber,
+                    email,
+                    appointmentDate,
+                    status,
+                    doctorId 
+                } = data;
+
+                setValues({
+                    FullName: fullName,
+                    DateOfBirth: dateOfBirth,
+                    Gender: [Gender.None, Gender.Male, Gender.Female][gender],
+                    HouseNo: address.split(',')[0],
+                    Street: address.split(',')[1],
+                    Ward: address.split(',')[2],
+                    District: address.split(',')[3],
+                    City: address.split(',')[4],
+                    Job: job,
+                    PhoneNumber: phoneNumber,
+                    Email: email,
+                    AppointmentDate: appointmentDate,
+                    Status: [
+                        PatientStatus.IsNew, 
+                        PatientStatus.IsAppointed, 
+                        PatientStatus.IsChecking,
+                        PatientStatus.IsChecked,
+                        PatientStatus.IsRechecking][status],
+                    DoctorId: doctorId,
+                });
+            } else {
+                if (status === 401) {
+                    handleSnackbarOption('error', ExpiredSessionMsg);
+                }
+            }
+        }).catch((reason) => {
+            console.log('[Get Patient By Id Error] ', reason);
+        });
+    };
+    
+    const getPatients = (resolve, reject, query) => {
+        Axios.get(GetPatientUrl, {
+            params: {
+                page: query.page + 1,
+                pageSize: query.pageSize,
+                query: searchValue,
+            }
+        }).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const page = query.page;
+                const totalCount = data.length;
+                resolve({
+                    data,
+                    page,
+                    totalCount,
+                });
+            } else {
+                if (status === 401) {
+                    handleSnackbarOption('error', ExpiredSessionMsg);
+                }
+            }
+        }).catch((reason) => {
+            console.log('[Get Patients Error] ', reason);
         });
     };
 
@@ -587,8 +759,13 @@ const PatientManagement = () => {
                             </Grid>
                         </Paper>
                         <Table
+                            tableRef={tableRef}
                             columns={patientColumns}
-                            data={patientData}
+                            data={
+                                query => new Promise((resolve, reject) => {
+                                    getPatients(resolve, reject, query);
+                                })
+                            }
                             onRowClick={handleSelectRow}
                             selectedRow={selectedRow}
                         />

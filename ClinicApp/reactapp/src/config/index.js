@@ -10,3 +10,7 @@ export const UserInfoUrl = '/connect/userinfo';
 
 // Receptionist Api:
 export const GetDoctorsUrl = '/api/receptionist/doctors';
+export const GetPatientUrl = 'api/receptionist/patients';
+export const AddPatientUrl = '/api/receptionist/patients';
+export const AddHistoryUrl = '/api/receptionist/histories';
+export const AddXrayUrl = '/api/receptionist/xrays';
