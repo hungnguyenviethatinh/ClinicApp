@@ -24,9 +24,19 @@ namespace DAL.Repositories
             _entities.Add(entity);
         }
 
+        public virtual void AddRange(IEnumerable<TEntity> entities)
+        {
+            _entities.AddRange(entities);
+        }
+
         public virtual async Task AddAsync(TEntity entity)
         {
             await _entities.AddAsync(entity);
+        }
+
+        public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities)
+        {
+            await _entities.AddRangeAsync(entities);
         }
 
         public virtual void Update(TEntity entity)
@@ -84,7 +94,7 @@ namespace DAL.Repositories
             return await _entities.FindAsync(keyValues);
         }
 
-        public virtual IEnumerable<TEntity> ToList()
+        public virtual IEnumerable<TEntity> GetAll()
         {
             return _entities.ToList();
         }

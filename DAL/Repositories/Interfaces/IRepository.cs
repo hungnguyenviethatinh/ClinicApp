@@ -9,7 +9,11 @@ namespace DAL.Repositories.Interfaces
     {
         void Add(TEntity entity);
 
+        void AddRange(IEnumerable<TEntity> entities);
+
         Task AddAsync(TEntity entity);
+
+        Task AddRangeAsync(IEnumerable<TEntity> entities);
 
         void Update(TEntity entity);
 
@@ -33,6 +37,6 @@ namespace DAL.Repositories.Interfaces
 
         Task<TEntity> FindAsync(params object[] keyValues);
 
-        IEnumerable<TEntity> ToList();
+        IEnumerable<TEntity> GetAll();
     }
 }

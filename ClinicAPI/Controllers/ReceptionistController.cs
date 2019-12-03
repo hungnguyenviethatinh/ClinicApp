@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ClinicAPI.Authorization;
@@ -44,9 +46,27 @@ namespace ClinicAPI.Controllers
 
         [HttpGet("patients")]
         [Authorize(Policies.ViewAllPatientsPolicy)]
-        public IActionResult GetPatients()
+        public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var patients = _unitOfWork.Patients.ToList();
+            List<Patient> patients = new List<Patient>();
+            if (!string.IsNullOrEmpty(query))
+            {
+                int.TryParse(query, out int id);
+
+                patients = _unitOfWork.Patients
+                    .Where(p => (p.Id == id || p.FullName == query || p.PhoneNumber == query))
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+            }
+            else
+            {
+                patients = _unitOfWork.Patients
+                    .GetAll()
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+            }
 
             foreach (var patient in patients)
             {
@@ -123,24 +143,24 @@ namespace ClinicAPI.Controllers
 
         [HttpPost("xrays")]
         [Authorize(Policies.ManageAllPatientsPolicy)]
-        public async Task<IActionResult> AddXRay([FromBody] XRayModel xRayModel)
+        public async Task<IActionResult> AddXRays([FromBody] IEnumerable<XRayModel> xRayModels)
         {
             if (ModelState.IsValid)
             {
-                if (xRayModel == null)
+                if (xRayModels == null)
                 {
-                    return BadRequest($"{nameof(xRayModel)} can not be null.");
+                    return BadRequest($"{nameof(xRayModels)} can not be null.");
                 }
 
-                XRayImage xRayImage = _mapper.Map<XRayImage>(xRayModel);
-                _unitOfWork.XRayImages.Add(xRayImage);
+                IEnumerable<XRayImage> xRayImages = _mapper.Map<IEnumerable<XRayImage>>(xRayModels);
+                _unitOfWork.XRayImages.AddRange(xRayImages);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
                 {
                     return NoContent();
                 }
 
-                return Ok(xRayImage);
+                return Ok();
             }
 
             return BadRequest(ModelState);
@@ -170,9 +190,12 @@ namespace ClinicAPI.Controllers
 
         [HttpGet("prescriptions")]
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
-        public IActionResult GetPrescriptions()
+        public IActionResult GetPrescriptions([FromQuery] int page, [FromQuery] int pageSize)
         {
-            var prescriptions = _unitOfWork.Prescriptions.ToList();
+            var prescriptions = _unitOfWork.Prescriptions
+                .GetAll()
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize);
 
             foreach(var prescription in prescriptions)
             {
