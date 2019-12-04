@@ -29,7 +29,7 @@ const App = () => {
                 <PrivateRoute exact path="/user-management" component={UserManagementView} />
                 <PrivateRoute exact path="/drug-management" component={DrugManagementView} />
                 <PrivateRoute exact path="/statistics" component={StatisticsView} />
-                <PrivateRoute exact path="/user" component={UserView} />
+                <PrivateRoute exact path="/account/me" component={UserView} />
                 <Route exact path="/login" component={LoginView} />
                 <Redirect to="/dashboard" />
             </Switch>

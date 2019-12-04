@@ -69,3 +69,4 @@ export const IdPrefix = {
 };
 
 export const ExpiredSessionMsg = 'Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại!';
+export const NotFoundMsg = 'Không tìm thấy thông tin!';

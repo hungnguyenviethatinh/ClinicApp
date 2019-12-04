@@ -1,6 +1,7 @@
 import React from 'react';
 import MaterialTable from 'material-table';
 import PropTypes from 'prop-types';
+import { Paper } from '@material-ui/core';
 
 import { icons } from './icons';
 import { localization } from './localization';
@@ -14,19 +15,25 @@ const Table = props => {
         ) ? '#EEE' : '#FFF',
     });
 
-    const [pageSize, setPageSize] = React.useState(5);
+    const [pageSize, setPageSize] = React.useState(20);
     const updatePageSize = (pageSize) => {
 		setPageSize(pageSize);
 	};
 
     return (
         <MaterialTable
+            components={{
+                Container: props => (
+                    <Paper elevation={0} {...props} />
+                ),
+            }}
             icons={icons}
             options={{
                 draggable: false,
                 toolbar: false,
                 rowStyle: styleSelectedRow,
                 pageSize,
+                pageSizeOptions: [20, 50, 100],
                 debounceInterval: 500,
                 ...customOptions,
             }}

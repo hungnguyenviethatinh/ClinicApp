@@ -5,20 +5,22 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { IconButton, Typography } from '@material-ui/core';
 import { Settings } from '@material-ui/icons';
+import { decodeJWT } from '../../common';
 
 const useStyles = makeStyles(theme => ({
 	root: {
 		display: 'flex',
 		flexDirection: 'column',
 		alignItems: 'center',
-		minHeight: 'fit-content'
+		minHeight: 'fit-content',
+		padding: theme.spacing(2, 0),
 	},
 	avatar: {
 		width: 60,
 		height: 60
 	},
 	name: {
-		marginTop: theme.spacing(1)
+		marginTop: theme.spacing(1),
 	},
 	margin: {
 		margin: theme.spacing(1),
@@ -30,7 +32,9 @@ const Profile = props => {
 
 	const classes = useStyles();
 
-	const user = JSON.parse(localStorage.getItem('user'));
+	const token = localStorage.getItem('access_token');
+	const decoded = decodeJWT(token);
+	const { fullname, role } = decoded;
 
 	return (
 		<div
@@ -38,14 +42,13 @@ const Profile = props => {
 			className={clsx(classes.root, className)}
 		>
 			{
-				user &&
 				<React.Fragment>
 					<div style={{
 						position: 'absolute',
 						right: 0,
 						top: -10,
 					}}>
-						<Link to="/user">
+						<Link to="/account/me">
 							<IconButton
 								aria-label="user"
 								className={classes.margin}
@@ -59,9 +62,9 @@ const Profile = props => {
 						className={classes.name}
 						variant="h4"
 					>
-						{user.name}
+						{fullname}
 					</Typography>
-					<Typography variant="body2">{user.role}</Typography>
+					<Typography variant="body2">{role}</Typography>
 				</React.Fragment>
 			}
 		</div>

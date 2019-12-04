@@ -196,7 +196,7 @@ namespace ClinicAPI.Migrations
                     Job = table.Column<string>(maxLength: 100, nullable: true),
                     PhoneNumber = table.Column<string>(unicode: false, maxLength: 100, nullable: true),
                     Email = table.Column<string>(maxLength: 100, nullable: true),
-                    AppointmentDate = table.Column<DateTime>(nullable: false),
+                    AppointmentDate = table.Column<DateTime>(nullable: true),
                     Status = table.Column<int>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),

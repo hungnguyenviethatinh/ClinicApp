@@ -54,7 +54,10 @@ namespace ClinicAPI.Controllers
                 int.TryParse(query, out int id);
 
                 patients = _unitOfWork.Patients
-                    .Where(p => (p.Id == id || p.FullName == query || p.PhoneNumber == query))
+                    .Where(p => (
+                    p.Id == id ||
+                    p.FullName.Equals(query, StringComparison.OrdinalIgnoreCase) ||
+                    p.PhoneNumber.Equals(query, StringComparison.OrdinalIgnoreCase)))
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();

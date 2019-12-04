@@ -1,6 +1,25 @@
 import jwt from 'jsonwebtoken';
 import { ApiUrl, Audiance, ClientId } from '../config';
 
+export const axiosConfig = () => {
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        }
+    };
+    return config;
+};
+
+export const axiosConfigJson = () => {
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json',
+        }
+    };
+    return config;
+};
+
 export const decodeJWT = (token) => jwt.decode(token);
 
 export const verifyJWT = (token, role = null) => {

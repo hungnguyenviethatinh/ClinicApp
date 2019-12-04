@@ -13,7 +13,7 @@ namespace ClinicAPI.ViewModels
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
 
-        public DateTime AppointmentDate { get; set; }
+        public DateTime? AppointmentDate { get; set; }
         public PatientStatus Status { get; set; }
 
         public string DoctorId { get; set; }

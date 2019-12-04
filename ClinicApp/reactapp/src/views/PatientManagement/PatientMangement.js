@@ -25,21 +25,25 @@ import { SearchInput } from '../../components/SearchInput';
 import _ from 'lodash';
 import moment from 'moment';
 
-import Axios from '../../common';
-import { 
-    PatientStatus, 
-    GenderEnum, 
-    Gender, 
-    PatientStatusEnum, 
+import Axios, {
+    axiosConfig,
+    axiosConfigJson,
+} from '../../common';
+import {
+    PatientStatus,
+    GenderEnum,
+    Gender,
+    PatientStatusEnum,
     IdPrefix,
     ExpiredSessionMsg,
 } from '../../constants';
-import { 
-    GetDoctorsUrl, 
-    AddPatientUrl, 
+import {
+    GetDoctorsUrl,
+    AddPatientUrl,
     AddHistoryUrl,
-    AddXrayUrl, 
+    AddXrayUrl,
     GetPatientUrl,
+    UpdatePatientUrl,
 } from '../../config';
 import { encodeId, decodeId } from '../../utils';
 
@@ -59,6 +63,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+const addressSeperator = ',';
 
 const genderOptions = [
     { label: Gender.Male, value: GenderEnum[Gender.Male] },
@@ -87,15 +92,9 @@ const patientColumns = [
     },
     {
         title: 'Địa chỉ', field: 'address',
-        render: rowData => _.last(rowData.address.split(',')),
+        render: rowData => _.last(rowData.address.split(addressSeperator)),
     },
 ];
-
-const config = {
-    headers: {
-        'Content-Type': 'application/json',
-    }
-};
 
 const PatientManagement = () => {
 
@@ -219,27 +218,38 @@ const PatientManagement = () => {
             return;
         }
 
+        const DateOfBirth = values.DateOfBirth.format('YYYY-MM-DD');
+        const Address = [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(addressSeperator);
+        const AppointmentDate = values.AppointmentDate ? values.AppointmentDate.format() : null;
+        const Status = PatientStatusEnum[values.Status];
+
         const patientModel = {
             FullName: values.FullName,
-            DateOfBirth: values.DateOfBirth.format('YYYY-MM-DD'),
+            DateOfBirth,
             Gender: values.Gender,
-            Address: [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(', '),
+            Address,
             Job: values.Job,
             PhoneNumber: values.PhoneNumber,
             Email: values.Email,
-            AppointmentDate: values.AppointmentDate,
-            Status: PatientStatusEnum[values.Status],
+            AppointmentDate,
+            Status,
             DoctorId: values.DoctorId,
         };
-        addPatient(patientModel);
+        if (!updateMode) {
+            addPatient(patientModel);
+        } else {
+            const { id } = selectedRow;
+            updatePatient(id, patientModel);
+        }
     };
 
     const addPatient = (patientModel) => {
-        Axios.post(AddPatientUrl, patientModel, config).then((response) => {
+        Axios.post(AddPatientUrl, patientModel, axiosConfigJson()).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { id } = data;
                 handleSnackbarOption('success', 'Bệnh nhân được tạo thành công.');
+                handleReset();
                 refreshData();
                 const historyModel = {
                     HeartBeat: values.HeartBeat,
@@ -252,7 +262,7 @@ const PatientManagement = () => {
                 addHistory(historyModel);
             } else {
                 console.log('[Add Patient Response] ', response);
-                handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân .');
+                handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân.');
             }
         }).catch((reason) => {
             console.log('[Add Patient Error] ', reason);
@@ -261,7 +271,7 @@ const PatientManagement = () => {
     };
 
     const addHistory = (historyModel) => {
-        Axios.post(AddHistoryUrl, historyModel, config).then((response) => {
+        Axios.post(AddHistoryUrl, historyModel, axiosConfigJson()).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { id, patientId } = data;
@@ -288,10 +298,10 @@ const PatientManagement = () => {
     };
 
     const addXrays = (xRayModels) => {
-        Axios.post(AddXrayUrl, xRayModels, config).then((response) => {
+        Axios.post(AddXrayUrl, xRayModels, axiosConfigJson()).then((response) => {
             const { status } = response;
             if (status === 200) {
-                handleSnackbarOption('success', 'Lưu trữ XQ của bệnh thành công.');
+                handleSnackbarOption('success', 'Lưu trữ XQ của bệnh nhân thành công.');
             } else {
                 console.log('[Add XRays Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi lưu trữ XQ của bệnh nhân.');
@@ -299,6 +309,22 @@ const PatientManagement = () => {
         }).catch((reason) => {
             console.log('[Add XRays Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi lưu trữ XQ của bệnh nhân.');
+        });
+    };
+
+    const updatePatient = (id, patientModel) => {
+        Axios.put(`${UpdatePatientUrl}/${id}`, patientModel, axiosConfigJson()).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Cập nhật thông tin của bệnh nhân thành công.');
+                refreshData();
+            } else {
+                console.log('[Update Patient Reponse] ', reason);
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
+            }
+        }).catch((reason) => {
+            console.log('[Update Patient Error] ', reason);
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
         });
     };
 
@@ -328,24 +354,23 @@ const PatientManagement = () => {
 
     const [searchValue, setSearchValue] = React.useState('');
     const handleSearchChange = event => {
-        let value = event.target.value;
-        if (value.toLowerCase().startsWith(IdPrefix.Patient)) {
-            value = decodeId(value, IdPrefix.Patient);
-        }
-        setSearchValue(value);
+        setSearchValue(event.target.value);
     };
     const handleSearch = event => {
         event.preventDefault();
         refreshData();
     }
 
+    const [updateMode, setUpdateMode] = React.useState(false);
     const [selectedRow, setSelectedRow] = React.useState(null);
     const handleSelectRow = (event, rowData) => {
         if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
             setSelectedRow(rowData);
-            
+            setUpdateMode(true);
+            getPatient(rowData.id);
         } else {
             setSelectedRow(null);
+            setUpdateMode(false);
             handleReset();
         }
     };
@@ -355,7 +380,7 @@ const PatientManagement = () => {
         value: '',
     }]);
     const getDoctorOptions = () => {
-        Axios.get(GetDoctorsUrl).then((response) => {
+        Axios.get(GetDoctorsUrl, axiosConfig()).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const options = [];
@@ -372,59 +397,77 @@ const PatientManagement = () => {
 
     const getPatient = (id) => {
         const url = `${GetPatientUrl}/${id}`;
-        Axios.get(url).then((response) => {
+        Axios.get(url, axiosConfig()).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { 
-                    fullName, 
+                const {
+                    fullName,
                     dateOfBirth,
-                    gender, 
+                    gender,
                     address,
-                    job, 
+                    job,
                     phoneNumber,
                     email,
                     appointmentDate,
                     status,
-                    doctorId 
+                    doctorId
                 } = data;
 
+                const AppointmentDate = appointmentDate ? moment(appointmentDate) : null;
+                const Status = [
+                    PatientStatus.IsNew,
+                    PatientStatus.IsAppointed,
+                    PatientStatus.IsChecking,
+                    PatientStatus.IsChecked,
+                    PatientStatus.IsRechecking][status];
+                
                 setValues({
                     FullName: fullName,
-                    DateOfBirth: dateOfBirth,
-                    Gender: [Gender.None, Gender.Male, Gender.Female][gender],
-                    HouseNo: address.split(',')[0],
-                    Street: address.split(',')[1],
-                    Ward: address.split(',')[2],
-                    District: address.split(',')[3],
-                    City: address.split(',')[4],
+                    DateOfBirth: moment(dateOfBirth),
+                    Gender: gender,
+                    HouseNo: address.split(addressSeperator)[0],
+                    Street: address.split(addressSeperator)[1],
+                    Ward: address.split(addressSeperator)[2],
+                    District: address.split(addressSeperator)[3],
+                    City: address.split(addressSeperator)[4],
                     Job: job,
                     PhoneNumber: phoneNumber,
                     Email: email,
-                    AppointmentDate: appointmentDate,
-                    Status: [
-                        PatientStatus.IsNew, 
-                        PatientStatus.IsAppointed, 
-                        PatientStatus.IsChecking,
-                        PatientStatus.IsChecked,
-                        PatientStatus.IsRechecking][status],
+                    AppointmentDate,
+                    Status,
                     DoctorId: doctorId,
+                    XRayImages: [],
+                    HeartBeat: '',
+                    BloodPresure: '',
+                    Pulse: '',
                 });
-            } else {
-                if (status === 401) {
-                    handleSnackbarOption('error', ExpiredSessionMsg);
-                }
             }
         }).catch((reason) => {
+            if (reason.response) {
+                const { status } = reason.response;
+                if (status === 401) {
+                    handleSnackbarOption('error', ExpiredSessionMsg);
+                } else if (status === 404) {
+                    handleSnackbarOption('error', NotFoundMsg);
+                }
+            }
             console.log('[Get Patient By Id Error] ', reason);
         });
     };
-    
+
     const getPatients = (resolve, reject, query) => {
+        let value = searchValue.toLowerCase();
+        const prefix = IdPrefix.Patient.toLowerCase();
+        if (value.startsWith(prefix)) {
+            value = decodeId(value, prefix);
+        }
+        const config = axiosConfig();
         Axios.get(GetPatientUrl, {
+            ...config,
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
-                query: searchValue,
+                query: value,
             }
         }).then((response) => {
             const { status, data } = response;
@@ -436,12 +479,14 @@ const PatientManagement = () => {
                     page,
                     totalCount,
                 });
-            } else {
+            }
+        }).catch((reason) => {
+            if (reason.response) {
+                const { status } = reason.response;
                 if (status === 401) {
                     handleSnackbarOption('error', ExpiredSessionMsg);
                 }
             }
-        }).catch((reason) => {
             console.log('[Get Patients Error] ', reason);
         });
     };
@@ -455,6 +500,7 @@ const PatientManagement = () => {
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <Card
                     className={classes.card}
+                    style={{ height: '100%' }}
                 >
                     <CardHeader
                         title="PHIẾU GHI THÔNG TIN BỆNH NHÂN"
@@ -730,6 +776,7 @@ const PatientManagement = () => {
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <Card
                     className={classes.card}
+                    style={{ height: '100%' }}
                 >
                     <CardHeader
                         title="DANH SÁCH BỆNH NHÂN"
@@ -737,8 +784,8 @@ const PatientManagement = () => {
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        <Paper 
-                            elevation={0} 
+                        <Paper
+                            elevation={0}
                             className={classes.paper}
                             style={{ paddingBottom: 10 }}
                         >

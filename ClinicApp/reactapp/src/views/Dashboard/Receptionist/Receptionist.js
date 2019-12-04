@@ -12,6 +12,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -27,6 +28,9 @@ const useStyles = makeStyles(theme => ({
         overflow: 'auto',
         flexDirection: 'column',
     },
+    fullHeight: {
+        height: '100%',
+    }
 }));
 
 const genderList = [
@@ -219,20 +223,17 @@ const prescriptions = [
 const ReceptionistView = () => {
     const classes = useStyles();
 
-    // const [selectedRow, setSelectedRow] = React.useState(null);
-    // const handleSelectRow = (event, rowData) => {
-    //     if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
-    //         setSelectedRow(rowData);
-    //     } else {
-    //         setSelectedRow(null);
-    //     }
-    // };
-
     return (
-        <Grid container spacing={3} >
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+        <Grid 
+            container 
+            spacing={3} 
+            className={classes.fullHeight} >
+            <Grid 
+                item 
+                xs={12} sm={12} md={6} lg={6} xl={6} 
+                className={classes.fullHeight}>
                 <Card
-                    className={classes.card}
+                    className={clsx(classes.card, classes.fullHeight)}
                 >
                     <CardHeader
                         title="HÀNG CHỜ BỆNH NHÂN"
@@ -241,18 +242,22 @@ const ReceptionistView = () => {
                     <CardContent className={classes.content}>
                         <PerfectScrollbar>
                             <Table
+                                customOptions={{
+                                    paging: false,
+                                }}
                                 columns={patientQueueColumns}
                                 data={patientQueue}
-                                // onRowClick={handleSelectRow}
-                                // selectedRow={selectedRow}
                             />
                         </PerfectScrollbar>
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+            <Grid 
+                item 
+                xs={12} sm={12} md={6} lg={6} xl={6} 
+                className={classes.fullHeight} >
                 <Card
-                    className={classes.card}
+                    className={clsx(classes.card, classes.fullHeight)}
                 >
                     <CardHeader
                         title="DANH SÁCH ĐƠN THUỐC MỚI"
@@ -261,10 +266,11 @@ const ReceptionistView = () => {
                     <CardContent className={classes.content}>
                         <PerfectScrollbar>
                             <Table
+                                customOptions={{
+                                    paging: false,
+                                }}
                                 columns={prescriptionColumns}
                                 data={prescriptions}
-                                // onRowClick={handleSelectRow}
-                                // selectedRow={selectedRow}
                             />
                         </PerfectScrollbar>
                     </CardContent>
