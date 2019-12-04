@@ -99,9 +99,10 @@ const patientColumns = [
 const PatientManagement = () => {
 
     const classes = useStyles();
-    const tableRef = React.createRef();
+    const [tableRef, setTableRef] = React.useState(React.createRef());
     const refreshData = () => {
-        tableRef.current && tableRef.current.onQueryChange();
+        tableRef && tableRef.onQueryChange();
+        // tableRef.current && tableRef.current.onQueryChange();
     };
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
@@ -148,7 +149,7 @@ const PatientManagement = () => {
     const handleValueChange = prop => event => {
         setValues({
             ...values,
-            [prop]: event.target.value,
+            [prop]: event.target.value.trim(),
         })
     };
     const handleDateoBirthChange = date => {
@@ -193,8 +194,12 @@ const PatientManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
             return;
         }
-        if (!moment(values.DateOfBirth).isValid) {
+        if (!moment(values.DateOfBirth).isValid()) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày tháng năm sinh!');
+            return;
+        }
+        if (values.AppointmentDate && !moment(values.AppointmentDate).isValid()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập ngày giờ hẹn hợp lệ (không có để trống)!');
             return;
         }
         if (!values.Gender.toString().trim()) {
@@ -220,7 +225,7 @@ const PatientManagement = () => {
 
         const DateOfBirth = values.DateOfBirth.format('YYYY-MM-DD');
         const Address = [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(addressSeperator);
-        const AppointmentDate = values.AppointmentDate ? values.AppointmentDate.format() : null;
+        const AppointmentDate = moment(values.AppointmentDate).isValid() ? values.AppointmentDate.format() : null;
         const Status = PatientStatusEnum[values.Status];
 
         const patientModel = {
@@ -354,7 +359,7 @@ const PatientManagement = () => {
 
     const [searchValue, setSearchValue] = React.useState('');
     const handleSearchChange = event => {
-        setSearchValue(event.target.value);
+        setSearchValue(event.target.value.trim());
     };
     const handleSearch = event => {
         event.preventDefault();
@@ -413,23 +418,25 @@ const PatientManagement = () => {
                     doctorId
                 } = data;
 
-                const AppointmentDate = appointmentDate ? moment(appointmentDate) : null;
+                const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
+                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth) : null;
                 const Status = [
                     PatientStatus.IsNew,
                     PatientStatus.IsAppointed,
                     PatientStatus.IsChecking,
                     PatientStatus.IsChecked,
                     PatientStatus.IsRechecking][status];
-                
+                const Address = address.split(addressSeperator);
+
                 setValues({
                     FullName: fullName,
-                    DateOfBirth: moment(dateOfBirth),
+                    DateOfBirth,
                     Gender: gender,
-                    HouseNo: address.split(addressSeperator)[0],
-                    Street: address.split(addressSeperator)[1],
-                    Ward: address.split(addressSeperator)[2],
-                    District: address.split(addressSeperator)[3],
-                    City: address.split(addressSeperator)[4],
+                    HouseNo: Address[0],
+                    Street: Address[1],
+                    Ward: Address[2],
+                    District: Address[3],
+                    City: Address[4],
                     Job: job,
                     PhoneNumber: phoneNumber,
                     Email: email,
@@ -473,9 +480,9 @@ const PatientManagement = () => {
             const { status, data } = response;
             if (status === 200) {
                 const page = query.page;
-                const totalCount = data.length;
+                const { patients, totalCount } = data;
                 resolve({
-                    data,
+                    data: patients,
                     page,
                     totalCount,
                 });
@@ -806,7 +813,7 @@ const PatientManagement = () => {
                             </Grid>
                         </Paper>
                         <Table
-                            tableRef={tableRef}
+                            tableRef={(event) => { setTableRef(event) }}
                             columns={patientColumns}
                             data={
                                 query => new Promise((resolve, reject) => {
