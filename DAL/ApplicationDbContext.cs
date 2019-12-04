@@ -224,7 +224,7 @@ namespace DAL
             foreach (var entry in modifiedEntries)
             {
                 var entity = (IAuditableEntity)entry.Entity;
-                DateTime now = DateTime.UtcNow;
+                DateTime now = DateTime.Now;
 
                 if (entry.State == EntityState.Added)
                 {
