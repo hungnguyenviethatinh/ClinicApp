@@ -28,7 +28,7 @@ namespace DAL.Models
         public DateTime UpdatedDate { get; set; }
 
         public ICollection<History> Histories { get; set; }
-        public ICollection<Prescription> Prescriptions { get; set; }
-        public ICollection<XRayImage> XRayImages { get; set; }
+        public virtual ICollection<Prescription> Prescriptions { get; set; }
+        public virtual ICollection<XRayImage> XRayImages { get; set; }
     }
 }

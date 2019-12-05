@@ -16,6 +16,15 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<XRayImage, XRayModel>();
             CreateMap<XRayModel, XRayImage>();
+
+            CreateMap<Prescription, PrescriptionModel>();
+            CreateMap<PrescriptionModel, Prescription>();
+
+            CreateMap<Medicine, MedicineModel>();
+            CreateMap<MedicineModel, Medicine>();
+
+            CreateMap<PrescriptionMedicine, PrescriptionMedicineModel>();
+            CreateMap<PrescriptionMedicineModel, PrescriptionMedicine>();
         }
     }
 }

@@ -48,10 +48,10 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            IEnumerable<Patient> patients = _unitOfWork.Patients.GetAll();
+            var patients = _unitOfWork.Patients.GetAll();
             int totalCount = patients.Count();
 
-            if (!string.IsNullOrEmpty(query))
+            if (!string.IsNullOrWhiteSpace(query))
             {
                 int.TryParse(query, out int id);
 
@@ -211,12 +211,31 @@ namespace ClinicAPI.Controllers
 
         [HttpGet("prescriptions")]
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
-        public IActionResult GetPrescriptions([FromQuery] int page, [FromQuery] int pageSize)
+        public IActionResult GetPrescriptions([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
             var prescriptions = _unitOfWork.Prescriptions.GetAll();
             int totalCount = prescriptions.Count();
 
-            prescriptions = prescriptions.Skip((page - 1) * pageSize).Take(pageSize);
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                int.TryParse(query, out int id);
+                var patientIds = _unitOfWork.Patients.Where(p => p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)).Select(p => p.Id);
+                var doctorIds = _unitOfWork.Users.Where(d => d.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)).Select(d => d.Id);
+
+                prescriptions
+                    .Where(p => 
+                        p.PatientId == id ||
+                        patientIds.Contains(p.PatientId) ||
+                        doctorIds.Contains(p.DoctorId))
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize);
+            }
+            else
+            {
+                prescriptions = prescriptions
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize);
+            }
 
             foreach (var prescription in prescriptions)
             {

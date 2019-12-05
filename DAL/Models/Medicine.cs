@@ -17,6 +17,6 @@ namespace DAL.Models
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
 
-        public ICollection<PrescriptionMedicine> PrescriptionMedicines { get; set; }
+        public virtual ICollection<PrescriptionMedicine> Prescriptions { get; set; }
     }
 }

@@ -114,7 +114,7 @@ namespace DAL
                 .HasForeignKey(p => p.HistoryId)
                 .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Prescription>()
-                .HasMany(p => p.PrescriptionMedicines)
+                .HasMany(p => p.Medicines)
                 .WithOne(pm => pm.Prescription)
                 .HasForeignKey(pm => pm.PrescriptionId)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
@@ -126,7 +126,7 @@ namespace DAL
             builder.Entity<Medicine>()
                 .Property(m => m.Price).HasColumnType(decimalType);
             builder.Entity<Medicine>()
-                .HasMany(m => m.PrescriptionMedicines)
+                .HasMany(m => m.Prescriptions)
                 .WithOne(pm => pm.Medicine)
                 .HasForeignKey(pm => pm.MedicineId)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
@@ -164,12 +164,12 @@ namespace DAL
                 .Property(pm => pm.Price).HasColumnType(decimalType);
             builder.Entity<PrescriptionMedicine>()
                 .HasOne(pm => pm.Prescription)
-                .WithMany(p => p.PrescriptionMedicines)
+                .WithMany(p => p.Medicines)
                 .HasForeignKey(pm => pm.PrescriptionId)
                 .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<PrescriptionMedicine>()
                 .HasOne(pm => pm.Medicine)
-                .WithMany(p => p.PrescriptionMedicines)
+                .WithMany(p => p.Prescriptions)
                 .HasForeignKey(pm => pm.MedicineId)
                 .IsRequired().OnDelete(DeleteBehavior.Restrict);
 
