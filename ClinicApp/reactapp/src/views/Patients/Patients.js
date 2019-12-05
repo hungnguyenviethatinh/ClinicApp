@@ -7,10 +7,23 @@ import {
     CardContent,
     Divider,
     Grid,
+    Paper,
+    Typography,
 } from '@material-ui/core';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import { Table } from '../../components/Table';
+import { SearchInput } from '../../components/SearchInput';
+
+import {
+    IdPrefix,
+    Gender,
+} from '../../constants';
+import { GetPatientsByDoctorUrl } from '../../config';
+import Axios, {
+    axiosConfig
+} from '../../common';
+import { encodeId, decodeId } from '../../utils';
+import moment from 'moment';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -28,172 +41,144 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-
-const genderList = [
-    { name: 'Nam', id: 0 },
-    { name: 'Nữ', id: 1 },
-    { name: 'Khác', id: 2 },
-];
-
-const statusList = [
-    { name: 'Mới', id: 0 },
-    { name: 'Tái khám', id: 1 },
-    { name: 'Khám', id: 2 },
-];
-
-const doctorList = [
-    { name: 'Nguyễn A', id: 'DKC-BS01' },
-    { name: 'Nguyễn B', id: 'DKC-BS02' },
-    { name: 'Nguyễn C', id: 'DKC-BS03' },
-];
-
-const patientList = [
-    {
-        ID: 'DKC-BN191118194216',
-        FullName: 'Nguyễn Viết A',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 0,
-    },
-    {
-        ID: 'DKC-BN191118194217',
-        FullName: 'Nguyễn Viết B',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 2,
-    },
-    {
-        ID: 'DKC-BN191118194218',
-        FullName: 'Nguyễn Viết C',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS01',
-        StatusID: 2,
-    },
-    {
-        ID: 'DKC-BN191118194219',
-        FullName: 'Nguyễn Viết D',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 1,
-    },
-    {
-        ID: 'DKC-BN191118194220',
-        FullName: 'Nguyễn Viết E',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 0,
-    },
-];
+const addressSeperator = ',';
 
 const patientColumns = [
     {
-        title: 'Mã BN', field: 'ID',
-        render: rowData => <Link to={`/patient/${rowData.ID}`} children={`${rowData.ID}`} />,
+        title: 'Mã BN', field: 'id', defaultSort: 'asc',
+        render: rowData =>
+            <Link
+                to={`/patient/${rowData.id}`}
+                children={
+                    encodeId(rowData.id, IdPrefix.Patient)
+                } />,
     },
     {
-        title: 'Họ & Tên', field: 'FullName',
+        title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Năm sinh', field: 'YearOfBirth', type: 'numeric',
+        title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
+        render: rowData => moment(rowData.dateOfBirth).year(),
     },
     {
-        title: 'Giới tính', field: 'Gender', type: 'numeric',
-        cellStyle: { minWidth: 100 },
-        filterCellStyle: { marginTop: 0 },
-        lookup: { 0: 'Nam', 1: 'Nữ', 2: 'Khác' },
-        render: rowData => genderList.find(g => g.id === rowData.Gender).name,
+        title: 'Giới tính', field: 'gender', type: 'numeric',
+        render: rowData => [Gender.None, Gender.Male, Gender.Female][rowData.gender],
     },
     {
-        title: 'Số ĐT', field: 'PhoneNumber',
+        title: 'Số ĐT', field: 'phoneNumber',
     },
     {
-        title: 'Địa chỉ', field: 'Address',
-    },
-    {
-        title: 'Nghề nghiệp', field: 'Job',
-        
-    },
-    {
-        title: 'Bác sĩ khám', field: 'DoctorID',
-        render: rowData => doctorList.find(d => d.id === rowData.DoctorID).name,
-        hidden: true,
-    },
-    {
-        title: 'Trạng thái', field: 'StatusID',
-        render: rowData => <Status status={statusList.find(s => s.id === rowData.StatusID).name} />,
-        hidden: true,
+        title: 'Địa chỉ', field: 'address',
+        render: rowData => _.last(rowData.address.split(addressSeperator)),
     },
 ];
 
 const Patients = () => {
-    const classes = useStyles();    
+    const classes = useStyles();
 
-    // const [selectedRow, setSelectedRow] = React.useState(null);
-    // const handleSelectRow = (event, rowData) => {
-    //     if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
-    //         setSelectedRow(rowData);
-    //         setValues({
-    //             ...rowData,
-    //         });
-    //     } else {
-    //         setSelectedRow(null);
-    //         handleResetValue();
-    //     }
-    // };
+    let tableRef = React.createRef();
 
-    React.useEffect(() => {
-        // console.log('values', values);
-        // console.log('images', images);
-    });
+    const refreshData = () => {
+        tableRef.current && tableRef.current.onQueryChange();
+    };
+
+    const [searchValue, setSearchValue] = React.useState('');
+    const handleSearchChange = event => {
+        setSearchValue(event.target.value.trim());
+    };
+    const handleSearch = event => {
+        event.preventDefault();
+        refreshData();
+    };
+
+    const getPatients = (resolve, reject, query) => {
+        let value = searchValue.toLowerCase();
+        const prefix = IdPrefix.Patient.toLowerCase();
+        if (value.startsWith(prefix)) {
+            value = decodeId(value, prefix);
+        }
+        const config = axiosConfig();
+        Axios.get(GetPatientsByDoctorUrl, {
+            ...config,
+            params: {
+                page: query.page + 1,
+                pageSize: query.pageSize,
+                query: value,
+            }
+        }).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const patients = data.patients;
+                const page = query.page;
+                const totalCount = data.totalCount;
+                resolve({
+                    data: patients,
+                    page,
+                    totalCount,
+                });
+            }
+        }).catch((reason) => {
+            if (reason.response) {
+                const { status } = reason.response;
+                if (status === 401) {
+                    handleSnackbarOption('error', ExpiredSessionMsg);
+                }
+            }
+            console.log('Get Patients Error: ', reason);
+        });
+    };
 
     return (
-        <Grid container spacing={3} >
+        <Grid
+            container
+            spacing={3}
+            style={{ height: '100%' }}
+        >
             <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
                 <Card
                     className={classes.card}
+                    style={{ height: '100%' }}
                 >
                     <CardHeader
                         title="DANH SÁCH BỆNH NHÂN"
-                        subheader="Tìm kiếm bệnh nhân"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        <PerfectScrollbar>
-                            <Table
-                                customOptions={{
-                                    filtering: true,
-                                }}
-                                columns={patientColumns}
-                                data={patientList}
-                                // onRowClick={handleSelectRow}
-                                // selectedRow={selectedRow}
+                        <Paper
+                            elevation={0}
+                            className={classes.paper}
+                            style={{ paddingBottom: 10 }}
+                        >
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="TÌM KIẾM BỆNH NHÂN"
                             />
-                        </PerfectScrollbar>
+                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <SearchInput
+                                        placeholder="Nhập mã số, tên hoặc sđt của bệnh nhân"
+                                        value={searchValue}
+                                        onChange={handleSearchChange}
+                                        onSearch={handleSearch}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                        <Table
+                            tableRef={tableRef}
+                            columns={patientColumns}
+                            data={
+                                query => new Promise((resolve, reject) => {
+                                    getPatients(resolve, reject, query);
+                                })
+                            }
+                        />
                     </CardContent>
                 </Card>
             </Grid>
         </Grid>
     );
-}
+};
 
 export default Patients;

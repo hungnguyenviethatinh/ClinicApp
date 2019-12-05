@@ -14,18 +14,28 @@ const styles = {
 
 const AutocompleteComponent = props => {
 
-    const { classes, className, id, label, value, fullWidth, options, onChange } = props;
+    const { 
+        classes, 
+        className, 
+        id, 
+        label, 
+        value, 
+        fullWidth, 
+        options, 
+        onChange,
+        getOptionLabel,
+        ...rest
+    } = props;
 
     return (
         <FormControl
             className={clsx(classes.root, className)}
             fullWidth={fullWidth}
-            margin="dense"
         >
             <Autocomplete
                 id={id}
                 options={options}
-                getOptionLabel={option => option.key}
+                getOptionLabel={getOptionLabel}
                 value={value}
                 onChange={onChange}
                 style={{ width: '100%' }}
@@ -39,6 +49,7 @@ const AutocompleteComponent = props => {
                         fullWidth
                     />
                 )}
+                {...rest}
             />
         </FormControl>
     );
@@ -51,11 +62,9 @@ AutocompleteComponent.propTypes = {
     label: PropTypes.string,
     value: PropTypes.any,
     fullWidth: PropTypes.bool,
-    options: PropTypes.shape({
-        key: propTypes.string,
-        value: propTypes.any,
-    }),
+    options: PropTypes.object,
     onChange: PropTypes.func,
+    getOptionLabel: PropTypes.func,
 };
 
 AutocompleteComponent.defaultProps = {
@@ -64,8 +73,9 @@ AutocompleteComponent.defaultProps = {
     label: '',
     value: null,
     fullWidth: false,
-    options: { },
+    options: null,
     onChange: () => { },
+    getOptionLabel: () => { },
 };
 
 export default withStyles(styles)(AutocompleteComponent);
