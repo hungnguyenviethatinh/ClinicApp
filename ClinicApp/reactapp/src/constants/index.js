@@ -66,6 +66,7 @@ export const color = {
 
 export const IdPrefix = {
     Patient: 'DKC-BN',
+    Prescription: 'DKC-DT',
 };
 
 export const ExpiredSessionMsg = 'Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại!';

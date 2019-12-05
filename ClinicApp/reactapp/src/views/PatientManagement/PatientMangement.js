@@ -99,10 +99,11 @@ const patientColumns = [
 const PatientManagement = () => {
 
     const classes = useStyles();
-    const [tableRef, setTableRef] = React.useState(React.createRef());
+    // const [tableRef, setTableRef] = React.useState(React.createRef());
+    const tableRef = React.useRef(null);
     const refreshData = () => {
-        tableRef && tableRef.onQueryChange();
-        // tableRef.current && tableRef.current.onQueryChange();
+        // tableRef && tableRef.onQueryChange();
+        tableRef.current && tableRef.current.onQueryChange();
     };
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
@@ -149,7 +150,7 @@ const PatientManagement = () => {
     const handleValueChange = prop => event => {
         setValues({
             ...values,
-            [prop]: event.target.value.trim(),
+            [prop]: event.target.value,
         })
     };
     const handleDateoBirthChange = date => {
@@ -364,7 +365,7 @@ const PatientManagement = () => {
     const handleSearch = event => {
         event.preventDefault();
         refreshData();
-    }
+    };
 
     const [updateMode, setUpdateMode] = React.useState(false);
     const [selectedRow, setSelectedRow] = React.useState(null);
@@ -813,7 +814,8 @@ const PatientManagement = () => {
                             </Grid>
                         </Paper>
                         <Table
-                            tableRef={(event) => { setTableRef(event) }}
+                            // tableRef={(event) => { setTableRef(event) }}
+                            tableRef={tableRef}
                             columns={patientColumns}
                             data={
                                 query => new Promise((resolve, reject) => {

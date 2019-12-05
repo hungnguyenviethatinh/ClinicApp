@@ -14,16 +14,17 @@ import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';
 import { Snackbar } from '../../../components/Snackbar';
 import clsx from 'clsx';
-import { 
-    GetPatientInQueueUrl,
+import {
+    GetPatientInQueueUrl, GetPrescriptionsInQueueUrl,
 } from '../../../config';
 import Axios, {
     axiosConfig,
 } from '../../../common';
-import { 
+import {
     ExpiredSessionMsg,
     Gender,
     PatientStatus,
+    PrescriptionStatus,
 } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -45,33 +46,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const genderList = [
-    { name: 'Nam', id: 0 },
-    { name: 'Nữ', id: 1 },
-    { name: 'Khác', id: 2 },
-];
-
-const typeList = [
-    { name: 'Đơn thuốc', id: 0 },
-    { name: 'Đơn chỉ định', id: 1 },
-];
-
-const statusList = [
-    { name: 'Mới', id: 0 },
-    { name: 'Tái khám', id: 1 },
-    { name: 'Khám', id: 2 },
-];
-
-const doctorList = [
-    { name: 'Nguyễn A', id: 'DKC-BS01' },
-    { name: 'Nguyễn B', id: 'DKC-BS02' },
-    { name: 'Nguyễn C', id: 'DKC-BS03' },
-];
-
 const patientQueueColumns = [
-    {
-        title: 'STT', field: 'order', type: 'numeric',
-    },
     {
         title: 'Họ & Tên', field: 'fullName',
     },
@@ -104,70 +79,43 @@ const patientQueueColumns = [
     },
 ];
 
-// const prescriptionColumns = [
-//     {
-//         title: 'Mã số Đơn thuốc', field: 'ID',
-//         render: rowData => <Link to={`/prescription/${rowData.ID}`} children={`${rowData.ID}`} />,
-//     },
-//     {
-//         title: 'Bác sĩ kê đơn', field: 'DoctorID',
-//         render: rowData => doctorList.find(d => d.id === rowData.DoctorID).name,
-//     },
-//     {
-//         title: 'Bệnh nhân', field: 'PatientID',
-//         render: rowData => patientQueue.find(p => p.ID === rowData.PatientID).FullName,
-//     },
-//     {
-//         title: 'Loại đơn', field: 'TypeID',
-//         render: rowData => typeList.find(t => t.id === rowData.TypeID).name,
-//     },
-//     {
-//         title: 'Trạng thái', field: 'StatusID',
-//         render: rowData => <Status status={statusList.find(s => s.id === rowData.StatusID).name} />,
-//     },
-// ];
+const prescriptionColumns = [
+    {
+        title: 'Mã ĐT', field: 'id',
+        render: rowData => <Link to={`/prescription/${rowData.id}`} children={`${rowData.id}`} />,
+    },
+    {
+        title: 'Bác sĩ kê đơn', field: 'doctorId',
+        render: rowData => rowData.doctor.fullName,
+    },
+    {
+        title: 'Bệnh nhân', field: 'patientId',
+        render: rowData => rowData.patient.fullName,
+    },
+    {
+        title: 'Trạng thái', field: 'status',
+        render: rowData => {
+            const status = [
+                PrescriptionStatus.IsNew,
+                PrescriptionStatus.IsPending,
+                PrescriptionStatus.IsPrinted][rowData.status]
+            return <Status status={status} />
+        },
+    },
+];
 
-// const prescriptions = [
-//     {
-//         ID: 'DKC-DT001',
-//         DoctorID: 'DKC-BS01',
-//         PatientID: 'DKC-BN191118194219',
-//         TypeID: 0,
-//         StatusID: 0,
-//     },
-//     {
-//         ID: 'DKC-DT002',
-//         DoctorID: 'DKC-BS02',
-//         PatientID: 'DKC-BN191118194220',
-//         TypeID: 0,
-//         StatusID: 0,
-//     },
-//     {
-//         ID: 'DKC-DT003',
-//         DoctorID: 'DKC-BS03',
-//         PatientID: 'DKC-BN191118194216',
-//         TypeID: 0,
-//         StatusID: 0,
-//     },
-//     {
-//         ID: 'DKC-DT004',
-//         DoctorID: 'DKC-BS01',
-//         PatientID: 'DKC-BN191118194217',
-//         TypeID: 1,
-//         StatusID: 0,
-//     },
-//     {
-//         ID: 'DKC-DT005',
-//         DoctorID: 'DKC-BS01',
-//         PatientID: 'DKC-BN191118194218',
-//         TypeID: 1,
-//         StatusID: 0,
-//     },
-// ];
+const getPatientLogMsgHeader = '[Get Patients Error]';
+const getPrescriptionLogMsgHeader = '[Get Prescriptions Error]';
 
 const ReceptionistView = () => {
     const classes = useStyles();
     let patientTableRef = React.createRef();
+    let prescriptionTableRef = React.createRef();
+
+    const refreshData = () => {
+        patientTableRef.current && patientTableRef.current.onQueryChange();
+        prescriptionTableRef.current && prescriptionTableRef.current.onQueryChange();
+    };
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -190,13 +138,20 @@ const ReceptionistView = () => {
         setOpenSnackbar(true);
     };
 
+    const handleError = (reason, logMsgHeader) => {
+        if (reason.response) {
+            const { status } = reason.response;
+            if (status === 401) {
+                handleSnackbarOption('error', ExpiredSessionMsg);
+            }
+        }
+        console.log(`${logMsgHeader}`, reason);
+    };
+
     const getPatientsInQueue = (resolve, reject, query) => {
         Axios.get(GetPatientInQueueUrl, axiosConfig()).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                data.map((dt, index) => Object.assign(dt, {
-                    order: index + 1,
-                }));
                 const page = query.page;
                 const totalCount = data.length;
                 resolve({
@@ -206,15 +161,31 @@ const ReceptionistView = () => {
                 });
             }
         }).catch((reason) => {
-            if (reason.response) {
-                const { status } = reason.response;
-                if (status === 401) {
-                    handleSnackbarOption('error', ExpiredSessionMsg);
-                }
-            }
-            console.log('[Get Latest Patients Queue Error] ', reason);
+            handleError(reason, getPatientLogMsgHeader);
         });
     };
+
+    const getPrescriptionsInQueue = (resolve, reject, query) => {
+        Axios.get(GetPrescriptionsInQueueUrl, axiosConfig()).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const page = query.page;
+                const totalCount = data.length;
+                resolve({
+                    data,
+                    page,
+                    totalCount,
+                });
+            }
+        }).catch((reason) => {
+            handleError(reason, getPrescriptionLogMsgHeader);
+        });
+    };
+
+    React.useEffect(() => {
+        console.log('ref: ', patientTableRef);
+        console.log('current: ', patientTableRef.current);
+    });
 
     return (
         <Grid
@@ -260,13 +231,18 @@ const ReceptionistView = () => {
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        {/* <Table
+                        <Table
+                            tableRef={prescriptionTableRef}
                             customOptions={{
                                 paging: false,
                             }}
                             columns={prescriptionColumns}
-                            data={[prescriptions]}
-                        /> */}
+                            data={
+                                query => new Promise((resolve, reject) => {
+                                    getPrescriptionsInQueue(resolve, reject, query);
+                                })
+                            }
+                        />
                     </CardContent>
                 </Card>
             </Grid>

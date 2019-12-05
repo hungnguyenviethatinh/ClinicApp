@@ -16,3 +16,5 @@ export const AddHistoryUrl = '/api/receptionist/histories';
 export const AddXrayUrl = '/api/receptionist/xrays';
 export const UpdatePatientUrl = '/api/receptionist/patients';
 export const GetPatientInQueueUrl = '/api/receptionist/patients/queue';
+export const GetPrescriptionsUrl = '/api/receptionist/prescriptions';
+export const GetPrescriptionsInQueueUrl = '/api/receptionist/prescriptions/queue';
