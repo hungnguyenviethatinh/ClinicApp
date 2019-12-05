@@ -4,6 +4,7 @@ namespace ClinicAPI.ViewModels
 {
     public class PrescriptionModel
     {
+        public string Diagnosis { get; set; }
         public PrescriptionStatus Status { get; set; }
 
         public int PatientId { get; set; }

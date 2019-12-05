@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ClinicAPI.Authorization;
 using ClinicAPI.Helpers;
@@ -29,9 +30,44 @@ namespace ClinicAPI.Controllers
 
         [HttpGet("patients")]
         [Authorize(Policies.ViewAllPatientsPolicy)]
-        public IActionResult GetPatients()
+        public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
             var patients = _unitOfWork.Patients.Where(p => p.DoctorId == GetCurrentUserId());
+            int totalCount = patients.Count();
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                int.TryParse(query, out int id);
+
+                patients = patients
+                    .Where(p => (
+                        p.Id == id ||
+                        p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                        p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize);
+            }
+            else
+            {
+                patients = patients
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize);
+            }
+
+            return Ok(new
+            {
+                totalCount,
+                patients,
+            });
+        }
+
+        [HttpGet("patients/queue")]
+        [Authorize(Policies.ViewAllPatientsPolicy)]
+        public IActionResult GetPatientsInQueue()
+        {
+            var patients = _unitOfWork.Patients
+                .Where(p => (p.DoctorId == GetCurrentUserId() && p.Status != PatientStatus.IsChecked))
+                .OrderBy(p => p.UpdatedDate);
 
             return Ok(patients);
         }
@@ -54,6 +90,22 @@ namespace ClinicAPI.Controllers
         public IActionResult GetPrescriptions()
         {
             var prescriptions = _unitOfWork.Prescriptions.Where(p => p.DoctorId == GetCurrentUserId());
+
+            foreach (var prescription in prescriptions)
+            {
+                prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
+            }
+
+            return Ok(prescriptions);
+        }
+
+        [HttpGet("prescriptions/queue")]
+        [Authorize(Policies.ViewAllPrescriptionsPolicy)]
+        public IActionResult GetPrescriptionsInQueue()
+        {
+            var prescriptions = _unitOfWork.Prescriptions
+                .Where(p => (p.DoctorId == GetCurrentUserId() && p.Status == PrescriptionStatus.IsNew))
+                .OrderBy(p => p.UpdatedDate);
 
             foreach (var prescription in prescriptions)
             {

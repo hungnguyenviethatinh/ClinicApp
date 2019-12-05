@@ -8,6 +8,8 @@ namespace DAL.Models
     public class Prescription : IAuditableEntity
     {
         public int Id { get; set; }
+
+        public string Diagnosis { get; set; }
         public PrescriptionStatus Status { get; set; }
 
         public int PatientId { get; set; }
