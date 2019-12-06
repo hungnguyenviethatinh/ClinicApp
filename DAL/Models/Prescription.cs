@@ -9,7 +9,8 @@ namespace DAL.Models
     {
         public int Id { get; set; }
 
-        public string Diagnosis { get; set; }
+        // public string Diagnosis { get; set; }
+        // public string Note { get; set; }
         public PrescriptionStatus Status { get; set; }
 
         public int PatientId { get; set; }

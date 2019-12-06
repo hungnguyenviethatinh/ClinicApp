@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using ClinicAPI.Authorization;
 using ClinicAPI.Helpers;
+using ClinicAPI.ViewModels;
 using DAL;
 using DAL.Core;
+using DAL.Models;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +24,24 @@ namespace ClinicAPI.Controllers
     [ApiController]
     public class DoctorController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public DoctorController(IUnitOfWork unitOfWork, ILogger<DoctorController> logger)
+        public DoctorController(IMapper mapper, IUnitOfWork unitOfWork, ILogger<DoctorController> logger)
         {
+            _mapper = mapper;
             _unitOfWork = unitOfWork;
             _logger = logger;
+        }
+
+        [HttpGet("medicines")]
+        [Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        public IActionResult GetMedicines()
+        {
+            var medicines = _unitOfWork.Medicines.GetAll();
+
+            return Ok(medicines);
         }
 
         [HttpGet("patients")]
@@ -70,6 +86,32 @@ namespace ClinicAPI.Controllers
                 .OrderBy(p => p.UpdatedDate);
 
             return Ok(patients);
+        }
+
+        [HttpGet("patients/current")]
+        [Authorize(Policies.ViewAllPatientsPolicy)]
+        public IActionResult GetCurrentPatient()
+        {
+            var patient = _unitOfWork.Patients
+                .Where(p => (p.DoctorId == GetCurrentUserId() && p.Status == PatientStatus.IsChecking))
+                .OrderBy(p => p.UpdatedDate)
+                .FirstOrDefault();
+
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            var history = _unitOfWork.Histories
+                .Where(h => (h.PatientId == patient.Id && h.IsChecked == false))
+                .OrderBy(h => h.UpdatedDate)
+                .FirstOrDefault();
+
+            return Ok(new
+            {
+                history,
+                patient,
+            });
         }
 
         [HttpGet("patients/{id}")]
@@ -132,15 +174,52 @@ namespace ClinicAPI.Controllers
 
         [HttpPost("prescriptions")]
         [Authorize(Policies.ManageAllPrescriptionsPolicy)]
-        public async Task<IActionResult> AddPrescription()
+        public async Task<IActionResult> AddPrescription([FromBody] PrescriptionModel prescriptionModel)
         {
-            int result = await _unitOfWork.SaveChangesAsync();
-            if (result < 0)
+            if (ModelState.IsValid)
             {
-                throw new Exception($"Error(s) occurred while adding");
+                if (prescriptionModel == null)
+                {
+                    return BadRequest($"{nameof(prescriptionModel)} can not be null.");
+                }
+
+                var prescription = _mapper.Map<Prescription>(prescriptionModel);
+                _unitOfWork.Prescriptions.Add(prescription);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(prescription);
             }
 
-            return Ok();
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("medicines")]
+        [Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        public async Task<IActionResult> AddMedicines([FromBody] IEnumerable<PrescriptionMedicineModel> medicineModels)
+        {
+            if (ModelState.IsValid)
+            {
+                if (medicineModels == null)
+                {
+                    return BadRequest($"{nameof(medicineModels)} can not be null.");
+                }
+
+                var medicines = _mapper.Map<IEnumerable<PrescriptionMedicine>>(medicineModels);
+                _unitOfWork.PrescriptionMedicines.AddRange(medicines);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok();
+            }
+
+            return BadRequest(ModelState);
         }
 
         [HttpPut("prescriptions/{id}")]
