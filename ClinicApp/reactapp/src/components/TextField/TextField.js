@@ -95,7 +95,7 @@ TextFieldComponent.propTypes = {
     required: PropTypes.bool,
     readOnly: PropTypes.bool,
     type: PropTypes.string,
-    value: PropTypes.string,
+    value: PropTypes.any,
     maxLength: PropTypes.number,
     style: PropTypes.object,
     placeholder: PropTypes.string,

@@ -9,24 +9,27 @@ import {
     Paper,
     Typography
 } from '@material-ui/core';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import _ from 'lodash';
-import moment from 'moment';
 
 import { Table } from '../../components/Table';
 import { TextField } from '../../components/TextField';
 import { Select } from '../../components/Select';
 import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
+import { SearchInput } from '../../components/SearchInput';
+
 import { 
     GetAllEmployeesUrl,
     GetEmployeeUrl,
-    GetRoleOptionsUrl,
+    AddEmployeeUrl,
+    UpdateEmployeeUrl,
 } from '../../config';
 import Axios, { 
     axiosConfig,
     axiosConfigJson,
 } from '../../common';
+import { 
+    RoleConstants, 
+} from '../../constants';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -44,12 +47,18 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+const roleOptions = [
+    { label: RoleConstants.AdministratorRoleName, value: RoleConstants.AdministratorRoleName },
+    { label: RoleConstants.DoctorRoleName, value: RoleConstants.DoctorRoleName },
+    { label: RoleConstants.ReceptionistRoleName, value: RoleConstants.ReceptionistRoleName },
+];
+
 const employeeColumns = [
     {
         title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Chức vụ', field: 'role',
+        title: 'Chức vụ', field: 'roleName',
     },
     {
         title: 'Số ĐT', field: 'phoneNumber',
@@ -61,7 +70,8 @@ const employeeColumns = [
 
 const getEmployeeLogMsfHeader = '[Get Employee Error]';
 const getEmployeesLogMsfHeader = '[Get Employees Error]';
-const getRolesLogMsfHeader = '[Get Role Error]';
+const addEmployeeLogMsfHeader = '[Add Employee Error]';
+const updateEmployeeLogMsfHeader = '[Update Employee Error]';
 
 const UserManagement = () => {
 
@@ -109,11 +119,11 @@ const UserManagement = () => {
 
     const [values, setValues] = React.useState({
         UserName: '',
-        FullName: '',
-        Role: '',
-        Email: '',
-        PhoneNumber: '',
         Password: '',
+        FullName: '',
+        RoleName: '',
+        PhoneNumber: '',
+        Email: '',
     });
     const handleValueChange = prop => event => {
         setValues({
@@ -134,11 +144,11 @@ const UserManagement = () => {
     const handleReset = () => {
         setValues({
             UserName: '',
-            FullName: '',
-            Role: '',
-            Email: '',
-            PhoneNumber: '',
             Password: '',
+            FullName: '',
+            RoleName: '',
+            PhoneNumber: '',
+            Email: '',
         });
     };
 
@@ -147,26 +157,60 @@ const UserManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên tài khoản!');
             return;
         }
+        if (!updateMode && !values.Password.trim()){
+            handleSnackbarOption('error', 'Yêu cầu nhập mật khẩu!');
+            return;
+        }
         if (!values.FullName.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
             return;
         }
+        if (!values.RoleName.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu chọn chức vụ!');
+            return;
+        }
+        if (!values.Email.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập email!');
+            return;
+        }
+        if (!values.PhoneNumber.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại!');
+            return;
+        }
 
-        const userModel = {};
         if (!updateMode) {
-            addUser(userModel)
+            addUser(values)
         } else {
             const { id } = selectedRow;
-            updateUser(id, userModel);
+            updateUser(id, values);
         }
     };
 
     const addUser = (userModel) => {
-
+        Axios.post(AddEmployeeUrl, userModel, axiosConfigJson()).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Tạo người dùng mới thành công!');
+                handleReset();
+                refreshData();
+            }
+        }).catch((reason) => {
+            handleError(reason, addEmployeeLogMsfHeader);
+        });
     };
 
     const updateUser = (id, userModel) => {
-
+        const url = `${UpdateEmployeeUrl}/${id}`;
+        Axios.put(url, userModel, axiosConfigJson()).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Cập nhật người dùng thành công!');
+                handleReset();
+                refreshData();
+            }
+        }).catch((reason) => {
+            handleError(reason, updateEmployeeLogMsfHeader);
+        });
     };
 
     const [updateMode, setUpdateMode] = React.useState(false);
@@ -189,12 +233,12 @@ const UserManagement = () => {
         Axios.get(url, axiosConfig()).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { userName, fullName, role, phoneNumber, email } = data;
+                const { userName, fullName, roleName, phoneNumber, email } = data;
                 setValues({
                     ...values,
                     UserName: userName,
                     FullName: fullName,
-                    Role: role,
+                    RoleName: roleName,
                     PhoneNumber: phoneNumber,
                     Email: email,
                 });
@@ -228,26 +272,6 @@ const UserManagement = () => {
             }
         }).catch((reason) => {
             handleError(reason, getEmployeesLogMsfHeader);
-        });
-    };
-
-    const [roleOptions, setRoleOptions] = React.useState({
-        label: '',
-        value: ''
-    });
-    const getRoleOptions = () => {
-        Axios.get(GetRoleOptionsUrl, axiosConfig()).then((response) => {
-            const { status, data } = response;
-            if (status === 200) {
-                const options = [];
-                data.map(({ id, name }) => options.push({
-                    label: name,
-                    value: id,
-                }));
-                setRoleOptions(options);
-            }
-        }).catch((reason) => {
-            handleError(reason, getRolesLogMsfHeader);
         });
     };
 
@@ -293,11 +317,11 @@ const UserManagement = () => {
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <Select
                                         fullWidth
-                                        id="Role"
+                                        id="RoleName"
                                         label="Chức vụ"
-                                        value={values.Role}
+                                        value={values.RoleName}
                                         options={roleOptions}
-                                        onChange={handleValueChange('Role')}
+                                        onChange={handleValueChange('RoleName')}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

@@ -35,4 +35,5 @@ export const GetMedicineUrl = '/api/admin/medicines';
 export const AddMedicineUrl = '/api/admin/medicines';
 export const UpdateMedicineUrl = '/api/admin/medicines';
 export const GetEmployeeUrl = '/api/admin/employees';
-export const GetRoleOptionsUrl = '/api/admin/roles';
+export const AddEmployeeUrl = '/api/admin/employees';
+export const UpdateEmployeeUrl = '/api/admin/employees';

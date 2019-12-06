@@ -58,6 +58,8 @@ const getMedicineErrorMsg = '[Get Medicines Error] ';
 const addPrescriptionErrorMsg = '[Add Prescription Error] ';
 const addMedicineErrorMsg = '[Add Medicines Error] ';
 
+const addressSeperator = ',';
+
 const PrescriptionManagement = () => {
 
     const classes = useStyles();
@@ -123,13 +125,18 @@ const PrescriptionManagement = () => {
                     address,
                     phoneNumber,
                 } = data.patient;
-                
+
+                const Address = address
+                    .split(addressSeperator)
+                    .filter(value => value.trim() !== '')
+                    .join(`${addressSeperator} `);
+
                 setPatient({
                     ...patient,
                     FullName: fullName,
                     DateOfBirth: moment(dateOfBirth).year(),
                     Gender: gender,
-                    Address: address,
+                    Address,
                     PhoneNumber: phoneNumber,
                 });
                 setPrescription({
@@ -178,7 +185,7 @@ const PrescriptionManagement = () => {
 
     const [medicineName, setMedicineName] = React.useState(null);
     const handleMedicineNameChange = index => (event, value) => {
-        medicines[index][MedicineId] = value.id;
+        medicines[index].MedicineId = value.id;
         setMedicines([...medicines]);
         setMedicineName(value);
     };
@@ -360,6 +367,24 @@ const PrescriptionManagement = () => {
                                         id="Gender"
                                         label="Giới tính"
                                         value={patient.Gender}
+                                        readOnly
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={8} lg={8} xl={8} >
+                                    <TextField
+                                        id="Address"
+                                        label="Địa chỉ"
+                                        value={patient.Address}
+                                        readOnly
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
+                                    <TextField
+                                        id="PhoneNumber"
+                                        label="Số iện thoại"
+                                        value={patient.PhoneNumber}
                                         readOnly
                                         fullWidth
                                     />

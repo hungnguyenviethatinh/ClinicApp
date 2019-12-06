@@ -9,15 +9,13 @@ import {
     Paper,
     Typography
 } from '@material-ui/core';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import _ from 'lodash';
-import moment from 'moment';
 
 import { Table } from '../../components/Table';
 import { TextField } from '../../components/TextField';
 import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
 import { Status } from '../../components/Status';
+import { SearchInput } from '../../components/SearchInput';
 
 import {
     DrugStatus,
@@ -158,7 +156,7 @@ const DrugManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên thuốc!');
             return;
         }
-        if (!medicine.Quantity.trim()) {
+        if (!medicine.Quantity.toString().trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập số lượng thuốc!');
             return;
         }
@@ -166,7 +164,7 @@ const DrugManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập đơn vị thuốc!');
             return;
         }
-        if (!medicine.Price.trim()) {
+        if (!medicine.Price.toString().trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập giá thuốc!');
             return;
         }
@@ -211,7 +209,7 @@ const DrugManagement = () => {
     const handleSelectRow = (event, rowData) => {
         if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
             setSelectedRow(rowData);
-            const { id } = rowData.id;
+            const { id } = rowData;
             getMedicine(id);
             setUpdateMode(true);
         } else {

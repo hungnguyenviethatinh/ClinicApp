@@ -14,7 +14,7 @@ import {
 import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';
 import { Snackbar } from '../../../components/Snackbar';
-import { SearchInput } from '../../components/SearchInput';
+import { SearchInput } from '../../../components/SearchInput';
 
 import Axios, {
     axiosConfig
@@ -22,6 +22,8 @@ import Axios, {
 import {
     GetAllPatientsUrl,
     GetAllEmployeesUrl,
+    GetAllPrescriptionsUrl,
+    GetAllMedicinesUrl,
 } from '../../../config';
 import {
     IdPrefix,
@@ -133,7 +135,7 @@ const employeeColumns = [
         title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Chức vụ', field: 'role',
+        title: 'Chức vụ', field: 'roleName',
     },
     {
         title: 'Số ĐT', field: 'phoneNumber',
@@ -401,7 +403,7 @@ const AdminView = () => {
                     className={classes.card}
                 >
                     <CardHeader
-                        title="DANH SÁCH ĐƠN THUỐC/CHỈ ĐỊNH"
+                        title="DANH SÁCH ĐƠN THUỐC"
                         subheader="Tất ơn thuốc đã được kê và lưu trữ trên hệ thống"
                     />
                     <Divider />
