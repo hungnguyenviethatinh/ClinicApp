@@ -12,6 +12,7 @@ namespace ClinicAPI.ViewModels
 
     public class MedicineViewModel : MedicineModel
     {
+        public int Id { get; set; }
         public MedicineStatus Status { get; set; }
     }
 }

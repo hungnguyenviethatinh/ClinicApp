@@ -37,15 +37,6 @@ namespace ClinicAPI.Controllers
             _logger = logger;
         }
 
-        [HttpGet("roles")]
-        [Authorize(Policies.ViewAllRolesPolicy)]
-        public IActionResult GetRoles()
-        {
-            var roles = _unitOfWork.Roles.GetAll();
-
-            return Ok(roles);
-        }
-
         [HttpGet("patients")]
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
@@ -258,9 +249,10 @@ namespace ClinicAPI.Controllers
 
             foreach (var employee in employees)
             {
-                var roles = await _accountManager.GetUserRolesAsync(employee);
+                var roleNames = await _accountManager.GetUserRolesAsync(employee);
+                var roleName = roleNames.FirstOrDefault();
                 var employeeVM = _mapper.Map<UserViewModel>(employee);
-                employeeVM.Role = roles.FirstOrDefault();
+                employeeVM.RoleName = roleName;
                 employeeVMs.Add(employeeVM);
             }
 
@@ -284,11 +276,74 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            var roles = await _accountManager.GetUserRolesAsync(employee);
+            var roleNames = await _accountManager.GetUserRolesAsync(employee);
+            var roleName = roleNames.FirstOrDefault();
             var employeeVM = _mapper.Map<UserViewModel>(employee);
-            employeeVM.Role = roles.FirstOrDefault();
+            employeeVM.RoleName = roleName;
 
             return Ok(employeeVM);
+        }
+
+        [HttpPost("employees")]
+        [Authorize(Policies.ManageAllUsersPolicy)]
+        public async Task<IActionResult> AddEmployee([FromBody] UserEditModel userEditModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (userEditModel == null)
+                {
+                    return BadRequest($"{nameof(userEditModel)} can not be null.");
+                }
+
+                var user = _mapper.Map<User>(userEditModel);
+                var result = await _accountManager.CreateUserAsync(user, new string[] { userEditModel.RoleName }, userEditModel.Password);
+                if (!result.Succeeded)
+                {
+                    return NoContent();
+                }
+
+                return Ok(user);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPut("employees/{id}")]
+        [Authorize(Policies.ManageAllUsersPolicy)]
+        public async Task<IActionResult> UpdateEmployee(string id, [FromBody] UserEditModel userEditModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (userEditModel == null)
+                {
+                    return BadRequest($"{nameof(userEditModel)} can not be null.");
+                }
+
+                var user = await _accountManager.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                _mapper.Map(userEditModel, user);
+                var result = await _accountManager.UpdateUserAsync(user, new string[] { userEditModel.RoleName });
+                if (!result.Succeeded)
+                {
+                    return NoContent();
+                }
+
+                if (!string.IsNullOrWhiteSpace(userEditModel.Password))
+                {
+                    result = await _accountManager.ResetPasswordAsync(user, userEditModel.Password);
+                    if (!result.Succeeded)
+                    {
+                        return NoContent();
+                    }
+                }
+
+                return Ok(user);
+            }
+
+            return BadRequest(ModelState);
         }
     }
 }
