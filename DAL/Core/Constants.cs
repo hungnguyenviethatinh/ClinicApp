@@ -63,4 +63,13 @@
 
         public const string No = "Hết";
     }
+
+    public static class PeriodConstants
+    {
+        public const string Day = "DAY";
+
+        public const string Week = "WEEK";
+
+        public const string Month = "MONTH";
+    }
 }

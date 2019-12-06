@@ -345,5 +345,144 @@ namespace ClinicAPI.Controllers
 
             return BadRequest(ModelState);
         }
+
+        [HttpGet("stat/patient")]
+        [Authorize(Policies.ViewAllPatientsPolicy)]
+        public IActionResult GetPatientStat([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] string period = PeriodConstants.Day)
+        {
+            var patients = _unitOfWork.Patients.GetAll();
+
+            var allPatients = patients
+                .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate);
+            //var newPatients = patients
+            //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate && p.Status == PatientStatus.IsNew);
+            //var checkedPatients = patients
+            //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate && p.Status == PatientStatus.IsChecked);
+            //var recheckPatients = patients
+            //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate && p.Status == PatientStatus.IsRechecking);
+            //var appointedPatients = patients
+            //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate && p.AppointmentDate != null && p.Status != PatientStatus.IsChecked);
+
+            if (period == PeriodConstants.Week)
+            {
+                var allByWeek = allPatients
+                .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
+                .Select(p => new { x = p.Key, y = p.Count() });
+
+                //var isNewByWeek = newPatients
+                //    .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
+                //    .Select(p => new { x = p.Key, y = p.Count() });
+
+                //var isCheckedByWeek = checkedPatients
+                //    .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
+                //    .Select(p => new { x = p.Key, y = p.Count() });
+
+                //var recheckByWeek = recheckPatients
+                //    .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
+                //    .Select(p => new { x = p.Key, y = p.Count() });
+
+                //var appointedByWeek = appointedPatients
+                //     .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
+                //     .Select(p => new { x = p.Key, y = p.Count() });
+
+                return Ok(new
+                {
+                    all = allByWeek,
+                    //isNew = isNewByWeek,
+                    //isChecked = isCheckedByWeek,
+                    //recheck = recheckByWeek,
+                    //appointed = appointedByWeek,
+                });
+            }
+
+            if (period == PeriodConstants.Month)
+            {
+                var allByMonth = allPatients
+                .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
+                .Select(p => new { x = p.Key, y = p.Count() });
+
+                //var isNewByMonth = newPatients
+                //    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
+                //    .Select(p => new { x = p.Key, y = p.Count() });
+
+                //var isCheckedByMonth = checkedPatients
+                //    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
+                //    .Select(p => new { x = p.Key, y = p.Count() });
+
+                //var recheckByMonth = recheckPatients
+                //    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
+                //    .Select(p => new { x = p.Key, y = p.Count() });
+
+                //var appointedByMonth = appointedPatients
+                //    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
+                //    .Select(p => new { x = p.Key, y = p.Count() });
+                return Ok(new
+                {
+                    all = allByMonth,
+                    //isNew = isNewByMonth,
+                    //isChecked = isCheckedByMonth,
+                    //recheck = recheckByMonth,
+                    //appointed = appointedByMonth,
+                });
+            }
+
+            var allByDay = allPatients
+                .GroupBy(p => p.CreatedDate.Date)
+                .Select(p => new { x = p.Key, y = p.Count() });
+
+            //var isNewByDay = newPatients
+            //    .GroupBy(p => p.CreatedDate.Date)
+            //    .Select(p => new { x = p.Key, y = p.Count() });
+
+            //var isCheckedByDay = checkedPatients
+            //    .GroupBy(p => p.CreatedDate.Date)
+            //    .Select(p => new { x = p.Key, y = p.Count() });
+
+            //var recheckByDay = recheckPatients
+            //    .GroupBy(p => p.CreatedDate.Date)
+            //    .Select(p => new { x = p.Key, y = p.Count() });
+
+            //var appointedByDay = appointedPatients
+            //    .GroupBy(p => p.CreatedDate.Date)
+            //    .Select(p => new { x = p.Key, y = p.Count() });
+
+            return Ok(new
+            {
+                all = allByDay,
+                //isNew = isNewByDay,
+                //isChecked = isCheckedByDay,
+                //recheck = recheckByDay,
+                //appointed = appointedByDay,
+            });
+        }
+
+        [HttpGet("stat/prescription")]
+        [Authorize(Policies.ViewAllPatientsPolicy)]
+        public IActionResult GetPrescriptionStat([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] string period = PeriodConstants.Day)
+        {
+            var prescriptions = _unitOfWork.Prescriptions
+                .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate);
+
+            if (period == PeriodConstants.Week)
+            {
+                var byWeek = prescriptions
+                    .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
+                    .Select(p => new { x = p.Key, y = p.Count() });
+                return Ok(byWeek);
+            }
+
+            if (period == PeriodConstants.Month)
+            {
+                var byMonth = prescriptions
+                    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
+                    .Select(p => new { x = p.Key, y = p.Count() });
+                return Ok(byMonth);
+            }
+
+            var byDay = prescriptions
+                .GroupBy(p => p.CreatedDate.Date)
+                .Select(p => new { x = p.Key, y = p.Count() });
+            return Ok(byDay);
+        }
     }
 }
