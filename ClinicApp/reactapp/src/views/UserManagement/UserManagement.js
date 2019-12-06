@@ -6,7 +6,8 @@ import {
     CardContent,
     Divider,
     Grid,
-    Paper
+    Paper,
+    Typography
 } from '@material-ui/core';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import _ from 'lodash';
@@ -17,6 +18,15 @@ import { TextField } from '../../components/TextField';
 import { Select } from '../../components/Select';
 import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
+import { 
+    GetAllEmployeesUrl,
+    GetEmployeeUrl,
+    GetRoleOptionsUrl,
+} from '../../config';
+import Axios, { 
+    axiosConfig,
+    axiosConfigJson,
+} from '../../common';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -35,87 +45,70 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const employeeColumns = [
-    { 
-        title: 'Mã nhân viên', field: 'ID',
+    {
+        title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Họ và Tên', field: 'FullName',
+        title: 'Chức vụ', field: 'role',
     },
     {
-        title: 'Chức vụ', field: 'Role',
+        title: 'Số ĐT', field: 'phoneNumber',
     },
     {
-        title: 'Email', field: 'Email',
-    },
-    {
-        title: 'Số điện thoại', field: 'PhoneNumber',
+        title: 'Email', field: 'email',
     },
 ];
 
-const employees = [
-    {
-        ID: 'DKC-LT191118194200',
-        FullName: 'Lễ tân',
-        Role: 'Lễ tân',
-        Email: 'letan@gmail.com',
-        PhoneNumber: '0989898989',
-    },
-    { 
-        ID: 'DKC-BS01',
-        FullName: 'Nguyễn A',
-        Role: 'Bác sĩ',
-        Email: 'nguyena@gmail.com',
-        PhoneNumber: '09999999',
-    },
-    { 
-        ID: 'DKC-BS02',
-        FullName: 'Nguyễn B',
-        Role: 'Bác sĩ',
-        Email: 'nguyenb@gmail.com',
-        PhoneNumber: '09999999',
-    },
-    { 
-        ID: 'DKC-BS03',
-        FullName: 'Nguyễn C',
-        Role: 'Bác sĩ',
-        Email: 'nguyenc@gmail.com',
-        PhoneNumber: '09999999',
-    },
-];
-
-const roleListOptions = [
-    { label: 'Administrator', value: 'Administrator', },
-    { label: 'Bác sĩ', value: 'Bác sĩ', },
-    { label: 'Lễ tân', value: 'Lễ tân', },
-];
+const getEmployeeLogMsfHeader = '[Get Employee Error]';
+const getEmployeesLogMsfHeader = '[Get Employees Error]';
+const getRolesLogMsfHeader = '[Get Role Error]';
 
 const UserManagement = () => {
 
     const classes = useStyles();
 
+    const tableRef = React.useRef(null);
+    const refreshData = () => {
+        tableRef.current && tableRef.current.onQueryChange();
+    };
+
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
-	const handleSnackbarClose = (event, reason) => {
-		if (reason === 'clickaway') {
-			return;
-		}
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
 
-		setOpenSnackbar(false);
-	};
+        setOpenSnackbar(false);
+    };
 
-	const [snackbarOption, setSnackbarOption] = React.useState({
-		variant: 'success',
-		message: 'Data loaded successfully!',
-	});
-	const handleSnackbarOption = (variant, message) => {
-		setSnackbarOption({
-			variant,
-			message,
+    const [snackbarOption, setSnackbarOption] = React.useState({
+        variant: 'success',
+        message: '',
+    });
+    const handleSnackbarOption = (variant, message) => {
+        setSnackbarOption({
+            variant,
+            message,
         });
         setOpenSnackbar(true);
-	};
+    };
+
+    const handleError = (reason, logMsgHeader) => {
+        if (reason.response) {
+            const { status } = reason.response;
+            if (status === 401) {
+                handleSnackbarOption('error', ExpiredSessionMsg);
+            } else {
+                if (status === 404) {
+                    handleSnackbarOption('error', NotFoundMsg);
+                }
+            }
+        }
+        console.log(`${logMsgHeader}`, reason);
+    };
 
     const [values, setValues] = React.useState({
-        ID: '',
+        UserName: '',
         FullName: '',
         Role: '',
         Email: '',
@@ -129,128 +122,185 @@ const UserManagement = () => {
         })
     };
 
-    const [addMode, setAddMode] = React.useState(false);
+    const [searchValue, setSearchValue] = React.useState('');
+    const handleSearchChange = event => {
+        setSearchValue(event.target.value.trim());
+    };
+    const handleSearch = event => {
+        event.preventDefault();
+        refreshData();
+    };
 
-    const handleAddValue = () => {
+    const handleReset = () => {
         setValues({
-            ID: `DKC-NV${moment().format('YYMMDDHHmmss')}`,
-        });
-        setAddMode(true);
-    };
-
-    const [employeeData, setEmployeeData] = React.useState([ ...employees ]);
-    const handleSaveValue = () => {
-        if (
-            addMode && (!values.ID.trim() || !values.FullName.trim() || !values.Email
-            || !values.Role || !values.PhoneNumber || !values.Password)
-        ) {
-            handleSnackbarOption('error', 'Vui lòng nhập đầy đủ thông tin vào các ô trên!');
-            return;
-        }
-
-        if (
-            !addMode && (!values.ID.trim() || !values.FullName.trim() || !values.Email
-            || !values.Role || !values.PhoneNumber)
-        ) {
-            handleSnackbarOption('error', 'Vui lòng nhập đầy đủ thông tin vào các ô trên!');
-            return;
-        }
-
-        if (!_.isNumber(parseInt(values.PhoneNumber))) {
-            handleSnackbarOption('error', 'Vui lòng nhập số điện thoại hợp lệ!');
-            return;
-        }
-
-        if (employeeData.findIndex(p => p.ID === values.ID) === -1) {
-            setEmployeeData([...employeeData, values]);
-            handleSnackbarOption('success', 'Thêm mới nhân viên thành công!');
-        } else {
-            employeeData.map(e => {
-                e.ID === values.ID && Object.assign(e, values)
-            });
-            setEmployeeData([ ...employeeData ]);
-            handleSnackbarOption('info', 'Cập nhật thông tin nhân viên thành công!');
-        }
-    };
-
-    const handleDelete = () => {
-        setEmployeeData(employeeData.filter(e => e.ID !== selectedRow.ID));
-    };
-
-    const handleResetValue = () => {
-        setValues({
-            ID: '',
+            UserName: '',
             FullName: '',
+            Role: '',
             Email: '',
             PhoneNumber: '',
             Password: '',
         });
     };
 
+    const handleDone = () => {
+        if (!values.UserName.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập tên tài khoản!');
+            return;
+        }
+        if (!values.FullName.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
+            return;
+        }
+
+        const userModel = {};
+        if (!updateMode) {
+            addUser(userModel)
+        } else {
+            const { id } = selectedRow;
+            updateUser(id, userModel);
+        }
+    };
+
+    const addUser = (userModel) => {
+
+    };
+
+    const updateUser = (id, userModel) => {
+
+    };
+
+    const [updateMode, setUpdateMode] = React.useState(false);
     const [selectedRow, setSelectedRow] = React.useState(null);
     const handleSelectRow = (event, rowData) => {
         if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
             setSelectedRow(rowData);
-            setValues({
-                ...rowData,
-            });
-            setAddMode(false);
+            const { id } = rowData;
+            getEmployee(id);
+            setUpdateMode(true);
         } else {
             setSelectedRow(null);
-            handleResetValue();
+            handleReset();
+            setUpdateMode(false);
         }
     };
 
-    React.useEffect(() => {
-        // console.log('values', values);
-        // console.log('images', images);
+    const getEmployee = (id) => {
+        const url = `${GetEmployeeUrl}/${id}`;
+        Axios.get(url, axiosConfig()).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { userName, fullName, role, phoneNumber, email } = data;
+                setValues({
+                    ...values,
+                    UserName: userName,
+                    FullName: fullName,
+                    Role: role,
+                    PhoneNumber: phoneNumber,
+                    Email: email,
+                });
+            }
+        }).catch((reason) => {
+            handleError(reason, getEmployeeLogMsfHeader);
+        });
+    };
+
+    const getEmployees = (resolve, reject, query) => {
+        let value = searchValue;
+        const config = axiosConfig();
+        Axios.get(GetAllEmployeesUrl, {
+            ...config,
+            params: {
+                page: query.page + 1,
+                pageSize: query.pageSize,
+                query: value,
+            }
+        }).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { totalCount, employees } = data;
+                const page = query.page;
+
+                resolve({
+                    data: employees,
+                    page,
+                    totalCount,
+                });
+            }
+        }).catch((reason) => {
+            handleError(reason, getEmployeesLogMsfHeader);
+        });
+    };
+
+    const [roleOptions, setRoleOptions] = React.useState({
+        label: '',
+        value: ''
     });
+    const getRoleOptions = () => {
+        Axios.get(GetRoleOptionsUrl, axiosConfig()).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const options = [];
+                data.map(({ id, name }) => options.push({
+                    label: name,
+                    value: id,
+                }));
+                setRoleOptions(options);
+            }
+        }).catch((reason) => {
+            handleError(reason, getRolesLogMsfHeader);
+        });
+    };
 
     return (
         <Grid container spacing={3} >
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <Card
                     className={classes.card}
+                    style={{ height: '100%' }}
                 >
                     <CardHeader
-                        title="THÔNG TIN NHÂN VIÊN"
+                        title="QUẢN LÍ NHÂN VIÊN"
                         subheader="Thêm, xóa, cập nhật thông tin nhân viên"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
                         <Paper elevation={0} className={classes.paper}>
-                            <Grid container spacing={2} >
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                    <TextField
-                                        id="ID"
-                                        label="Mã Nhân Viên"
-                                        value={values.ID}
-                                        onChange={handleValueChange('ID')}
-                                        readOnly
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="FORM QUẢN LÍ NHÂN VIÊN"
+                            />
+                            <Grid container spacing={2} style={{ marginBottom: 8 }}>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
                                         autoFocus
+                                        id="UserName"
+                                        label="Tên tài khoản"
+                                        value={values.UserName}
+                                        onChange={handleValueChange('UserName')}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                    <TextField
+                                        fullWidth
                                         id="FullName"
                                         label="Họ & Tên"
                                         value={values.FullName}
                                         onChange={handleValueChange('FullName')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <Select
                                         fullWidth
                                         id="Role"
                                         label="Chức vụ"
                                         value={values.Role}
-                                        options={roleListOptions}
+                                        options={roleOptions}
                                         onChange={handleValueChange('Role')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
                                         id="Email"
@@ -259,7 +309,7 @@ const UserManagement = () => {
                                         onChange={handleValueChange('Email')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
                                         id="PhoneNumber"
@@ -269,7 +319,7 @@ const UserManagement = () => {
                                         maxLength={10}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
                                         id="Password"
@@ -279,73 +329,79 @@ const UserManagement = () => {
                                         onChange={handleValueChange('Password')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
-                                    <Grid container justify="flex-end" spacing={2}>
-                                        <Grid item>
-                                            <Button
-                                                color="info"
-                                                children="Đặt lại"
-                                                iconName="reset"
-                                                onClick={handleResetValue}
-                                            />
-                                        </Grid>
-                                        <Grid item>
-                                            <Button
-                                                color="primary"
-                                                children="Lưu"
-                                                iconName="save"
-                                                onClick={handleSaveValue}
-                                            />
-                                        </Grid>
-                                        <Grid item>
-                                            <Button
-                                                color="success"
-                                                children="Thêm"
-                                                iconName="add"
-                                                onClick={handleAddValue}
-                                            />
-                                        </Grid>
-                                    </Grid>
+                            </Grid>
+                            <Grid
+                                container
+                                spacing={2}
+                                justify="flex-end"
+                                style={{ marginTop: 8 }}
+                            >
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Button
+                                        fullWidth
+                                        color="info"
+                                        children="Đặt lại"
+                                        iconName="reset"
+                                        onClick={handleReset}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Button
+                                        fullWidth
+                                        color="success"
+                                        children="Hoàn tất"
+                                        iconName="done"
+                                        onClick={handleDone}
+                                    />
                                 </Grid>
                             </Grid>
                         </Paper>
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <Card
                     className={classes.card}
+                    style={{ height: '100%' }}
                 >
                     <CardHeader
-                        action={
-                            <Grid container spacing={1}>
-                                <Grid item>
-                                    <Button
-                                        color="danger"
-                                        children="Xóa"
-                                        iconName="delete"
-                                        disabled={selectedRow === null}
-                                        onClick={handleDelete}
-                                    />
-                                </Grid>
-                            </Grid>
-                        }
                         title="DANH SÁCH NHÂN VIÊN"
-                        subheader="Tìm kiếm nhân viên"
+                        subheader="Tất cả tài khoản của nhân viên có trên hệ thống"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        <PerfectScrollbar>
-                            <Table
-                                customOptions={{
-                                    filtering: true,
-                                }}
-                                columns={employeeColumns}
-                                data={employeeData}
-                                onRowClick={handleSelectRow}
-                                selectedRow={selectedRow}
+                        <Paper
+                            elevation={0}
+                            className={classes.paper}
+                            style={{ paddingBottom: 10 }}
+                        >
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="TÌM KIẾM NHÂN VIÊN"
                             />
-                        </PerfectScrollbar>
+                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <SearchInput
+                                        placeholder="Nhập tên tài khoản, tên, số dt hoặc email"
+                                        value={searchValue}
+                                        onChange={handleSearchChange}
+                                        onSearch={handleSearch}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                        <Table
+                            tableRef={tableRef}
+                            columns={employeeColumns}
+                            data={
+                                query => new Promise((resolve, reject) => {
+                                    getEmployees(resolve, reject, query);
+                                })
+                            }
+                            onRowClick={handleSelectRow}
+                            selectedRow={selectedRow}
+                        />
                     </CardContent>
                 </Card>
             </Grid>

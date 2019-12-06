@@ -7,11 +7,32 @@ import {
     CardContent,
     Divider,
     Grid,
+    Paper,
+    Typography,
 } from '@material-ui/core';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';
+import { Snackbar } from '../../../components/Snackbar';
+import { SearchInput } from '../../components/SearchInput';
+
+import Axios, {
+    axiosConfig
+} from '../../../common';
+import {
+    GetAllPatientsUrl,
+    GetAllEmployeesUrl,
+} from '../../../config';
+import {
+    IdPrefix,
+    Gender,
+    PatientStatus,
+    PrescriptionStatus,
+    UserStatus,
+    DrugStatus,
+} from '../../../constants';
+import { encodeId, decodeId } from '../../../utils';
+import moment from 'moment';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -29,299 +50,306 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const genderList = [
-    { name: 'Nam', id: 0 },
-    { name: 'Nữ', id: 1 },
-    { name: 'Khác', id: 2 },
-];
-
-const typeList = [
-    { name: 'Đơn thuốc', id: 0 },
-    { name: 'Đơn chỉ định', id: 1 },
-];
-
-const statusList = [
-    { name: 'Mới', id: 0 },
-    { name: 'Tái khám', id: 1 },
-    { name: 'Khám', id: 2 },
-];
-
-const doctorList = [
-    { name: 'Nguyễn A', id: 'DKC-BS01' },
-    { name: 'Nguyễn B', id: 'DKC-BS02' },
-    { name: 'Nguyễn C', id: 'DKC-BS03' },
-];
+const addressSeperator = ',';
 
 const patientQueueColumns = [
     {
-        title: 'Mã BN', field: 'ID',
+        title: 'Mã BN', field: 'id',
+        render: rowData => encodeId(rowData.id, IdPrefix.Patient),
     },
     {
-        title: 'Họ & Tên', field: 'FullName',
+        title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Năm sinh', field: 'YearOfBirth', type: 'numeric',
+        title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
+        render: rowData => moment(rowData.dateOfBirth).year(),
     },
     {
-        title: 'Giới tính', field: 'Gender', type: 'numeric',
-        render: rowData => genderList.find(g => g.id === rowData.Gender).name,
+        title: 'Giới tính', field: 'gender', type: 'numeric',
+        render: rowData => [Gender.None, Gender.Male, Gender.Female][rowData.gender],
     },
     {
-        title: 'Số ĐT', field: 'PhoneNumber',
+        title: 'Số ĐT', field: 'phoneNumber',
     },
     {
-        title: 'Địa chỉ', field: 'Address',
+        title: 'Email', field: 'email',
     },
     {
-        title: 'Nghề nghiệp', field: 'Job',
+        title: 'Địa chỉ', field: 'address',
+        render: rowData => _.last(rowData.address.split(addressSeperator)),
     },
     {
-        title: 'Bác sĩ khám', field: 'DoctorID',
-        render: rowData => doctorList.find(d => d.id === rowData.DoctorID).name,
+        title: 'Nghề nghiệp', field: 'job',
     },
     {
-        title: 'Trạng thái', field: 'StatusID',
-        render: rowData => <Status status={statusList.find(s => s.id === rowData.StatusID).name} />,
-    },
-];
-
-const patientQueue = [
-    {
-        ID: 'DKC-BN191118194216',
-        FullName: 'Nguyễn Viết A',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 0,
-    },
-    {
-        ID: 'DKC-BN191118194217',
-        FullName: 'Nguyễn Viết B',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 2,
-    },
-    {
-        ID: 'DKC-BN191118194218',
-        FullName: 'Nguyễn Viết C',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS01',
-        StatusID: 2,
-    },
-    {
-        ID: 'DKC-BN191118194219',
-        FullName: 'Nguyễn Viết D',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 1,
-    },
-    {
-        ID: 'DKC-BN191118194220',
-        FullName: 'Nguyễn Viết E',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 0,
+        title: 'Trạng thái', field: 'status',
+        render: rowData => {
+            let status = [
+                PatientStatus.IsNew,
+                PatientStatus.IsAppointed,
+                PatientStatus.IsChecking,
+                PatientStatus.IsChecked,
+                PatientStatus.IsRechecking][rowData.status];
+            if (moment(rowData.appointmentDate).isValid()) {
+                status = PatientStatus.IsAppointed;
+            }
+            return <Status status={status} />
+        },
     },
 ];
 
 const prescriptionColumns = [
-    { 
-        title: 'Mã số Đơn thuốc', field: 'ID',
-        render: rowData => <Link to={`/prescription/${rowData.ID}`} children={`${rowData.ID}`} />,
-    },
-    { 
-        title: 'Bác sĩ kê đơn', field: 'DoctorID',
-        render: rowData => doctorList.find(d => d.id === rowData.DoctorID).name,
-    },
-    { 
-        title: 'Bệnh nhân', field: 'PatientID',
-        render: rowData => patientQueue.find(p => p.ID === rowData.PatientID).FullName,
-    },
-    { 
-        title: 'Loại đơn', field: 'TypeID',
-        render: rowData => typeList.find(t => t.id === rowData.TypeID).name,
-    },
-    { 
-        title: 'Trạng thái', field: 'StatusID',
-        render: rowData => <Status status={statusList.find(s => s.id === rowData.StatusID).name} />,
-    },
-];
-
-const prescriptions = [
     {
-        ID: 'DKC-DT001',
-        DoctorID: 'DKC-BS01',
-        PatientID: 'DKC-BN191118194219',
-        TypeID: 0,
-        StatusID: 0,
+        title: 'Mã ĐT', field: 'id',
+        render: rowData =>
+            <Link
+                to={`/prescription/${rowData.id}`}
+                children={
+                    encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
+                } />,
     },
     {
-        ID: 'DKC-DT002',
-        DoctorID: 'DKC-BS02',
-        PatientID: 'DKC-BN191118194220',
-        TypeID: 0,
-        StatusID: 0,
+        title: 'Bác sĩ kê đơn', field: 'doctorId',
+        render: rowData => rowData.doctor.fullName,
     },
     {
-        ID: 'DKC-DT003',
-        DoctorID: 'DKC-BS03',
-        PatientID: 'DKC-BN191118194216',
-        TypeID: 0,
-        StatusID: 0,
+        title: 'Bệnh nhân', field: 'patientId',
+        render: rowData => rowData.patient.fullName,
     },
     {
-        ID: 'DKC-DT004',
-        DoctorID: 'DKC-BS01',
-        PatientID: 'DKC-BN191118194217',
-        TypeID: 1,
-        StatusID: 0,
-    },
-    {
-        ID: 'DKC-DT005',
-        DoctorID: 'DKC-BS01',
-        PatientID: 'DKC-BN191118194218',
-        TypeID: 1,
-        StatusID: 0,
+        title: 'Trạng thái', field: 'status',
+        render: rowData => {
+            const status = [
+                PrescriptionStatus.IsNew,
+                PrescriptionStatus.IsPending,
+                PrescriptionStatus.IsPrinted][rowData.status]
+            return <Status status={status} />
+        },
     },
 ];
 
 const employeeColumns = [
-    { 
-        title: 'Mã nhân viên', field: 'ID',
+    {
+        title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Họ và Tên', field: 'FullName',
+        title: 'Chức vụ', field: 'role',
     },
     {
-        title: 'Chức vụ', field: 'Role',
+        title: 'Số ĐT', field: 'phoneNumber',
     },
     {
-        title: 'Số điện thoại', field: 'PhoneNumber',
+        title: 'Email', field: 'email',
     },
     {
-        title: 'Trạng thái', field: 'Status',
-        render: rowData => <Status status={rowData.Status} />,
+        title: 'Trạng thái', field: 'isActive',
+        render: rowData => {
+            const status = rowData.isActive ? UserStatus.Active : UserStatus.Inactive;
+            return <Status status={status} />
+        },
     },
 ];
 
-const employees = [
+const medicineColumns = [
     {
-        ID: 'DKC-LT191118194200',
-        FullName: 'Lễ tân',
-        Role: 'Lễ tân',
-        PhoneNumber: '0989898989',
-        Status: 'Có mặt',
+        title: 'Tên thuốc', field: 'name',
     },
-    { 
-        ID: 'DKC-BS01',
-        FullName: 'Nguyễn A',
-        Role: 'Bác sĩ',
-        PhoneNumber: '09999999',
-        Status: 'Có mặt',
+    {
+        title: 'Số lượng', field: 'quantity', type: 'numeric',
     },
-    { 
-        ID: 'DKC-BS02',
-        FullName: 'Nguyễn B',
-        Role: 'Bác sĩ',
-        PhoneNumber: '09999999',
-        Status: 'Có mặt',
+    {
+        title: 'Đơn vị', field: 'unit',
     },
-    { 
-        ID: 'DKC-BS03',
-        FullName: 'Nguyễn C',
-        Role: 'Bác sĩ',
-        PhoneNumber: '09999999',
-        Status: 'Vắng mặt',
+    {
+        title: 'Trạng thái', field: 'status',
+        render: rowData => {
+            const status = [
+                DrugStatus.No,
+                DrugStatus.Yes][rowData.status]
+            return <Status status={status} />
+        },
     },
 ];
 
-const drugColumns = [
-    {
-        title: 'Mã số', field: 'ID',
-    },
-    {
-        title: 'Tên thuốc', field: 'Name',
-    },
-    {
-        title: 'Số lượng', field: 'Amount', type: 'numeric',
-    },
-    {
-        title: 'Đơn vị', field: 'Unit',
-    },
-    {
-        title: 'Trạng thái', field: 'Status',
-        render: rowData => <Status status={rowData.Status} />,
-    },
-];
-
-const drugs = [
-    {
-        ID: 'DKC-T001',
-        Name: 'Panadol',
-        Amount: 100,
-        Unit: 'Vỉ',
-        Status: 'Còn',
-    },
-    {
-        ID: 'DKC-T002',
-        Name: 'Panadol Extra',
-        Amount: 100,
-        Unit: 'Viên',
-        Status: 'Còn',
-    },
-    {
-        ID: 'DKC-T003',
-        Name: 'Vitamin',
-        Amount: 100,
-        Unit: 'Vỉ',
-        Status: 'Còn',
-    },
-    {
-        ID: 'DKC-T004',
-        Name: 'Panadol TTTT',
-        Amount: 0,
-        Unit: 'Hộp',
-        Status: 'Hết',
-    },
-    {
-        ID: 'DKC-T005',
-        Name: 'ABc',
-        Amount: 0,
-        Unit: 'Lọ',
-        Status: 'Hết',
-    },
-];
+const getPatientLogMsgHeader = '[Get Patients Error]';
+const getPrescriptionLogMsgHeader = '[Get Prescriptions Error]';
+const getMedicineLogMsfHeader = '[Get Medicines Error]';
+const getEmployeeLogMsfHeader = '[Get Employees Error]';
 
 const AdminView = () => {
     const classes = useStyles();
 
-    // const [selectedRow, setSelectedRow] = React.useState(null);
-    // const handleSelectRow = (event, rowData) => {
-    //     if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
-    //         setSelectedRow(rowData);
-    //     } else {
-    //         setSelectedRow(null);
-    //     }
-    // };
+    let patientTableRef = React.createRef();
+    let prescriptionTableRef = React.createRef();
+    let employeeTableRef = React.createRef();
+
+    const [patientSearchValue, setPatientSearchValue] = React.useState('');
+    const [prescriptionSearchValue, setPrescriptionSearchValue] = React.useState('');
+    const [employeeSearchValue, setEmployeeSearchValue] = React.useState('');
+    const handlePatientSearchChange = event => {
+        setPatientSearchValue(event.target.value.trim());
+    };
+    const handlePatientSearch = event => {
+        event.preventDefault();
+        patientTableRef.current && patientTableRef.current.onQueryChange();
+    };
+    const handlePrescriptionSearchChange = event => {
+        setPrescriptionSearchValue(event.target.value.trim());
+    };
+    const handlePrescriptionSearch = event => {
+        event.preventDefault();
+        prescriptionTableRef.current && prescriptionTableRef.current.onQueryChange();
+    };
+    const handleEmployeeSearchChange = event => {
+        setEmployeeSearchValue(event.target.value.trim());
+    };
+    const handleEmployeeSearch = event => {
+        event.preventDefault();
+        employeeTableRef.current && employeeTableRef.current.onQueryChange();
+    };
+
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
+
+    const [snackbarOption, setSnackbarOption] = React.useState({
+        variant: 'success',
+        message: '',
+    });
+    const handleSnackbarOption = (variant, message) => {
+        setSnackbarOption({
+            variant,
+            message,
+        });
+        setOpenSnackbar(true);
+    };
+
+    const handleError = (reason, logMsgHeader) => {
+        if (reason.response) {
+            const { status } = reason.response;
+            if (status === 401) {
+                handleSnackbarOption('error', ExpiredSessionMsg);
+            }
+        }
+        console.log(`${logMsgHeader}`, reason);
+    };
+
+    const config = axiosConfig();
+
+    const getPatients = (resolve, reject, query) => {
+        let value = patientSearchValue.toLowerCase();
+        const prefix = IdPrefix.Patient.toLowerCase();
+        if (value.startsWith(prefix)) {
+            value = decodeId(value, prefix);
+        }
+        Axios.get(GetAllPatientsUrl, {
+            ...config,
+            params: {
+                page: query.page + 1,
+                pageSize: query.pageSize,
+                query: value,
+            }
+        }).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { totalCount, patients } = data;
+                const page = query.page;
+
+                resolve({
+                    data: patients,
+                    page,
+                    totalCount,
+                });
+            }
+        }).catch((reason) => {
+            handleError(reason, getPatientLogMsgHeader);
+        });
+    };
+
+    const getPrescriptions = (resolve, reject, query) => {
+        let value = prescriptionSearchValue.toLowerCase();
+        const prefix = `${IdPrefix.Prescription}${IdPrefix.Patient}`.toLowerCase();
+        if (value.startsWith(prefix)) {
+            value = decodeId(value, prefix);
+        }
+        Axios.get(GetAllPrescriptionsUrl, {
+            ...config,
+            params: {
+                page: query.page + 1,
+                pageSize: query.pageSize,
+                query: value,
+            }
+        }).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { totalCount, prescriptions } = data;
+                const page = query.page;
+
+                resolve({
+                    data: prescriptions,
+                    page,
+                    totalCount,
+                });
+            }
+        }).catch((reason) => {
+            handleError(reason, getPrescriptionLogMsgHeader);
+        });
+    };
+
+    const getEmployees = (resolve, reject, query) => {
+        let value = employeeSearchValue;
+        Axios.get(GetAllEmployeesUrl, {
+            ...config,
+            params: {
+                page: query.page + 1,
+                pageSize: query.pageSize,
+                query: value,
+            }
+        }).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { totalCount, employees } = data;
+                const page = query.page;
+
+                resolve({
+                    data: employees,
+                    page,
+                    totalCount,
+                });
+            }
+        }).catch((reason) => {
+            handleError(reason, getEmployeeLogMsfHeader);
+        });
+    };
+
+    const getMedicines = (resolve, reject, query) => {
+        Axios.get(GetAllMedicinesUrl, {
+            ...config,
+            params: {
+                page: query.page + 1,
+                pageSize: query.pageSize,
+            }
+        }).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { totalCount, medicines } = data;
+                const page = query.page;
+
+                resolve({
+                    data: medicines,
+                    page,
+                    totalCount,
+                });
+            }
+        }).catch((reason) => {
+            handleError(reason, getMedicineLogMsfHeader);
+        });
+    };
 
     return (
         <Grid container spacing={3} >
@@ -331,18 +359,40 @@ const AdminView = () => {
                 >
                     <CardHeader
                         title="DANH SÁCH BỆNH NHÂN"
-                        subheader="Bệnh nhân đến khám trong ngày"
+                        subheader="Tất cả bệnh nhân có hồ sơ trên hệ thống"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        <PerfectScrollbar>
-                            <Table
-                                columns={patientQueueColumns}
-                                data={patientQueue}
-                                // onRowClick={handleSelectRow}
-                                // selectedRow={selectedRow}
+                        <Paper
+                            elevation={0}
+                            className={classes.paper}
+                            style={{ paddingBottom: 10 }}
+                        >
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="TÌM KIẾM BỆNH NHÂN"
                             />
-                        </PerfectScrollbar>
+                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <SearchInput
+                                        placeholder="Nhập mã số, tên hoặc sđt của bệnh nhân"
+                                        value={patientSearchValue}
+                                        onChange={handlePatientSearchChange}
+                                        onSearch={handlePatientSearch}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                        <Table
+                            tableRef={patientTableRef}
+                            columns={patientQueueColumns}
+                            data={
+                                query => new Promise((resolve, reject) => {
+                                    getPatients(resolve, reject, query);
+                                })
+                            }
+                        />
                     </CardContent>
                 </Card>
             </Grid>
@@ -352,18 +402,40 @@ const AdminView = () => {
                 >
                     <CardHeader
                         title="DANH SÁCH ĐƠN THUỐC/CHỈ ĐỊNH"
-                        subheader="Đơn thuốc/chỉ định được kê trong ngày "
+                        subheader="Tất ơn thuốc đã được kê và lưu trữ trên hệ thống"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        <PerfectScrollbar>
-                            <Table
-                                columns={prescriptionColumns}
-                                data={prescriptions}
-                                // onRowClick={handleSelectRow}
-                                // selectedRow={selectedRow}
+                        <Paper
+                            elevation={0}
+                            className={classes.paper}
+                            style={{ paddingBottom: 10 }}
+                        >
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="TÌM KIẾM ĐƠN THUỐC"
                             />
-                        </PerfectScrollbar>
+                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <SearchInput
+                                        placeholder="Nhập mã đt, tên bác sĩ hoặc tên bệnh nhân để tìm đơn thuốc"
+                                        value={prescriptionSearchValue}
+                                        onChange={handlePrescriptionSearchChange}
+                                        onSearch={handlePrescriptionSearch}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                        <Table
+                            tableRef={prescriptionTableRef}
+                            columns={prescriptionColumns}
+                            data={
+                                query => new Promise((resolve, reject) => {
+                                    getPrescriptions(resolve, reject, query);
+                                })
+                            }
+                        />
                     </CardContent>
                 </Card>
             </Grid>
@@ -373,17 +445,40 @@ const AdminView = () => {
                 >
                     <CardHeader
                         title="DANH SÁCH NHÂN VIÊN"
+                        subheader="Tất cả tài khoản của nhân viên có trên hệ thống"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        <PerfectScrollbar>
-                            <Table
-                                columns={employeeColumns}
-                                data={employees}
-                                // onRowClick={handleSelectRow}
-                                // selectedRow={selectedRow}
+                        <Paper
+                            elevation={0}
+                            className={classes.paper}
+                            style={{ paddingBottom: 10 }}
+                        >
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="TÌM KIẾM NHÂN VIÊN"
                             />
-                        </PerfectScrollbar>
+                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <SearchInput
+                                        placeholder="Nhập tên tài khoản, tên, số dt hoặc email"
+                                        value={employeeSearchValue}
+                                        onChange={handleEmployeeSearchChange}
+                                        onSearch={handleEmployeeSearch}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                        <Table
+                            tableRef={employeeTableRef}
+                            columns={employeeColumns}
+                            data={
+                                query => new Promise((resolve, reject) => {
+                                    getEmployees(resolve, reject, query);
+                                })
+                            }
+                        />
                     </CardContent>
                 </Card>
             </Grid>
@@ -393,20 +488,29 @@ const AdminView = () => {
                 >
                     <CardHeader
                         title="DANH SÁCH THUỐC"
+                        subheader="Thuốc hiện có trong hệ thống"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        <PerfectScrollbar>
-                            <Table
-                                columns={drugColumns}
-                                data={drugs}
-                                // onRowClick={handleSelectRow}
-                                // selectedRow={selectedRow}
-                            />
-                        </PerfectScrollbar>
+                        <Table
+                            columns={medicineColumns}
+                            data={
+                                query => new Promise((resolve, reject) => {
+                                    getMedicines(resolve, reject, query);
+                                })
+                            }
+                        />
                     </CardContent>
                 </Card>
             </Grid>
+            <Snackbar
+                vertical="bottom"
+                horizontal="right"
+                variant={snackbarOption.variant}
+                message={snackbarOption.message}
+                open={openSnackbar}
+                handleClose={handleSnackbarClose}
+            />
         </Grid>
     );
 }

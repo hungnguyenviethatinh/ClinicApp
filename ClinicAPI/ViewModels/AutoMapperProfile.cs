@@ -25,6 +25,15 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<PrescriptionMedicine, PrescriptionMedicineModel>();
             CreateMap<PrescriptionMedicineModel, PrescriptionMedicine>();
+
+            CreateMap<User, UserViewModel>()
+                .ForMember(u => u.Role, map => map.Ignore());
+
+            CreateMap<Medicine, MedicineModel>();
+            CreateMap<MedicineModel, Medicine>();
+
+            CreateMap<Medicine, MedicineViewModel>()
+                .ForMember(m => m.Status, map => map.Ignore());
         }
     }
 }

@@ -33,8 +33,13 @@ export const PrescriptionStatusEnum = {
 };
 
 export const DrugStatus = {
-    Yes: 'Còn',
     No: 'Hết',
+    Yes: 'Còn',
+};
+
+export const DrugStatusEnum = {
+    'Hết': 0,
+    'Còn': 1,
 };
 
 export const UserStatus = {

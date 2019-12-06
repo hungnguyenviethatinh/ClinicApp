@@ -22,4 +22,10 @@
         IsPending,
         IsPrinted,
     }
+
+    public enum MedicineStatus
+    {
+        No,
+        Yes,
+    }
 }

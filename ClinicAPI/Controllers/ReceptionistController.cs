@@ -191,22 +191,27 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ManageAllPatientsPolicy)]
         public async Task<IActionResult> UpdatePatient(int id, [FromBody] PatientModel patientModel)
         {
-            var patient = _unitOfWork.Patients.Find(id);
-            if (patient == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                var patient = _unitOfWork.Patients.Find(id);
+                if (patient == null)
+                {
+                    return NotFound();
+                }
+
+                _mapper.Map(patientModel, patient);
+                _unitOfWork.Patients.Update(patient);
+
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(patient);
             }
 
-            _mapper.Map(patientModel, patient);
-            _unitOfWork.Patients.Update(patient);
-
-            int result = await _unitOfWork.SaveChangesAsync();
-            if (result < 1)
-            {
-                return NoContent();
-            }
-
-            return Ok(patient);
+            return BadRequest(ModelState);
         }
 
         [HttpGet("prescriptions")]

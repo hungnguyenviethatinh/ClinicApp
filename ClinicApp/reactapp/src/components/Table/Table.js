@@ -15,7 +15,7 @@ const Table = props => {
         ) ? '#EEE' : '#FFF',
     });
 
-    const [pageSize, setPageSize] = React.useState(20);
+    const [pageSize, setPageSize] = React.useState(10);
     const updatePageSize = (pageSize) => {
 		setPageSize(pageSize);
 	};
@@ -33,7 +33,7 @@ const Table = props => {
                 toolbar: false,
                 rowStyle: styleSelectedRow,
                 pageSize,
-                pageSizeOptions: [20, 50, 100],
+                pageSizeOptions: [10, 20, 50],
                 debounceInterval: 500,
                 ...customOptions,
             }}

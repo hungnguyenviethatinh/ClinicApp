@@ -27,6 +27,7 @@ import {
     PatientStatus,
     PrescriptionStatus,
 } from '../../../constants';
+import { encodeId } from '../../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -79,7 +80,12 @@ const patientQueueColumns = [
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
-        render: rowData => <Link to={`/prescription/${rowData.id}`} children={`${rowData.id}`} />,
+        render: rowData => 
+            <Link 
+            to={`/prescription/${rowData.id}`} 
+            children={
+                encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
+            } />,
     },
     {
         title: 'Bệnh nhân', field: 'patientId',

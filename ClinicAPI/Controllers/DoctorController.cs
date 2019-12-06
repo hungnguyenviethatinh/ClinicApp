@@ -224,23 +224,34 @@ namespace ClinicAPI.Controllers
 
         [HttpPut("prescriptions/{id}")]
         [Authorize(Policies.ManageAllPrescriptionsPolicy)]
-        public async Task<IActionResult> UpdatePrescription(int id)
+        public async Task<IActionResult> UpdatePrescription(int id, PrescriptionModel prescriptionModel)
         {
-            var prescription = await _unitOfWork.Prescriptions.FindAsync(id);
-            if (prescription == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                if (prescriptionModel == null)
+                {
+                    return BadRequest($"{nameof(prescriptionModel)} can not be null.");
+                }
+
+                var prescription = await _unitOfWork.Prescriptions.FindAsync(id);
+                if (prescription == null)
+                {
+                    return NotFound();
+                }
+
+                _mapper.Map(prescriptionModel, prescription);
+                _unitOfWork.Prescriptions.Update(prescription);
+
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 0)
+                {
+                    throw new Exception($"Error(s) occurred while updating {id}.");
+                }
+
+                return Ok(prescription);
             }
 
-            _unitOfWork.Prescriptions.Update(prescription);
-
-            int result = await _unitOfWork.SaveChangesAsync();
-            if (result < 0)
-            {
-                throw new Exception($"Error(s) occurred while updating {id}.");
-            }
-
-            return Ok(prescription);
+            return BadRequest(ModelState);
         }
 
         private string GetCurrentUserId()

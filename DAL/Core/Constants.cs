@@ -56,4 +56,11 @@
 
         public const string IsPrinted = "Đã in";
     }
+
+    public static class MedicineStatusConstants
+    {
+        public const string Yes = "Còn";
+
+        public const string No = "Hết";
+    }
 }

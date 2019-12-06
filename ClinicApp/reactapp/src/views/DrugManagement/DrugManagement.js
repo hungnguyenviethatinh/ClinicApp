@@ -6,7 +6,8 @@ import {
     CardContent,
     Divider,
     Grid,
-    Paper
+    Paper,
+    Typography
 } from '@material-ui/core';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import _ from 'lodash';
@@ -16,6 +17,22 @@ import { Table } from '../../components/Table';
 import { TextField } from '../../components/TextField';
 import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
+import { Status } from '../../components/Status';
+
+import {
+    DrugStatus,
+    ExpiredSessionMsg
+} from '../../constants';
+import Axios, {
+    axiosConfig,
+    axiosConfigJson,
+} from '../../common';
+import {
+    GetAllMedicinesUrl,
+    GetMedicineUrl,
+    AddMedicineUrl,
+    UpdateMedicineUrl
+} from '../../config';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -33,66 +50,42 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const drugColumns = [
+const medicineColumns = [
     {
-        title: 'Mã số', field: 'ID',
+        title: 'Tên thuốc', field: 'name',
     },
     {
-        title: 'Tên thuốc', field: 'Name',
+        title: 'Số lượng', field: 'quantity', type: 'numeric',
     },
     {
-        title: 'Số lượng', field: 'Amount', type: 'numeric',
+        title: 'Đơn vị', field: 'unit',
     },
     {
-        title: 'Đơn vị', field: 'Unit',
+        title: 'Giá', field: 'price',
     },
     {
-        title: 'Giá', field: 'Price', type: 'numeric',
-        render: rowData => rowData.Price + ' VNĐ',
-    },
-];
-
-const drugs = [
-    {
-        ID: 'DKC-T001',
-        Name: 'Panadol',
-        Amount: '100',
-        Unit: 'Vỉ',
-        Price: '100000',
-    },
-    {
-        ID: 'DKC-T002',
-        Name: 'Panadol Extra',
-        Amount: '100',
-        Unit: 'Viên',
-        Price: '100000',
-    },
-    {
-        ID: 'DKC-T003',
-        Name: 'Vitamin',
-        Amount: '100',
-        Unit: 'Vỉ',
-        Price: '100000',
-    },
-    {
-        ID: 'DKC-T004',
-        Name: 'Panadol TTTT',
-        Amount: '0',
-        Unit: 'Hộp',
-        Price: '100000',
-    },
-    {
-        ID: 'DKC-T005',
-        Name: 'ABc',
-        Amount: '0',
-        Unit: 'Lọ',
-        Price: '100000',
+        title: 'Trạng thái', field: 'status',
+        render: rowData => {
+            const status = [
+                DrugStatus.No,
+                DrugStatus.Yes][rowData.status]
+            return <Status status={status} />
+        },
     },
 ];
 
-const UserManagement = () => {
+const getMedicinesLogMsfHeader = '[Get Medicines Error]';
+const getMedicineLogMsfHeader = '[Get Medicine Error]';
+const addMedicineLogMsfHeader = '[Add Medicine Error]';
+
+const DrugManagement = () => {
 
     const classes = useStyles();
+
+    const tableRef = React.useRef(null);
+    const refreshData = () => {
+        tableRef.current && tableRef.current.onQueryChange();
+    };
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -115,218 +108,293 @@ const UserManagement = () => {
         setOpenSnackbar(true);
     };
 
-    const [values, setValues] = React.useState({
-        ID: '',
+    const handleError = (reason, logMsgHeader) => {
+        if (reason.response) {
+            const { status } = reason.response;
+            if (status === 401) {
+                handleSnackbarOption('error', ExpiredSessionMsg);
+            } else {
+                if (status === 404) {
+                    handleSnackbarOption('error', NotFoundMsg);
+                }
+            }
+        }
+        console.log(`${logMsgHeader}`, reason);
+    };
+
+    const [searchValue, setSearchValue] = React.useState('');
+    const handleSearchChange = event => {
+        setSearchValue(event.target.value.trim());
+    };
+    const handleSearch = event => {
+        event.preventDefault();
+        refreshData();
+    };
+
+    const [medicine, setMedicine] = React.useState({
         Name: '',
-        Amount: '',
+        Quantity: '',
         Unit: '',
         Price: '',
     });
-    const handleValueChange = prop => event => {
-        setValues({
-            ...values,
+    const handleMedicineChange = prop => event => {
+        setMedicine({
+            ...medicine,
             [prop]: event.target.value,
         })
     };
 
-    const handleAddValue = () => {
-        setValues({
-            ID: `DKC-T${moment().format('YYMMDDHHmmss')}`,
-        });
-    };
-
-    const [drugData, setDrugData] = React.useState([...drugs]);
-    const handleSaveValue = () => {
-        if (
-            !values.ID.trim() || !values.Name.trim() || !values.Amount || !values.Unit || !values.Price
-        ) {
-            handleSnackbarOption('error', 'Vui lòng nhập đầy đủ thông tin vào các ô trên!');
-            return;
-        }
-
-        if (!_.isNumber(parseInt(values.Amount)) || !_.isNumber(parseInt(values.Price))) {
-            handleSnackbarOption('error', 'Vui lòng nhập số vào ô Số lượng hợp lệ!');
-            return;
-        }
-
-        if (drugData.findIndex(p => p.ID === values.ID) === -1) {
-            setDrugData([...drugData, values]);
-            handleSnackbarOption('success', 'Thêm thuốc mới thành công!');
-        } else {
-            drugData.map(d => {
-                d.ID === values.ID && Object.assign(d, values)
-            });
-            setDrugData([...drugData]);
-            handleSnackbarOption('info', 'Cập nhật thông tin thuốc thành công!');
-        }
-    };
-
-    const handleDelete = () => {
-        setDrugData(drugData.filter(e => e.ID !== selectedRow.ID));
-    };
-
-    const handleResetValue = () => {
-        setValues({
-            ID: '',
+    const handleReset = () => {
+        setMedicine({
             Name: '',
-            Amount: '',
+            Quantity: '',
             Unit: '',
             Price: '',
         });
     };
 
+    const handleDone = () => {
+        if (!medicine.Name.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập tên thuốc!');
+            return;
+        }
+        if (!medicine.Quantity.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập số lượng thuốc!');
+            return;
+        }
+        if (!medicine.Unit.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập đơn vị thuốc!');
+            return;
+        }
+        if (!medicine.Price.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập giá thuốc!');
+            return;
+        }
+
+        if (!updateMode) {
+            addMedicine(medicine);
+        } else {
+            const { id } = selectedRow;
+            updateMedicine(id, medicine);
+        }
+    };
+
+    const addMedicine = (medicineModel) => {
+        Axios.post(AddMedicineUrl, medicineModel, axiosConfigJson()).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Thêm thuốc vào kho dữ liêu thành công!');
+                handleReset();
+                refreshData();
+            }
+        }).catch((reason) => {
+            handleError(reason, addMedicineLogMsfHeader);
+        });
+    };
+
+    const updateMedicine = (id, medicineModel) => {
+        const url = `${UpdateMedicineUrl}/${id}`;
+        Axios.put(url, medicineModel, axiosConfigJson()).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Cập nhật dữ liệu thuốc thành công!');
+                handleReset();
+                refreshData();
+            }
+        }).catch((reason) => {
+            handleError(reason, addMedicineLogMsfHeader);
+        });
+    };
+
+    const [updateMode, setUpdateMode] = React.useState(false);
     const [selectedRow, setSelectedRow] = React.useState(null);
     const handleSelectRow = (event, rowData) => {
         if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
             setSelectedRow(rowData);
-            setValues({
-                ...rowData,
-            });
+            const { id } = rowData.id;
+            getMedicine(id);
+            setUpdateMode(true);
         } else {
             setSelectedRow(null);
-            handleResetValue();
+            handleReset();
+            setUpdateMode(false);
         }
     };
 
-    React.useEffect(() => {
-        // console.log('values', values);
-        // console.log('images', images);
-    });
+    const config = axiosConfig();
+
+    const getMedicine = (id) => {
+        const url = `${GetMedicineUrl}/${id}`;
+        Axios.get(url, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { name, quantity, unit, price } = data;
+                setMedicine({
+                    Name: name,
+                    Quantity: quantity,
+                    Unit: unit,
+                    Price: price,
+                });
+            }
+        }).catch((reason) => {
+            handleError(reason, getMedicineLogMsfHeader);
+        });
+    };
+
+    const getMedicines = (resolve, reject, query) => {
+        Axios.get(GetAllMedicinesUrl, {
+            ...config,
+            params: {
+                page: query.page + 1,
+                pageSize: query.pageSize,
+            }
+        }).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { totalCount, medicines } = data;
+                const page = query.page;
+
+                resolve({
+                    data: medicines,
+                    page,
+                    totalCount,
+                });
+            }
+        }).catch((reason) => {
+            handleError(reason, getMedicinesLogMsfHeader);
+        });
+    };
 
     return (
         <Grid container spacing={3} >
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <Card
                     className={classes.card}
+                    style={{ height: '100%' }}
                 >
                     <CardHeader
-                        title="THÔNG TIN NHÂN VIÊN"
-                        subheader="Thêm, xóa, cập nhật thông tin nhân viên"
+                        title="QUẢN LÝ THUỐC"
+                        subheader="Thêm, cập nhật thuốc tại đây"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
                         <Paper elevation={0} className={classes.paper}>
-                            <Grid container spacing={2} >
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                    <TextField
-                                        id="ID"
-                                        label="Mã số thuốc"
-                                        value={values.ID}
-                                        onChange={handleValueChange('ID')}
-                                        readOnly
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="BIỂU MẪU THÊM THUỐC"
+                            />
+                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
                                         autoFocus
                                         id="Name"
                                         label="Tên thuốc"
-                                        value={values.Name}
-                                        onChange={handleValueChange('Name')}
+                                        value={medicine.Name}
+                                        onChange={handleMedicineChange('Name')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <TextField
                                         fullWidth
-                                        autoFocus
-                                        id="Amount"
+                                        id="Quantity"
                                         label="Số lượng"
-                                        value={values.Amount}
-                                        onChange={handleValueChange('Amount')}
+                                        value={medicine.Quantity}
+                                        onChange={handleMedicineChange('Quantity')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <TextField
                                         fullWidth
                                         id="Unit"
                                         label="Đơn vị"
-                                        value={values.Unit}
-                                        onChange={handleValueChange('Unit')}
+                                        value={medicine.Unit}
+                                        onChange={handleMedicineChange('Unit')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <TextField
                                         fullWidth
                                         id="Price"
                                         label="Giá"
-                                        value={values.Price}
-                                        onChange={handleValueChange('Giá')}
+                                        value={medicine.Price}
+                                        onChange={handleMedicineChange('Price')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    <Grid 
-                                        container 
-                                        justify="flex-end" 
-                                        spacing={2}
-                                        style={{ width: '100%', margin: 0 }}
-                                    >
-                                        <Grid item>
-                                            <Button
-                                                color="info"
-                                                children="Đặt lại"
-                                                iconName="reset"
-                                                onClick={handleResetValue}
-                                            />
-                                        </Grid>
-                                        <Grid item>
-                                            <Button
-                                                color="primary"
-                                                children="Lưu"
-                                                iconName="save"
-                                                onClick={handleSaveValue}
-                                            />
-                                        </Grid>
-                                        <Grid item>
-                                            <Button
-                                                color="success"
-                                                children="Thêm"
-                                                iconName="add"
-                                                onClick={handleAddValue}
-                                            />
-                                        </Grid>
-                                    </Grid>
+                            </Grid>
+                            <Grid
+                                container
+                                spacing={2}
+                                justify="flex-end"
+                                style={{ marginTop: 8 }}
+                            >
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Button
+                                        fullWidth
+                                        color="info"
+                                        children="Đặt lại"
+                                        iconName="reset"
+                                        onClick={handleReset}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Button
+                                        fullWidth
+                                        color="success"
+                                        children="Hoàn tất"
+                                        iconName="done"
+                                        onClick={handleDone}
+                                    />
                                 </Grid>
                             </Grid>
                         </Paper>
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <Card
                     className={classes.card}
+                    style={{ height: '100%' }}
                 >
                     <CardHeader
-                        action={
-                            <Grid container spacing={1}>
-                                <Grid item>
-                                    <Button
-                                        color="danger"
-                                        children="Xóa"
-                                        iconName="delete"
-                                        disabled={selectedRow === null}
-                                        onClick={handleDelete}
-                                    />
-                                </Grid>
-                            </Grid>
-                        }
                         title="DANH SÁCH THUỐC"
-                        subheader="Tìm kiếm thuốc"
+                        subheader="Danh sách thuốc đã có dữ liệu trên hệ thống"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        <PerfectScrollbar>
-                            <Table
-                                customOptions={{
-                                    filtering: true,
-                                }}
-                                columns={drugColumns}
-                                data={drugData}
-                                onRowClick={handleSelectRow}
-                                selectedRow={selectedRow}
+                        <Paper
+                            elevation={0}
+                            className={classes.paper}
+                            style={{ paddingBottom: 10 }}
+                        >
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="TÌM KIẾM THUỐC"
                             />
-                        </PerfectScrollbar>
+                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <SearchInput
+                                        placeholder="Nhập tên thuốc để tìm kiếm"
+                                        value={searchValue}
+                                        onChange={handleSearchChange}
+                                        onSearch={handleSearch}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                        <Table
+                            tableRef={tableRef}
+                            columns={medicineColumns}
+                            data={
+                                query => new Promise((resolve, reject) => {
+                                    getMedicines(resolve, reject, query);
+                                })
+                            }
+                            onRowClick={handleSelectRow}
+                            selectedRow={selectedRow}
+                        />
                     </CardContent>
                 </Card>
             </Grid>
@@ -342,4 +410,4 @@ const UserManagement = () => {
     );
 }
 
-export default UserManagement;
+export default DrugManagement;

@@ -26,3 +26,13 @@ export const GetMedicineNameOptionsUrl = '/api/doctor/medicines';
 export const GetCurrentPatientUrl = '/api/doctor/patients/current';
 export const AddPrescriptionUrl = 'api/doctor/prescriptions'
 export const AddMedicinesUrl = 'api/doctor/medicines';
+// Addmin Api:
+export const GetAllPatientsUrl = '/api/admin/patients';
+export const GetAllPrescriptionsUrl = '/api/admin/prescriptions';
+export const GetAllMedicinesUrl = '/api/admin/medicines';
+export const GetAllEmployeesUrl = '/api/admin/employees';
+export const GetMedicineUrl = '/api/admin/medicines';
+export const AddMedicineUrl = '/api/admin/medicines';
+export const UpdateMedicineUrl = '/api/admin/medicines';
+export const GetEmployeeUrl = '/api/admin/employees';
+export const GetRoleOptionsUrl = '/api/admin/roles';
