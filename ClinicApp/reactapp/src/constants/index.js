@@ -76,3 +76,12 @@ export const IdPrefix = {
 
 export const ExpiredSessionMsg = 'Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại!';
 export const NotFoundMsg = 'Không tìm thấy thông tin!';
+
+export const PeriodConstants = {
+    Day: 'DAY',
+    Week: 'WEEK',
+    Month: 'MONTH',
+};
+
+export const dataDateTimeFormat = 'YYYY-MM-DD';
+export const displayDateTimeFormat = 'DD-MM-YYYY';

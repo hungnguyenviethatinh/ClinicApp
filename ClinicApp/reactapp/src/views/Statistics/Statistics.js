@@ -15,6 +15,19 @@ import { DatePicker } from '../../components/DatePicker';
 import { Select } from '../../components/Select';
 import { Button } from '../../components/Button';
 
+import Axios, {
+    axiosConfig,
+} from '../../common';
+import {
+    GetPatientStatUrl,
+    GetPrescriptionStatUrl,
+} from '../../config';
+import {
+    PeriodConstants,
+    dataDateTimeFormat,
+    displayDateTimeFormat
+} from '../../constants';
+
 const useStyles = makeStyles(theme => ({
     card: {},
     content: {
@@ -38,25 +51,21 @@ const useStyles = makeStyles(theme => ({
 
 const periodOptions = [
     {
-        value: 'DAY',
+        value: PeriodConstants.Day,
         label: 'Ngày',
     },
     {
-        value: 'WEEK',
+        value: PeriodConstants.Week,
         label: 'Tuần',
     },
     {
-        value: 'MONTH',
+        value: PeriodConstants.Month,
         label: 'Tháng',
     },
 ];
 
-const xAxisPatientData = ['1/1/2019', '2/1/2019', '3/1/2019', '4/1/2019', '5/1/2019', '6/1/2019', '7/1/2019', '8/1/2019', '9/1/2019', '10/1/2019' ];
-const patientData = [10, 2, 15, 5, 8, 0, 0, 11, 12, 1 ];
-
-const xAxisPresData = ['1/1/2019', '2/1/2019', '3/1/2019', '4/1/2019', '5/1/2019', '6/1/2019', '7/1/2019', '8/1/2019', '9/1/2019', '10/1/2019' ];
-const presDrugData = [9, 1, 15, 5, 8, 0, 0, 11, 12, 1 ];
-const presRequData = [1, 1, 0, 5, 8, 0, 0, 11, 12, 1 ];
+const getPrescriptionStatErrorMsg = '[Get Prescription Stat Error]';
+const getPatientStatErrorMsg = '[Get Patient Stat Error]';
 
 const StatisticsView = () => {
     const classes = useStyles();
@@ -64,12 +73,12 @@ const StatisticsView = () => {
     let patientChart = React.createRef();
     let prescriptionChart = React.createRef();
 
-    const [selectedTimePeriod, setSelectedTimePeriod] = React.useState('DAY');
+    const [selectedTimePeriod, setSelectedTimePeriod] = React.useState(PeriodConstants.Day);
     const handleTimePeriodChange = event => {
         setSelectedTimePeriod(event.target.value);
     };
 
-    const [selectedStartDate, setSelectedStartDate] = React.useState(moment());
+    const [selectedStartDate, setSelectedStartDate] = React.useState(moment().subtract(7, 'day'));
     const [selectedEndDate, setSelectedEndDate] = React.useState(moment());
     const handleStartDateChange = date => {
         setSelectedStartDate(date);
@@ -79,8 +88,153 @@ const StatisticsView = () => {
     };
 
     const handleSearch = () => {
-
+        getPatientStat();
     };
+
+    const handleError = (reason, logMsgHeader) => {
+        if (reason.response) {
+            const { status } = reason.response;
+            if (status === 401) {
+                handleSnackbarOption('error', ExpiredSessionMsg);
+            } else {
+                if (status === 404) {
+                    handleSnackbarOption('error', NotFoundMsg);
+                }
+            }
+        }
+        console.log(`${logMsgHeader}`, reason);
+    };
+
+    const [xAxisPatientData, setXAxisPatientData] = React.useState([]);
+    const [allPatientData, setAllPatientData] = React.useState([]);
+    // const [isNewPatientData, setIsNewPatientData] = React.useState([]);
+    // const [isCheckedPatientData, setIsCheckedPatientData] = React.useState([]);
+    // const [recheckPatientData, setRecheckPatientData] = React.useState([]);
+    // const [appointedPatientData, setAppointedPatientData] = React.useState([]);
+    const getPatientStat = () => {
+        const config = axiosConfig();
+        const startDate = selectedStartDate.format(dataDateTimeFormat);
+        const endDate = selectedEndDate.format(dataDateTimeFormat);
+        const period = selectedTimePeriod;
+
+        Axios.get(GetPatientStatUrl, {
+            ...config,
+            params: {
+                startDate,
+                endDate,
+                period,
+            }
+        }).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { all, /* isNew, isChecked, recheck, appointed */ } = data;
+                let xAxis = [];
+                const allY = [];
+                // const isNewY = [];
+                // const isCheckedY = [];
+                // const recheckY = [];
+                // const appointedY = [];
+
+                all.map(({ x, y }) => {
+                    xAxis.push(x);
+                    allY.push(y);
+                });
+                // isNew.map(({ x, y }) => {
+                //     isNewY.push(y);
+                // });
+                // isChecked.map(({ x, y }) => {
+                //     isCheckedY.push(y);
+                // });
+                // recheck.map(({ x, y }) => {
+                //     recheckY.push(y);
+                // });
+                // appointed.map(({ x, y }) => {
+                //     appointedY.push(y);
+                // });
+                if (selectedTimePeriod === PeriodConstants.Day) {
+                    xAxis = xAxis.map(x => moment(x).format(displayDateTimeFormat));
+                }
+                if (selectedTimePeriod === PeriodConstants.Week) {
+                    xAxis = xAxis.map(({ year, week }) => `T${week}-${year}`);
+                }
+                if (selectedTimePeriod === PeriodConstants.Month) {
+                    xAxis = xAxis.map(({ year, month }) => `${month}-${year}`);
+                }
+                setXAxisPatientData(xAxis);
+                setAllPatientData(allY);
+                // setIsNewPatientData(isNewY);
+                // setIsCheckedPatientData(isCheckedY);
+                // setRecheckPatientData(recheckY);
+                // setAppointedPatientData(appointedY);
+            }
+        }).catch((reason) => {
+            handleError(reason, getPatientStatErrorMsg);
+        });
+    };
+
+    const [presSelectedTimePeriod, setPresSelectedTimePeriod] = React.useState(PeriodConstants.Day);
+    const handlePresTimePeriodChange = event => {
+        setPresSelectedTimePeriod(event.target.value);
+    };
+
+    const [presSelectedStartDate, setPresSelectedStartDate] = React.useState(moment().subtract(7, 'day'));
+    const [presSelectedEndDate, setPresSelectedEndDate] = React.useState(moment());
+    const handlePresStartDateChange = date => {
+        setPresSelectedStartDate(date);
+    };
+    const handlePresEndDateChange = date => {
+        setPresSelectedEndDate(date);
+    };
+
+    const handlePrescriptionStatSearch = () => {
+        getPrescriptionStat();
+    };
+
+    const [xAxisPrescriptionData, setXAxisPrescriptionData] = React.useState([]);
+    const [prescriptionData, setPrescriptionData] = React.useState([]);
+    const getPrescriptionStat = () => {
+        const config = axiosConfig();
+        const startDate = presSelectedStartDate.format(dataDateTimeFormat);
+        const endDate = presSelectedEndDate.format(dataDateTimeFormat);
+        const period = presSelectedTimePeriod;
+
+        Axios.get(GetPrescriptionStatUrl, {
+            ...config,
+            params: {
+                startDate,
+                endDate,
+                period,
+            }
+        }).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const xAxis = [];
+                const yAxis = [];
+                data.map(({ x, y }) => {
+                    xAxis.push(x);
+                    yAxis.push(y);
+                });
+                if (presSelectedTimePeriod === PeriodConstants.Day) {
+                    xAxis.map(x => moment(x).format(displayDateTimeFormat));
+                }
+                if (presSelectedTimePeriod === PeriodConstants.Week) {
+                    xAxis.map(({ year, week }) => `T${week}-${year}`);
+                }
+                if (presSelectedTimePeriod === PeriodConstants.Month) {
+                    xAxis.map(({ year, month }) => `${month}-${year}`);
+                }
+                setXAxisPrescriptionData(xAxis);
+                setPrescriptionData(yAxis);
+            }
+        }).catch((reason) => {
+            handleError(reason, getPrescriptionStatErrorMsg);
+        });
+    };
+
+    React.useEffect(() => {
+        getPatientStat();
+        getPrescriptionStat();
+    }, []);
 
     return (
         <Grid container spacing={3} >
@@ -142,7 +296,7 @@ const StatisticsView = () => {
                                             {
                                                 name: 'Số bệnh nhân',
                                                 type: 'line',
-                                                data: patientData,
+                                                data: allPatientData,
                                                 axisTick: {
                                                     alignWithLabel: true,
                                                 },
@@ -151,6 +305,54 @@ const StatisticsView = () => {
                                                     width: 3,
                                                 },
                                             },
+                                            // {
+                                            //     name: 'Mới',
+                                            //     type: 'line',
+                                            //     data: isNewPatientData,
+                                            //     axisTick: {
+                                            //         alignWithLabel: true,
+                                            //     },
+                                            //     lineStyle: {
+                                            //         color: '#28a745',
+                                            //         width: 3,
+                                            //     },
+                                            // },
+                                            // {
+                                            //     name: 'Đã khám',
+                                            //     type: 'line',
+                                            //     data: isCheckedPatientData,
+                                            //     axisTick: {
+                                            //         alignWithLabel: true,
+                                            //     },
+                                            //     lineStyle: {
+                                            //         color: '#dc3545',
+                                            //         width: 3,
+                                            //     },
+                                            // },
+                                            // {
+                                            //     name: 'Tái khám',
+                                            //     type: 'line',
+                                            //     data: recheckPatientData,
+                                            //     axisTick: {
+                                            //         alignWithLabel: true,
+                                            //     },
+                                            //     lineStyle: {
+                                            //         color: '#6c757d',
+                                            //         width: 3,
+                                            //     },
+                                            // },
+                                            // {
+                                            //     name: 'Đặt lịch hẹn',
+                                            //     type: 'line',
+                                            //     data: appointedPatientData,
+                                            //     axisTick: {
+                                            //         alignWithLabel: true,
+                                            //     },
+                                            //     lineStyle: {
+                                            //         color: '#17a2b8',
+                                            //         width: 3,
+                                            //     },
+                                            // },
                                         ]}
                                     />
                                 </Grid>
@@ -175,16 +377,16 @@ const StatisticsView = () => {
                                     <DatePicker
                                         id="startDatePicker"
                                         label="Từ ngày"
-                                        value={selectedStartDate}
-                                        onChange={(date) => handleStartDateChange(date)}
+                                        value={presSelectedStartDate}
+                                        onChange={(date) => handlePresStartDateChange(date)}
                                     />
                                 </Grid>
                                 <Grid item>
                                     <DatePicker
                                         id="endDatePicker"
                                         label="Tới ngày"
-                                        value={selectedEndDate}
-                                        onChange={(date) => handleEndDateChange(date)}
+                                        value={presSelectedEndDate}
+                                        onChange={(date) => handlePresEndDateChange(date)}
                                     />
                                 </Grid>
                                 <Grid item>
@@ -192,8 +394,8 @@ const StatisticsView = () => {
                                         className={classes.select}
                                         id="timePeriod"
                                         label="Theo"
-                                        value={selectedTimePeriod}
-                                        onChange={handleTimePeriodChange}
+                                        value={presSelectedTimePeriod}
+                                        onChange={handlePresTimePeriodChange}
                                         options={periodOptions}
                                     />
                                 </Grid>
@@ -203,39 +405,27 @@ const StatisticsView = () => {
                                         color="success"
                                         iconName="search"
                                         style={{ marginTop: 0, marginBottom: 0 }}
-                                        onClick={handleSearch}
+                                        onClick={handlePrescriptionStatSearch}
                                     />
                                 </Grid>
                             </Grid>
                             <Grid container spacing={3} style={{ marginTop: 24 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    <BarChart
+                                    <LineChart
                                         ref={(e) => { prescriptionChart = e; }}
                                         style={{ height: '350px', width: '100%' }}
-                                        xAxisData={xAxisPresData}
+                                        xAxisData={xAxisPrescriptionData}
                                         series={[
                                             {
-                                                name:'Đơn thuốc',
-                                                type:'bar',
-                                                stack: 'Số lượng đơn',
-                                                data: presDrugData,
+                                                name: 'Số lượng đơn thuốc',
+                                                type: 'line',
+                                                data: prescriptionData,
                                                 axisTick: {
                                                     alignWithLabel: true,
                                                 },
-                                                itemStyle: {
-                                                    color: 'blue',
-                                                },
-                                            },
-                                            {
-                                                name:'Đơn chỉ định',
-                                                type:'bar',
-                                                stack: 'Số lượng đơn',
-                                                data: presRequData,
-                                                axisTick: {
-                                                    alignWithLabel: true,
-                                                },
-                                                itemStyle: {
-                                                    color: 'green',
+                                                lineStyle: {
+                                                    color: '#3f51b5',
+                                                    width: 3,
                                                 },
                                             },
                                         ]}
