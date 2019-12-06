@@ -6,10 +6,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 const styles = {
-    root: {
-        marginTop: 0,
-        marginBottom: 0,
-    },
+    root: { },
 };
 
 const AutocompleteComponent = props => {
@@ -38,7 +35,6 @@ const AutocompleteComponent = props => {
                 getOptionLabel={getOptionLabel}
                 value={value}
                 onChange={onChange}
-                style={{ width: '100%' }}
                 renderInput={params => (
                     <TextField
                         {...params}
@@ -62,7 +58,7 @@ AutocompleteComponent.propTypes = {
     label: PropTypes.string,
     value: PropTypes.any,
     fullWidth: PropTypes.bool,
-    options: PropTypes.object,
+    options: PropTypes.arrayOf(PropTypes.object),
     onChange: PropTypes.func,
     getOptionLabel: PropTypes.func,
 };
@@ -73,7 +69,7 @@ AutocompleteComponent.defaultProps = {
     label: '',
     value: null,
     fullWidth: false,
-    options: null,
+    options: [{ }],
     onChange: () => { },
     getOptionLabel: () => { },
 };
