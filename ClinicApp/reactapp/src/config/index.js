@@ -39,3 +39,7 @@ export const AddEmployeeUrl = '/api/admin/employees';
 export const UpdateEmployeeUrl = '/api/admin/employees';
 export const GetPatientStatUrl = '/api/admin/stat/patient';
 export const GetPrescriptionStatUrl = '/api/admin/stat/prescription';
+// Shared:
+export const PatientUrl = '/api/patient';
+export const PrescriptionUrl = '/api/prescription';
+export const HistoryByPatientIdUrl = '/api/history/patient';

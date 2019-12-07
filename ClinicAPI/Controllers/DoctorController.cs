@@ -114,18 +114,33 @@ namespace ClinicAPI.Controllers
             });
         }
 
-        [HttpGet("patients/{id}")]
-        [Authorize(Policies.ViewAllPatientsPolicy)]
-        public async Task<IActionResult> GetPatient(int id)
-        {
-            var patient = await _unitOfWork.Patients.FindAsync(id);
-            if (patient == null)
-            {
-                return NotFound();
-            }
+        //[HttpGet("patients/{id}")]
+        //[Authorize(Policies.ViewAllPatientsPolicy)]
+        //public async Task<IActionResult> GetPatient(int id)
+        //{
+        //    var patient = await _unitOfWork.Patients.FindAsync(id);
+        //    if (patient == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(patient);
-        }
+        //    var histories = _unitOfWork.Histories.Where(h => h.PatientId == id);
+        //    foreach (var history in histories)
+        //    {
+        //        var prescriptions = _unitOfWork.Prescriptions.Where(p => p.HistoryId == history.Id);
+        //        var xrays = _unitOfWork.XRayImages.Where(p => p.HistoryId == history.Id);
+        //        foreach(var prescription in prescriptions)
+        //        {
+        //            history.Prescriptions.Add(prescription);
+        //        }
+        //        foreach (var xray in xrays)
+        //        {
+        //            history.XRayImages.Add(xray);
+        //        }
+        //    }
+
+        //    return Ok(patient);
+        //}
 
         [HttpGet("prescriptions")]
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]

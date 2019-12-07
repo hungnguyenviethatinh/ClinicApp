@@ -32,41 +32,53 @@ const Profile = props => {
 
 	const classes = useStyles();
 
-	const token = localStorage.getItem('access_token');
-	const decoded = decodeJWT(token);
-	const { fullname, role } = decoded;
+	const [currentUser, setCurrentUser] = React.useState({
+		fullname: '',
+		role: '',
+	});
+
+	React.useEffect(() => {
+		const token = localStorage.getItem('access_token');
+
+		if (token) {
+			const decoded = decodeJWT(token);
+			if (decoded.fullname && decoded.role) {
+				const { fullname, role } = decoded;
+				setCurrentUser({
+					fullname,
+					role,
+				});
+			}
+		}
+	}, []);
 
 	return (
 		<div
 			{...rest}
 			className={clsx(classes.root, className)}
 		>
-			{
-				<React.Fragment>
-					<div style={{
-						position: 'absolute',
-						right: 0,
-						top: -10,
-					}}>
-						<Link to="/account/me">
-							<IconButton
-								aria-label="user"
-								className={classes.margin}
-								fontSize="medium"
-							>
-								<Settings fontSize="inherit" />
-							</IconButton>
-						</Link>
-					</div>
-					<Typography
-						className={classes.name}
-						variant="h4"
+			<div style={{
+				position: 'absolute',
+				right: 0,
+				top: -10,
+			}}>
+				<Link to="/account/me">
+					<IconButton
+						aria-label="user"
+						className={classes.margin}
+						fontSize="medium"
 					>
-						{fullname}
-					</Typography>
-					<Typography variant="body2">{role}</Typography>
-				</React.Fragment>
-			}
+						<Settings fontSize="inherit" />
+					</IconButton>
+				</Link>
+			</div>
+			<Typography
+				className={classes.name}
+				variant="h4"
+			>
+				{currentUser.fullname}
+			</Typography>
+			<Typography variant="body2">{currentUser.role}</Typography>
 		</div>
 	);
 };

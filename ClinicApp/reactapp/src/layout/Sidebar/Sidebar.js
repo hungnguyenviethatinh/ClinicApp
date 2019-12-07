@@ -46,7 +46,7 @@ const adminMenus = [
         icon: <DashboardIcon />
     },
     {
-        title: 'Quản lí người dùng',
+        title: 'Quản lí nhân viên',
         href: '/user-management',
         icon: <PeopleIcon />
     },

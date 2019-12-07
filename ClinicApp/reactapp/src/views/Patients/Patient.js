@@ -8,11 +8,19 @@ import {
     Grid,
     Paper,
     CssBaseline,
-    Typography
+    Typography,
+    FormControl
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Table } from '../../components/Table';
+import { Tab, TabContent } from '../../components/Tab';
+import { Snackbar } from '../../components/Snackbar';
+
+import moment from 'moment';
+import { PatientStatus, ExpiredSessionMsg, NotFoundMsg, displayDateTimeFormat, } from '../../constants';
+import { DateTimePicker } from '@material-ui/pickers';
+import Axios, { axiosConfig } from '../../common';
+import { PatientUrl, HistoryByPatientIdUrl } from '../../config';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -28,304 +36,138 @@ const useStyles = makeStyles(theme => ({
         overflow: 'auto',
         flexDirection: 'column',
     },
-    bordered: {
-        border: '1px solid rgba(224, 224, 224, 1)',
-    },
 }));
 
-const typeList = [
-    { name: 'Đơn thuốc', id: 0 },
-    { name: 'Đơn chỉ định', id: 1 },
-];
-
-const genderList = [
-    { name: 'Nam', id: 0 },
-    { name: 'Nữ', id: 1 },
-    { name: 'Khác', id: 2 },
-];
-
-const statusList = [
-    { name: 'Mới', id: 0 },
-    { name: 'Đã in', id: 1 },
-];
-
-const doctorList = [
-    { name: 'Nguyễn A', id: 'DKC-BS01' },
-    { name: 'Nguyễn B', id: 'DKC-BS02' },
-    { name: 'Nguyễn C', id: 'DKC-BS03' },
-];
-
-const patients = [
-    {
-        ID: 'DKC-BN191118194216',
-        FullName: 'Nguyễn Viết A',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 0,
-    },
-    {
-        ID: 'DKC-BN191118194217',
-        FullName: 'Nguyễn Viết B',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 2,
-    },
-    {
-        ID: 'DKC-BN191118194218',
-        FullName: 'Nguyễn Viết C',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS01',
-        StatusID: 2,
-    },
-    {
-        ID: 'DKC-BN191118194219',
-        FullName: 'Nguyễn Viết D',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 1,
-    },
-    {
-        ID: 'DKC-BN191118194220',
-        FullName: 'Nguyễn Viết E',
-        YearOfBirth: 1995,
-        Gender: 0,
-        PhoneNumber: '0987654321',
-        Address: 'tp hồ chí minh',
-        Job: 'sinh viên',
-        DoctorID: 'DKC-BS03',
-        StatusID: 0,
-    },
-];
-
-const diagnosis = [
-    { name: 'Mất ngủ đau đầu', id: 0 },
-    { name: 'Rối loạn', id: 1 },
-    { name: 'Đau bụng', id: 2 },
-    { name: 'Đau tim', id: 3 },
-    { name: 'Bệnh lười', id: 4 },
-];
-
-const drugs = [
-    {
-        ID: 'DKC-DT001',
-        Name: 'Panadol',
-        Amount: 50,
-        Unit: 'Viên',
-        Usage: 'Ngày uống 3 lần, lần 2 viên.'
-    },
-    {
-        ID: 'DKC-DT002',
-        Name: 'Panadol',
-        Amount: 50,
-        Unit: 'Viên',
-        Usage: 'Ngày uống 3 lần, lần 2 viên.'
-    },
-    {
-        ID: 'DKC-DT003',
-        Name: 'Panadol',
-        Amount: 50,
-        Unit: 'Viên',
-        Usage: 'Ngày uống 3 lần, lần 2 viên.'
-    },
-    {
-        ID: 'DKC-DT008',
-        Name: 'Panadol',
-        Amount: 50,
-        Unit: 'Viên',
-        Usage: 'Ngày uống 3 lần, lần 2 viên.'
-    },
-    {
-        ID: 'DKC-DT006',
-        Name: 'Panadol',
-        Amount: 50,
-        Unit: 'Viên',
-        Usage: 'Ngày uống 3 lần, lần 2 viên.'
-    },
-    {
-        ID: 'DKC-DT007',
-        Name: 'Panadol',
-        Amount: 50,
-        Unit: 'Viên',
-        Usage: 'Ngày uống 3 lần, lần 2 viên.'
-    },
-];
-
-const requests = [
-    {
-        ID: 'DKC-DT004',
-        Name: 'Chụp X Quang',
-        Description: 'Đi chụp X Quang tim'
-    },
-    {
-        ID: 'DKC-DT005',
-        Name: 'Chụp X Quang',
-        Description: 'Đi chụp X Quang tim'
-    },
-    {
-        ID: 'DKC-DT009',
-        Name: 'Chụp X Quang',
-        Description: 'Đi chụp X Quang tim'
-    },
-    {
-        ID: 'DKC-DT010',
-        Name: 'Chụp X Quang',
-        Description: 'Đi chụp X Quang tim'
-    },
-];
-
-const prescriptions = [
-    {
-        ID: 'DKC-DT001',
-        DoctorID: 'DKC-BS01',
-        PatientID: 'DKC-BN191118194219',
-        DiagnosisID: 0,
-        TypeID: 0,
-        StatusID: 0,
-        Date: new Date('2019-01-01'),
-        Note: 'Hẹn tái khám ngày 08-01-2019',
-    },
-    {
-        ID: 'DKC-DT002',
-        DoctorID: 'DKC-BS02',
-        PatientID: 'DKC-BN191118194220',
-        DiagnosisID: 1,
-        TypeID: 0,
-        StatusID: 0,
-        Date: new Date('2019-01-01'),
-        Note: 'Nhớ giữ ấm',
-    },
-    {
-        ID: 'DKC-DT003',
-        DoctorID: 'DKC-BS03',
-        PatientID: 'DKC-BN191118194216',
-        DiagnosisID: 2,
-        TypeID: 0,
-        StatusID: 0,
-        Date: new Date('2019-01-01'),
-        Note: 'Hạn chế uống rượu bia'
-    },
-    {
-        ID: 'DKC-DT004',
-        DoctorID: 'DKC-BS01',
-        PatientID: 'DKC-BN191118194217',
-        DiagnosisID: 1,
-        TypeID: 1,
-        StatusID: 0,
-        Date: new Date('2019-01-01'),
-        Note: 'Không nên uống cafe',
-    },
-    {
-        ID: 'DKC-DT005',
-        DoctorID: 'DKC-BS01',
-        PatientID: 'DKC-BN191118194218',
-        DiagnosisID: 2,
-        TypeID: 1,
-        StatusID: 0,
-        Date: new Date('2019-01-01'),
-        Note: '',
-    },
-    {
-        ID: 'DKC-DT006',
-        DoctorID: 'DKC-BS01',
-        PatientID: 'DKC-BN191118194219',
-        DiagnosisID: 3,
-        TypeID: 0,
-        StatusID: 1,
-        Date: new Date('2019-10-01'),
-        Note: 'Đã trị dứt điểm',
-    },
-    {
-        ID: 'DKC-DT007',
-        DoctorID: 'DKC-BS02',
-        PatientID: 'DKC-BN191118194220',
-        DiagnosisID: 4,
-        TypeID: 0,
-        StatusID: 1,
-        Date: new Date('2019-10-01'),
-        Note: '',
-    },
-    {
-        ID: 'DKC-DT008',
-        DoctorID: 'DKC-BS03',
-        PatientID: 'DKC-BN191118194216',
-        DiagnosisID: 4,
-        TypeID: 0,
-        StatusID: 1,
-        Date: new Date('2019-01-01'),
-        Note: '',
-    },
-    {
-        ID: 'DKC-DT009',
-        DoctorID: 'DKC-BS01',
-        PatientID: 'DKC-BN191118194217',
-        DiagnosisID: 0,
-        TypeID: 1,
-        StatusID: 1,
-        Date: new Date('2019-01-01'),
-        Note: '',
-    },
-    {
-        ID: 'DKC-DT010',
-        DoctorID: 'DKC-BS01',
-        PatientID: 'DKC-BN191118194218',
-        DiagnosisID: 3,
-        TypeID: 1,
-        StatusID: 1,
-        Date: new Date('2019-01-01'),
-        Note: '',
-    },
-];
-
 const historyColumns = [
-    { 
-        title: 'Ngày khám', field: 'Date', type: 'date',
+    {
+        title: 'Ngày khám', field: 'createdDate', type: 'date',
+        render: rowData => moment(rowData.createdDate).format(displayDateTimeFormat),
     },
-    { 
-        title: 'Bác sĩ khám', field: 'DoctorID',
-        render: rowData => doctorList.find(d => d.id === rowData.DoctorID).name,
-    },
-    { 
-        title: 'Chẩn đoán', field: 'DiagnosisID',
-        render: rowData => diagnosis.find(d => d.id === rowData.DiagnosisID).name,
-    },
-    { 
-        title: 'Số đơn thuốc / chỉ định', field: 'ID',
-        render: rowData => <Link to={`/prescription/${rowData.ID}`} children={`${rowData.ID}`} />,
-    },
-    { 
-        title: 'Ghi chú', field: 'Note',
+    {
+        title: 'Bác sĩ khám', field: 'doctorId',
+        render: rowData => rowData.doctor.fullName,
     },
 ];
+
+const tabNames = ['Thông tin bệnh nhân', 'Lịch sử khám bệnh', 'Tra cứu lịch hẹn'];
+const addressSeperator = ',';
 
 const Patient = () => {
     const classes = useStyles();
+
     const { id } = useParams();
+    const tableRef = React.createRef();
 
-    const [patient, setPatient] = React.useState(null);
-    const [prescription, setPrescription] = React.useState([]);
-    const handlePrint = () => {
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
 
+        setOpenSnackbar(false);
+    };
+
+    const [snackbarOption, setSnackbarOption] = React.useState({
+        variant: 'success',
+        message: '',
+    });
+    const handleSnackbarOption = (variant, message) => {
+        setSnackbarOption({
+            variant,
+            message,
+        });
+        setOpenSnackbar(true);
+    };
+
+    const [patient, setPatient] = React.useState({
+        FullName: '',
+        DateOfBirth: null,
+        Gender: '',
+        Address: '',
+        Job: '',
+        PhoneNumber: '',
+        Email: '',
+        AppointmentDate: null,
+        Status: PatientStatus.IsNew,
+    });
+
+    const getPatient = () => {
+        const url = `${PatientUrl}/${id}`;
+        Axios.get(url, axiosConfig()).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const {
+                    fullName,
+                    dateOfBirth,
+                    gender,
+                    address,
+                    job,
+                    phoneNumber,
+                    email,
+                    appointmentDate,
+                } = data;
+
+                const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
+                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(displayDateTimeFormat) : null;
+                const Address = address.split(addressSeperator).filter(value => value.trim() !== '').join(`${addressSeperator} `);
+
+                setPatient({
+                    FullName: fullName,
+                    DateOfBirth,
+                    Gender: gender,
+                    Address,
+                    Job: job,
+                    PhoneNumber: phoneNumber,
+                    Email: email,
+                    AppointmentDate,
+                });
+            }
+        }).catch((reason) => {
+            if (reason.response) {
+                const { status } = reason.response;
+                if (status === 401) {
+                    handleSnackbarOption('error', ExpiredSessionMsg);
+                } else if (status === 404) {
+                    handleSnackbarOption('error', NotFoundMsg);
+                }
+            }
+            console.log('[Get Patient By Id Error] ', reason);
+        });
+    };
+
+    const getHistories = (resolve, reject, query) => {
+        const url = `${HistoryByPatientIdUrl}/${id}`;
+        Axios.get(url, axiosConfig()).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const page = query.page;
+                const totalCount = data.length;
+                resolve({
+                    data,
+                    page,
+                    totalCount,
+                });
+            }
+        }).catch((reason) => {
+            if (reason.response) {
+                const { status } = reason.response;
+                if (status === 401) {
+                    handleSnackbarOption('error', ExpiredSessionMsg);
+                } else if (status === 404) {
+                    handleSnackbarOption('error', NotFoundMsg);
+                }
+            }
+            console.log('[Get Histories Error] ', reason);
+        });
+    };
+
+    const [tabValue, setTabValue] = React.useState(0);
+    const handleTabChange = (event, newValue) => {
+        setTabValue(newValue);
     };
 
     React.useEffect(() => {
-        setPatient(patients.find(p => p.ID === id));
-        setPrescription(prescriptions.filter(p => p.PatientID === id));
+        getPatient();
     }, []);
 
     return (
@@ -335,86 +177,188 @@ const Patient = () => {
                     className={classes.card}
                 >
                     <CardHeader
-                        title="THÔNG TIN BỆNH NHÂN"
+                        title="HỒ SƠ BỆNH NHÂN"
+                        subheader="Tra cứu thông tin bệnh nhân tại đây"
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                        {patient &&
-                            <Paper elevation={0} className={classes.paper} >
-                                <CssBaseline />
-                                <Grid container spacing={3} justify="center" alignItems="center">
-                                    <Grid item>
-                                        <Typography variant="h1" component="h1" align="center">
-                                            {patient.FullName}
-                                        </Typography>
+                        <Tab
+                            value={tabValue}
+                            names={tabNames}
+                            handleChange={handleTabChange}
+                        >
+                            <TabContent value={tabValue} index={0}>
+                                <Typography
+                                    variant="h1"
+                                    component="h1"
+                                    align="center"
+                                    children={`${patient.FullName}`}
+                                    gutterBottom
+                                />
+                                <Grid container>
+                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                        <Typography
+                                            variant="body1"
+                                            component="p"
+                                            align="left"
+                                            children="Họ và Tên BN:"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                        <Typography
+                                            variant="h6"
+                                            component="h6"
+                                            align="center"
+                                            children={`${patient.FullName}`}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                        <Typography
+                                            variant="body1"
+                                            component="p"
+                                            align="left"
+                                            children="Ngày, tháng, năm sinh:"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                        <Typography
+                                            variant="h6"
+                                            component="h6"
+                                            align="center"
+                                            children={`${patient.DateOfBirth}`}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                        <Typography
+                                            variant="body1"
+                                            component="p"
+                                            align="left"
+                                            children="Giới tính:"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                        <Typography
+                                            variant="h6"
+                                            component="h6"
+                                            align="center"
+                                            children={`${patient.Gender}`}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                        <Typography
+                                            variant="body1"
+                                            component="p"
+                                            align="left"
+                                            children="Địa chỉ:"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={10} lg={10} xl={10}>
+                                        <Typography
+                                            variant="h6"
+                                            component="h6"
+                                            align="center"
+                                            children={`${patient.Address}`}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                        <Typography
+                                            variant="body1"
+                                            component="p"
+                                            align="left"
+                                            children="Nghề nghiệp:"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={10} lg={10} xl={10}>
+                                        <Typography
+                                            variant="h6"
+                                            component="h6"
+                                            align="center"
+                                            children={`${patient.Job}`}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                        <Typography
+                                            variant="body1"
+                                            component="p"
+                                            align="left"
+                                            children="Điện thoại:"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                        <Typography
+                                            variant="h6"
+                                            component="h6"
+                                            align="center"
+                                            children={`${patient.PhoneNumber}`}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                        <Typography
+                                            variant="body1"
+                                            component="p"
+                                            align="left"
+                                            children="Email:"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                        <Typography
+                                            variant="h6"
+                                            component="h6"
+                                            align="center"
+                                            children={`${patient.Email}`}
+                                        />
                                     </Grid>
                                 </Grid>
-                                <Grid container spacing={3} style={{ marginTop: 32 }} >
-                                    <Grid item xs={12} sm={12} md={6}>
-                                        <Typography variant="body1" component="p">
-                                            Mã bệnh nhân:
-                                        <strong>
-                                                {' ' + patient.ID}
-                                            </strong>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={6}>
-                                        <Typography variant="body1" component="p">
-                                            Họ & Tên:
-                                        <strong>
-                                                {' ' + patient.FullName}
-                                            </strong>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={2}>
-                                        <Typography variant="body1" component="p">
-                                            Giới tính:
-                                            <strong>
-                                                {
-                                                    ' ' +
-                                                    genderList.find(
-                                                        g => g.id === patient.Gender
-                                                    ).name
-                                                }
-                                            </strong>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={2}>
-                                        <Typography variant="body1" component="p">
-                                            Tuổi:
-                                        <strong>
-                                                {
-                                                    ' ' + (
-                                                        new Date().getFullYear() - patient.YearOfBirth
-                                                    )
-                                                }
-                                            </strong>
-                                        </Typography>
+                            </TabContent>
+                            <TabContent value={tabValue} index={1}>
+                                <Grid container spacing={3} >
+                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        <Table
+                                            tableRef={tableRef}
+                                            customOptions={{
+                                                paging: false,
+                                            }}
+                                            columns={historyColumns}
+                                            data={
+                                                query => new Promise((resolve, reject) => {
+                                                    getHistories(resolve, reject, query);
+                                                })
+                                            }
+                                        />
                                     </Grid>
                                 </Grid>
-                            </Paper>
-                        }
+                            </TabContent>
+                            <TabContent value={tabValue} index={2}>
+                                <Grid
+                                    container
+                                    spacing={3}
+                                    justify="center"
+                                >
+                                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                        <FormControl
+                                            fullWidth
+                                        >
+                                            <DateTimePicker
+                                                variant="static"
+                                                label="Lịch hẹn"
+                                                value={patient.AppointmentDate}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                            </TabContent>
+                        </Tab>
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
-                <Card
-                    className={classes.card}
-                >
-                    <CardHeader
-                        title="LỊCH SỬ KHÁM BỆNH"
-                    />
-                    <Divider />
-                    <CardContent className={classes.content}>
-                        <PerfectScrollbar>
-                            <Table
-                                columns={historyColumns}
-                                data={prescription}
-                            />
-                        </PerfectScrollbar>
-                    </CardContent>
-                </Card>
-            </Grid>
+            <Snackbar
+                vertical="bottom"
+                horizontal="right"
+                variant={snackbarOption.variant}
+                message={snackbarOption.message}
+                open={openSnackbar}
+                handleClose={handleSnackbarClose}
+            />
         </Grid>
     );
 };

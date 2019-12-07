@@ -643,6 +643,7 @@ const PatientManagement = () => {
                             <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                                     <DateTimePicker
+                                        disablePast
                                         fullWidth
                                         id="AppointmentDate"
                                         label="Ngày giờ hẹn (nếu có)"
