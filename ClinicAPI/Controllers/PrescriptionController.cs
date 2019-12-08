@@ -33,7 +33,7 @@ namespace ClinicAPI.Controllers
         {
             var prescription = await _unitOfWork.Prescriptions.FindAsync(id);
 
-            return Ok(prescription);
+            return Ok(new[] { prescription, });
         }
     }
 }

@@ -121,7 +121,7 @@ namespace ClinicAPI.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasMaxLength(200);
 
-                    b.Property<DateTime>("AppointmentDate")
+                    b.Property<DateTime?>("AppointmentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
@@ -187,12 +187,18 @@ namespace ClinicAPI.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Diagnosis")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DoctorId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("HistoryId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
@@ -568,13 +574,13 @@ namespace ClinicAPI.Migrations
             modelBuilder.Entity("DAL.Models.PrescriptionMedicine", b =>
                 {
                     b.HasOne("DAL.Models.Medicine", "Medicine")
-                        .WithMany("PrescriptionMedicines")
+                        .WithMany("Prescriptions")
                         .HasForeignKey("MedicineId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("DAL.Models.Prescription", "Prescription")
-                        .WithMany("PrescriptionMedicines")
+                        .WithMany("Medicines")
                         .HasForeignKey("PrescriptionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,10 +69,13 @@ namespace ClinicAPI.Controllers
                     .Take(pageSize);
             }
 
-            return Ok(new
+            return Ok(new[]
             {
-                totalCount,
-                patients,
+                new
+                {
+                    totalCount,
+                    patients,
+                },
             });
         }
 
@@ -104,13 +106,16 @@ namespace ClinicAPI.Controllers
 
             var history = _unitOfWork.Histories
                 .Where(h => (h.PatientId == patient.Id && h.IsChecked == false))
-                .OrderBy(h => h.UpdatedDate)
+                .OrderByDescending(h => h.UpdatedDate)
                 .FirstOrDefault();
 
-            return Ok(new
+            return Ok(new[]
             {
-                history,
-                patient,
+                new
+                {
+                    history,
+                    patient,
+                },
             });
         }
 
@@ -184,7 +189,7 @@ namespace ClinicAPI.Controllers
 
             prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
 
-            return Ok(prescription);
+            return Ok(new[] { prescription, });
         }
 
         [HttpPost("prescriptions")]

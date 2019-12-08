@@ -80,9 +80,9 @@ namespace ClinicAPI
                 {
                     options.Authority = applicationUrl;
                     options.SupportedTokens = SupportedTokens.Jwt;
-                    options.RequireHttpsMetadata = false; // Note: Set to true in production
+                    options.RequireHttpsMetadata = false; // Note: Set this for https in production
                     options.ApiName = IdentityServerConfig.ApiName;
-                    // options.JwtBackChannelHandler = IdentityServerConfig.GetJwtBackChannelHandler(); // Note: Use this in production
+                    options.JwtBackChannelHandler = IdentityServerConfig.GetJwtBackChannelHandler(); // Note: Use this in production
                 });
 
             services.AddAuthorization(options =>
@@ -163,7 +163,7 @@ namespace ClinicAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 

@@ -37,7 +37,7 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(patient);
+            return Ok(new[] { patient, });
         }
     }
 }

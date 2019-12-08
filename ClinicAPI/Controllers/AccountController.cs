@@ -28,7 +28,7 @@ namespace ClinicAPI.Controllers
             string id = Utilities.GetUserId(User);
             var currentUser = await _accountManager.GetUserByIdAsync(id);
             
-            return Ok(currentUser);
+            return Ok(new[] { currentUser, });
         }
     }
 }

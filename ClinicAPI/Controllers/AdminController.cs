@@ -68,10 +68,13 @@ namespace ClinicAPI.Controllers
                 patient.Doctor = _unitOfWork.Users.Find(patient.DoctorId);
             }
 
-            return Ok(new
+            return Ok(new []
             {
-                totalCount,
-                patients,
+                new
+                {
+                    totalCount,
+                    patients,
+                },
             });
         }
 
@@ -109,10 +112,13 @@ namespace ClinicAPI.Controllers
                 prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
             }
 
-            return Ok(new
+            return Ok(new []
             {
-                totalCount,
-                prescriptions,
+                new
+                {
+                    totalCount,
+                    prescriptions,
+                },
             });
         }
 
@@ -142,10 +148,13 @@ namespace ClinicAPI.Controllers
             {
                 medicine.Status = medicine.Quantity <= 0 ? MedicineStatus.No : MedicineStatus.Yes;
             }
-            return Ok(new
+            return Ok(new []
             {
-                totalCount,
-                medicines = medicineVMs,
+                new
+                {
+                    totalCount,
+                    medicines = medicineVMs,
+                },
             });
         }
 
@@ -159,7 +168,7 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(medicine);
+            return Ok(new [] { medicine, });
         }
 
         [HttpPost("medicines")]
@@ -256,10 +265,13 @@ namespace ClinicAPI.Controllers
                 employeeVMs.Add(employeeVM);
             }
 
-            return Ok(new
+            return Ok(new []
             {
-                totalCount,
-                employees = employeeVMs,
+                new
+                {
+                    totalCount,
+                    employees = employeeVMs,
+                },
             });
         }
 
@@ -281,7 +293,7 @@ namespace ClinicAPI.Controllers
             var employeeVM = _mapper.Map<UserViewModel>(employee);
             employeeVM.RoleName = roleName;
 
-            return Ok(employeeVM);
+            return Ok(new[] { employeeVM, });
         }
 
         [HttpPost("employees")]
@@ -385,9 +397,9 @@ namespace ClinicAPI.Controllers
                 //     .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
                 //     .Select(p => new { x = p.Key, y = p.Count() });
 
-                return Ok(new
+                return Ok(new []
                 {
-                    all = allByWeek,
+                    new { all = allByWeek, },
                     //isNew = isNewByWeek,
                     //isChecked = isCheckedByWeek,
                     //recheck = recheckByWeek,
@@ -416,9 +428,9 @@ namespace ClinicAPI.Controllers
                 //var appointedByMonth = appointedPatients
                 //    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
                 //    .Select(p => new { x = p.Key, y = p.Count() });
-                return Ok(new
+                return Ok(new []
                 {
-                    all = allByMonth,
+                    new { all = allByMonth, },
                     //isNew = isNewByMonth,
                     //isChecked = isCheckedByMonth,
                     //recheck = recheckByMonth,
@@ -446,9 +458,9 @@ namespace ClinicAPI.Controllers
             //    .GroupBy(p => p.CreatedDate.Date)
             //    .Select(p => new { x = p.Key, y = p.Count() });
 
-            return Ok(new
+            return Ok(new []
             {
-                all = allByDay,
+                new { all = allByDay, },
                 //isNew = isNewByDay,
                 //isChecked = isCheckedByDay,
                 //recheck = recheckByDay,

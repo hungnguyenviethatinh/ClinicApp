@@ -4,7 +4,9 @@
     "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:5050",
-      "sslPort": 44366
+      "sslPort": 0 // Disable https.
+      //"sslPort": 44366 // Enable https.
+
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
@@ -12,7 +14,6 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -20,7 +21,6 @@
     "ClinicAPI": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

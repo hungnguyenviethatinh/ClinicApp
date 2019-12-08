@@ -57,8 +57,8 @@ namespace ClinicAPI.Controllers
 
                 patients = patients
                     .Where(p => (
-                        p.Id == id || 
-                        p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) || 
+                        p.Id == id ||
+                        p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
@@ -75,9 +75,13 @@ namespace ClinicAPI.Controllers
                 patient.Doctor = _unitOfWork.Users.Find(patient.DoctorId);
             }
 
-            return Ok(new {
-                totalCount,
-                patients,
+            return Ok(new[]
+            {
+               new
+               {
+                    totalCount,
+                    patients,
+               },
             });
         }
 
@@ -109,7 +113,7 @@ namespace ClinicAPI.Controllers
 
             patient.Doctor = _unitOfWork.Users.Find(patient.DoctorId);
 
-            return Ok(patient);
+            return Ok(new[] { patient, });
         }
 
         [HttpPost("patients")]
@@ -228,7 +232,7 @@ namespace ClinicAPI.Controllers
                 var doctorIds = _unitOfWork.Users.Where(d => d.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)).Select(d => d.Id);
 
                 prescriptions
-                    .Where(p => 
+                    .Where(p =>
                         p.PatientId == id ||
                         patientIds.Contains(p.PatientId) ||
                         doctorIds.Contains(p.DoctorId))
@@ -248,9 +252,13 @@ namespace ClinicAPI.Controllers
                 prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
             }
 
-            return Ok(new { 
-                totalCount,
-                prescriptions,
+            return Ok(new[]
+            {
+                new
+                {
+                    totalCount,
+                    prescriptions,
+                },
             });
         }
 
@@ -275,7 +283,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public async Task<IActionResult> GetPrescription(int id)
         {
-            var prescription = await  _unitOfWork.Prescriptions.FindAsync(id);
+            var prescription = await _unitOfWork.Prescriptions.FindAsync(id);
             if (prescription == null)
             {
                 return NotFound();
@@ -284,7 +292,7 @@ namespace ClinicAPI.Controllers
             prescription.Doctor = _unitOfWork.Users.Find(prescription.DoctorId);
             prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
 
-            return Ok(prescription);
+            return Ok(new[] { prescription, });
         }
     }
 }

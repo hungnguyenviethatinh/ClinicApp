@@ -255,6 +255,8 @@ namespace ClinicAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Diagnosis = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true),
                     Status = table.Column<int>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),

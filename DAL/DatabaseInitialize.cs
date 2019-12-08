@@ -45,14 +45,8 @@ namespace DAL
                     RoleConstants.ReceptionistRoleName, ApplicationPermissions.GetReceptionistPermissionValues());
 
                 await CreateUserAsync(
-                    "admin", "pass@123", "Inbuilt Administrator", "admin@gmail.com", "09999999", 
+                    "admin", "admin@123", "Inbuilt Administrator", "admin@drkhoaclinic.com", "0999999999", 
                     new string[] { RoleConstants.AdministratorRoleName });
-                await CreateUserAsync(
-                    "doctor", "pass@123", "Inbuilt Doctor", "doctor@gmail.com", "09999999", 
-                    new string[] { RoleConstants.DoctorRoleName });
-                await CreateUserAsync(
-                    "receptionist", "pass@123", "Inbuilt Receptionist", "receptionist@gmail.com", "09999999", 
-                    new string[] { RoleConstants.ReceptionistRoleName });
 
                 _logger.LogInformation("Inbuilt account generation completed.");
             }
