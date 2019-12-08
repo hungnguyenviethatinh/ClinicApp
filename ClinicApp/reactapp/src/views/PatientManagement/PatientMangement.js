@@ -26,8 +26,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import Axios, {
-    axiosConfig,
-    axiosConfigJson,
+    axiosRequestConfig,
 } from '../../common';
 import {
     PatientStatus,
@@ -249,8 +248,10 @@ const PatientManagement = () => {
         }
     };
 
+    const config = axiosRequestConfig();
+
     const addPatient = (patientModel) => {
-        Axios.post(AddPatientUrl, patientModel, axiosConfigJson()).then((response) => {
+        Axios.post(AddPatientUrl, patientModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { id } = data;
@@ -277,7 +278,7 @@ const PatientManagement = () => {
     };
 
     const addHistory = (historyModel) => {
-        Axios.post(AddHistoryUrl, historyModel, axiosConfigJson()).then((response) => {
+        Axios.post(AddHistoryUrl, historyModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { id, patientId } = data;
@@ -304,7 +305,7 @@ const PatientManagement = () => {
     };
 
     const addXrays = (xRayModels) => {
-        Axios.post(AddXrayUrl, xRayModels, axiosConfigJson()).then((response) => {
+        Axios.post(AddXrayUrl, xRayModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Lưu trữ XQ của bệnh nhân thành công.');
@@ -319,7 +320,7 @@ const PatientManagement = () => {
     };
 
     const updatePatient = (id, patientModel) => {
-        Axios.put(`${UpdatePatientUrl}/${id}`, patientModel, axiosConfigJson()).then((response) => {
+        Axios.put(`${UpdatePatientUrl}/${id}`, patientModel, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật thông tin của bệnh nhân thành công.');
@@ -386,7 +387,7 @@ const PatientManagement = () => {
         value: '',
     }]);
     const getDoctorOptions = () => {
-        Axios.get(GetDoctorsUrl, axiosConfig()).then((response) => {
+        Axios.get(GetDoctorsUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const options = [];
@@ -403,7 +404,7 @@ const PatientManagement = () => {
 
     const getPatient = (id) => {
         const url = `${GetPatientUrl}/${id}`;
-        Axios.get(url, axiosConfig()).then((response) => {
+        Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const {
@@ -417,7 +418,7 @@ const PatientManagement = () => {
                     appointmentDate,
                     status,
                     doctorId
-                } = data;
+                } = data[0];
 
                 const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
                 const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth) : null;
@@ -469,7 +470,7 @@ const PatientManagement = () => {
         if (value.startsWith(prefix)) {
             value = decodeId(value, prefix);
         }
-        const config = axiosConfig();
+
         Axios.get(GetPatientUrl, {
             ...config,
             params: {
@@ -480,8 +481,8 @@ const PatientManagement = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const page = query.page;
-                const { patients, totalCount } = data;
+                const { page } = query;
+                const { patients, totalCount } = data[0];
                 resolve({
                     data: patients,
                     page,

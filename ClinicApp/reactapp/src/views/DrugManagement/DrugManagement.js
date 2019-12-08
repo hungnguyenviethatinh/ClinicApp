@@ -22,8 +22,7 @@ import {
     ExpiredSessionMsg
 } from '../../constants';
 import Axios, {
-    axiosConfig,
-    axiosConfigJson,
+    axiosRequestConfig,
 } from '../../common';
 import {
     GetAllMedicinesUrl,
@@ -177,8 +176,10 @@ const DrugManagement = () => {
         }
     };
 
+    const config = axiosRequestConfig();
+
     const addMedicine = (medicineModel) => {
-        Axios.post(AddMedicineUrl, medicineModel, axiosConfigJson()).then((response) => {
+        Axios.post(AddMedicineUrl, medicineModel, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Thêm thuốc vào kho dữ liêu thành công!');
@@ -192,7 +193,7 @@ const DrugManagement = () => {
 
     const updateMedicine = (id, medicineModel) => {
         const url = `${UpdateMedicineUrl}/${id}`;
-        Axios.put(url, medicineModel, axiosConfigJson()).then((response) => {
+        Axios.put(url, medicineModel, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật dữ liệu thuốc thành công!');
@@ -219,14 +220,12 @@ const DrugManagement = () => {
         }
     };
 
-    const config = axiosConfig();
-
     const getMedicine = (id) => {
         const url = `${GetMedicineUrl}/${id}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { name, quantity, unit, price } = data;
+                const { name, quantity, unit, price } = data[0];
                 setMedicine({
                     Name: name,
                     Quantity: quantity,
@@ -249,8 +248,8 @@ const DrugManagement = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { totalCount, medicines } = data;
-                const page = query.page;
+                const { totalCount, medicines } = data[0];
+                const { page } = query;
 
                 resolve({
                     data: medicines,

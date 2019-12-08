@@ -17,10 +17,20 @@ import { Tab, TabContent } from '../../components/Tab';
 import { Snackbar } from '../../components/Snackbar';
 
 import moment from 'moment';
-import { PatientStatus, ExpiredSessionMsg, NotFoundMsg, displayDateTimeFormat, } from '../../constants';
+import { 
+    PatientStatus, 
+    ExpiredSessionMsg, 
+    NotFoundMsg, 
+    displayDateTimeFormat, 
+} from '../../constants';
 import { DateTimePicker } from '@material-ui/pickers';
-import Axios, { axiosConfig } from '../../common';
-import { PatientUrl, HistoryByPatientIdUrl } from '../../config';
+import Axios, { 
+    axiosRequestConfig, 
+} from '../../common';
+import { 
+    PatientUrl, 
+    HistoryByPatientIdUrl, 
+} from '../../config';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -91,9 +101,11 @@ const Patient = () => {
         Status: PatientStatus.IsNew,
     });
 
+    const config = axiosRequestConfig();
+
     const getPatient = () => {
         const url = `${PatientUrl}/${id}`;
-        Axios.get(url, axiosConfig()).then((response) => {
+        Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const {
@@ -105,7 +117,7 @@ const Patient = () => {
                     phoneNumber,
                     email,
                     appointmentDate,
-                } = data;
+                } = data[0];
 
                 const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
                 const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(displayDateTimeFormat) : null;
@@ -137,10 +149,10 @@ const Patient = () => {
 
     const getHistories = (resolve, reject, query) => {
         const url = `${HistoryByPatientIdUrl}/${id}`;
-        Axios.get(url, axiosConfig()).then((response) => {
+        Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const page = query.page;
+                const { page } = query;
                 const totalCount = data.length;
                 resolve({
                     data,

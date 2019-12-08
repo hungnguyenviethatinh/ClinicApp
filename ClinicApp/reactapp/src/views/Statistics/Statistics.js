@@ -16,7 +16,7 @@ import { Select } from '../../components/Select';
 import { Button } from '../../components/Button';
 
 import Axios, {
-    axiosConfig,
+    axiosRequestConfig,
 } from '../../common';
 import {
     GetPatientStatUrl,
@@ -105,6 +105,8 @@ const StatisticsView = () => {
         console.log(`${logMsgHeader}`, reason);
     };
 
+    const config = axiosRequestConfig();
+
     const [xAxisPatientData, setXAxisPatientData] = React.useState([]);
     const [allPatientData, setAllPatientData] = React.useState([]);
     // const [isNewPatientData, setIsNewPatientData] = React.useState([]);
@@ -112,7 +114,6 @@ const StatisticsView = () => {
     // const [recheckPatientData, setRecheckPatientData] = React.useState([]);
     // const [appointedPatientData, setAppointedPatientData] = React.useState([]);
     const getPatientStat = () => {
-        const config = axiosConfig();
         const startDate = selectedStartDate.format(dataDateTimeFormat);
         const endDate = selectedEndDate.format(dataDateTimeFormat);
         const period = selectedTimePeriod;
@@ -127,7 +128,7 @@ const StatisticsView = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { all, /* isNew, isChecked, recheck, appointed */ } = data;
+                const { all, /* isNew, isChecked, recheck, appointed */ } = data[0];
                 let xAxis = [];
                 const allY = [];
                 // const isNewY = [];
@@ -193,7 +194,6 @@ const StatisticsView = () => {
     const [xAxisPrescriptionData, setXAxisPrescriptionData] = React.useState([]);
     const [prescriptionData, setPrescriptionData] = React.useState([]);
     const getPrescriptionStat = () => {
-        const config = axiosConfig();
         const startDate = presSelectedStartDate.format(dataDateTimeFormat);
         const endDate = presSelectedEndDate.format(dataDateTimeFormat);
         const period = presSelectedTimePeriod;

@@ -17,7 +17,7 @@ import { Snackbar } from '../../../components/Snackbar';
 import { SearchInput } from '../../../components/SearchInput';
 
 import Axios, {
-    axiosConfig
+    axiosRequestConfig,
 } from '../../../common';
 import {
     GetAllPatientsUrl,
@@ -241,7 +241,7 @@ const AdminView = () => {
         console.log(`${logMsgHeader}`, reason);
     };
 
-    const config = axiosConfig();
+    const config = axiosRequestConfig();
 
     const getPatients = (resolve, reject, query) => {
         let value = patientSearchValue.toLowerCase();
@@ -259,8 +259,8 @@ const AdminView = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { totalCount, patients } = data;
-                const page = query.page;
+                const { totalCount, patients } = data[0];
+                const { page } = query;
 
                 resolve({
                     data: patients,
@@ -289,8 +289,8 @@ const AdminView = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { totalCount, prescriptions } = data;
-                const page = query.page;
+                const { totalCount, prescriptions } = data[0];
+                const { page } = query;
 
                 resolve({
                     data: prescriptions,
@@ -315,8 +315,8 @@ const AdminView = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { totalCount, employees } = data;
-                const page = query.page;
+                const { totalCount, employees } = data[0];
+                const { page } = query;
 
                 resolve({
                     data: employees,
@@ -339,8 +339,8 @@ const AdminView = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { totalCount, medicines } = data;
-                const page = query.page;
+                const { totalCount, medicines } = data[0];
+                const { page } = query;
 
                 resolve({
                     data: medicines,

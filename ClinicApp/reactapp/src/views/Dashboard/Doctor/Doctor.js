@@ -19,7 +19,7 @@ import {
     GetPrescriptionsInQueueByDoctorUrl,
 } from '../../../config';
 import Axios, {
-    axiosConfig,
+    axiosRequestConfig,
 } from '../../../common';
 import {
     ExpiredSessionMsg,
@@ -147,11 +147,13 @@ const DoctorView = () => {
         console.log(`${logMsgHeader}`, reason);
     };
 
+    const config = axiosRequestConfig();
+
     const getPatientsInQueue = (resolve, reject, query) => {
-        Axios.get(GetPatientInQueueByDoctorUrl, axiosConfig()).then((response) => {
+        Axios.get(GetPatientInQueueByDoctorUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const page = query.page;
+                const { page } = query;
                 const totalCount = data.length;
                 resolve({
                     data,
@@ -165,10 +167,10 @@ const DoctorView = () => {
     };
 
     const getPrescriptionsInQueue = (resolve, reject, query) => {
-        Axios.get(GetPrescriptionsInQueueByDoctorUrl, axiosConfig()).then((response) => {
+        Axios.get(GetPrescriptionsInQueueByDoctorUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const page = query.page;
+                const { page } = query;
                 const totalCount = data.length;
                 resolve({
                     data,

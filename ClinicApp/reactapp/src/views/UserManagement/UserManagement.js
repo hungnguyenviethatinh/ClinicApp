@@ -24,8 +24,7 @@ import {
     UpdateEmployeeUrl,
 } from '../../config';
 import Axios, { 
-    axiosConfig,
-    axiosConfigJson,
+    axiosRequestConfig,
 } from '../../common';
 import { 
     RoleConstants, 
@@ -186,8 +185,10 @@ const UserManagement = () => {
         }
     };
 
+    const config = axiosRequestConfig();
+
     const addUser = (userModel) => {
-        Axios.post(AddEmployeeUrl, userModel, axiosConfigJson()).then((response) => {
+        Axios.post(AddEmployeeUrl, userModel, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Tạo người dùng mới thành công!');
@@ -201,7 +202,7 @@ const UserManagement = () => {
 
     const updateUser = (id, userModel) => {
         const url = `${UpdateEmployeeUrl}/${id}`;
-        Axios.put(url, userModel, axiosConfigJson()).then((response) => {
+        Axios.put(url, userModel, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật người dùng thành công!');
@@ -230,10 +231,10 @@ const UserManagement = () => {
 
     const getEmployee = (id) => {
         const url = `${GetEmployeeUrl}/${id}`;
-        Axios.get(url, axiosConfig()).then((response) => {
+        Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { userName, fullName, roleName, phoneNumber, email } = data;
+                const { userName, fullName, roleName, phoneNumber, email } = data[0];
                 setValues({
                     ...values,
                     UserName: userName,
@@ -249,8 +250,8 @@ const UserManagement = () => {
     };
 
     const getEmployees = (resolve, reject, query) => {
-        let value = searchValue;
-        const config = axiosConfig();
+        const value = searchValue;
+
         Axios.get(GetAllEmployeesUrl, {
             ...config,
             params: {
@@ -261,8 +262,8 @@ const UserManagement = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { totalCount, employees } = data;
-                const page = query.page;
+                const { totalCount, employees } = data[0];
+                const { page } = query;
 
                 resolve({
                     data: employees,

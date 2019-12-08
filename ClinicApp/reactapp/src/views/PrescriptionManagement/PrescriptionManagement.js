@@ -23,8 +23,7 @@ import { Autocomplete } from '../../components/Autocomplete';
 import { DateTimePicker } from '../../components/DateTimePicker'
 
 import Axios, {
-    axiosConfig,
-    axiosConfigJson,
+    axiosRequestConfig,
 } from '../../common';
 
 import {
@@ -113,8 +112,11 @@ const PrescriptionManagement = () => {
             AppointmentDate: date,
         });
     };
+
+    const config = axiosRequestConfig();
+
     const getPatient = () => {
-        Axios.get(GetCurrentPatientUrl, axiosConfig()).then((response) => {
+        Axios.get(GetCurrentPatientUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const {
@@ -124,7 +126,7 @@ const PrescriptionManagement = () => {
                     gender,
                     address,
                     phoneNumber,
-                } = data.patient;
+                } = data[0].patient;
 
                 const Address = address
                     .split(addressSeperator)
@@ -143,7 +145,7 @@ const PrescriptionManagement = () => {
                     ...prescription,
                     PatientId: id,
                     DoctorId: doctorId,
-                    HistoryId: data.history.id,
+                    HistoryId: data[0].history.id,
                 });
             }
         }).catch((reason) => {
@@ -195,7 +197,7 @@ const PrescriptionManagement = () => {
     }]);
     const getOptionLabel = (option) => option.name;
     const getMedicineNameOptions = () => {
-        Axios.get(GetMedicineNameOptionsUrl, axiosConfig()).then((response) => {
+        Axios.get(GetMedicineNameOptionsUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 data.map(({ id, name }) => ({id, name}));
@@ -288,7 +290,7 @@ const PrescriptionManagement = () => {
     };
 
     const addPrescription = (prescriptionModel) => {
-        Axios.post(AddPrescriptionUrl, prescriptionModel, axiosConfigJson()).then((response) => {
+        Axios.post(AddPrescriptionUrl, prescriptionModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { id } = data;
@@ -308,7 +310,7 @@ const PrescriptionManagement = () => {
     };
 
     const addMedicines = (medicineModels) => {
-        Axios.post(AddMedicinesUrl, medicineModels, axiosConfigJson()).then((response) => {
+        Axios.post(AddMedicinesUrl, medicineModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Đơn thuốc mới đã được tạo thành công!');

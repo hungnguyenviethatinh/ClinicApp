@@ -14,12 +14,12 @@ import qs from 'querystring';
 
 import { TextField } from '../../components/TextField';
 
-import { 
-    ApiUrl, 
+import {
+    ApiUrl,
     Audiance,
     ClientId,
-    ClientSecret, 
-    LoginUrl 
+    ClientSecret,
+    LoginUrl
 } from '../../config';
 
 const useStyles = makeStyles(theme => ({
@@ -128,14 +128,17 @@ const Login = (props) => {
         };
 
         axios.post(url, qs.stringify(data), config).then((response) => {
+            hideProgress();
+
             const { status, data } = response;
             if (status === 200) {
                 const { access_token } = data;
                 localStorage.setItem('access_token', access_token);
                 setIsLogined(true);
             }
-            hideProgress();
         }).catch((reason) => {
+            hideProgress();
+
             if (reason.response) {
                 const { status, data } = reason.response;
                 if (status === 400) {
@@ -155,7 +158,6 @@ const Login = (props) => {
                 setErrorMessage('Có lỗi xảy ra. Vui lòng thử lại sau!');
                 console.error(reason);
             }
-            hideProgress();
         });
     };
     const handleSubmit = event => {
@@ -176,70 +178,76 @@ const Login = (props) => {
         }
     };
 
-    if (isLogined) {
-        return (
-            <Redirect to={from} />
-        );
-    }
-
     return (
-        <Grid container justify="center" alignItems="center" className={classes.container}>
-            <Grid item xs={12} style={{ padding: '10px' }}>
-                <Container component="div" maxWidth="xs" className={classes.main}>
-                    <CssBaseline />
-                    <div id="progressBar">
-                        <div id="progress"></div>
-                    </div>
-                    <div className={clsx(classes.paper, classes.head)}>
-                        <Typography color="primary" component="h4" variant="h4">
-                            ĐĂNG NHẬP HỆ THỐNG
-                        </Typography>
-                    </div>
-                    <div className={classes.paper}>
-                        <form className={classes.form} noValidate onSubmit={handleSubmit}>
-                            <TextField
-                                required={true}
-                                fullWidth={true}
-                                id="username"
-                                name="username"
-                                label="Tài khoản"
-                                value={values.username}
-                                onChange={handleChangeUsername}
-                                autoFocus={true}
-                                error={errors.invalidUsername}
-                                helperText="Vui lòng nhập tài khoản của bạn!"
-                            />
-                            <TextField
-                                required={true}
-                                fullWidth={true}
-                                id="password"
-                                name="password"
-                                label="Mật khẩu"
-                                type="password"
-                                value={values.password}
-                                onChange={handleChangePassword}
-                                error={errors.invalidPassword}
-                                helperText="Vui lòng nhập mật khẩu của bạn!"
-                            />
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                className={classes.submit}
-                                id="buttonSignin"
-                                disabled={isProgressing}
-                            >
-                                ĐĂNG NHẬP
-                            </Button>
-                        </form>
-                        <div className={classes.paper}>
-                            <Typography children={errorMessage} color="error" component="p" variant="caption" />
-                        </div>
-                    </div>
-                </Container>
-            </Grid>
-        </Grid>
+        <React.Fragment>
+            {isLogined ?
+                <Redirect to={from} />
+                :
+                <Grid container justify="center" alignItems="center" className={classes.container}>
+                    <Grid item xs={12} style={{ padding: '10px' }}>
+                        <Container component="div" maxWidth="xs" className={classes.main}>
+                            <CssBaseline />
+                            <div id="progressBar">
+                                <div id="progress"></div>
+                            </div>
+                            <div className={clsx(classes.paper, classes.head)}>
+                                <Typography color="primary" component="h4" variant="h4">
+                                    ĐĂNG NHẬP HỆ THỐNG
+                                </Typography>
+                            </div>
+                            <div className={classes.paper}>
+                                <form className={classes.form} noValidate onSubmit={handleSubmit}>
+                                    <TextField
+                                        required={true}
+                                        fullWidth={true}
+                                        id="username"
+                                        name="username"
+                                        label="Tài khoản"
+                                        value={values.username}
+                                        onChange={handleChangeUsername}
+                                        autoFocus={true}
+                                        error={errors.invalidUsername}
+                                        helperText="Vui lòng nhập tài khoản của bạn!"
+                                    />
+                                    <TextField
+                                        required={true}
+                                        fullWidth={true}
+                                        id="password"
+                                        name="password"
+                                        label="Mật khẩu"
+                                        type="password"
+                                        value={values.password}
+                                        onChange={handleChangePassword}
+                                        error={errors.invalidPassword}
+                                        helperText="Vui lòng nhập mật khẩu của bạn!"
+                                    />
+                                    <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.submit}
+                                        id="buttonSignin"
+                                        disabled={isProgressing}
+                                    >
+                                        ĐĂNG NHẬP
+                                    </Button>
+                                </form>
+                                <div className={classes.paper}>
+                                    <Typography 
+                                        children={errorMessage} 
+                                        color="error" 
+                                        component="p" 
+                                        variant="caption" 
+                                    />
+                                </div>
+                            </div>
+                        </Container>
+                    </Grid>
+                </Grid>
+
+            }
+        </React.Fragment>
     );
 }
 

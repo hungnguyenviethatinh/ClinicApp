@@ -30,11 +30,11 @@ const styles = {
 };
 
 const DropZoneComponent = props => {
-    const { classes, onDropFile } = props;
+    const { classes, fileType, onDropFile } = props;
 
     const [uploadedFiles, setUploadedFiles] = React.useState([]);
     const onDrop = (acceptedFiles) => {
-        let files = [];
+        const files = [];
         acceptedFiles.map((file, index) => {
             encodeFileToBase64(file).then((result) => {
                 files.push({
@@ -101,7 +101,7 @@ const DropZoneComponent = props => {
         <DropZone
             multiple
             onDrop={onDrop}
-            accept="image/*"
+            accept={fileType}
         >
             {({ getRootProps, getInputProps }) => (
                 <section className="container">
@@ -118,11 +118,13 @@ const DropZoneComponent = props => {
 
 DropZoneComponent.propTypes = {
     classes: PropTypes.object,
+    fileType: PropTypes.string,
     onDropFile: PropTypes.func,
 };
 
 DropZoneComponent.defaultProps = {
     classes: null,
+    fileType: 'image/*',
     onDropFile: () => { },
 };
 

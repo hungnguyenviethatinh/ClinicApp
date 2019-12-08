@@ -20,7 +20,7 @@ import {
 } from '../../constants';
 import { GetPatientsByDoctorUrl } from '../../config';
 import Axios, {
-    axiosConfig
+    axiosRequestConfig,
 } from '../../common';
 import { encodeId, decodeId } from '../../utils';
 import moment from 'moment';
@@ -91,13 +91,15 @@ const Patients = () => {
         refreshData();
     };
 
+    const config = axiosRequestConfig();
+
     const getPatients = (resolve, reject, query) => {
         let value = searchValue.toLowerCase();
         const prefix = IdPrefix.Patient.toLowerCase();
         if (value.startsWith(prefix)) {
             value = decodeId(value, prefix);
         }
-        const config = axiosConfig();
+
         Axios.get(GetPatientsByDoctorUrl, {
             ...config,
             params: {
@@ -108,9 +110,8 @@ const Patients = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const patients = data.patients;
-                const page = query.page;
-                const totalCount = data.totalCount;
+                const { totalCount, patients } = data[0];
+                const { page } = query;
                 resolve({
                     data: patients,
                     page,

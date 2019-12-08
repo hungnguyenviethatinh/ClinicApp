@@ -21,7 +21,7 @@ import {
 } from '../../constants';
 import { GetPrescriptionsUrl } from '../../config';
 import Axios, { 
-    axiosConfig 
+    axiosRequestConfig, 
 } from '../../common';
 import { encodeId, decodeId } from '../../utils';
 import moment from 'moment';
@@ -94,13 +94,15 @@ const Prescriptions = () => {
         refreshData();
     };
 
+    const config = axiosRequestConfig();
+
     const getPrescriptions = (resolve, reject, query) => {
         let value = searchValue.toLowerCase();
         const prefix = `${IdPrefix.Prescription}${IdPrefix.Patient}`.toLowerCase();
         if (value.startsWith(prefix)) {
             value = decodeId(value, prefix);
         }
-        const config = axiosConfig();
+
         Axios.get(GetPrescriptionsUrl, {
             ...config,
             params: {
@@ -111,9 +113,8 @@ const Prescriptions = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const prescriptions = data.prescriptions;
-                const page = query.page;
-                const totalCount = data.totalCount;
+                const { totalCount, prescriptions} = data[0];
+                const { page } = query;
                 resolve({
                     data: prescriptions,
                     page,
