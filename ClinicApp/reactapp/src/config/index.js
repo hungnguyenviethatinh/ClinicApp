@@ -24,7 +24,7 @@ export const GetPatientInQueueByDoctorUrl = '/api/doctor/patients/queue';
 export const GetPrescriptionsInQueueByDoctorUrl = '/api/doctor/prescriptions/queue';
 export const GetMedicineNameOptionsUrl = '/api/doctor/medicines';
 export const GetCurrentPatientUrl = '/api/doctor/patients/current';
-export const AddPrescriptionUrl = 'api/doctor/prescriptions'
+export const AddPrescriptionUrl = 'api/doctor/prescriptions';
 export const AddMedicinesUrl = 'api/doctor/medicines';
 // Addmin Api:
 export const GetAllPatientsUrl = '/api/admin/patients';

@@ -21,7 +21,7 @@ import {
     PatientStatus, 
     ExpiredSessionMsg, 
     NotFoundMsg, 
-    displayDateTimeFormat, 
+    DisplayDateTimeFormat, 
 } from '../../constants';
 import { DateTimePicker } from '@material-ui/pickers';
 import Axios, { 
@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
 const historyColumns = [
     {
         title: 'Ngày khám', field: 'createdDate', type: 'date',
-        render: rowData => moment(rowData.createdDate).format(displayDateTimeFormat),
+        render: rowData => moment(rowData.createdDate).format(DisplayDateTimeFormat),
     },
     {
         title: 'Bác sĩ khám', field: 'doctorId',
@@ -120,7 +120,7 @@ const Patient = () => {
                 } = data[0];
 
                 const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
-                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(displayDateTimeFormat) : null;
+                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(DisplayDateTimeFormat) : null;
                 const Address = address.split(addressSeperator).filter(value => value.trim() !== '').join(`${addressSeperator} `);
 
                 setPatient({

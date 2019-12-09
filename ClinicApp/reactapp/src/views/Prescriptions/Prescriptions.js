@@ -18,6 +18,7 @@ import { SearchInput } from '../../components/SearchInput';
 import { 
     PrescriptionStatus,
     IdPrefix,
+    DisplayDateTimeFormat,
 } from '../../constants';
 import { GetPrescriptionsUrl } from '../../config';
 import Axios, { 
@@ -62,7 +63,7 @@ const prescriptionColumns = [
     },
     {
         title: 'Ngày tạo', field: 'updatedDate',
-        render: rowData => moment(rowData.updatedDate).format('DD-MM-YYYY'),
+        render: rowData => moment(rowData.updatedDate).format(DisplayDateTimeFormat),
     },
     {
         title: 'Trạng thái', field: 'status',

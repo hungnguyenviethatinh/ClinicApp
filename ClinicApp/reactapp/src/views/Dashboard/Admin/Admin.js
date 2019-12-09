@@ -18,6 +18,7 @@ import { SearchInput } from '../../../components/SearchInput';
 
 import Axios, {
     axiosRequestConfig,
+    useInterval,
 } from '../../../common';
 import {
     GetAllPatientsUrl,
@@ -32,6 +33,7 @@ import {
     PrescriptionStatus,
     UserStatus,
     DrugStatus,
+    RefreshDataTimer,
 } from '../../../constants';
 import { encodeId, decodeId } from '../../../utils';
 import moment from 'moment';
@@ -184,6 +186,47 @@ const AdminView = () => {
     let patientTableRef = React.createRef();
     let prescriptionTableRef = React.createRef();
     let employeeTableRef = React.createRef();
+    let medicineTableRef = React.createRef();
+
+    const refreshPatientData = () => {
+        patientTableRef.current && patientTableRef.current.onQueryChange();
+    };
+    const refreshPrescriptionData = () => {
+        prescriptionTableRef.current && prescriptionTableRef.current.onQueryChange();
+    };
+    const refreshEmployeeData = () => {
+        employeeTableRef.current && employeeTableRef.current.onQueryChange();
+    };
+    const refreshMedicineData = () => {
+        medicineTableRef.current && medicineTableRef.current.onQueryChange();
+    };
+
+    // const [countPatientTable, setCountPatientTable] = React.useState(0);
+    // const [countPrescriptionTable, setCountPrescriptionTable] = React.useState(0);
+    // const [countEmployeeTable, setCountEmployeeTable] = React.useState(0);
+    const [countMedicineTable, setCountMedicineTable] = React.useState(0);
+    useInterval(() => {
+        // if (countPatientTable > 0 && countPatientTable < RefreshDataTimer) {
+        //     setCountPatientTable(countPatientTable + 1);
+        // } else {
+        //     refreshPatientData();
+        // }
+        // if (countPrescriptionTable > 0 && countPrescriptionTable < RefreshDataTimer) {
+        //     setCountPrescriptionTable(countPrescriptionTable + 1);
+        // } else {
+        //     refreshPrescriptionData();
+        // }
+        // if (countEmployeeTable > 0 && countEmployeeTable < RefreshDataTimer) {
+        //     setCountEmployeeTable(countEmployeeTable + 1);
+        // } else {
+        //     refreshEmployeeData();
+        // }
+        if (countMedicineTable > 0 && countMedicineTable < RefreshDataTimer) {
+            setCountMedicineTable(countMedicineTable + 1);
+        } else {
+            refreshMedicineData();
+        }
+    }, 1000);
 
     const [patientSearchValue, setPatientSearchValue] = React.useState('');
     const [prescriptionSearchValue, setPrescriptionSearchValue] = React.useState('');
@@ -193,21 +236,21 @@ const AdminView = () => {
     };
     const handlePatientSearch = event => {
         event.preventDefault();
-        patientTableRef.current && patientTableRef.current.onQueryChange();
+        refreshPatientData();
     };
     const handlePrescriptionSearchChange = event => {
         setPrescriptionSearchValue(event.target.value.trim());
     };
     const handlePrescriptionSearch = event => {
         event.preventDefault();
-        prescriptionTableRef.current && prescriptionTableRef.current.onQueryChange();
+        refreshPrescriptionData();
     };
     const handleEmployeeSearchChange = event => {
         setEmployeeSearchValue(event.target.value.trim());
     };
     const handleEmployeeSearch = event => {
         event.preventDefault();
-        employeeTableRef.current && employeeTableRef.current.onQueryChange();
+        refreshEmployeeData();
     };
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
@@ -268,8 +311,10 @@ const AdminView = () => {
                     totalCount,
                 });
             }
+            // setCountPatientTable(1);
         }).catch((reason) => {
             handleError(reason, getPatientLogMsgHeader);
+            // setCountPatientTable(1);
         });
     };
 
@@ -298,8 +343,10 @@ const AdminView = () => {
                     totalCount,
                 });
             }
+            // setCountPrescriptionTable(1);
         }).catch((reason) => {
             handleError(reason, getPrescriptionLogMsgHeader);
+            // setCountPrescriptionTable(1);
         });
     };
 
@@ -324,8 +371,10 @@ const AdminView = () => {
                     totalCount,
                 });
             }
+            // setCountEmployeeTable(1);
         }).catch((reason) => {
             handleError(reason, getEmployeeLogMsfHeader);
+            // setCountEmployeeTable(1);
         });
     };
 
@@ -348,8 +397,10 @@ const AdminView = () => {
                     totalCount,
                 });
             }
+            setCountMedicineTable(1);
         }).catch((reason) => {
             handleError(reason, getMedicineLogMsfHeader);
+            setCountMedicineTable(1);
         });
     };
 
@@ -495,6 +546,7 @@ const AdminView = () => {
                     <Divider />
                     <CardContent className={classes.content}>
                         <Table
+                            tableRef={medicineTableRef}
                             columns={medicineColumns}
                             data={
                                 query => new Promise((resolve, reject) => {

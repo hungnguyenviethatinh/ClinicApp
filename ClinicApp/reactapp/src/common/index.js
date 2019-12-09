@@ -58,14 +58,14 @@ export const verifyJWT = (token, role = null) => {
     return true;
 };
 
-export const encodeFileToBase64 = (file) => {
-    return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            resolve(event.target.result);
-        };
-        reader.readAsDataURL(file);
-    });
-};
+export const encodeFileToBase64 = (file) => new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        resolve(event.target.result);
+    };
+    reader.readAsDataURL(file);
+});
+
+export { default as useInterval } from './UseInterval';
 
 export { default } from './AxiosInstance';

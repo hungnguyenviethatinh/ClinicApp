@@ -35,6 +35,7 @@ import {
     PatientStatusEnum,
     IdPrefix,
     ExpiredSessionMsg,
+    DataDateTimeFormat,
 } from '../../constants';
 import {
     GetDoctorsUrl,
@@ -223,7 +224,7 @@ const PatientManagement = () => {
             return;
         }
 
-        const DateOfBirth = values.DateOfBirth.format('YYYY-MM-DD');
+        const DateOfBirth = values.DateOfBirth.format(DataDateTimeFormat);
         const Address = [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(addressSeperator);
         const AppointmentDate = moment(values.AppointmentDate).isValid() ? values.AppointmentDate.format() : null;
         const Status = PatientStatusEnum[values.Status];

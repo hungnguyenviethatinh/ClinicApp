@@ -1,7 +1,7 @@
 export const RoleConstants = {
-    AdministratorRoleName: 'Administrator',
-    ReceptionistRoleName: 'Receptionist',
-    DoctorRoleName: 'Doctor',
+    AdministratorRoleName: 'Admin',
+    ReceptionistRoleName: 'Lễ tân',
+    DoctorRoleName: 'Bác sĩ',
 };
 
 export const PatientStatus = {
@@ -83,5 +83,7 @@ export const PeriodConstants = {
     Month: 'MONTH',
 };
 
-export const dataDateTimeFormat = 'YYYY-MM-DD';
-export const displayDateTimeFormat = 'DD-MM-YYYY';
+export const DataDateTimeFormat = 'YYYY-MM-DD';
+export const DisplayDateTimeFormat = 'DD-MM-YYYY';
+
+export const RefreshDataTimer = 10; // In seconds.

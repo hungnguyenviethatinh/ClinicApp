@@ -24,8 +24,8 @@ import {
 } from '../../config';
 import {
     PeriodConstants,
-    dataDateTimeFormat,
-    displayDateTimeFormat
+    DataDateTimeFormat,
+    DisplayDateTimeFormat
 } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -114,8 +114,8 @@ const StatisticsView = () => {
     // const [recheckPatientData, setRecheckPatientData] = React.useState([]);
     // const [appointedPatientData, setAppointedPatientData] = React.useState([]);
     const getPatientStat = () => {
-        const startDate = selectedStartDate.format(dataDateTimeFormat);
-        const endDate = selectedEndDate.format(dataDateTimeFormat);
+        const startDate = selectedStartDate.format(DataDateTimeFormat);
+        const endDate = selectedEndDate.format(DataDateTimeFormat);
         const period = selectedTimePeriod;
 
         Axios.get(GetPatientStatUrl, {
@@ -153,7 +153,7 @@ const StatisticsView = () => {
                 //     appointedY.push(y);
                 // });
                 if (selectedTimePeriod === PeriodConstants.Day) {
-                    xAxis = xAxis.map(x => moment(x).format(displayDateTimeFormat));
+                    xAxis = xAxis.map(x => moment(x).format(DisplayDateTimeFormat));
                 }
                 if (selectedTimePeriod === PeriodConstants.Week) {
                     xAxis = xAxis.map(({ year, week }) => `T${week}-${year}`);
@@ -194,8 +194,8 @@ const StatisticsView = () => {
     const [xAxisPrescriptionData, setXAxisPrescriptionData] = React.useState([]);
     const [prescriptionData, setPrescriptionData] = React.useState([]);
     const getPrescriptionStat = () => {
-        const startDate = presSelectedStartDate.format(dataDateTimeFormat);
-        const endDate = presSelectedEndDate.format(dataDateTimeFormat);
+        const startDate = presSelectedStartDate.format(DataDateTimeFormat);
+        const endDate = presSelectedEndDate.format(DataDateTimeFormat);
         const period = presSelectedTimePeriod;
 
         Axios.get(GetPrescriptionStatUrl, {
@@ -215,7 +215,7 @@ const StatisticsView = () => {
                     yAxis.push(y);
                 });
                 if (presSelectedTimePeriod === PeriodConstants.Day) {
-                    xAxis.map(x => moment(x).format(displayDateTimeFormat));
+                    xAxis.map(x => moment(x).format(DisplayDateTimeFormat));
                 }
                 if (presSelectedTimePeriod === PeriodConstants.Week) {
                     xAxis.map(({ year, week }) => `T${week}-${year}`);

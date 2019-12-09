@@ -19,6 +19,7 @@ import {
 } from '../../../config';
 import Axios, {
     axiosRequestConfig,
+    useInterval,
 } from '../../../common';
 import {
     ExpiredSessionMsg,
@@ -26,6 +27,7 @@ import {
     PatientStatus,
     PrescriptionStatus,
     IdPrefix,
+    RefreshDataTimer,
 } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -83,12 +85,12 @@ const patientQueueColumns = [
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
-        render: rowData => 
-            <Link 
-            to={`/prescription/${rowData.id}`} 
-            children={
-                encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-            } />,
+        render: rowData =>
+            <Link
+                to={`/prescription/${rowData.id}`}
+                children={
+                    encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
+                } />,
     },
     {
         title: 'Bác sĩ kê đơn', field: 'doctorId',
@@ -118,10 +120,27 @@ const ReceptionistView = () => {
     let patientTableRef = React.createRef();
     let prescriptionTableRef = React.createRef();
 
-    const refreshData = () => {
+    const refreshPatientData = () => {
         patientTableRef.current && patientTableRef.current.onQueryChange();
+    };
+    const refreshPrescriptionData = () => {
         prescriptionTableRef.current && prescriptionTableRef.current.onQueryChange();
     };
+
+    const [countPatientTable, setCountPatientTable] = React.useState(0);
+    const [countPrescriptionTable, setCountPrescriptionTable] = React.useState(0);
+    useInterval(() => {
+        if (countPatientTable > 0 && countPatientTable < RefreshDataTimer) {
+            setCountPatientTable(countPatientTable + 1);
+        } else {
+            refreshPatientData();
+        }
+        if (countPrescriptionTable > 0 && countPrescriptionTable < RefreshDataTimer) {
+            setCountPrescriptionTable(countPrescriptionTable + 1);
+        } else {
+            refreshPrescriptionData();
+        }
+    }, 1000);
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -168,8 +187,10 @@ const ReceptionistView = () => {
                     totalCount,
                 });
             }
+            setCountPatientTable(1);
         }).catch((reason) => {
             handleError(reason, getPatientLogMsgHeader);
+            setCountPatientTable(1);
         });
     };
 
@@ -185,15 +206,12 @@ const ReceptionistView = () => {
                     totalCount,
                 });
             }
+            setCountPrescriptionTable(1);
         }).catch((reason) => {
             handleError(reason, getPrescriptionLogMsgHeader);
+            setCountPrescriptionTable(1);
         });
     };
-
-    React.useEffect(() => {
-        console.log('ref: ', patientTableRef);
-        console.log('current: ', patientTableRef.current);
-    });
 
     return (
         <Grid
