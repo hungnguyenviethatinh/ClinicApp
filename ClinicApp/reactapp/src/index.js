@@ -4,16 +4,24 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
+import moment from 'moment';
+import 'moment/locale/vi';
 import Theme from './theme';
 import App from './App';
 import './assets/scss/styles.scss';
-// import 'typeface-roboto';
+
+const locale = 'vi';
+moment.locale(locale);
 
 const root = document.getElementById('root');
 ReactDom.render(
     <ThemeProvider theme={Theme}>
         <CssBaseline />
-        <MuiPickersUtilsProvider utils={MomentUtils}>
+        <MuiPickersUtilsProvider
+             libInstance={moment}
+             utils={MomentUtils}
+             locale={locale}
+        >
             <App />
         </MuiPickersUtilsProvider>
     </ThemeProvider>

@@ -19,7 +19,7 @@
 
     public static class RoleConstants
     {
-        public const string AdministratorRoleName = "Admin";
+        public const string AdministratorRoleName = "Quản trị viên";
 
         public const string ReceptionistRoleName = "Lễ tân";
         

@@ -1,5 +1,5 @@
 export const RoleConstants = {
-    AdministratorRoleName: 'Admin',
+    AdministratorRoleName: 'Quản trị viên',
     ReceptionistRoleName: 'Lễ tân',
     DoctorRoleName: 'Bác sĩ',
 };
