@@ -66,9 +66,11 @@
   </Target>
 
   <Target Name="ReleaseChromelyApp" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Release' ">
+    <Message Importance="High" Text="Building React App.." />
     <Exec Command="npm run build" WorkingDirectory="reactapp" ContinueOnError="true" ConsoleToMSBuild="false">
       <Output TaskParameter="ConsoleOutput" PropertyName="OutputOfExec" />
     </Exec>
+    
     <Message Importance="High" Text="Copying React App to release folder.." />
     <Exec Command="xcopy &quot;$(ProjectDir)reactapp\dist&quot; &quot;$(TargetDir)dist&quot;   /i /s /r /y /c" />
   </Target>
