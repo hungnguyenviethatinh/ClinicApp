@@ -67,6 +67,7 @@ namespace ClinicAPI.Migrations
                     Quantity = table.Column<int>(nullable: false),
                     Unit = table.Column<string>(nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
                     UpdatedBy = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
@@ -198,6 +199,7 @@ namespace ClinicAPI.Migrations
                     Email = table.Column<string>(maxLength: 100, nullable: true),
                     AppointmentDate = table.Column<DateTime>(nullable: true),
                     Status = table.Column<int>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
                     UpdatedBy = table.Column<string>(nullable: true),
@@ -258,6 +260,7 @@ namespace ClinicAPI.Migrations
                     Diagnosis = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true),
                     Status = table.Column<int>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),
                     HistoryId = table.Column<int>(nullable: false),
@@ -298,6 +301,7 @@ namespace ClinicAPI.Migrations
                     Name = table.Column<string>(maxLength: 100, nullable: false),
                     Data = table.Column<string>(unicode: false, nullable: false),
                     LastModifiedDate = table.Column<DateTime>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
                     HistoryId = table.Column<int>(nullable: false),
                     PatientId = table.Column<int>(nullable: false)
                 },
@@ -331,7 +335,8 @@ namespace ClinicAPI.Migrations
                     AfterBreakfast = table.Column<int>(nullable: true),
                     AfterLunch = table.Column<int>(nullable: true),
                     AfterDinner = table.Column<int>(nullable: true),
-                    Note = table.Column<string>(nullable: true)
+                    Note = table.Column<string>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

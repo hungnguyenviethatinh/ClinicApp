@@ -19,11 +19,11 @@
 
     public static class RoleConstants
     {
-        public const string AdministratorRoleName = "Administrator";
+        public const string AdministratorRoleName = "Admin";
 
-        public const string ReceptionistRoleName = "Receptionist";
+        public const string ReceptionistRoleName = "Lễ tân";
         
-        public const string DoctorRoleName = "Doctor";
+        public const string DoctorRoleName = "Bác sĩ";
     }
 
     public static class GenderConstants

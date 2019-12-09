@@ -16,5 +16,7 @@
         public int? AfterLunch { get; set; }
         public int? AfterDinner { get; set; }
         public string Note { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }

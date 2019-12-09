@@ -18,6 +18,7 @@ namespace DAL.Models
 
         public DateTime? AppointmentDate { get; set; }
         public PatientStatus Status { get; set; }
+        public bool IsDeleted { get; set; }
 
         public string DoctorId { get; set; }
         public User Doctor { get; set; }

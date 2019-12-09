@@ -41,7 +41,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var patients = _unitOfWork.Patients.GetAll();
+            var patients = _unitOfWork.Patients.Where(p => !p.IsDeleted);
             int totalCount = patients.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -82,7 +82,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public IActionResult GetPrescriptions([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var prescriptions = _unitOfWork.Prescriptions.GetAll();
+            var prescriptions = _unitOfWork.Prescriptions.Where(p => !p.IsDeleted);
             int totalCount = prescriptions.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -91,7 +91,7 @@ namespace ClinicAPI.Controllers
                 var patientIds = _unitOfWork.Patients.Where(p => p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)).Select(p => p.Id);
                 var doctorIds = _unitOfWork.Users.Where(d => d.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)).Select(d => d.Id);
 
-                prescriptions
+                prescriptions = prescriptions
                     .Where(p =>
                         p.PatientId == id ||
                         patientIds.Contains(p.PatientId) ||
@@ -126,7 +126,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllMedicinesPolicy)]
         public IActionResult GetMedicines([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var medicines = _unitOfWork.Medicines.GetAll();
+            var medicines = _unitOfWork.Medicines.Where(m => !m.IsDeleted);
             int totalCount = medicines.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -232,7 +232,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllUsersPolicy)]
         public async Task<IActionResult> GetEmployees([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var employees = _unitOfWork.Users.GetAll();
+            var employees = _unitOfWork.Users.Where(e => !e.IsDeleted);
             int totalCount = employees.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -362,10 +362,10 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatientStat([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] string period = PeriodConstants.Day)
         {
-            var patients = _unitOfWork.Patients.GetAll();
+            var patients = _unitOfWork.Patients.Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate);
 
-            var allPatients = patients
-                .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate);
+            //var allPatients = patients
+            //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate);
             //var newPatients = patients
             //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate && p.Status == PatientStatus.IsNew);
             //var checkedPatients = patients
@@ -377,7 +377,7 @@ namespace ClinicAPI.Controllers
 
             if (period == PeriodConstants.Week)
             {
-                var allByWeek = allPatients
+                var allByWeek = patients
                 .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
                 .Select(p => new { x = p.Key, y = p.Count() });
 
@@ -409,7 +409,7 @@ namespace ClinicAPI.Controllers
 
             if (period == PeriodConstants.Month)
             {
-                var allByMonth = allPatients
+                var allByMonth = patients
                 .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
                 .Select(p => new { x = p.Key, y = p.Count() });
 
@@ -438,7 +438,7 @@ namespace ClinicAPI.Controllers
                 });
             }
 
-            var allByDay = allPatients
+            var allByDay = patients
                 .GroupBy(p => p.CreatedDate.Date)
                 .Select(p => new { x = p.Key, y = p.Count() });
 

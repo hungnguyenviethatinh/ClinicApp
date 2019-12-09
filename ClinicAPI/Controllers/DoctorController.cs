@@ -38,7 +38,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ManageAllPrescriptionsPolicy)]
         public IActionResult GetMedicines()
         {
-            var medicines = _unitOfWork.Medicines.GetAll();
+            var medicines = _unitOfWork.Medicines.Where(m => !m.IsDeleted);
 
             return Ok(medicines);
         }
@@ -47,7 +47,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var patients = _unitOfWork.Patients.Where(p => p.DoctorId == GetCurrentUserId());
+            var patients = _unitOfWork.Patients.Where(p => !p.IsDeleted && p.DoctorId == GetCurrentUserId());
             int totalCount = patients.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -84,7 +84,7 @@ namespace ClinicAPI.Controllers
         public IActionResult GetPatientsInQueue()
         {
             var patients = _unitOfWork.Patients
-                .Where(p => (p.DoctorId == GetCurrentUserId() && p.Status != PatientStatus.IsChecked))
+                .Where(p => (!p.IsDeleted && p.DoctorId == GetCurrentUserId() && p.Status != PatientStatus.IsChecked))
                 .OrderBy(p => p.UpdatedDate);
 
             return Ok(patients);
@@ -151,7 +151,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public IActionResult GetPrescriptions()
         {
-            var prescriptions = _unitOfWork.Prescriptions.Where(p => p.DoctorId == GetCurrentUserId());
+            var prescriptions = _unitOfWork.Prescriptions.Where(p => !p.IsDeleted && p.DoctorId == GetCurrentUserId());
 
             foreach (var prescription in prescriptions)
             {
@@ -166,7 +166,7 @@ namespace ClinicAPI.Controllers
         public IActionResult GetPrescriptionsInQueue()
         {
             var prescriptions = _unitOfWork.Prescriptions
-                .Where(p => (p.DoctorId == GetCurrentUserId() && p.Status == PrescriptionStatus.IsNew))
+                .Where(p => (!p.IsDeleted && p.DoctorId == GetCurrentUserId() && p.Status == PrescriptionStatus.IsNew))
                 .OrderBy(p => p.UpdatedDate);
 
             foreach (var prescription in prescriptions)
