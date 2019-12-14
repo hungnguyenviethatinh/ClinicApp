@@ -538,7 +538,7 @@ namespace ClinicAPI.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpPost("units/{id}")]
+        [HttpPut("units/{id}")]
         public async Task<IActionResult> UpdateUnit(int id, [FromBody] UnitModel unitModel)
         {
             if (ModelState.IsValid)
@@ -736,7 +736,7 @@ namespace ClinicAPI.Controllers
         {
             var medicineStat = _unitOfWork.Medicines
                 .Where(m => !m.IsDeleted)
-                .Select(m => new { m.Name, m.Quantity });
+                .Select(m => new { m.Name, m.Quantity, m.Unit });
 
             return Ok(medicineStat);
         }
