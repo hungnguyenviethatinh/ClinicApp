@@ -36,6 +36,7 @@ import {
     IdPrefix,
     ExpiredSessionMsg,
     DataDateTimeFormat,
+    AddressSeperator,
 } from '../../constants';
 import {
     GetDoctorsUrl,
@@ -44,6 +45,9 @@ import {
     AddXrayUrl,
     GetPatientUrl,
     UpdatePatientUrl,
+    UpdateHistoryUrl,
+    DeletePatientUrl,
+    UpdateXRayUrl,
 } from '../../config';
 import { encodeId, decodeId } from '../../utils';
 
@@ -62,8 +66,6 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
     },
 }));
-
-const addressSeperator = ',';
 
 const genderOptions = [
     { label: Gender.Male, value: GenderEnum[Gender.Male] },
@@ -92,7 +94,7 @@ const patientColumns = [
     },
     {
         title: 'Địa chỉ', field: 'address',
-        render: rowData => _.last(rowData.address.split(addressSeperator)),
+        render: rowData => _.last(rowData.address.split(AddressSeperator)),
     },
 ];
 
@@ -142,7 +144,8 @@ const PatientManagement = () => {
         AppointmentDate: null,
         Status: PatientStatus.IsNew,
         XRayImages: [],
-        HeartBeat: '',
+        Height: '',
+        Weight: '',
         BloodPresure: '',
         Pulse: '',
         DoctorId: '',
@@ -225,7 +228,7 @@ const PatientManagement = () => {
         }
 
         const DateOfBirth = values.DateOfBirth.format(DataDateTimeFormat);
-        const Address = [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(addressSeperator);
+        const Address = [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(AddressSeperator);
         const AppointmentDate = moment(values.AppointmentDate).isValid() ? values.AppointmentDate.format() : null;
         const Status = PatientStatusEnum[values.Status];
 
@@ -260,7 +263,8 @@ const PatientManagement = () => {
                 handleReset();
                 refreshData();
                 const historyModel = {
-                    HeartBeat: values.HeartBeat,
+                    Height: values.Height,
+                    Weight: values.Weight,
                     BloodPresure: values.BloodPresure,
                     Pulse: values.Pulse,
                     IsChecked: false,
@@ -326,6 +330,16 @@ const PatientManagement = () => {
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật thông tin của bệnh nhân thành công.');
                 refreshData();
+                const historyModel = {
+                    Height: values.Height,
+                    Weight: values.Weight,
+                    BloodPresure: values.BloodPresure,
+                    Pulse: values.Pulse,
+                    IsChecked: false,
+                    DoctorId: values.DoctorId,
+                    PatientId: id,
+                };
+                updateHistory(id, historyModel);
             } else {
                 console.log('[Update Patient Reponse] ', reason);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
@@ -333,6 +347,68 @@ const PatientManagement = () => {
         }).catch((reason) => {
             console.log('[Update Patient Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
+        });
+    };
+
+    const updateHistory = (patientId, historyModel) => {
+        Axios.put(`${UpdateHistoryUrl}/${patientId}`, historyModel, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { id, patientId } = data;
+                handleSnackbarOption('success', 'Cập nhật hồ sơ bệnh nhân thành công.');
+                if (!_.isEmpty(values.XRayImages)) {
+                    const xRayModels = [];
+                    values.XRayImages.map((xRayImage) => xRayModels.push({
+                        Name: xRayImage.name,
+                        Data: xRayImage.data,
+                        LastModifiedDate: xRayImage.lastModifiedDate,
+                        HistoryId: id,
+                        PatientId: patientId,
+                    }));
+                    updateXRays(id, xRayModels);
+                }
+            } else {
+                console.log('[Update History Response] ', response);
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật hồ sơ của bệnh nhân.');
+            }
+        }).catch((reason) => {
+            console.log('[Update History Error] ', reason);
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật hồ sơ của bệnh nhân.');
+        });
+    };
+
+    const updateXRays = (historyId, xRayModels) => {
+        Axios.put(`${UpdateXRayUrl}/${historyId}`, xRayModels, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Cập nhật XQ của bệnh nhân thành công.');
+            } else {
+                console.log('[Update XRays Response] ', response);
+                handleSnackbarOption('error', 'Cập khi lưu trữ XQ của bệnh nhân.');
+            }
+        }).catch((reason) => {
+            console.log('[Update XRays Error] ', reason);
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật XQ của bệnh nhân.');
+        });
+    };
+
+    const handleDelete = () => {
+        const { id } = selectedRow;
+        deletePatient(id);
+    };
+
+    const deletePatient = (id) => {
+        Axios.delete(`${DeletePatientUrl}/${id}`, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Xóa bệnh nhân thành công.');
+                handleReset();
+                setSelectedRow(null);
+                refreshData();
+            }
+        }).catch((reason) => {
+            console.log('[Delete Patient Error] ', reason);
+            handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
         });
     };
 
@@ -352,7 +428,8 @@ const PatientManagement = () => {
             AppointmentDate: null,
             Status: PatientStatus.IsNew,
             XRayImages: [],
-            HeartBeat: '',
+            Height: '',
+            Weight: '',
             BloodPresure: '',
             Pulse: '',
             DoctorId: '',
@@ -429,7 +506,7 @@ const PatientManagement = () => {
                     PatientStatus.IsChecking,
                     PatientStatus.IsChecked,
                     PatientStatus.IsRechecking][status];
-                const Address = address.split(addressSeperator);
+                const Address = address.split(AddressSeperator);
 
                 setValues({
                     FullName: fullName,
@@ -447,7 +524,8 @@ const PatientManagement = () => {
                     Status,
                     DoctorId: doctorId,
                     XRayImages: [],
-                    HeartBeat: '',
+                    Height: '',
+                    Weight: '',
                     BloodPresure: '',
                     Pulse: '',
                 });
@@ -707,17 +785,27 @@ const PatientManagement = () => {
                                 children="* Thực hiện các bước cận lâm sàng:"
                             />
                             <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
+                                <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
                                     <TextField
                                         fullWidth
-                                        id="HeartBeat"
-                                        label="Nhịp tim"
-                                        value={values.HeartBeat}
-                                        onChange={handleValueChange('HeartBeat')}
-                                        placeholder=".......lần/phút"
+                                        id="Height"
+                                        label="Chiều cao"
+                                        value={values.Height}
+                                        onChange={handleValueChange('Height')}
+                                        placeholder=".......cm"
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
+                                <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
+                                    <TextField
+                                        fullWidth
+                                        id="Weight"
+                                        label="Cân nặng"
+                                        value={values.Weight}
+                                        onChange={handleValueChange('Weight')}
+                                        placeholder=".......kg"
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
                                     <TextField
                                         fullWidth
                                         id="BloodPresure"
@@ -727,7 +815,7 @@ const PatientManagement = () => {
                                         placeholder=".../...mmHg"
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
+                                <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
                                     <TextField
                                         fullWidth
                                         id="Pulse"
@@ -770,15 +858,41 @@ const PatientManagement = () => {
                                         onClick={handleReset}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                    <Button
-                                        fullWidth
-                                        color="success"
-                                        children="Hoàn tất"
-                                        iconName="done"
-                                        onClick={handleDone}
-                                    />
-                                </Grid>
+                                {
+                                    selectedRow &&
+                                    <React.Fragment>
+                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                            <Button
+                                                fullWidth
+                                                color="danger"
+                                                children="Xóa"
+                                                iconName="delete"
+                                                onClick={handleDelete}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                            <Button
+                                                fullWidth
+                                                color="info"
+                                                children="Lưu"
+                                                iconName="save"
+                                                onClick={handleDone}
+                                            />
+                                        </Grid>
+                                    </React.Fragment>
+                                }
+                                {
+                                    !selectedRow &&
+                                    <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                        <Button
+                                            fullWidth
+                                            color="success"
+                                            children="Hoàn tất"
+                                            iconName="done"
+                                            onClick={handleDone}
+                                        />
+                                    </Grid>
+                                }
                             </Grid>
                         </Paper>
                     </CardContent>

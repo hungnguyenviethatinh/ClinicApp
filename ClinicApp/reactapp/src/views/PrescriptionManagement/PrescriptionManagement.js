@@ -31,6 +31,7 @@ import {
     PrescriptionStatus,
     ExpiredSessionMsg,
     NotFoundMsg,
+    AddressSeperator,
 } from '../../constants';
 import { 
     GetMedicineNameOptionsUrl, GetCurrentPatientUrl, AddMedicinesUrl, 
@@ -56,8 +57,6 @@ const getPatientErrorMsg = '[Get Patient Error] ';
 const getMedicineErrorMsg = '[Get Medicines Error] ';
 const addPrescriptionErrorMsg = '[Add Prescription Error] ';
 const addMedicineErrorMsg = '[Add Medicines Error] ';
-
-const addressSeperator = ',';
 
 const PrescriptionManagement = () => {
 
@@ -129,9 +128,9 @@ const PrescriptionManagement = () => {
                 } = data[0].patient;
 
                 const Address = address
-                    .split(addressSeperator)
+                    .split(AddressSeperator)
                     .filter(value => value.trim() !== '')
-                    .join(`${addressSeperator} `);
+                    .join(`${AddressSeperator} `);
 
                 setPatient({
                     ...patient,

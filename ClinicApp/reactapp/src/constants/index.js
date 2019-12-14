@@ -87,3 +87,5 @@ export const DataDateTimeFormat = 'YYYY-MM-DD';
 export const DisplayDateTimeFormat = 'DD-MM-YYYY';
 
 export const RefreshDataTimer = 10; // In seconds.
+
+export const AddressSeperator = ',';

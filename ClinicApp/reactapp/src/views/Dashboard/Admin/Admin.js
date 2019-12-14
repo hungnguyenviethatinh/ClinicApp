@@ -34,6 +34,7 @@ import {
     UserStatus,
     DrugStatus,
     RefreshDataTimer,
+    AddressSeperator,
 } from '../../../constants';
 import { encodeId, decodeId } from '../../../utils';
 import moment from 'moment';
@@ -53,8 +54,6 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
     },
 }));
-
-const addressSeperator = ',';
 
 const patientQueueColumns = [
     {
@@ -80,7 +79,7 @@ const patientQueueColumns = [
     },
     {
         title: 'Địa chỉ', field: 'address',
-        render: rowData => _.last(rowData.address.split(addressSeperator)),
+        render: rowData => _.last(rowData.address.split(AddressSeperator)),
     },
     {
         title: 'Nghề nghiệp', field: 'job',
@@ -433,6 +432,7 @@ const AdminView = () => {
                                         value={patientSearchValue}
                                         onChange={handlePatientSearchChange}
                                         onSearch={handlePatientSearch}
+                                        id="patientSearchInput"
                                     />
                                 </Grid>
                             </Grid>
@@ -476,6 +476,7 @@ const AdminView = () => {
                                         value={prescriptionSearchValue}
                                         onChange={handlePrescriptionSearchChange}
                                         onSearch={handlePrescriptionSearch}
+                                        id="prescriptionSearchInput"
                                     />
                                 </Grid>
                             </Grid>
@@ -519,6 +520,7 @@ const AdminView = () => {
                                         value={employeeSearchValue}
                                         onChange={handleEmployeeSearchChange}
                                         onSearch={handleEmployeeSearch}
+                                        id="employeeSearchInput"
                                     />
                                 </Grid>
                             </Grid>

@@ -32,7 +32,9 @@ const TabComponent = (props) => {
 
     return (
         <div className={classes.root}>
-            <AppBar position="static">
+            {/* <AppBar
+                color="inherit" 
+                position="static"> */}
                 <Tabs
                     value={value}
                     onChange={handleChange}
@@ -41,7 +43,7 @@ const TabComponent = (props) => {
                 >
                     {names.map((name, index) => <Tab key={index} label={name} {...a11yProps(index)} />)}
                 </Tabs>
-            </AppBar>
+            {/* </AppBar> */}
             {children}
         </div>
     );

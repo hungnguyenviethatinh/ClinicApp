@@ -17,6 +17,7 @@ import { SearchInput } from '../../components/SearchInput';
 import {
     IdPrefix,
     Gender,
+    AddressSeperator,
 } from '../../constants';
 import { GetPatientsByDoctorUrl } from '../../config';
 import Axios, {
@@ -40,8 +41,6 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
     },
 }));
-
-const addressSeperator = ',';
 
 const patientColumns = [
     {
@@ -69,7 +68,7 @@ const patientColumns = [
     },
     {
         title: 'Địa chỉ', field: 'address',
-        render: rowData => _.last(rowData.address.split(addressSeperator)),
+        render: rowData => _.last(rowData.address.split(AddressSeperator)),
     },
 ];
 

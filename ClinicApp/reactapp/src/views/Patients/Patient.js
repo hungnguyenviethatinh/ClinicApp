@@ -21,7 +21,8 @@ import {
     PatientStatus, 
     ExpiredSessionMsg, 
     NotFoundMsg, 
-    DisplayDateTimeFormat, 
+    DisplayDateTimeFormat,
+    AddressSeperator, 
 } from '../../constants';
 import { DateTimePicker } from '@material-ui/pickers';
 import Axios, { 
@@ -60,7 +61,6 @@ const historyColumns = [
 ];
 
 const tabNames = ['Thông tin bệnh nhân', 'Lịch sử khám bệnh', 'Tra cứu lịch hẹn'];
-const addressSeperator = ',';
 
 const Patient = () => {
     const classes = useStyles();
@@ -121,7 +121,7 @@ const Patient = () => {
 
                 const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
                 const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(DisplayDateTimeFormat) : null;
-                const Address = address.split(addressSeperator).filter(value => value.trim() !== '').join(`${addressSeperator} `);
+                const Address = address.split(AddressSeperator).filter(value => value.trim() !== '').join(`${AddressSeperator} `);
 
                 setPatient({
                     FullName: fullName,
