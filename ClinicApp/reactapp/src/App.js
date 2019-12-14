@@ -9,6 +9,7 @@ import { PrescriptionsView, PrescriptionDetailView } from './views/Prescriptions
 import { PrescriptionManagementView } from './views/PrescriptionManagement';
 import { UserManagementView } from './views/UserManagement';
 import { DrugManagementView } from './views/DrugManagement';
+import { DataInputManagementView } from './views/DataInputManagement';
 import { StatisticsView } from './views/Statistics';
 import { UserView } from './views/User';
 
@@ -28,6 +29,7 @@ const App = () => {
                 <PrivateRoute exact path="/prescription-management" component={PrescriptionManagementView} />
                 <PrivateRoute exact path="/user-management" component={UserManagementView} />
                 <PrivateRoute exact path="/drug-management" component={DrugManagementView} />
+                <PrivateRoute exact path="/datainput-management" component={DataInputManagementView} />
                 <PrivateRoute exact path="/statistics" component={StatisticsView} />
                 <PrivateRoute exact path="/account/me" component={UserView} />
                 <Route exact path="/login" component={LoginView} />

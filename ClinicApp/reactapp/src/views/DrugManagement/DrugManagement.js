@@ -74,6 +74,7 @@ const medicineColumns = [
 const getMedicinesLogMsfHeader = '[Get Medicines Error]';
 const getMedicineLogMsfHeader = '[Get Medicine Error]';
 const addMedicineLogMsfHeader = '[Add Medicine Error]';
+const updateMedicineLogMsfHeader = '[Update Medicine Error]';
 
 const DrugManagement = () => {
 
@@ -201,7 +202,7 @@ const DrugManagement = () => {
                 refreshData();
             }
         }).catch((reason) => {
-            handleError(reason, addMedicineLogMsfHeader);
+            handleError(reason, updateMedicineLogMsfHeader);
         });
     };
 

@@ -404,6 +404,7 @@ const PatientManagement = () => {
                 handleSnackbarOption('success', 'Xóa bệnh nhân thành công.');
                 handleReset();
                 setSelectedRow(null);
+                setUpdateMode(false);
                 refreshData();
             }
         }).catch((reason) => {

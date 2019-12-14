@@ -56,6 +56,11 @@ const adminMenus = [
         icon: <StoreIcon />
     },
     {
+        title: 'Quản lí nhập dữ liệu',
+        href: '/datainput-management',
+        icon: <StoreIcon />
+    },
+    {
         title: 'Thống kê',
         href: '/statistics',
         icon: <EqualizerIcon />
