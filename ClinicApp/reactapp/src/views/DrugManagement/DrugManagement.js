@@ -29,8 +29,10 @@ import {
     GetMedicineUrl,
     AddMedicineUrl,
     UpdateMedicineUrl,
-    DeleteMedicineUrl
+    DeleteMedicineUrl,
+    GetUnitUrl
 } from '../../config';
+import { Select } from '../../components/Select';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -77,6 +79,7 @@ const getMedicineLogMsfHeader = '[Get Medicine Error]';
 const addMedicineLogMsfHeader = '[Add Medicine Error]';
 const updateMedicineLogMsfHeader = '[Update Medicine Error]';
 const deleteMedicineLogMsfHeader = '[Delete Medicine Error]';
+const getUnitsLogMsfHeader = '[Get Units Error]';
 
 const DrugManagement = () => {
 
@@ -287,6 +290,30 @@ const DrugManagement = () => {
         });
     };
 
+    const [unitOptions, setUnitOptions] = React.useState([{
+        label: '',
+        value: '',
+    }]);
+    const getUnitOptions = () => {
+        Axios.get(GetUnitUrl, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const options = [];
+                data.map(({ name }) => options.push({
+                    label: name,
+                    value: name,
+                }));
+                setUnitOptions(options);
+            }
+        }).catch((reason) => {
+            handleError(reason, getUnitsLogMsfHeader);
+        });
+    };
+
+    React.useEffect(() => {
+        getUnitOptions();
+    }, []);
+
     return (
         <Grid container spacing={3} >
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
@@ -327,11 +354,13 @@ const DrugManagement = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                    <TextField
+                                    <Select
                                         fullWidth
+                                        style={{ marginTop: 8, marginBottom: 4 }}
                                         id="Unit"
                                         label="Đơn vị"
                                         value={medicine.Unit}
+                                        options={unitOptions}
                                         onChange={handleMedicineChange('Unit')}
                                     />
                                 </Grid>
@@ -340,6 +369,7 @@ const DrugManagement = () => {
                                         fullWidth
                                         id="Price"
                                         label="Giá"
+                                        placeholder={`...đồng/${medicine.Unit}`}
                                         value={medicine.Price}
                                         onChange={handleMedicineChange('Price')}
                                     />
