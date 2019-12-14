@@ -398,7 +398,7 @@ const DataInputManagement = () => {
                                         fullWidth
                                         autoFocus
                                         id="DiagnosisName"
-                                        label="Tên thuốc"
+                                        label="Tên chẩn đoán"
                                         value={diagnosisName}
                                         onChange={handleDiagnosisNameChange}
                                     />
@@ -434,7 +434,7 @@ const DataInputManagement = () => {
                                         <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                             <Button
                                                 fullWidth
-                                                color="info"
+                                                color="success"
                                                 children="Lưu"
                                                 iconName="save"
                                                 onClick={handleDiagnosisDone}
@@ -546,7 +546,7 @@ const DataInputManagement = () => {
                                         <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                             <Button
                                                 fullWidth
-                                                color="info"
+                                                color="success"
                                                 children="Lưu"
                                                 iconName="save"
                                                 onClick={handleUnitDone}

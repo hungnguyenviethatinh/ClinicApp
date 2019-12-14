@@ -21,6 +21,7 @@ import Axios, {
 import {
     GetPatientStatUrl,
     GetPrescriptionStatUrl,
+    GetMedicineStatUrl,
 } from '../../config';
 import {
     PeriodConstants,
@@ -66,12 +67,14 @@ const periodOptions = [
 
 const getPrescriptionStatErrorMsg = '[Get Prescription Stat Error]';
 const getPatientStatErrorMsg = '[Get Patient Stat Error]';
+const getMedicineStatErrorMsg = '[Get Medicine Stat Error]';
 
 const StatisticsView = () => {
     const classes = useStyles();
 
     let patientChart = React.createRef();
     let prescriptionChart = React.createRef();
+    let medicineChart = React.createRef();
 
     const [selectedTimePeriod, setSelectedTimePeriod] = React.useState(PeriodConstants.Day);
     const handleTimePeriodChange = event => {
@@ -231,9 +234,30 @@ const StatisticsView = () => {
         });
     };
 
+    const [xAxisMedicineData, setXAxisMedicineData] = React.useState([]);
+    const [medicineData, setMedicineData] = React.useState([]);
+    const getMedicineStat = () => {
+        Axios.get(GetMedicineStatUrl, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const xAxis = [];
+                const yAxis = [];
+                data.map(({ name, quantity, unit }) => {
+                    xAxis.push(`${name} (${unit})`);
+                    yAxis.push(quantity);
+                });
+                setXAxisMedicineData(xAxis);
+                setMedicineData(yAxis);
+            }
+        }).catch((reason) => {
+            handleError(reason, getMedicineStatErrorMsg);
+        });
+    };
+
     React.useEffect(() => {
         getPatientStat();
         getPrescriptionStat();
+        getMedicineStat();
     }, []);
 
     return (
@@ -249,10 +273,10 @@ const StatisticsView = () => {
                     <Divider />
                     <CardContent className={classes.content}>
                         <Paper elevation={0} className={classes.paper}>
-                            <Grid container spacing={3} alignItems="center" >
+                            <Grid container spacing={3} justify="center" alignItems="center" >
                                 <Grid item>
                                     <DatePicker
-                                        id="startDatePicker"
+                                        id="startDatePicker1"
                                         label="Từ ngày"
                                         value={selectedStartDate}
                                         onChange={(date) => handleStartDateChange(date)}
@@ -260,7 +284,7 @@ const StatisticsView = () => {
                                 </Grid>
                                 <Grid item>
                                     <DatePicker
-                                        id="endDatePicker"
+                                        id="endDatePicker1"
                                         label="Tới ngày"
                                         value={selectedEndDate}
                                         onChange={(date) => handleEndDateChange(date)}
@@ -269,7 +293,7 @@ const StatisticsView = () => {
                                 <Grid item>
                                     <Select
                                         className={classes.select}
-                                        id="timePeriod"
+                                        id="timePeriod1"
                                         label="Theo"
                                         value={selectedTimePeriod}
                                         onChange={handleTimePeriodChange}
@@ -372,10 +396,10 @@ const StatisticsView = () => {
                     <Divider />
                     <CardContent className={classes.content}>
                         <Paper elevation={0} className={classes.paper}>
-                            <Grid container spacing={3} alignItems="center" >
+                            <Grid container spacing={3} justify="center" alignItems="center" >
                                 <Grid item>
                                     <DatePicker
-                                        id="startDatePicker"
+                                        id="startDatePicker2"
                                         label="Từ ngày"
                                         value={presSelectedStartDate}
                                         onChange={(date) => handlePresStartDateChange(date)}
@@ -383,7 +407,7 @@ const StatisticsView = () => {
                                 </Grid>
                                 <Grid item>
                                     <DatePicker
-                                        id="endDatePicker"
+                                        id="endDatePicker2"
                                         label="Tới ngày"
                                         value={presSelectedEndDate}
                                         onChange={(date) => handlePresEndDateChange(date)}
@@ -392,7 +416,7 @@ const StatisticsView = () => {
                                 <Grid item>
                                     <Select
                                         className={classes.select}
-                                        id="timePeriod"
+                                        id="timePeriod2"
                                         label="Theo"
                                         value={presSelectedTimePeriod}
                                         onChange={handlePresTimePeriodChange}
@@ -426,6 +450,43 @@ const StatisticsView = () => {
                                                 lineStyle: {
                                                     color: '#3f51b5',
                                                     width: 3,
+                                                },
+                                            },
+                                        ]}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+                <Card
+                    className={classes.card}
+                >
+                    <CardHeader
+                        title="THỐNG KÊ THUỐC"
+                        subheader="Thống kê số lượng thuốc trong kho dữ liệu"
+                    />
+                    <Divider />
+                    <CardContent className={classes.content}>
+                        <Paper elevation={0} className={classes.paper}>
+                            <Grid container spacing={3} style={{ marginTop: 24 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                    <BarChart
+                                        ref={(e) => { medicineChart = e; }}
+                                        style={{ height: '350px', width: '100%' }}
+                                        xAxisData={xAxisMedicineData}
+                                        series={[
+                                            {
+                                                name: 'Số lượng còn lại',
+                                                type: 'bar',
+                                                data: medicineData,
+                                                axisTick: {
+                                                    alignWithLabel: true,
+                                                },
+                                                itemStyle: {
+                                                    color: '#3f51b5',
                                                 },
                                             },
                                         ]}

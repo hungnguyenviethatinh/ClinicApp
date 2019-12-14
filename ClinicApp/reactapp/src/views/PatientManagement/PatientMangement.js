@@ -101,10 +101,9 @@ const patientColumns = [
 const PatientManagement = () => {
 
     const classes = useStyles();
-    // const [tableRef, setTableRef] = React.useState(React.createRef());
+
     const tableRef = React.useRef(null);
     const refreshData = () => {
-        // tableRef && tableRef.onQueryChange();
         tableRef.current && tableRef.current.onQueryChange();
     };
 
@@ -874,7 +873,7 @@ const PatientManagement = () => {
                                         <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                             <Button
                                                 fullWidth
-                                                color="info"
+                                                color="success"
                                                 children="Lưu"
                                                 iconName="save"
                                                 onClick={handleDone}
@@ -932,7 +931,6 @@ const PatientManagement = () => {
                             </Grid>
                         </Paper>
                         <Table
-                            // tableRef={(event) => { setTableRef(event) }}
                             tableRef={tableRef}
                             columns={patientColumns}
                             data={

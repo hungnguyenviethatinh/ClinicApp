@@ -28,7 +28,8 @@ import {
     GetAllMedicinesUrl,
     GetMedicineUrl,
     AddMedicineUrl,
-    UpdateMedicineUrl
+    UpdateMedicineUrl,
+    DeleteMedicineUrl
 } from '../../config';
 
 const useStyles = makeStyles(theme => ({
@@ -75,6 +76,7 @@ const getMedicinesLogMsfHeader = '[Get Medicines Error]';
 const getMedicineLogMsfHeader = '[Get Medicine Error]';
 const addMedicineLogMsfHeader = '[Add Medicine Error]';
 const updateMedicineLogMsfHeader = '[Update Medicine Error]';
+const deleteMedicineLogMsfHeader = '[Delete Medicine Error]';
 
 const DrugManagement = () => {
 
@@ -177,6 +179,11 @@ const DrugManagement = () => {
         }
     };
 
+    const handleDelete = () => {
+        const { id } = selectedRow;
+        deleteMedicine(id);
+    };
+
     const config = axiosRequestConfig();
 
     const addMedicine = (medicineModel) => {
@@ -189,6 +196,7 @@ const DrugManagement = () => {
             }
         }).catch((reason) => {
             handleError(reason, addMedicineLogMsfHeader);
+            handleSnackbarOption('error', 'Có lỗi khi thêm thuốc vào kho dữ liệu!');
         });
     };
 
@@ -198,11 +206,27 @@ const DrugManagement = () => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật dữ liệu thuốc thành công!');
-                handleReset();
                 refreshData();
             }
         }).catch((reason) => {
             handleError(reason, updateMedicineLogMsfHeader);
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin thuốc!');
+        });
+    };
+
+    const deleteMedicine = (id) => {
+        Axios.delete(`${DeleteMedicineUrl}/${id}`, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Thuốc đã được xóa thành công!');
+                handleReset();
+                setSelectedRow(null);
+                setUpdateMode(false);
+                refreshData();
+            }
+        }).catch((reason) => {
+            handleError(reason, deleteMedicineLogMsfHeader);
+            handleSnackbarOption('error', 'Có lỗi khi xóa loại thuốc này!');
         });
     };
 
@@ -336,15 +360,41 @@ const DrugManagement = () => {
                                         onClick={handleReset}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                    <Button
-                                        fullWidth
-                                        color="success"
-                                        children="Hoàn tất"
-                                        iconName="done"
-                                        onClick={handleDone}
-                                    />
-                                </Grid>
+                                {
+                                    selectedRow &&
+                                    <React.Fragment>
+                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                            <Button
+                                                fullWidth
+                                                color="danger"
+                                                children="Xóa"
+                                                iconName="delete"
+                                                onClick={handleDelete}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                            <Button
+                                                fullWidth
+                                                color="success"
+                                                children="Lưu"
+                                                iconName="save"
+                                                onClick={handleDone}
+                                            />
+                                        </Grid>
+                                    </React.Fragment>
+                                }
+                                {
+                                    !selectedRow &&
+                                    <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                        <Button
+                                            fullWidth
+                                            color="success"
+                                            children="Hoàn tất"
+                                            iconName="done"
+                                            onClick={handleDone}
+                                        />
+                                    </Grid>
+                                }
                             </Grid>
                         </Paper>
                     </CardContent>

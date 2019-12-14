@@ -22,6 +22,7 @@ import {
     GetEmployeeUrl,
     AddEmployeeUrl,
     UpdateEmployeeUrl,
+    DeleteEmployeeUrl,
 } from '../../config';
 import Axios, { 
     axiosRequestConfig,
@@ -71,6 +72,7 @@ const getEmployeeLogMsfHeader = '[Get Employee Error]';
 const getEmployeesLogMsfHeader = '[Get Employees Error]';
 const addEmployeeLogMsfHeader = '[Add Employee Error]';
 const updateEmployeeLogMsfHeader = '[Update Employee Error]';
+const deleteEmployeeLogMsfHeader = '[Delete Employee Error]';
 
 const UserManagement = () => {
 
@@ -185,6 +187,11 @@ const UserManagement = () => {
         }
     };
 
+    const handleDelete = () => {
+        const { id } = selectedRow;
+        deleteUser(id);
+    };
+
     const config = axiosRequestConfig();
 
     const addUser = (userModel) => {
@@ -197,6 +204,7 @@ const UserManagement = () => {
             }
         }).catch((reason) => {
             handleError(reason, addEmployeeLogMsfHeader);
+            handleSnackbarOption('error', 'Có lỗi khi tạo người dùng mới!');
         });
     };
 
@@ -206,11 +214,27 @@ const UserManagement = () => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật người dùng thành công!');
-                handleReset();
                 refreshData();
             }
         }).catch((reason) => {
             handleError(reason, updateEmployeeLogMsfHeader);
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật người dúng!');
+        });
+    };
+
+    const deleteUser = (id) => {
+        Axios.delete(`${DeleteEmployeeUrl}/${id}`, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Xóa người dùng thành công!');
+                handleReset();
+                setSelectedRow(null);
+                setUpdateMode(false);
+                refreshData();
+            }
+        }).catch((reason) => {
+            handleError(reason, deleteEmployeeLogMsfHeader);
+            handleSnackbarOption('error', 'Có lỗi khi xóa người dùng!');
         });
     };
 
@@ -370,15 +394,41 @@ const UserManagement = () => {
                                         onClick={handleReset}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                    <Button
-                                        fullWidth
-                                        color="success"
-                                        children="Hoàn tất"
-                                        iconName="done"
-                                        onClick={handleDone}
-                                    />
-                                </Grid>
+                                {
+                                    selectedRow &&
+                                    <React.Fragment>
+                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                            <Button
+                                                fullWidth
+                                                color="danger"
+                                                children="Xóa"
+                                                iconName="delete"
+                                                onClick={handleDelete}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                            <Button
+                                                fullWidth
+                                                color="success"
+                                                children="Lưu"
+                                                iconName="save"
+                                                onClick={handleDone}
+                                            />
+                                        </Grid>
+                                    </React.Fragment>
+                                }
+                                {
+                                    !selectedRow &&
+                                    <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                        <Button
+                                            fullWidth
+                                            color="success"
+                                            children="Hoàn tất"
+                                            iconName="done"
+                                            onClick={handleDone}
+                                        />
+                                    </Grid>
+                                }
                             </Grid>
                         </Paper>
                     </CardContent>

@@ -9,6 +9,7 @@ import EqualizerIcon from '@material-ui/icons/Equalizer';
 import StoreIcon from '@material-ui/icons/Store';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import ViewListIcon from '@material-ui/icons/ViewList';
+import ImportContactsIcon from '@material-ui/icons/ImportContacts';
 
 import { Menu } from '../Menu';
 import Profile from '../Profile';
@@ -58,7 +59,7 @@ const adminMenus = [
     {
         title: 'Quản lí nhập dữ liệu',
         href: '/datainput-management',
-        icon: <StoreIcon />
+        icon: <ImportContactsIcon />
     },
     {
         title: 'Thống kê',
