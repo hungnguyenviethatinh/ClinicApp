@@ -197,6 +197,11 @@ namespace ClinicAPI.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (patientModel == null)
+                {
+                    return BadRequest($"{nameof(patientModel)} can not be null.");
+                }
+
                 var patient = _unitOfWork.Patients.Find(id);
                 if (patient == null)
                 {
@@ -216,6 +221,101 @@ namespace ClinicAPI.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+
+        [HttpPut("histories/{patientId}")]
+        [Authorize(Policies.ManageAllPatientsPolicy)]
+        public async Task<IActionResult> UpdateHistory(int patientId, [FromBody] HistoryModel historyModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (historyModel == null)
+                {
+                    return BadRequest($"{nameof(historyModel)} can not be null.");
+                }
+
+                var history = _unitOfWork.Histories
+                    .Where(h => h.PatientId == patientId && !h.IsChecked)
+                    .FirstOrDefault();
+
+                if (history == null)
+                {
+                    return NotFound();
+                }
+
+                _mapper.Map(historyModel, history);
+                _unitOfWork.Histories.Update(history);
+
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(history);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPut("xrays/{historyId}")]
+        [Authorize(Policies.ManageAllPatientsPolicy)]
+        public async Task<IActionResult> UpdateXrays(int historyId, [FromBody] IEnumerable<XRayModel> xRayModels)
+        {
+            if (ModelState.IsValid)
+            {
+                if (xRayModels == null)
+                {
+                    return BadRequest($"{nameof(xRayModels)} can not be null.");
+                }
+
+                var xRayImages = _unitOfWork.XRayImages.Where(x => x.HistoryId == historyId);
+
+                foreach (var xRayImage in xRayImages)
+                {
+                    xRayImage.IsDeleted = true;
+                }
+
+                _unitOfWork.XRayImages.UpdateRange(xRayImages);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                var newXRayImages = _mapper.Map<IEnumerable<XRayImage>>(xRayModels);
+                _unitOfWork.XRayImages.AddRange(newXRayImages);
+                result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok();
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpDelete("patients/{id}")]
+        [Authorize(Policies.ManageAllPatientsPolicy)]
+        public async Task<IActionResult> DeletePatient(int id)
+        {
+            var patient = _unitOfWork.Patients.Find(id);
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            patient.IsDeleted = true;
+            _unitOfWork.Patients.Update(patient);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok(patient);
         }
 
         [HttpGet("prescriptions")]

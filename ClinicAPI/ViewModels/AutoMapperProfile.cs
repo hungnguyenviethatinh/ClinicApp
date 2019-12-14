@@ -14,6 +14,11 @@ namespace ClinicAPI.ViewModels
             CreateMap<History, HistoryModel>();
             CreateMap<HistoryModel, History>();
 
+            CreateMap<History, HistoryViewModel>()
+                .ForMember(h => h.Doctor, map => map.Ignore())
+                .ForMember(h => h.Prescriptions, map => map.Ignore())
+                .ForMember(h => h.XRayImages, map => map.Ignore());
+
             CreateMap<XRayImage, XRayModel>();
             CreateMap<XRayModel, XRayImage>();
 

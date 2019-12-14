@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
+using ClinicAPI.ViewModels;
 using DAL;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -31,14 +29,25 @@ namespace ClinicAPI.Controllers
         [HttpGet("patient/{patientId}")]
         public IActionResult GetHistoriesByPatientId(int patientId)
         {
-            var histories = _unitOfWork.Histories.Where(h => h.PatientId == patientId).OrderByDescending(h => h.CreatedDate);
-            foreach(var history in histories)
+            var histories = _unitOfWork.Histories
+                .Where(h => h.PatientId == patientId)
+                .OrderByDescending(h => h.CreatedDate);
+
+            var historyVMs = _mapper.Map<IEnumerable<HistoryViewModel>>(histories);
+
+            foreach(var history in historyVMs)
             {
                 var doctor = _unitOfWork.Users.Find(history.DoctorId);
                 history.Doctor = doctor;
+
+                var prescriptions = _unitOfWork.Prescriptions.Where(p => p.HistoryId == history.Id);
+                history.Prescriptions.AddRange(prescriptions);
+
+                var xrays = _unitOfWork.XRayImages.Where(x => x.HistoryId == history.Id);
+                history.XRayImages.AddRange(xrays);
             }
 
-            return Ok(histories);
+            return Ok(historyVMs);
         }
     }
 }

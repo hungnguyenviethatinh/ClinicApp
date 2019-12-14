@@ -132,11 +132,13 @@ namespace DAL
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<History>()
-                .Property(h => h.HeartBeat).HasMaxLength(100);
+                .Property(h => h.Height).HasMaxLength(10);
             builder.Entity<History>()
-                .Property(h => h.BloodPresure).HasMaxLength(100);
+                .Property(h => h.Weight).HasMaxLength(10);
             builder.Entity<History>()
-                .Property(h => h.Pulse).HasMaxLength(100);
+                .Property(h => h.BloodPresure).HasMaxLength(10);
+            builder.Entity<History>()
+                .Property(h => h.Pulse).HasMaxLength(10);
             builder.Entity<History>()
                 .HasOne(h => h.Doctor)
                 .WithMany(d => d.Histories)

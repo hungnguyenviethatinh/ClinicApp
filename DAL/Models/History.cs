@@ -7,7 +7,8 @@ namespace DAL.Models
     public class History : IAuditableEntity
     {
         public int Id { get; set; }
-        public string HeartBeat { get; set; }
+        public string Height { get; set; }
+        public string Weight { get; set; }
         public string BloodPresure { get; set; }
         public string Pulse { get; set; }
         public bool IsChecked { get; set; }
