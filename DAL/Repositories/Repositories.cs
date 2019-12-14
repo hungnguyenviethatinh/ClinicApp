@@ -41,4 +41,30 @@ namespace DAL.Repositories
 
         }
     }
+
+    public interface IDiagnosisRepository : IRepository<Diagnosis>
+    {
+
+    }
+
+    public class DiagnosisRepository : Repository<Diagnosis>, IDiagnosisRepository
+    {
+        public DiagnosisRepository(ApplicationDbContext context) : base(context)
+        {
+
+        }
+    }
+
+    public interface  IUnitRepository : IRepository<Unit>
+    {
+
+    }
+
+    public class UnitRepository : Repository<Unit>, IUnitRepository
+    {
+        public UnitRepository(ApplicationDbContext context) : base(context)
+        {
+
+        }
+    }
 }

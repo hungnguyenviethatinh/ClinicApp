@@ -44,6 +44,12 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<Medicine, MedicineViewModel>()
                 .ForMember(m => m.Status, map => map.Ignore());
+
+            CreateMap<Diagnosis, DiagnosisModel>();
+            CreateMap<DiagnosisModel, Diagnosis>();
+
+            CreateMap<Unit, UnitModel>();
+            CreateMap<UnitModel, Unit>();
         }
     }
 }

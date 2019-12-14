@@ -19,6 +19,8 @@ namespace DAL
         public DbSet<History> Histories { get; set; }
         public DbSet<PrescriptionMedicine> PrescriptionMedicines { get; set; }
         public DbSet<XRayImage> XRayImages { get; set; }
+        public DbSet<Diagnosis> Diagnoses { get; set; }
+        public DbSet<Unit> Units { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -189,6 +191,14 @@ namespace DAL
                 .WithMany(h => h.XRayImages)
                 .HasForeignKey(x => x.HistoryId)
                 .IsRequired().OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Diagnosis>().HasIndex(d => d.Name).IsUnique();
+            builder.Entity<Diagnosis>()
+                .Property(d => d.Name).IsRequired().HasMaxLength(100);
+
+            builder.Entity<Unit>().HasIndex(u => u.Name).IsUnique();
+            builder.Entity<Unit>()
+                .Property(u => u.Name).IsRequired().HasMaxLength(15);
         }
 
         public override int SaveChanges()

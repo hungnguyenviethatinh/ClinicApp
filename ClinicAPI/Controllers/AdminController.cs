@@ -68,7 +68,7 @@ namespace ClinicAPI.Controllers
                 patient.Doctor = _unitOfWork.Users.Find(patient.DoctorId);
             }
 
-            return Ok(new []
+            return Ok(new[]
             {
                 new
                 {
@@ -112,7 +112,7 @@ namespace ClinicAPI.Controllers
                 prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
             }
 
-            return Ok(new []
+            return Ok(new[]
             {
                 new
                 {
@@ -148,7 +148,7 @@ namespace ClinicAPI.Controllers
             {
                 medicine.Status = medicine.Quantity <= 0 ? MedicineStatus.No : MedicineStatus.Yes;
             }
-            return Ok(new []
+            return Ok(new[]
             {
                 new
                 {
@@ -168,7 +168,7 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(new [] { medicine, });
+            return Ok(new[] { medicine, });
         }
 
         [HttpPost("medicines")]
@@ -228,6 +228,28 @@ namespace ClinicAPI.Controllers
             return BadRequest(ModelState);
         }
 
+        [HttpDelete("medicines/{id}")]
+        [Authorize(Policies.ManageAllMedicinesPolicy)]
+        public async Task<IActionResult> DeleteMedicine(int id)
+        {
+            var medicine = _unitOfWork.Medicines.Find(id);
+
+            if (medicine == null)
+            {
+                return NotFound();
+            }
+
+            medicine.IsDeleted = true;
+            _unitOfWork.Medicines.Update(medicine);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok(medicine);
+        }
+
         [HttpGet("employees")]
         [Authorize(Policies.ViewAllUsersPolicy)]
         public async Task<IActionResult> GetEmployees([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
@@ -265,7 +287,7 @@ namespace ClinicAPI.Controllers
                 employeeVMs.Add(employeeVM);
             }
 
-            return Ok(new []
+            return Ok(new[]
             {
                 new
                 {
@@ -358,6 +380,214 @@ namespace ClinicAPI.Controllers
             return BadRequest(ModelState);
         }
 
+        [HttpDelete("employees/{id}")]
+        [Authorize(Policies.ManageAllUsersPolicy)]
+        public async Task<IActionResult> DeleteEmployee(string id)
+        {
+            var user = await _accountManager.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.IsDeleted = true;
+            var (Succeeded, Errors) = await _accountManager.UpdateUserAsync(user);
+            if (!Succeeded)
+            {
+                return NoContent();
+            }
+
+            return Ok(user);
+        }
+
+        [HttpGet("diagnoses")]
+        public IActionResult GetDiagnoses()
+        {
+            var diagnoses = _unitOfWork.Diagnoses.Where(d => !d.IsDeleted);
+
+            return Ok(diagnoses);
+        }
+
+        [HttpGet("diagnoses/{id}")]
+        public async Task<IActionResult> GetDiagnosis(int id)
+        {
+            var diagnosis = await _unitOfWork.Diagnoses.FindAsync(id);
+            if (diagnosis == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new[] { diagnosis, });
+        }
+
+        [HttpPost("diagnoses")]
+        public async Task<IActionResult> AddDiagnosis([FromBody] DiagnosisModel diagnosisModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (diagnosisModel == null)
+                {
+                    return BadRequest($"{nameof(diagnosisModel)} can not be null!");
+                }
+
+                var diagnosis = _mapper.Map<Diagnosis>(diagnosisModel);
+                _unitOfWork.Diagnoses.Add(diagnosis);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(diagnosis);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPut("diagnoses/{id}")]
+        public async Task<IActionResult> UpdateDiagnosis(int id, [FromBody] DiagnosisModel diagnosisModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (diagnosisModel == null)
+                {
+                    return BadRequest($"{nameof(diagnosisModel)} can not be null!");
+                }
+
+                var diagnosis = _unitOfWork.Diagnoses.Find(id);
+                if (diagnosis == null)
+                {
+                    return NotFound();
+                }
+
+                _mapper.Map(diagnosisModel, diagnosis);
+                _unitOfWork.Diagnoses.Update(diagnosis);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(diagnosis);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpDelete("diagnoses/{id}")]
+        public async Task<IActionResult> DeleteDiagnosis(int id)
+        {
+            var diagnosis = _unitOfWork.Diagnoses.Find(id);
+            if (diagnosis == null)
+            {
+                return NotFound();
+            }
+
+            diagnosis.IsDeleted = true;
+            _unitOfWork.Diagnoses.Update(diagnosis);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok(diagnosis);
+        }
+
+        [HttpGet("units")]
+        public IActionResult GetUnits()
+        {
+            var units = _unitOfWork.Units.Where(u => !u.IsDeleted);
+
+            return Ok(units);
+        }
+
+        [HttpGet("units/{id}")]
+        public async Task<IActionResult> GetUnit(int id)
+        {
+            var unit = await _unitOfWork.Units.FindAsync(id);
+            if (unit == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new[] { unit, });
+        }
+
+        [HttpPost("units")]
+        public async Task<IActionResult> AddUnit([FromBody] UnitModel unitModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (unitModel == null)
+                {
+                    return BadRequest($"{nameof(unitModel)} can not be null!");
+                }
+
+                var unit = _mapper.Map<Unit>(unitModel);
+                _unitOfWork.Units.Add(unit);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(unit);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPost("units/{id}")]
+        public async Task<IActionResult> UpdateUnit(int id, [FromBody] UnitModel unitModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (unitModel == null)
+                {
+                    return BadRequest($"{nameof(unitModel)} can not be null!");
+                }
+
+                var unit = _unitOfWork.Units.Find(id);
+                if (unit == null)
+                {
+                    return NotFound();
+                }
+
+                _mapper.Map(unitModel, unit);
+                _unitOfWork.Units.Update(unit);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(unit);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpDelete("units/{id}")]
+        public async Task<IActionResult> DeleteUnit(int id)
+        {
+            var unit = _unitOfWork.Units.Find(id);
+            if (unit == null)
+            {
+                return NotFound();
+            }
+
+            unit.IsDeleted = true;
+            _unitOfWork.Units.Update(unit);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok(unit);
+        }
+
         [HttpGet("stat/patient")]
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatientStat([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] string period = PeriodConstants.Day)
@@ -397,7 +627,7 @@ namespace ClinicAPI.Controllers
                 //     .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
                 //     .Select(p => new { x = p.Key, y = p.Count() });
 
-                return Ok(new []
+                return Ok(new[]
                 {
                     new { all = allByWeek, },
                     //isNew = isNewByWeek,
@@ -428,7 +658,7 @@ namespace ClinicAPI.Controllers
                 //var appointedByMonth = appointedPatients
                 //    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
                 //    .Select(p => new { x = p.Key, y = p.Count() });
-                return Ok(new []
+                return Ok(new[]
                 {
                     new { all = allByMonth, },
                     //isNew = isNewByMonth,
@@ -458,7 +688,7 @@ namespace ClinicAPI.Controllers
             //    .GroupBy(p => p.CreatedDate.Date)
             //    .Select(p => new { x = p.Key, y = p.Count() });
 
-            return Ok(new []
+            return Ok(new[]
             {
                 new { all = allByDay, },
                 //isNew = isNewByDay,
@@ -480,6 +710,7 @@ namespace ClinicAPI.Controllers
                 var byWeek = prescriptions
                     .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
                     .Select(p => new { x = p.Key, y = p.Count() });
+
                 return Ok(byWeek);
             }
 
@@ -488,13 +719,26 @@ namespace ClinicAPI.Controllers
                 var byMonth = prescriptions
                     .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
                     .Select(p => new { x = p.Key, y = p.Count() });
+
                 return Ok(byMonth);
             }
 
             var byDay = prescriptions
                 .GroupBy(p => p.CreatedDate.Date)
                 .Select(p => new { x = p.Key, y = p.Count() });
+
             return Ok(byDay);
+        }
+
+        [HttpGet("stat/medicine")]
+        [Authorize(Policies.ViewAllMedicinesPolicy)]
+        public IActionResult GetMedicineStat()
+        {
+            var medicineStat = _unitOfWork.Medicines
+                .Where(m => !m.IsDeleted)
+                .Select(m => new { m.Name, m.Quantity });
+
+            return Ok(medicineStat);
         }
     }
 }

@@ -14,6 +14,8 @@ namespace DAL
         private IHistoryRepository _histories;
         private IPrescriptionMedicineRepository _prescriptionMedicines;
         private IXRayImageRepository _xRayImages;
+        private IDiagnosisRepository _diagnoses;
+        private IUnitRepository _units;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -121,6 +123,32 @@ namespace DAL
                 }
 
                 return _xRayImages;
+            }
+        }
+
+        public IDiagnosisRepository Diagnoses
+        {
+            get
+            {
+                if (_diagnoses == null)
+                {
+                    _diagnoses = new DiagnosisRepository(_context);
+                }
+
+                return _diagnoses;
+            }
+        }
+
+        public IUnitRepository Units
+        {
+            get
+            {
+                if (_units == null)
+                {
+                    _units = new UnitRepository(_context);
+                }
+
+                return _units;
             }
         }
 

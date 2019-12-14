@@ -13,6 +13,8 @@ namespace DAL
         IHistoryRepository Histories { get; }
         IPrescriptionMedicineRepository PrescriptionMedicines { get; }
         IXRayImageRepository XRayImages { get; }
+        IDiagnosisRepository Diagnoses { get; }
+        IUnitRepository Units { get; }
 
         int SaveChanges();
         Task<int> SaveChangesAsync();
