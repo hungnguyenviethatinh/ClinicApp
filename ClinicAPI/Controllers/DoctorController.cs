@@ -38,9 +38,33 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ManageAllPrescriptionsPolicy)]
         public IActionResult GetMedicines()
         {
-            var medicines = _unitOfWork.Medicines.Where(m => !m.IsDeleted);
+            var medicines = _unitOfWork.Medicines
+                .Where(m => !m.IsDeleted)
+                .Select(m => new { m.Id, m.Name });
 
             return Ok(medicines);
+        }
+
+        [HttpGet("diagnoses")]
+        [Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        public IActionResult GetDiagnoses()
+        {
+            var diagnoses = _unitOfWork.Diagnoses
+                .Where(d => !d.IsDeleted)
+                .Select(d => new { d.Name });
+
+            return Ok(diagnoses);
+        }
+
+        [HttpGet("units")]
+        [Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        public IActionResult GetUnits()
+        {
+            var units = _unitOfWork.Units
+                .Where(u => !u.IsDeleted)
+                .Select(u => new { u.Name });
+
+            return Ok(units);
         }
 
         [HttpGet("patients")]
