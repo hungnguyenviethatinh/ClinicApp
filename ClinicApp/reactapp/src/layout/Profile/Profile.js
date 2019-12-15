@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/styles';
 import { IconButton, Typography } from '@material-ui/core';
 import { Settings } from '@material-ui/icons';
 import { decodeJWT } from '../../common';
+import { RouteConstants } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -62,7 +63,7 @@ const Profile = props => {
 				right: 0,
 				top: -10,
 			}}>
-				<Link to="/account/me">
+				<Link to={RouteConstants.UserView}>
 					<IconButton
 						aria-label="user"
 						className={classes.margin}

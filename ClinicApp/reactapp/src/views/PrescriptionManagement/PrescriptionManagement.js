@@ -138,6 +138,7 @@ const PrescriptionManagement = () => {
             if (status === 200) {
                 const {
                     id,
+                    doctorId,
                     fullName,
                     dateOfBirth,
                     gender,
@@ -174,7 +175,7 @@ const PrescriptionManagement = () => {
     const [prescription, setPrescription] = React.useState({
         Diagnosis: '',
         Note: '',
-        Status: PrescriptionStatusEnum[PrescriptionStatus.IsPending],
+        Status: PrescriptionStatusEnum[PrescriptionStatus.IsNew],
         PatientId: '',
         DoctorId: '',
         HistoryId: '',
@@ -212,13 +213,15 @@ const PrescriptionManagement = () => {
     const [medicineNameOptions, setMedicineNameOptions] = React.useState([{
         id: '',
         name: '',
+        quantity: '',
+        unit: '',
+        price: '',
     }]);
     const getOptionLabel = (option) => option.name;
     const getMedicineNameOptions = () => {
         Axios.get(GetMedicineNameOptionsUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                data.map(({ id, name }) => ({ id, name }));
                 setMedicineNameOptions(data);
             }
         }).catch((reason) => {
@@ -254,12 +257,9 @@ const PrescriptionManagement = () => {
             AppointmentDate: null,
         })
         setPrescription({
+            ...prescription,
             Diagnosis: '',
             Note: '',
-            Status: PrescriptionStatusEnum[PrescriptionStatus.IsPending],
-            PatientId: '',
-            DoctorId: '',
-            HistoryId: '',
         });
         setMedicines([{
             PrescriptionId: '',
@@ -276,6 +276,10 @@ const PrescriptionManagement = () => {
     };
 
     const handleDone = () => {
+        if (!patient.FullName.trim()) {
+            handleSnackbarOption('info', 'Không có bệnh nhân được chọn để kê đơn. Quay lại Bảng điều khiển để chọn!');
+            return;
+        }
         if (patient.AppointmentDate && !moment(patient.AppointmentDate).isValid()) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày giờ hẹn tái khám hợp lệ (không có để trống)!');
             return;
@@ -285,10 +289,6 @@ const PrescriptionManagement = () => {
             return;
         }
         for (let medicine of medicines) {
-            if (!patient.FullName.trim()) {
-                handleSnackbarOption('info', 'Không có bệnh nhân được chọn để kê đơn. Quay lại Bảng điều khiển để chọn!');
-                return;
-            }
             if (medicine.MedicineId === '') {
                 handleSnackbarOption('error', 'Yêu cầu nhập mặt hàng thuốc!');
                 return;
@@ -327,7 +327,7 @@ const PrescriptionManagement = () => {
         console.log(prescription);
         console.log(medicines);
 
-        addPrescription(prescription);
+        // addPrescription(prescription);
     };
 
     const addPrescription = (prescriptionModel) => {

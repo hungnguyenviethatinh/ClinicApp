@@ -188,6 +188,7 @@ const DoctorView = () => {
                 });
             }
             setCountPatientTable(1);
+            setSelectedRow(null);
         }).catch((reason) => {
             handleError(reason, getPatientLogMsgHeader);
             setCountPatientTable(1);
@@ -222,11 +223,11 @@ const DoctorView = () => {
         }
     };
 
-    const oldPatientStatus = 'oldPatientStatus';
+    const patientPreviousStatus = 'patientPreviousStatus';
 
     const handleCancel = () => {
         const { id } = selectedRow;
-        const status = localStorage.getItem(oldPatientStatus) || PatientStatusEnum[PatientStatus.IsNew];
+        const status = localStorage.getItem(patientPreviousStatus) || PatientStatusEnum[PatientStatus.IsNew];
         const url = `${UpdatePatientStatusUrl}/${id}/${status}`;
         Axios.get(url, config).then((response) => {
             const { status } = response;
@@ -244,14 +245,14 @@ const DoctorView = () => {
 
     const handleUpdate = () => {
         const { id, status } = selectedRow;
-        localStorage.setItem(oldPatientStatus, `${status}`);
+        localStorage.setItem(patientPreviousStatus, `${status}`);
         const url = `${UpdatePatientStatusUrl}/${id}/${PatientStatusEnum[PatientStatus.IsChecking]}`;
         Axios.get(url, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 history.push(RouteConstants.PrescriptionManagementView);
             } else {
-                handleSnackbarOption('error', 'Có lỗi khi xử lý. Vui lòng thử lại sau!');
+                handleSnackbarOption('error', 'Đang kê đơn cho bệnh nhân khác!');
             }
         }).catch((reason) => {
             handleError(reason, updatePatientLogMsgHeader);

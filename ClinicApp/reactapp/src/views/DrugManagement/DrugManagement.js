@@ -162,11 +162,11 @@ const DrugManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên thuốc!');
             return;
         }
-        if (medicine.Quantity === '') {
+        if (!medicine.Quantity.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập số lượng thuốc!');
             return;
         }
-        if (medicine.Quantity !== '' && !_.isFinite(_.toNumber(medicine.Quantity))) {
+        if (medicine.Quantity.trim() && !_.isFinite(_.toNumber(medicine.Quantity))) {
             handleSnackbarOption('error', 'Yêu cầu nhập số cho số lượng thuốc!');
             return;
         }
@@ -174,11 +174,11 @@ const DrugManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập đơn vị thuốc!');
             return;
         }
-        if (!medicine.Price === '') {
+        if (!medicine.Price.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập giá thuốc!');
             return;
         }
-        if (medicine.Price !== '' && !_.isFinite(_.toNumber(medicine.Price))) {
+        if (medicine.Price.trim() && !_.isFinite(_.toNumber(medicine.Price))) {
             handleSnackbarOption('error', 'Yêu cầu nhập số cho giá thuốc!');
             return;
         }
@@ -186,7 +186,7 @@ const DrugManagement = () => {
         const medicineModel = {
             Name: medicine.Name.trim(),
             Quantity: _.toNumber(medicine.Quantity),
-            Unit: medicine.Unit.trim(),
+            Unit: medicine.Unit,
             Price: _.toNumber(medicine.Price),
         };
 
