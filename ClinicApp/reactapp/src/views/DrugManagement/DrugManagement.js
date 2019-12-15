@@ -9,6 +9,7 @@ import {
     Paper,
     Typography
 } from '@material-ui/core';
+import _ from 'lodash';
 
 import { Table } from '../../components/Table';
 import { TextField } from '../../components/TextField';
@@ -161,24 +162,39 @@ const DrugManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên thuốc!');
             return;
         }
-        if (!medicine.Quantity.toString().trim()) {
+        if (medicine.Quantity === '') {
             handleSnackbarOption('error', 'Yêu cầu nhập số lượng thuốc!');
+            return;
+        }
+        if (medicine.Quantity !== '' && !_.isFinite(_.toNumber(medicine.Quantity))) {
+            handleSnackbarOption('error', 'Yêu cầu nhập số cho số lượng thuốc!');
             return;
         }
         if (!medicine.Unit.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập đơn vị thuốc!');
             return;
         }
-        if (!medicine.Price.toString().trim()) {
+        if (!medicine.Price === '') {
             handleSnackbarOption('error', 'Yêu cầu nhập giá thuốc!');
             return;
         }
+        if (medicine.Price !== '' && !_.isFinite(_.toNumber(medicine.Price))) {
+            handleSnackbarOption('error', 'Yêu cầu nhập số cho giá thuốc!');
+            return;
+        }
+
+        const medicineModel = {
+            Name: medicine.Name.trim(),
+            Quantity: _.toNumber(medicine.Quantity),
+            Unit: medicine.Unit.trim(),
+            Price: _.toNumber(medicine.Price),
+        };
 
         if (!updateMode) {
-            addMedicine(medicine);
+            addMedicine(medicineModel);
         } else {
             const { id } = selectedRow;
-            updateMedicine(id, medicine);
+            updateMedicine(id, medicineModel);
         }
     };
 
@@ -356,7 +372,7 @@ const DrugManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Select
                                         fullWidth
-                                        style={{ marginTop: 8, marginBottom: 4 }}
+                                        // style={{ marginTop: 8, marginBottom: 4 }}
                                         id="Unit"
                                         label="Đơn vị"
                                         value={medicine.Unit}

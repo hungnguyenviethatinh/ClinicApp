@@ -24,7 +24,7 @@ const SelectComponent = props => {
     return (
         <FormControl
             fullWidth={fullWidth}
-            // margin="dense"
+            margin="dense"
             className={clsx(classes.root, className)}
             style={style}
         >

@@ -149,7 +149,7 @@ const DataInputManagement = () => {
         }
 
         const diagnosisModel = {
-            Name: diagnosisName,
+            Name: diagnosisName.trim(),
         };
         if (!updateDiagnosisMode) {
             addDiagnosis(diagnosisModel);
@@ -267,7 +267,7 @@ const DataInputManagement = () => {
         }
 
         const unitModel = {
-            Name: unitName,
+            Name: unitName.trim(),
         };
         if (!updateUnitMode) {
             addUnit(unitModel);
