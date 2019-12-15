@@ -89,3 +89,19 @@ export const DisplayDateTimeFormat = 'DD-MM-YYYY';
 export const RefreshDataTimer = 10; // In seconds.
 
 export const AddressSeperator = ',';
+
+export const RouteConstants = {
+    DashboardView: '/dashboard',
+    PatientsView: '/patients',
+    PatientDetailView: '/patient/:id',
+    PatientMangementView: '/patient-management',
+    PrescriptionsView: '/prescriptions',
+    PrescriptionDetailView: '/prescription/:id',
+    PrescriptionManagementView: '/prescription-management',
+    UserManagementView: '/user-management',
+    DrugManagementView: '/drug-management',
+    DataInputManagementView: '/datainput-management',
+    StatisticsView: '/statistics',
+    UserView: '/account/me',
+    LoginView: '/login',
+};

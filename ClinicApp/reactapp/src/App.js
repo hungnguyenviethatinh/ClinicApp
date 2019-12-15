@@ -14,26 +14,27 @@ import { StatisticsView } from './views/Statistics';
 import { UserView } from './views/User';
 
 import { PrivateRoute } from './components/PrivateRoute';
+import { RouteConstants } from './constants';
 
 const App = () => {
     return (
         <Router>
             <Switch>
-                <Redirect exact from="/" to="/dashboard" />
-                <PrivateRoute exact path="/dashboard" component={DashboardView} />
-                <PrivateRoute exact path="/patients" component={PatientsView} />
-                <PrivateRoute exact path="/patient/:id" component={PatientDetailView} />
-                <PrivateRoute exact path="/patient-management" component={PatientMangementView} />
-                <PrivateRoute exact path="/prescriptions" component={PrescriptionsView} />
-                <PrivateRoute exact path="/prescription/:id" component={PrescriptionDetailView} />
-                <PrivateRoute exact path="/prescription-management" component={PrescriptionManagementView} />
-                <PrivateRoute exact path="/user-management" component={UserManagementView} />
-                <PrivateRoute exact path="/drug-management" component={DrugManagementView} />
-                <PrivateRoute exact path="/datainput-management" component={DataInputManagementView} />
-                <PrivateRoute exact path="/statistics" component={StatisticsView} />
-                <PrivateRoute exact path="/account/me" component={UserView} />
-                <Route exact path="/login" component={LoginView} />
-                <Redirect to="/dashboard" />
+                <Redirect exact from="/" to={RouteConstants.DashboardView} />
+                <PrivateRoute exact path={RouteConstants.DashboardView} component={DashboardView} />
+                <PrivateRoute exact path={RouteConstants.PatientsView} component={PatientsView} />
+                <PrivateRoute exact path={RouteConstants.PatientDetailView} component={PatientDetailView} />
+                <PrivateRoute exact path={RouteConstants.PatientMangementView} component={PatientMangementView} />
+                <PrivateRoute exact path={RouteConstants.PrescriptionsView} component={PrescriptionsView} />
+                <PrivateRoute exact path={RouteConstants.PrescriptionDetailView} component={PrescriptionDetailView} />
+                <PrivateRoute exact path={RouteConstants.PrescriptionManagementView} component={PrescriptionManagementView} />
+                <PrivateRoute exact path={RouteConstants.UserManagementView} component={UserManagementView} />
+                <PrivateRoute exact path={RouteConstants.DrugManagementView} component={DrugManagementView} />
+                <PrivateRoute exact path={RouteConstants.DataInputManagementView} component={DataInputManagementView} />
+                <PrivateRoute exact path={RouteConstants.StatisticsView} component={StatisticsView} />
+                <PrivateRoute exact path={RouteConstants.UserView}component={UserView} />
+                <Route exact path={RouteConstants.LoginView} component={LoginView} />
+                <Redirect to={RouteConstants.DashboardView}/>
             </Switch>
         </Router>
     );

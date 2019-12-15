@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import {
     Card,
@@ -8,15 +8,18 @@ import {
     Divider,
     Grid,
 } from '@material-ui/core';
-
+import clsx from 'clsx';
 import moment from 'moment';
+
 import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';
 import { Snackbar } from '../../../components/Snackbar';
-import clsx from 'clsx';
+import { Button } from '../../../components/Button';
+
 import {
     GetPatientInQueueByDoctorUrl,
     GetPrescriptionsInQueueByDoctorUrl,
+    UpdatePatientStatusUrl,
 } from '../../../config';
 import Axios, {
     axiosRequestConfig,
@@ -28,6 +31,8 @@ import {
     PatientStatus,
     PrescriptionStatus,
     RefreshDataTimer,
+    PatientStatusEnum,
+    RouteConstants,
 } from '../../../constants';
 import { encodeId } from '../../../utils';
 
@@ -107,9 +112,11 @@ const prescriptionColumns = [
 
 const getPatientLogMsgHeader = '[Get Patients Error]';
 const getPrescriptionLogMsgHeader = '[Get Prescriptions Error]';
+const updatePatientLogMsgHeader = '[Update Patient Error]';
 
 const DoctorView = () => {
     const classes = useStyles();
+    const history = useHistory();
     let patientTableRef = React.createRef();
     let prescriptionTableRef = React.createRef();
 
@@ -206,6 +213,52 @@ const DoctorView = () => {
         });
     };
 
+    const [selectedRow, setSelectedRow] = React.useState(null);
+    const handleSelectRow = (event, rowData) => {
+        if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
+            setSelectedRow(rowData);
+        } else {
+            setSelectedRow(null);
+        }
+    };
+
+    const oldPatientStatus = 'oldPatientStatus';
+
+    const handleCancel = () => {
+        const { id } = selectedRow;
+        const status = localStorage.getItem(oldPatientStatus) || PatientStatusEnum[PatientStatus.IsNew];
+        const url = `${UpdatePatientStatusUrl}/${id}/${status}`;
+        Axios.get(url, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Hủy kê đơn thành công!');
+                setSelectedRow(null);
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi xử lý. Vui lòng thử lại sau!');
+            }
+        }).catch((reason) => {
+            handleError(reason, updatePatientLogMsgHeader);
+            handleSnackbarOption('error', 'Có lỗi khi xử lý. Vui lòng thử lại sau!');
+        });
+    };
+
+    const handleUpdate = () => {
+        const { id, status } = selectedRow;
+        localStorage.setItem(oldPatientStatus, `${status}`);
+        const url = `${UpdatePatientStatusUrl}/${id}/${PatientStatusEnum[PatientStatus.IsChecking]}`;
+        Axios.get(url, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                history.push(RouteConstants.PrescriptionManagementView);
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi xử lý. Vui lòng thử lại sau!');
+            }
+        }).catch((reason) => {
+            handleError(reason, updatePatientLogMsgHeader);
+            handleSnackbarOption('error', 'Có lỗi khi xử lý. Vui lòng thử lại sau!');
+        });
+    };
+
     return (
         <Grid
             container
@@ -219,6 +272,42 @@ const DoctorView = () => {
                     className={clsx(classes.card, classes.fullHeight)}
                 >
                     <CardHeader
+                        action={
+                            <React.Fragment>
+                                {
+                                    selectedRow &&
+                                    <Grid
+                                        container
+                                        spacing={3}
+                                        justify="flex-end"
+                                        alignItems="center"
+                                    >
+                                        {
+                                            (selectedRow.status === PatientStatusEnum[PatientStatus.IsChecking]) ?
+                                                <Grid item>
+                                                    <Button
+                                                        fullWidth
+                                                        color="danger"
+                                                        children="Hủy kê đơn"
+                                                        iconName="cancel"
+                                                        onClick={handleCancel}
+                                                    />
+                                                </Grid>
+                                                :
+                                                <Grid item>
+                                                    <Button
+                                                        fullWidth
+                                                        color="success"
+                                                        children="Kê đơn"
+                                                        iconName="pen"
+                                                        onClick={handleUpdate}
+                                                    />
+                                                </Grid>
+                                        }
+                                    </Grid>
+                                }
+                            </React.Fragment>
+                        }
                         title="HÀNG CHỜ BỆNH NHÂN"
                     />
                     <Divider />
@@ -234,6 +323,8 @@ const DoctorView = () => {
                                     getPatientsInQueue(resolve, reject, query);
                                 })
                             }
+                            onRowClick={handleSelectRow}
+                            selectedRow={selectedRow}
                         />
                     </CardContent>
                 </Card>

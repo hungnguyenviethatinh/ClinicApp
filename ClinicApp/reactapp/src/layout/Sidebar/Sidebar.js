@@ -15,7 +15,7 @@ import { Menu } from '../Menu';
 import Profile from '../Profile';
 
 import { verifyJWT } from '../../common';
-import { RoleConstants } from '../../constants';
+import { RoleConstants, RouteConstants } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -43,27 +43,27 @@ const useStyles = makeStyles(theme => ({
 const adminMenus = [
     {
         title: 'Bảng điều khiển',
-        href: '/dashboard',
+        href: RouteConstants.DashboardView,
         icon: <DashboardIcon />
     },
     {
         title: 'Quản lí nhân viên',
-        href: '/user-management',
+        href: RouteConstants.UserManagementView,
         icon: <PeopleIcon />
     },
     {
         title: 'Quản lí thuốc',
-        href: '/drug-management',
+        href: RouteConstants.DrugManagementView,
         icon: <StoreIcon />
     },
     {
         title: 'Quản lí nhập dữ liệu',
-        href: '/datainput-management',
+        href: RouteConstants.DataInputManagementView,
         icon: <ImportContactsIcon />
     },
     {
         title: 'Thống kê',
-        href: '/statistics',
+        href: RouteConstants.StatisticsView,
         icon: <EqualizerIcon />
     },
 ];
@@ -71,17 +71,17 @@ const adminMenus = [
 const doctorMenus = [
     {
         title: 'Bảng điều khiển',
-        href: '/dashboard',
+        href: RouteConstants.DashboardView,
         icon: <DashboardIcon />
     },
     {
         title: 'Danh sách bệnh nhân',
-        href: '/patients',
+        href: RouteConstants.PatientsView,
         icon: <ViewListIcon />
     },
     {
         title: 'Kê đơn thuốc',
-        href: '/prescription-management',
+        href: RouteConstants.PrescriptionManagementView,
         icon: <ReceiptIcon />
     },
 ];
@@ -89,17 +89,17 @@ const doctorMenus = [
 const receptionistMenus = [
     {
         title: 'Bảng điều khiển',
-        href: '/dashboard',
+        href: RouteConstants.DashboardView,
         icon: <DashboardIcon />
     },
     {
         title: 'Tiếp nhận bệnh nhân',
-        href: '/patient-management',
+        href: RouteConstants.PatientMangementView,
         icon: <ViewListIcon />
     },
     {
         title: 'Danh sách đơn thuốc',
-        href: '/prescriptions',
+        href: RouteConstants.PrescriptionsView,
         icon: <ReceiptIcon />
     },
 ];
@@ -113,7 +113,7 @@ const Sidebar = props => {
 
     const prepareMenus = () => {
         const token = localStorage.getItem('access_token');
-        
+
         verifyJWT(token, RoleConstants.AdministratorRoleName) && setMenus(adminMenus);
         verifyJWT(token, RoleConstants.DoctorRoleName) && setMenus(doctorMenus);
         verifyJWT(token, RoleConstants.ReceptionistRoleName) && setMenus(receptionistMenus);

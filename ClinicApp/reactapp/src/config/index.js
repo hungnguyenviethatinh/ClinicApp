@@ -24,6 +24,7 @@ export const GetPrescriptionsInQueueUrl = '/api/receptionist/prescriptions/queue
 // Doctor Api:
 export const GetPatientsByDoctorUrl = '/api/doctor/patients';
 export const GetPatientInQueueByDoctorUrl = '/api/doctor/patients/queue';
+export const UpdatePatientStatusUrl = '/api/doctor/patients/update';
 export const GetPrescriptionsInQueueByDoctorUrl = '/api/doctor/prescriptions/queue';
 export const GetMedicineNameOptionsUrl = '/api/doctor/medicines';
 export const GetDiagnosisNameOptionsUrl = '/api/doctor/diagnoses';

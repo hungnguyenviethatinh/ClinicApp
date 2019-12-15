@@ -602,7 +602,13 @@ const PatientManagement = () => {
                                 component="p"
                                 children="THÔNG TIN BỆNH NHÂN (*)"
                             />
-                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                            <Grid
+                                container
+                                spacing={2}
+                                justify="center"
+                                alignItems="center"
+                                style={{ marginBottom: 8 }}
+                            >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
@@ -625,6 +631,7 @@ const PatientManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Select
                                         fullWidth
+                                        style={{ marginTop: 0, marginBottom: 0 }}
                                         id="Gender"
                                         label="Giới tính"
                                         value={values.Gender}

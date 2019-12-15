@@ -144,8 +144,7 @@ const PrescriptionManagement = () => {
                     address,
                     phoneNumber,
                 } = data[0].patient;
-
-                const Gender = [Gender.None, Gender.Male, Gender.Female][gender];
+                
                 const Address = address
                     .split(AddressSeperator)
                     .filter(value => value.trim() !== '')
@@ -156,7 +155,7 @@ const PrescriptionManagement = () => {
                     Id: id,
                     FullName: fullName,
                     DateOfBirth: moment(dateOfBirth).year(),
-                    Gender,
+                    Gender: [Gender.None, Gender.Male, Gender.Female][gender],
                     Address,
                     PhoneNumber: phoneNumber,
                 });

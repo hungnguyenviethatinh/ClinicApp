@@ -2,7 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
-import { Add, Autorenew, Edit, Delete, Done, Save, Print, Visibility, Search } from '@material-ui/icons';
+import { Add, Autorenew, Edit, Delete, Done, Save, Print, Visibility, Search, Cancel, BorderColor } from '@material-ui/icons';
 import { FormControl } from '@material-ui/core';
 
 const styledBy = (property, mapping) => props => mapping[props[property]];
@@ -48,6 +48,10 @@ const Icon = props => {
             return <Search style={{ marginRight: 16 }} />;
         case 'done':
             return <Done style={{ marginRight: 16 }} />;
+        case 'cancel':
+            return <Cancel style={{ marginRight: 16 }} />;
+        case 'pen':
+            return <BorderColor style={{ marginRight: 16 }} />;
         default:
             return <React.Fragment />
     }
