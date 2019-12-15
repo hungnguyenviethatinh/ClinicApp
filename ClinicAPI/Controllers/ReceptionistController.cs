@@ -40,6 +40,7 @@ namespace ClinicAPI.Controllers
         public async Task<IActionResult> GetDoctors()
         {
             var doctors = await _accountManager.GetUsersByRoleNameAsync(RoleConstants.DoctorRoleName);
+            doctors = doctors.Where(d => !d.IsDeleted);
 
             return Ok(doctors);
         }

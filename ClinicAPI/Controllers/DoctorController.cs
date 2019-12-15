@@ -119,7 +119,7 @@ namespace ClinicAPI.Controllers
         public IActionResult GetCurrentPatient()
         {
             var patient = _unitOfWork.Patients
-                .Where(p => (p.DoctorId == GetCurrentUserId() && p.Status == PatientStatus.IsChecking))
+                .Where(p => (p.DoctorId == GetCurrentUserId() && !p.IsDeleted && p.Status == PatientStatus.IsChecking))
                 .OrderBy(p => p.UpdatedDate)
                 .FirstOrDefault();
 
@@ -141,6 +141,36 @@ namespace ClinicAPI.Controllers
                     patient,
                 },
             });
+        }
+
+        [HttpGet("patients/update/{id}/{status}")]
+        public async Task<IActionResult> UpdatePatientStatus(int id, PatientStatus status)
+        {
+            if (status == PatientStatus.IsChecking)
+            {
+                var patients = _unitOfWork.Patients
+                    .Where(p => (p.DoctorId == GetCurrentUserId() && !p.IsDeleted && p.Status == PatientStatus.IsChecking));
+                if (patients.Any())
+                {
+                    return NoContent();
+                }
+            }
+
+            var patient = _unitOfWork.Patients.Find(id);
+            if (patient == null)
+            {
+                return NotFound();
+            }
+
+            patient.Status = status;
+            _unitOfWork.Patients.Update(patient);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
         }
 
         //[HttpGet("patients/{id}")]
