@@ -40,7 +40,7 @@ namespace ClinicAPI.Controllers
         {
             var medicines = _unitOfWork.Medicines
                 .Where(m => !m.IsDeleted)
-                .Select(m => new { m.Id, m.Name });
+                .Select(m => new { m.Id, m.Name, m.Quantity, m.Unit, m.Price });
 
             return Ok(medicines);
         }
@@ -130,7 +130,7 @@ namespace ClinicAPI.Controllers
 
             var history = _unitOfWork.Histories
                 .Where(h => (h.PatientId == patient.Id && h.IsChecked == false))
-                .OrderByDescending(h => h.UpdatedDate)
+                .OrderByDescending(h => h.CreatedDate)
                 .FirstOrDefault();
 
             return Ok(new[]
