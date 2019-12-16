@@ -19,7 +19,8 @@ import {
     Audiance,
     ClientId,
     ClientSecret,
-    LoginUrl
+    LoginUrl,
+    SetUserStatusUrl,
 } from '../../config';
 
 const useStyles = makeStyles(theme => ({
@@ -134,7 +135,7 @@ const Login = (props) => {
             if (status === 200) {
                 const { access_token } = data;
                 localStorage.setItem('access_token', access_token);
-                setIsLogined(true);
+                setUserStatus(true);
             }
         }).catch((reason) => {
             hideProgress();
@@ -160,6 +161,32 @@ const Login = (props) => {
             }
         });
     };
+
+    const setUserStatus = (active) => {
+        axios.get(SetUserStatusUrl, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            },
+            params: {
+                active,
+            },
+        }).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                console.log('[Set User Status] - OK!');
+                setIsLogined(true);
+            }
+        }).catch((reason) => {
+            console.log('[Set User Status] ', reason);
+            if (reason.response) {
+                const { status } = reason.response;
+                if (status === 401) {
+                    localStorage.removeItem('access_token');
+                }
+            }
+        });
+    };
+
     const handleSubmit = event => {
         event.preventDefault();
 

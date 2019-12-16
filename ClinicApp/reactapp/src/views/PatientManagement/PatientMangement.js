@@ -205,7 +205,7 @@ const PatientManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày giờ hẹn hợp lệ (không có để trống)!');
             return;
         }
-        if (!values.Gender.toString().trim()) {
+        if (!_.isFinite(values.Gender)) {
             handleSnackbarOption('error', 'Yêu cầu nhập giới tính!');
             return;
         }
@@ -229,7 +229,8 @@ const PatientManagement = () => {
         const DateOfBirth = values.DateOfBirth.format(DataDateTimeFormat);
         const Address = [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(AddressSeperator);
         const AppointmentDate = moment(values.AppointmentDate).isValid() ? values.AppointmentDate.format() : null;
-        const Status = PatientStatusEnum[values.Status];
+        const Status = values.Status === PatientStatus.IsNew ?
+            PatientStatusEnum[PatientStatus.IsNew] : PatientStatusEnum[PatientStatus.IsRechecking];
 
         const patientModel = {
             FullName: values.FullName,
@@ -730,7 +731,6 @@ const PatientManagement = () => {
                             <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                                     <DateTimePicker
-                                        disablePast
                                         fullWidth
                                         id="AppointmentDate"
                                         label="Ngày giờ hẹn (nếu có)"

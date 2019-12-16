@@ -33,6 +33,7 @@ import {
     RefreshDataTimer,
     PatientStatusEnum,
     RouteConstants,
+    IdPrefix,
 } from '../../../constants';
 import { encodeId } from '../../../utils';
 
@@ -77,7 +78,9 @@ const patientQueueColumns = [
                 PatientStatus.IsChecked,
                 PatientStatus.IsRechecking][rowData.status];
             if (moment(rowData.appointmentDate).isValid()) {
-                status = PatientStatus.IsAppointed;
+                if (status !== PatientStatus.IsChecking) {
+                    status = PatientStatus.IsAppointed;
+                }
             }
             return <Status status={status} />
         },

@@ -32,6 +32,8 @@ export const GetUnitNameOptionsUrl = '/api/doctor/units';
 export const GetCurrentPatientUrl = '/api/doctor/patients/current';
 export const AddPrescriptionsUrl = 'api/doctor/prescriptions';
 export const AddMedicinesUrl = 'api/doctor/medicines';
+export const UpdatePatientHistoryUrl = 'api/doctor/patients';
+export const UpdateMedicinesQuantityUrl = 'api/doctor/medicines/quantity';
 // Addmin Api:
 export const GetAllPatientsUrl = '/api/admin/patients';
 export const GetAllPrescriptionsUrl = '/api/admin/prescriptions';
@@ -62,3 +64,4 @@ export const DeleteUnitUrl = '/api/admin/units';
 export const PatientUrl = '/api/patient';
 export const PrescriptionUrl = '/api/prescription';
 export const HistoryByPatientIdUrl = '/api/history/patient';
+export const SetUserStatusUrl = '/api/account/status';

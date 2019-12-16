@@ -128,7 +128,7 @@ const DrugManagement = () => {
 
     const [searchValue, setSearchValue] = React.useState('');
     const handleSearchChange = event => {
-        setSearchValue(event.target.value.trim());
+        setSearchValue(event.target.value);
     };
     const handleSearch = event => {
         event.preventDefault();
@@ -283,11 +283,13 @@ const DrugManagement = () => {
     };
 
     const getMedicines = (resolve, reject, query) => {
+        const value = searchValue.trim();
         Axios.get(GetAllMedicinesUrl, {
             ...config,
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
+                query: value,
             }
         }).then((response) => {
             const { status, data } = response;

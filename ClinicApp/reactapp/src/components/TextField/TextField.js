@@ -18,7 +18,7 @@ const TextFieldComponent = props => {
     const { 
         classes, className, autoFocus, error, fullWidth, helperText, style,
         id, label, name, onChange, required, readOnly, value, maxLength,
-        placeholder, multiline, rowsMax
+        placeholder, multiline, rowsMax, onBlur, onKeyPress,
     } = props;
 
     const [showPassword, setShowPassword] = React.useState(false);
@@ -51,7 +51,9 @@ const TextFieldComponent = props => {
                 id={id}
                 value={value}
                 placeholder={placeholder}
+                onBlur={onBlur}
                 onChange={onChange}
+                onKeyPress={onKeyPress}
                 inputProps={{
                     maxLength,
                 }}
@@ -92,6 +94,8 @@ TextFieldComponent.propTypes = {
     label: PropTypes.string,
     name: PropTypes.string,
     onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    onKeyPress: PropTypes.func,
     required: PropTypes.bool,
     readOnly: PropTypes.bool,
     type: PropTypes.string,
@@ -113,6 +117,8 @@ TextFieldComponent.defaultProps = {
     label: '',
     name: '',
     onChange: () => { },
+    onBlur: () => { },
+    onKeyPress: () => { },
     required: false,
     readOnly: false,
     type: 'text',

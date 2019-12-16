@@ -8,14 +8,16 @@ import {
     Divider,
     Grid,
 } from '@material-ui/core';
-
+import clsx from 'clsx';
 import moment from 'moment';
+
 import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';
 import { Snackbar } from '../../../components/Snackbar';
-import clsx from 'clsx';
+
 import {
-    GetPatientInQueueUrl, GetPrescriptionsInQueueUrl,
+    GetPatientInQueueUrl,
+    GetPrescriptionsInQueueUrl,
 } from '../../../config';
 import Axios, {
     axiosRequestConfig,
@@ -29,6 +31,7 @@ import {
     IdPrefix,
     RefreshDataTimer,
 } from '../../../constants';
+import { encodeId } from '../../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -75,7 +78,9 @@ const patientQueueColumns = [
                 PatientStatus.IsChecked,
                 PatientStatus.IsRechecking][rowData.status];
             if (moment(rowData.appointmentDate).isValid()) {
-                status = PatientStatus.IsAppointed;
+                if (status !== PatientStatus.IsChecking) {
+                    status = PatientStatus.IsAppointed;
+                }
             }
             return <Status status={status} />
         },
