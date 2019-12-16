@@ -123,8 +123,10 @@ namespace DAL
 
             builder.Entity<Medicine>()
                 .Property(m => m.Name).IsRequired().HasMaxLength(100);
+            //builder.Entity<Medicine>()
+            //    .HasIndex(m => m.Name).IsUnique();
             builder.Entity<Medicine>()
-                .HasIndex(m => m.Name).IsUnique();
+                .Property(m => m.Unit).HasMaxLength(100);
             builder.Entity<Medicine>()
                 .Property(m => m.Price).HasColumnType(decimalType);
             builder.Entity<Medicine>()
@@ -165,6 +167,8 @@ namespace DAL
             builder.Entity<PrescriptionMedicine>()
                 .HasKey(pm => new { pm.PrescriptionId, pm.MedicineId });
             builder.Entity<PrescriptionMedicine>()
+                .Property(pm => pm.Unit).HasMaxLength(100);
+            builder.Entity<PrescriptionMedicine>()
                 .Property(pm => pm.Price).HasColumnType(decimalType);
             builder.Entity<PrescriptionMedicine>()
                 .HasOne(pm => pm.Prescription)
@@ -192,11 +196,11 @@ namespace DAL
                 .HasForeignKey(x => x.HistoryId)
                 .IsRequired().OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<Diagnosis>().HasIndex(d => d.Name).IsUnique();
+            //builder.Entity<Diagnosis>().HasIndex(d => d.Name).IsUnique();
             builder.Entity<Diagnosis>()
                 .Property(d => d.Name).IsRequired().HasMaxLength(100);
 
-            builder.Entity<Unit>().HasIndex(u => u.Name).IsUnique();
+            //builder.Entity<Unit>().HasIndex(u => u.Name).IsUnique();
             builder.Entity<Unit>()
                 .Property(u => u.Name).IsRequired().HasMaxLength(15);
         }

@@ -39,7 +39,7 @@ namespace ClinicAPI.Controllers
         public IActionResult GetMedicines()
         {
             var medicines = _unitOfWork.Medicines
-                .Where(m => !m.IsDeleted)
+                .Where(m => !m.IsDeleted && m.Quantity > 0)
                 .Select(m => new { m.Id, m.Name, m.Quantity, m.Unit, m.Price });
 
             return Ok(medicines);
@@ -108,7 +108,9 @@ namespace ClinicAPI.Controllers
         public IActionResult GetPatientsInQueue()
         {
             var patients = _unitOfWork.Patients
-                .Where(p => (!p.IsDeleted && p.DoctorId == GetCurrentUserId() && p.Status != PatientStatus.IsChecked))
+                .Where(p =>
+                (!p.IsDeleted && p.DoctorId == GetCurrentUserId() && p.Status != PatientStatus.IsChecked &&
+                (p.AppointmentDate == null || p.AppointmentDate <= DateTime.Now)))
                 .OrderBy(p => p.UpdatedDate);
 
             return Ok(patients);
@@ -173,33 +175,41 @@ namespace ClinicAPI.Controllers
             return Ok();
         }
 
-        //[HttpGet("patients/{id}")]
-        //[Authorize(Policies.ViewAllPatientsPolicy)]
-        //public async Task<IActionResult> GetPatient(int id)
-        //{
-        //    var patient = await _unitOfWork.Patients.FindAsync(id);
-        //    if (patient == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpGet("patients/{id}")]
+        public async Task<IActionResult> UpdatePatientHistory(int id, [FromQuery] DateTime appointmentDate, [FromQuery] PatientStatus status)
+        {
+            var patient = _unitOfWork.Patients.Find(id);
+            if (patient == null)
+            {
+                return NotFound();
+            }
 
-        //    var histories = _unitOfWork.Histories.Where(h => h.PatientId == id);
-        //    foreach (var history in histories)
-        //    {
-        //        var prescriptions = _unitOfWork.Prescriptions.Where(p => p.HistoryId == history.Id);
-        //        var xrays = _unitOfWork.XRayImages.Where(p => p.HistoryId == history.Id);
-        //        foreach(var prescription in prescriptions)
-        //        {
-        //            history.Prescriptions.Add(prescription);
-        //        }
-        //        foreach (var xray in xrays)
-        //        {
-        //            history.XRayImages.Add(xray);
-        //        }
-        //    }
+            patient.AppointmentDate = appointmentDate;
+            patient.Status = status;
+            _unitOfWork.Patients.Update(patient);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
 
-        //    return Ok(patient);
-        //}
+            var history = _unitOfWork.Histories
+                .Where(h => (h.PatientId == id && !h.IsChecked))
+                .FirstOrDefault();
+            if (history == null)
+            {
+                return NotFound();
+            }
+
+            history.IsChecked = true;
+            result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
+        }
 
         [HttpGet("prescriptions")]
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
@@ -291,6 +301,45 @@ namespace ClinicAPI.Controllers
                 }
 
                 return Ok();
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPut("medicines/quantity")]
+        [Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        public async Task<IActionResult> UpdateMedicinesQuantity([FromBody] IEnumerable<MedicineUpdateModel> medicineUpdateModels)
+        {
+            if (ModelState.IsValid)
+            {
+                if (medicineUpdateModels == null)
+                {
+                    return BadRequest($"{nameof(medicineUpdateModels)} can not be null.");
+                }
+
+                var medicineIds = medicineUpdateModels.Select(m => m.Id);
+                var medicines = _unitOfWork.Medicines.Where(m => !m.IsDeleted && medicineIds.Contains(m.Id));
+
+                foreach (var medicine in medicines)
+                {
+                    foreach (var model in medicineUpdateModels)
+                    {
+                        if (medicine.Id == model.Id)
+                        {
+                            medicine.Quantity -= model.Quantity;
+                            break;
+                        }
+                    }
+                }
+
+                _unitOfWork.Medicines.UpdateRange(medicines);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(medicines);
             }
 
             return BadRequest(ModelState);

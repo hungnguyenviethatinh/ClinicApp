@@ -41,6 +41,9 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<Medicine, MedicineModel>();
             CreateMap<MedicineModel, Medicine>();
+            CreateMap<MedicineUpdateModel, Medicine>()
+                .ForMember(m => m.Quantity,
+                map => map.MapFrom((medicineModel, medicine) => medicine.Quantity - medicineModel.Quantity));
 
             CreateMap<Medicine, MedicineViewModel>()
                 .ForMember(m => m.Status, map => map.Ignore());

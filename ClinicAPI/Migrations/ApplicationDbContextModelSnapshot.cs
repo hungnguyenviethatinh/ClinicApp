@@ -48,9 +48,6 @@ namespace ClinicAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("Diagnoses");
                 });
 
@@ -136,7 +133,8 @@ namespace ClinicAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Unit")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -145,9 +143,6 @@ namespace ClinicAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Medicines");
                 });
@@ -288,6 +283,9 @@ namespace ClinicAPI.Migrations
                     b.Property<int?>("AfterLunch")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Afternoon")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -303,8 +301,9 @@ namespace ClinicAPI.Migrations
                     b.Property<int>("TimesPerDay")
                         .HasColumnType("int");
 
-                    b.Property<int>("Unit")
-                        .HasColumnType("int");
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.HasKey("PrescriptionId", "MedicineId");
 
@@ -380,9 +379,6 @@ namespace ClinicAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Units");
                 });

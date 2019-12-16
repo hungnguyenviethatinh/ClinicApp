@@ -83,7 +83,7 @@ namespace ClinicAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
                     Quantity = table.Column<int>(nullable: false),
-                    Unit = table.Column<string>(nullable: true),
+                    Unit = table.Column<string>(maxLength: 100, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
@@ -366,11 +366,12 @@ namespace ClinicAPI.Migrations
                     PrescriptionId = table.Column<int>(nullable: false),
                     MedicineId = table.Column<int>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
-                    Unit = table.Column<int>(nullable: false),
+                    Unit = table.Column<string>(maxLength: 100, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TimesPerDay = table.Column<int>(nullable: false),
                     AfterBreakfast = table.Column<int>(nullable: true),
                     AfterLunch = table.Column<int>(nullable: true),
+                    Afternoon = table.Column<int>(nullable: true),
                     AfterDinner = table.Column<int>(nullable: true),
                     Note = table.Column<string>(nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false)
@@ -432,12 +433,6 @@ namespace ClinicAPI.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Diagnoses_Name",
-                table: "Diagnoses",
-                column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Histories_DoctorId",
                 table: "Histories",
                 column: "DoctorId");
@@ -446,12 +441,6 @@ namespace ClinicAPI.Migrations
                 name: "IX_Histories_PatientId",
                 table: "Histories",
                 column: "PatientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Medicines_Name",
-                table: "Medicines",
-                column: "Name",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Patients_DoctorId",
@@ -477,12 +466,6 @@ namespace ClinicAPI.Migrations
                 name: "IX_Prescriptions_PatientId",
                 table: "Prescriptions",
                 column: "PatientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Units_Name",
-                table: "Units",
-                column: "Name",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_XRayImages_HistoryId",

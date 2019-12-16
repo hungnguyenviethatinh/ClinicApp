@@ -30,5 +30,27 @@ namespace ClinicAPI.Controllers
             
             return Ok(new[] { currentUser, });
         }
+
+        [HttpGet("status")]
+        public async Task<IActionResult> SetUserStatus([FromQuery] bool active)
+        {
+            string id = Utilities.GetUserId(User);
+            var currentUser = await _accountManager.GetUserByIdAsync(id);
+
+            if (currentUser.IsDeleted)
+            {
+                return Unauthorized();
+            }
+
+            currentUser.IsActive = active;
+
+            var (Succeeded, Errors) = await _accountManager.UpdateUserAsync(currentUser);
+            if (!Succeeded)
+            {
+                return NoContent();
+            }
+
+            return Ok();
+        }
     }
 }

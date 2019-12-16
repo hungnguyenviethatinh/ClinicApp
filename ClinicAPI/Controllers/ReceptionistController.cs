@@ -91,7 +91,9 @@ namespace ClinicAPI.Controllers
         public IActionResult GetPatientsInQueue()
         {
             IEnumerable<Patient> patients = _unitOfWork.Patients
-                .Where(p => !p.IsDeleted && p.Status != PatientStatus.IsChecked)
+                .Where(p => 
+                (!p.IsDeleted && p.Status != PatientStatus.IsChecked && 
+                (p.AppointmentDate == null || p.AppointmentDate <= DateTime.Now)))
                 .OrderBy(p => p.UpdatedDate);
 
             foreach (var patient in patients)
@@ -235,19 +237,28 @@ namespace ClinicAPI.Controllers
                     return BadRequest($"{nameof(historyModel)} can not be null.");
                 }
 
+                int result = 0;
+
                 var history = _unitOfWork.Histories
                     .Where(h => h.PatientId == patientId && !h.IsChecked)
                     .FirstOrDefault();
 
                 if (history == null)
                 {
-                    return NotFound();
+                    history = _mapper.Map<History>(historyModel);
+                    _unitOfWork.Histories.Add(history);
+                    result = await _unitOfWork.SaveChangesAsync();
+                    if (result < 1)
+                    {
+                        return NoContent();
+                    }
+
+                    return Ok(history);
                 }
 
                 _mapper.Map(historyModel, history);
                 _unitOfWork.Histories.Update(history);
-
-                int result = await _unitOfWork.SaveChangesAsync();
+                result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
                 {
                     return NoContent();
@@ -270,21 +281,25 @@ namespace ClinicAPI.Controllers
                     return BadRequest($"{nameof(xRayModels)} can not be null.");
                 }
 
-                var xRayImages = _unitOfWork.XRayImages.Where(x => x.HistoryId == historyId);
-
-                foreach (var xRayImage in xRayImages)
+                int result = 0;
+                var xRayImages = _unitOfWork.XRayImages.Where(x => (x.HistoryId == historyId && !x.IsDeleted));
+                if (xRayImages.Any())
                 {
-                    xRayImage.IsDeleted = true;
-                }
+                    foreach (var xRayImage in xRayImages)
+                    {
+                        xRayImage.IsDeleted = true;
+                    }
 
-                _unitOfWork.XRayImages.UpdateRange(xRayImages);
-                int result = await _unitOfWork.SaveChangesAsync();
-                if (result < 1)
-                {
-                    return NoContent();
+                    _unitOfWork.XRayImages.UpdateRange(xRayImages);
+                    result = await _unitOfWork.SaveChangesAsync();
+                    if (result < 1)
+                    {
+                        return NoContent();
+                    }
                 }
 
                 var newXRayImages = _mapper.Map<IEnumerable<XRayImage>>(xRayModels);
+
                 _unitOfWork.XRayImages.AddRange(newXRayImages);
                 result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
