@@ -15,7 +15,11 @@ import { Menu } from '../Menu';
 import Profile from '../Profile';
 
 import { verifyJWT } from '../../common';
-import { RoleConstants, RouteConstants } from '../../constants';
+import {
+    RoleConstants,
+    RouteConstants,
+    AccessTokenKey,
+} from '../../constants';
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -112,7 +116,7 @@ const Sidebar = props => {
     const [menus, setMenus] = React.useState([]);
 
     const prepareMenus = () => {
-        const token = localStorage.getItem('access_token');
+        const token = localStorage.getItem(AccessTokenKey);
 
         verifyJWT(token, RoleConstants.AdministratorRoleName) && setMenus(adminMenus);
         verifyJWT(token, RoleConstants.DoctorRoleName) && setMenus(doctorMenus);

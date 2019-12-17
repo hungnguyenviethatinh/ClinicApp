@@ -6,7 +6,10 @@ import { makeStyles } from '@material-ui/styles';
 import { IconButton, Typography } from '@material-ui/core';
 import { Settings } from '@material-ui/icons';
 import { decodeJWT } from '../../common';
-import { RouteConstants } from '../../constants';
+import {
+	RouteConstants,
+	AccessTokenKey,
+} from '../../constants';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -39,7 +42,7 @@ const Profile = props => {
 	});
 
 	React.useEffect(() => {
-		const token = localStorage.getItem('access_token');
+		const token = localStorage.getItem(AccessTokenKey);
 
 		if (token) {
 			const decoded = decodeJWT(token);

@@ -1,9 +1,11 @@
 import jwt from 'jsonwebtoken';
+
 import { ApiUrl, Audiance, ClientId } from '../config';
+import { AccessTokenKey } from '../constants';
 
 export const axiosRequestConfig = () => {
     const headers = {
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        'Authorization': `Bearer ${localStorage.getItem(AccessTokenKey)}`,
     };
     return { headers };
 };

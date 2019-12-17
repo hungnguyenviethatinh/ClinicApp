@@ -22,6 +22,7 @@ import {
     LoginUrl,
     SetUserStatusUrl,
 } from '../../config';
+import { AccessTokenKey } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
     '@global': {
@@ -134,7 +135,7 @@ const Login = (props) => {
             const { status, data } = response;
             if (status === 200) {
                 const { access_token } = data;
-                localStorage.setItem('access_token', access_token);
+                localStorage.setItem(AccessTokenKey, access_token);
                 setUserStatus(true);
             }
         }).catch((reason) => {
@@ -163,9 +164,11 @@ const Login = (props) => {
     };
 
     const setUserStatus = (active) => {
-        axios.get(SetUserStatusUrl, {
+        const url = ApiUrl + SetUserStatusUrl;
+
+        axios.get(url, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Authorization': `Bearer ${localStorage.getItem(AccessTokenKey)}`,
             },
             params: {
                 active,
@@ -181,7 +184,7 @@ const Login = (props) => {
             if (reason.response) {
                 const { status } = reason.response;
                 if (status === 401) {
-                    localStorage.removeItem('access_token');
+                    localStorage.removeItem(AccessTokenKey);
                 }
             }
         });

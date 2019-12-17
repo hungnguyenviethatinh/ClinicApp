@@ -94,7 +94,7 @@ const patientQueueColumns = [
                 PatientStatus.IsChecked,
                 PatientStatus.IsRechecking][rowData.status];
             if (moment(rowData.appointmentDate).isValid()) {
-                if (status !== PatientStatus.IsChecking) {
+                if (status !== PatientStatus.IsChecked && status !== PatientStatus.IsChecking) {
                     status = PatientStatus.IsAppointed;
                 }
             }

@@ -3,14 +3,14 @@ import { withRouter } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { 
-    AppBar, 
-    Button, 
+import {
+    AppBar,
+    Button,
     Toolbar,
     // Badge, 
-    Hidden, 
-    IconButton, 
-    Typography 
+    Hidden,
+    IconButton,
+    Typography
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 // import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
@@ -18,7 +18,14 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import axios from 'axios';
 
-import { SetUserStatusUrl } from '../../config';
+import {
+    ApiUrl,
+    SetUserStatusUrl
+} from '../../config';
+import {
+    RouteConstants,
+    AccessTokenKey,
+} from '../../constants';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -45,9 +52,11 @@ const LogoutButton = withRouter((props) => {
     const { classes, history } = props;
 
     const handleLogout = () => {
-        axios.get(SetUserStatusUrl, {
+        const url = ApiUrl + SetUserStatusUrl;
+
+        axios.get(url, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Authorization': `Bearer ${localStorage.getItem(AccessTokenKey)}`,
             },
             params: {
                 active: false,
@@ -56,15 +65,15 @@ const LogoutButton = withRouter((props) => {
             const { status } = response;
             if (status === 200) {
                 console.log('[Set User Status] - OK!');
-                localStorage.removeItem('access_token');
-                history.push('/login');
+                localStorage.removeItem(AccessTokenKey);
+                history.push(RouteConstants.LoginView);
             }
         }).catch((reason) => {
             console.log('[Set User Status] ', reason);
             if (reason.response) {
                 const { status } = reason.response;
                 if (status === 401) {
-                    localStorage.removeItem('access_token');
+                    localStorage.removeItem(AccessTokenKey);
                 }
             }
         });

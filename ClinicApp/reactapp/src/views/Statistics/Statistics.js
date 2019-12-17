@@ -211,20 +211,20 @@ const StatisticsView = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const xAxis = [];
+                let xAxis = [];
                 const yAxis = [];
                 data.map(({ x, y }) => {
                     xAxis.push(x);
                     yAxis.push(y);
                 });
                 if (presSelectedTimePeriod === PeriodConstants.Day) {
-                    xAxis.map(x => moment(x).format(DisplayDateTimeFormat));
+                    xAxis = xAxis.map(x => moment(x).format(DisplayDateTimeFormat));
                 }
                 if (presSelectedTimePeriod === PeriodConstants.Week) {
-                    xAxis.map(({ year, week }) => `T${week}-${year}`);
+                    xAxis = xAxis.map(({ year, week }) => `T${week}-${year}`);
                 }
                 if (presSelectedTimePeriod === PeriodConstants.Month) {
-                    xAxis.map(({ year, month }) => `${month}-${year}`);
+                    xAxis = xAxis.map(({ year, month }) => `${month}-${year}`);
                 }
                 setXAxisPrescriptionData(xAxis);
                 setPrescriptionData(yAxis);
