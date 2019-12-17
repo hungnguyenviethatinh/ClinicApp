@@ -64,4 +64,5 @@ export const DeleteUnitUrl = '/api/admin/units';
 export const PatientUrl = '/api/patient';
 export const PrescriptionUrl = '/api/prescription';
 export const HistoryByPatientIdUrl = '/api/history/patient';
+export const PatientCurrentHistoryUrl = 'api/history/patient/current';
 export const SetUserStatusUrl = '/api/account/status';

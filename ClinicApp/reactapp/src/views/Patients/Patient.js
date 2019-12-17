@@ -7,34 +7,38 @@ import {
     Divider,
     Grid,
     Paper,
-    CssBaseline,
     Typography,
     FormControl
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { DateTimePicker } from '@material-ui/pickers';
+import moment from 'moment';
+
 import { Table } from '../../components/Table';
 import { Tab, TabContent } from '../../components/Tab';
 import { Snackbar } from '../../components/Snackbar';
+import { Status } from '../../components/Status';
+import { HistoryButton as Back } from '../../components/Button';
 
-import moment from 'moment';
-import { 
-    PatientStatus, 
-    ExpiredSessionMsg, 
-    NotFoundMsg, 
+import {
+    PatientStatus,
+    ExpiredSessionMsg,
+    // NotFoundMsg,
     DisplayDateTimeFormat,
-    AddressSeperator, 
+    AddressSeperator,
+    Gender,
 } from '../../constants';
-import { DateTimePicker } from '@material-ui/pickers';
-import Axios, { 
-    axiosRequestConfig, 
+import Axios, {
+    axiosRequestConfig,
 } from '../../common';
-import { 
-    PatientUrl, 
-    HistoryByPatientIdUrl, 
+import {
+    PatientUrl,
+    HistoryByPatientIdUrl,
+    PatientCurrentHistoryUrl,
 } from '../../config';
 
 const useStyles = makeStyles(theme => ({
-    card: {},
+    card: { },
     content: {
         padding: theme.spacing(0),
     },
@@ -58,9 +62,181 @@ const historyColumns = [
         title: 'Bác sĩ khám', field: 'doctorId',
         render: rowData => rowData.doctor.fullName,
     },
+    {
+        title: 'Trạng thái', field: 'isChecked',
+        render: rowData => {
+            const status = rowData.isChecked ? PatientStatus.IsChecked : PatientStatus.IsNew;
+            return <Status status={status} />
+        }
+    },
 ];
 
+const getDetailPanel = (rowData) => {
+    const {
+        height,
+        weight,
+        bloodPresure,
+        pulse,
+        prescriptions,
+        xRayImages,
+    } = rowData;
+
+    return (
+        <Paper elevation={0} style={{ padding: '16px 64px' }}>
+            <Typography
+                variant="caption"
+                component="p"
+                children="THÔNG TIN KHÁM LÂM SÀNG"
+            />
+            <Grid
+                container
+                spacing={2}
+                justify="center"
+                alignItems="center"
+                style={{ marginTop: 8, marginBottom: 24 }}
+            >
+                <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                    <Typography
+                        variant="body1"
+                        component="p"
+                        children="Chiều cao:"
+                    />
+                </Grid>
+                <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                    <Typography
+                        variant="h6"
+                        component="h6"
+                        children={`${height} cm`}
+                        style={{ fontWeight: 600 }}
+                    />
+                </Grid>
+                <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                    <Typography
+                        variant="body1"
+                        component="p"
+                        children="Cân nặng:"
+                    />
+                </Grid>
+                <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                    <Typography
+                        variant="h6"
+                        component="h6"
+                        children={`${weight} kg`}
+                        style={{ fontWeight: 600 }}
+                    />
+                </Grid>
+                <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                    <Typography
+                        variant="body1"
+                        component="p"
+                        children="Nhịp tim:"
+                    />
+                </Grid>
+                <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                    <Typography
+                        variant="h6"
+                        component="h6"
+                        children={`${bloodPresure} lần/phút`}
+                        style={{ fontWeight: 600 }}
+                    />
+                </Grid>
+                <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                    <Typography
+                        variant="body1"
+                        component="p"
+                        children="Mạch:"
+                    />
+                </Grid>
+                <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                    <Typography
+                        variant="h6"
+                        component="h6"
+                        children={`${pulse} mmHg`}
+                        style={{ fontWeight: 600 }}
+                    />
+                </Grid>
+            </Grid>
+            <Typography
+                variant="caption"
+                component="p"
+                children="HÌNH ẢNH CHỤP X QUANG"
+            />
+            <Grid
+                container
+                spacing={2}
+                justify="center"
+                alignItems="center"
+                style={{ marginTop: 8, marginBottom: 24 }}
+            >
+                {
+                    !_.isEmpty(xRayImages) ?
+                        <React.Fragment>
+                            {
+                                xRayImages.map((image, index) => (
+                                    <Grid key={index} item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        <div style={{ textAlign: 'center' }}>
+                                            <img
+                                                src={image.data}
+                                                alt={image.name}
+                                            />
+                                        </div>
+                                    </Grid>
+                                ))
+                            }
+                        </React.Fragment>
+                        :
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Typography
+                                variant="body1"
+                                component="p"
+                                children="KHÔNG CÓ HÌNH ẢNH"
+                            />
+                        </Grid>
+                }
+            </Grid>
+            <Typography
+                variant="caption"
+                component="p"
+                children="ĐƠN THUỐC ĐÃ KÊ"
+            />
+            <Grid
+                container
+                spacing={2}
+                justify="flex-start"
+                alignItems="center"
+                style={{ marginTop: 8, marginBottom: 24 }}
+            >
+                {
+                    !_.isEmpty(prescriptions) ?
+                        <React.Fragment>
+                            {
+                                prescriptions.map((prescription, index) => (
+                                    <Grid key={index} item>
+                                        {prescription.id}
+                                    </Grid>
+                                ))
+                            }
+                        </React.Fragment>
+                        :
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Typography
+                                variant="body1"
+                                component="p"
+                                children="KHÔNG CÓ ĐƠN THUỐC"
+                            />
+                        </Grid>
+                }
+            </Grid>
+
+        </Paper>
+    );
+};
+
 const tabNames = ['Thông tin bệnh nhân', 'Lịch sử khám bệnh', 'Tra cứu lịch hẹn'];
+
+const getPatientByIdError = '[Get Patient By Id Error]';
+const getPatientHistoryError = '[Get Patient History Error]';
+const getPatientHistoriesError = '[Get Patient Histories Error]';
 
 const Patient = () => {
     const classes = useStyles();
@@ -87,6 +263,20 @@ const Patient = () => {
             message,
         });
         setOpenSnackbar(true);
+    };
+
+    const handleError = (reason, logMsgHeader) => {
+        if (reason.response) {
+            const { status } = reason.response;
+            if (status === 401) {
+                handleSnackbarOption('error', ExpiredSessionMsg);
+            } else {
+                // if (status === 404) {
+                //     handleSnackbarOption('error', NotFoundMsg);
+                // }
+            }
+        }
+        console.log(`${logMsgHeader}`, reason);
     };
 
     const [patient, setPatient] = React.useState({
@@ -126,7 +316,7 @@ const Patient = () => {
                 setPatient({
                     FullName: fullName,
                     DateOfBirth,
-                    Gender: gender,
+                    Gender: [Gender.None, Gender.Male, Gender.Female][gender],
                     Address,
                     Job: job,
                     PhoneNumber: phoneNumber,
@@ -135,15 +325,34 @@ const Patient = () => {
                 });
             }
         }).catch((reason) => {
-            if (reason.response) {
-                const { status } = reason.response;
-                if (status === 401) {
-                    handleSnackbarOption('error', ExpiredSessionMsg);
-                } else if (status === 404) {
-                    handleSnackbarOption('error', NotFoundMsg);
-                }
+            handleError(reason, getPatientByIdError);
+        });
+    };
+
+    const [history, setHistory] = React.useState(null);
+    const getCurrentHistory = () => {
+        const url = `${PatientCurrentHistoryUrl}/${id}`;
+        Axios.get(url, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const {
+                    height,
+                    weight,
+                    bloodPresure,
+                    pulse,
+                    xRayImages,
+                } = data[0];
+
+                setHistory({
+                    Height: height,
+                    Weight: weight,
+                    BloodPresure: bloodPresure,
+                    Pulse: pulse,
+                    XRayImages: xRayImages,
+                });
             }
-            console.log('[Get Patient By Id Error] ', reason);
+        }).catch((reason) => {
+            handleError(reason, getPatientHistoryError);
         });
     };
 
@@ -161,15 +370,7 @@ const Patient = () => {
                 });
             }
         }).catch((reason) => {
-            if (reason.response) {
-                const { status } = reason.response;
-                if (status === 401) {
-                    handleSnackbarOption('error', ExpiredSessionMsg);
-                } else if (status === 404) {
-                    handleSnackbarOption('error', NotFoundMsg);
-                }
-            }
-            console.log('[Get Histories Error] ', reason);
+            handleError(reason, getPatientHistoriesError);
         });
     };
 
@@ -180,10 +381,14 @@ const Patient = () => {
 
     React.useEffect(() => {
         getPatient();
+        getCurrentHistory();
     }, []);
 
     return (
         <Grid container spacing={3} >
+            <Grid item >
+                <Back />
+            </Grid>
             <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
                 <Card
                     className={classes.card}
@@ -200,125 +405,262 @@ const Patient = () => {
                             handleChange={handleTabChange}
                         >
                             <TabContent value={tabValue} index={0}>
-                                <Typography
-                                    variant="h1"
-                                    component="h1"
-                                    align="center"
-                                    children={`${patient.FullName}`}
-                                    gutterBottom
-                                />
-                                <Grid container>
-                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                <Grid
+                                    container
+                                    justify="center"
+                                    alignItems="center"
+                                    spacing={2}
+                                >
+                                    <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
                                         <Typography
-                                            variant="body1"
-                                            component="p"
-                                            align="left"
-                                            children="Họ và Tên BN:"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
-                                        <Typography
-                                            variant="h6"
-                                            component="h6"
+                                            variant="h1"
+                                            component="h1"
                                             align="center"
                                             children={`${patient.FullName}`}
+                                            style={{ marginBottom: 32, textTransform: 'uppercase' }}
                                         />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                         <Typography
-                                            variant="body1"
+                                            variant="caption"
                                             component="p"
-                                            align="left"
-                                            children="Ngày, tháng, năm sinh:"
+                                            children="THÔNG TIN CƠ BẢN"
                                         />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                        <Grid
+                                            container
+                                            spacing={2}
+                                            justify="center"
+                                            alignItems="center"
+                                            style={{ marginTop: 8, marginBottom: 24 }}
+                                        >
+                                            <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                <Typography
+                                                    variant="body1"
+                                                    component="p"
+                                                    children="Họ và Tên BN:"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                <Typography
+                                                    variant="h6"
+                                                    component="h6"
+                                                    children={`${patient.FullName}`}
+                                                    style={{ fontWeight: 600, textTransform: 'uppercase' }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                <Typography
+                                                    variant="body1"
+                                                    component="p"
+                                                    children="Ngày, tháng, năm sinh:"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={3} lg={3} xl={3}>
+                                                <Typography
+                                                    variant="h6"
+                                                    component="h6"
+                                                    children={`${patient.DateOfBirth}`}
+                                                    style={{ fontWeight: 600 }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                                <Typography
+                                                    variant="body1"
+                                                    component="p"
+                                                    children="Giới tính:"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={3} lg={3} xl={3}>
+                                                <Typography
+                                                    variant="h6"
+                                                    component="h6"
+                                                    children={`${patient.Gender}`}
+                                                    style={{ fontWeight: 600 }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                <Typography
+                                                    variant="body1"
+                                                    component="p"
+                                                    children="Địa chỉ:"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                <Typography
+                                                    variant="h6"
+                                                    component="h6"
+                                                    children={`${patient.Address}`}
+                                                    style={{ fontWeight: 600 }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                <Typography
+                                                    variant="body1"
+                                                    component="p"
+                                                    children="Nghề nghiệp:"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                <Typography
+                                                    variant="h6"
+                                                    component="h6"
+                                                    children={`${patient.Job}`}
+                                                    style={{ fontWeight: 600 }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                <Typography
+                                                    variant="body1"
+                                                    component="p"
+                                                    children="Điện thoại:"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={3} lg={3} xl={3}>
+                                                <Typography
+                                                    variant="h6"
+                                                    component="h6"
+                                                    children={`${patient.PhoneNumber}`}
+                                                    style={{ fontWeight: 600 }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                                <Typography
+                                                    variant="body1"
+                                                    component="p"
+                                                    children="Email:"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={3} lg={3} xl={3}>
+                                                <Typography
+                                                    variant="h6"
+                                                    component="h6"
+                                                    children={`${patient.Email}`}
+                                                    style={{ fontWeight: 600 }}
+                                                />
+                                            </Grid>
+                                        </Grid>
                                         <Typography
-                                            variant="h6"
-                                            component="h6"
-                                            align="center"
-                                            children={`${patient.DateOfBirth}`}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
-                                        <Typography
-                                            variant="body1"
+                                            variant="caption"
                                             component="p"
-                                            align="left"
-                                            children="Giới tính:"
+                                            children="THÔNG TIN KHÁM LÂM SÀNG"
                                         />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                        <Grid
+                                            container
+                                            spacing={2}
+                                            justify="center"
+                                            alignItems="center"
+                                            style={{ marginTop: 8, marginBottom: 24 }}
+                                        >
+                                            {
+                                                history ?
+                                                    <React.Fragment>
+                                                        <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="p"
+                                                                children="Chiều cao:"
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                component="h6"
+                                                                children={`${history.Height} cm`}
+                                                                style={{ fontWeight: 600 }}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="p"
+                                                                children="Cân nặng:"
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                component="h6"
+                                                                children={`${history.Weight} kg`}
+                                                                style={{ fontWeight: 600 }}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="p"
+                                                                children="Nhịp tim:"
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                component="h6"
+                                                                children={`${history.BloodPresure} lần/phút`}
+                                                                style={{ fontWeight: 600 }}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="p"
+                                                                children="Mạch:"
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                component="h6"
+                                                                children={`${history.Pulse} mmHg`}
+                                                                style={{ fontWeight: 600 }}
+                                                            />
+                                                        </Grid>
+                                                    </React.Fragment>
+                                                    :
+                                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                                        <Typography
+                                                            variant="body1"
+                                                            component="p"
+                                                            children="KHÔNG CÓ THÔNG TIN"
+                                                        />
+                                                    </Grid>
+                                            }
+                                        </Grid>
                                         <Typography
-                                            variant="h6"
-                                            component="h6"
-                                            align="center"
-                                            children={`${patient.Gender}`}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
-                                        <Typography
-                                            variant="body1"
+                                            variant="caption"
                                             component="p"
-                                            align="left"
-                                            children="Địa chỉ:"
+                                            children="HÌNH ẢNH CHỤP X QUANG"
                                         />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={10} lg={10} xl={10}>
-                                        <Typography
-                                            variant="h6"
-                                            component="h6"
-                                            align="center"
-                                            children={`${patient.Address}`}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
-                                        <Typography
-                                            variant="body1"
-                                            component="p"
-                                            align="left"
-                                            children="Nghề nghiệp:"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={10} lg={10} xl={10}>
-                                        <Typography
-                                            variant="h6"
-                                            component="h6"
-                                            align="center"
-                                            children={`${patient.Job}`}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
-                                        <Typography
-                                            variant="body1"
-                                            component="p"
-                                            align="left"
-                                            children="Điện thoại:"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
-                                        <Typography
-                                            variant="h6"
-                                            component="h6"
-                                            align="center"
-                                            children={`${patient.PhoneNumber}`}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
-                                        <Typography
-                                            variant="body1"
-                                            component="p"
-                                            align="left"
-                                            children="Email:"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
-                                        <Typography
-                                            variant="h6"
-                                            component="h6"
-                                            align="center"
-                                            children={`${patient.Email}`}
-                                        />
+                                        <Grid
+                                            container
+                                            spacing={2}
+                                            justify="center"
+                                            alignItems="center"
+                                            style={{ marginTop: 8, marginBottom: 24 }}
+                                        >
+                                            {
+                                                (history && !_.isEmpty(history.XRayImages)) ?
+                                                    <React.Fragment>
+                                                        {
+                                                            history.XRayImages.map((image, index) => (
+                                                                <Grid key={index} item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                                                    <div style={{ textAlign: 'center' }}>
+                                                                        <img
+                                                                            src={image.data}
+                                                                            alt={image.name}
+                                                                        />
+                                                                    </div>
+                                                                </Grid>
+                                                            ))
+                                                        }
+                                                    </React.Fragment>
+                                                    :
+                                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                                        <Typography
+                                                            variant="body1"
+                                                            component="p"
+                                                            children="KHÔNG CÓ HÌNH ẢNH"
+                                                        />
+                                                    </Grid>
+                                            }
+                                        </Grid>
                                     </Grid>
                                 </Grid>
                             </TabContent>
@@ -336,6 +678,7 @@ const Patient = () => {
                                                     getHistories(resolve, reject, query);
                                                 })
                                             }
+                                            detailPanel={(rowData) => getDetailPanel(rowData)}
                                         />
                                     </Grid>
                                 </Grid>
@@ -345,18 +688,34 @@ const Patient = () => {
                                     container
                                     spacing={3}
                                     justify="center"
+                                    alignItems="center"
                                 >
-                                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                        <FormControl
-                                            fullWidth
-                                        >
-                                            <DateTimePicker
-                                                variant="static"
-                                                label="Lịch hẹn"
-                                                value={patient.AppointmentDate}
-                                            />
-                                        </FormControl>
-                                    </Grid>
+                                    {
+                                        patient.AppointmentDate ?
+                                            <Grid item>
+                                                <FormControl
+                                                    fullWidth
+                                                >
+                                                    <DateTimePicker
+                                                        variant="static"
+                                                        label="Lịch hẹn"
+                                                        value={patient.AppointmentDate}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            :
+                                            <Grid
+                                                item
+                                                xs={12} sm={12} md={12} lg={12} xl={12}
+                                                style={{ paddingLeft: 0, paddingRight: 0 }}
+                                            >
+                                                <Typography
+                                                    variant="body1"
+                                                    component="p"
+                                                    children="KHÔNG CÓ LỊCH HẸN NÀO"
+                                                />
+                                            </Grid>
+                                    }
                                 </Grid>
                             </TabContent>
                         </Tab>
