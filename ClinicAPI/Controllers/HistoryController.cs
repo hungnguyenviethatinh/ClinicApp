@@ -29,25 +29,25 @@ namespace ClinicAPI.Controllers
         [HttpGet("patient/{patientId}")]
         public IActionResult GetHistoriesByPatientId(int patientId)
         {
-            var histories = _unitOfWork.Histories
-                .Where(h => h.PatientId == patientId)
-                .OrderByDescending(h => h.CreatedDate);
+            var histories = _unitOfWork.Histories.GetPatientHistories(patientId);
 
-            var historyVMs = _mapper.Map<IEnumerable<HistoryViewModel>>(histories);
+            return Ok(histories);
+        }
 
-            foreach(var history in historyVMs)
+        [HttpGet("patient/current/{patientId}")]
+        public IActionResult GetPatientCurrentHistory(int patientId)
+        {
+            var history = _unitOfWork.Histories
+                .GetPatientHistories(patientId)
+                .Where(h => !h.IsChecked)
+                .FirstOrDefault();
+
+            if (history == null)
             {
-                var doctor = _unitOfWork.Users.Find(history.DoctorId);
-                history.Doctor = doctor;
-
-                var prescriptions = _unitOfWork.Prescriptions.Where(p => p.HistoryId == history.Id);
-                history.Prescriptions.AddRange(prescriptions);
-
-                var xrays = _unitOfWork.XRayImages.Where(x => x.HistoryId == history.Id);
-                history.XRayImages.AddRange(xrays);
+                return NotFound();
             }
 
-            return Ok(historyVMs);
+            return Ok(new[] { history, });
         }
     }
 }

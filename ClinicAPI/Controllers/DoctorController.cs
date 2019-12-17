@@ -202,6 +202,7 @@ namespace ClinicAPI.Controllers
             }
 
             history.IsChecked = true;
+            _unitOfWork.Histories.Update(history);
             result = await _unitOfWork.SaveChangesAsync();
             if (result < 1)
             {

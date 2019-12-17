@@ -1,11 +1,14 @@
 ﻿using DAL.Models;
 using DAL.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DAL.Repositories
 {
     public interface IHistoryRepository : IRepository<History>
     {
-
+        IEnumerable<History> GetPatientHistories(int patientId);
     }
 
     public class HistoryRepository : Repository<History>, IHistoryRepository
@@ -14,6 +17,18 @@ namespace DAL.Repositories
         {
 
         }
+
+        public IEnumerable<History> GetPatientHistories(int patientId)
+        {
+            return _appContext.Histories
+                .Where(h => h.PatientId == patientId)
+                .Include(h => h.Doctor)
+                .Include(h => h.Prescriptions)
+                .Include(h => h.XRayImages)
+                .OrderBy(h => h.Id);
+                
+        }
+        private ApplicationDbContext _appContext => (ApplicationDbContext)_context;
     }
 
     public interface IXRayImageRepository : IRepository<XRayImage>
