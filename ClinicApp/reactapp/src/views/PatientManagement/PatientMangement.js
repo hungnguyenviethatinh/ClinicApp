@@ -21,6 +21,7 @@ import { DateTimePicker } from '../../components/DateTimePicker';
 import { CheckBox } from '../../components/CheckBox';
 import { Label } from '../../components/Label';
 import { SearchInput } from '../../components/SearchInput';
+import { DeleteConfirm } from '../../components/DeleteConfirm';
 
 import _ from 'lodash';
 import moment from 'moment';
@@ -126,6 +127,14 @@ const PatientManagement = () => {
             message,
         });
         setOpenSnackbar(true);
+    };
+
+    const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
+    const onOpenDeleteConfirm = () => {
+        setOpenDeleteConfirm(true);
+    };
+    const handlCloseDeleteConfirm = () => {
+        setOpenDeleteConfirm(false);
     };
 
     const [values, setValues] = React.useState({
@@ -395,6 +404,7 @@ const PatientManagement = () => {
     const handleDelete = () => {
         const { id } = selectedRow;
         deletePatient(id);
+        setOpenDeleteConfirm(false);
     };
 
     const deletePatient = (id) => {
@@ -865,41 +875,15 @@ const PatientManagement = () => {
                                         onClick={handleReset}
                                     />
                                 </Grid>
-                                {
-                                    selectedRow &&
-                                    <React.Fragment>
-                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                            <Button
-                                                fullWidth
-                                                color="danger"
-                                                children="Xóa"
-                                                iconName="delete"
-                                                onClick={handleDelete}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                            <Button
-                                                fullWidth
-                                                color="success"
-                                                children="Lưu"
-                                                iconName="save"
-                                                onClick={handleDone}
-                                            />
-                                        </Grid>
-                                    </React.Fragment>
-                                }
-                                {
-                                    !selectedRow &&
-                                    <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                        <Button
-                                            fullWidth
-                                            color="success"
-                                            children="Hoàn tất"
-                                            iconName="done"
-                                            onClick={handleDone}
-                                        />
-                                    </Grid>
-                                }
+                                <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                    <Button
+                                        fullWidth
+                                        color="success"
+                                        children={selectedRow ? 'Lưu' : 'Hoàn tất'}
+                                        iconName={selectedRow ? 'save' : 'done'}
+                                        onClick={handleDone}
+                                    />
+                                </Grid>
                             </Grid>
                         </Paper>
                     </CardContent>
@@ -911,6 +895,19 @@ const PatientManagement = () => {
                     style={{ height: '100%' }}
                 >
                     <CardHeader
+                        action={
+                            <React.Fragment>
+                                {
+                                    selectedRow &&
+                                    <Button
+                                        color="danger"
+                                        children="Xóa"
+                                        iconName="delete"
+                                        onClick={onOpenDeleteConfirm}
+                                    />
+                                }
+                            </React.Fragment>
+                        }
                         title="DANH SÁCH BỆNH NHÂN"
                         subheader="Danh sách bệnh nhân đã có dữ liệu trên hệ thống"
                     />
@@ -951,6 +948,11 @@ const PatientManagement = () => {
                     </CardContent>
                 </Card>
             </Grid>
+            <DeleteConfirm
+                open={openDeleteConfirm}
+                handleClose={handlCloseDeleteConfirm}
+                handleDelete={handleDelete}
+            />
             <Snackbar
                 vertical="bottom"
                 horizontal="right"

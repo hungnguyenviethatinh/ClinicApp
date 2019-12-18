@@ -17,6 +17,7 @@ import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
 import { Status } from '../../components/Status';
 import { SearchInput } from '../../components/SearchInput';
+import { DeleteConfirm } from '../../components/DeleteConfirm';
 
 import {
     DrugStatus,
@@ -112,6 +113,14 @@ const DrugManagement = () => {
         setOpenSnackbar(true);
     };
 
+    const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
+    const onOpenDeleteConfirm = () => {
+        setOpenDeleteConfirm(true);
+    };
+    const handlCloseDeleteConfirm = () => {
+        setOpenDeleteConfirm(false);
+    };
+
     const handleError = (reason, logMsgHeader) => {
         if (reason.response) {
             const { status } = reason.response;
@@ -146,6 +155,12 @@ const DrugManagement = () => {
             ...medicine,
             [prop]: event.target.value,
         })
+    };
+
+    const handleMedicineKeyPress = event => {
+        if (event.key === 'Enter') {
+            handleDone();
+        }
     };
 
     const handleReset = () => {
@@ -201,6 +216,7 @@ const DrugManagement = () => {
     const handleDelete = () => {
         const { id } = selectedRow;
         deleteMedicine(id);
+        setOpenDeleteConfirm(false);
     };
 
     const config = axiosRequestConfig();
@@ -360,6 +376,7 @@ const DrugManagement = () => {
                                         label="Tên thuốc"
                                         value={medicine.Name}
                                         onChange={handleMedicineChange('Name')}
+                                        onKeyPress={handleMedicineKeyPress}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
@@ -369,12 +386,12 @@ const DrugManagement = () => {
                                         label="Số lượng"
                                         value={medicine.Quantity}
                                         onChange={handleMedicineChange('Quantity')}
+                                        onKeyPress={handleMedicineKeyPress}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Select
                                         fullWidth
-                                        // style={{ marginTop: 8, marginBottom: 4 }}
                                         id="Unit"
                                         label="Đơn vị"
                                         value={medicine.Unit}
@@ -390,6 +407,7 @@ const DrugManagement = () => {
                                         placeholder={`...đồng/${medicine.Unit}`}
                                         value={medicine.Price}
                                         onChange={handleMedicineChange('Price')}
+                                        onKeyPress={handleMedicineKeyPress}
                                     />
                                 </Grid>
                             </Grid>
@@ -410,39 +428,25 @@ const DrugManagement = () => {
                                 </Grid>
                                 {
                                     selectedRow &&
-                                    <React.Fragment>
-                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                            <Button
-                                                fullWidth
-                                                color="danger"
-                                                children="Xóa"
-                                                iconName="delete"
-                                                onClick={handleDelete}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                            <Button
-                                                fullWidth
-                                                color="success"
-                                                children="Lưu"
-                                                iconName="save"
-                                                onClick={handleDone}
-                                            />
-                                        </Grid>
-                                    </React.Fragment>
-                                }
-                                {
-                                    !selectedRow &&
-                                    <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
                                             fullWidth
-                                            color="success"
-                                            children="Hoàn tất"
-                                            iconName="done"
-                                            onClick={handleDone}
+                                            color="danger"
+                                            children="Xóa"
+                                            iconName="delete"
+                                            onClick={onOpenDeleteConfirm}
                                         />
                                     </Grid>
                                 }
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Button
+                                        fullWidth
+                                        color="success"
+                                        children={selectedRow ? 'Lưu' : 'Hoàn tất'}
+                                        iconName={selectedRow ? 'save' : 'done'}
+                                        onClick={handleDone}
+                                    />
+                                </Grid>
                             </Grid>
                         </Paper>
                     </CardContent>
@@ -494,6 +498,11 @@ const DrugManagement = () => {
                     </CardContent>
                 </Card>
             </Grid>
+            <DeleteConfirm
+                open={openDeleteConfirm}
+                handleClose={handlCloseDeleteConfirm}
+                handleDelete={handleDelete}
+            />
             <Snackbar
                 vertical="bottom"
                 horizontal="right"

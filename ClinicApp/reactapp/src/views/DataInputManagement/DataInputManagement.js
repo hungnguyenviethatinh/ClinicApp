@@ -14,21 +14,15 @@ import { Table } from '../../components/Table';
 import { TextField } from '../../components/TextField';
 import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
-import { Status } from '../../components/Status';
-import { SearchInput } from '../../components/SearchInput';
+import { DeleteConfirm } from '../../components/DeleteConfirm';
 
 import {
-    DrugStatus,
     ExpiredSessionMsg
 } from '../../constants';
 import Axios, {
     axiosRequestConfig,
 } from '../../common';
 import {
-    GetAllMedicinesUrl,
-    GetMedicineUrl,
-    AddMedicineUrl,
-    UpdateMedicineUrl,
     GetDiagnosesUrl,
     GetDiagnosisUrl,
     AddDiagnosisUrl,
@@ -121,6 +115,22 @@ const DataInputManagement = () => {
         setOpenSnackbar(true);
     };
 
+    const [openDiagnosis, setOpenDiagnosis] = React.useState(false);
+    const onOpenDiagnosis = () => {
+        setOpenDiagnosis(true);
+    };
+    const handleCloseDiagnosis = () => {
+        setOpenDiagnosis(false);
+    };
+
+    const [openUnit, setOpenUnit] = React.useState(false);
+    const onOpenUnit = () => {
+        setOpenUnit(true);
+    };
+    const handleCloseUnit = () => {
+        setOpenUnit(false);
+    };
+
     const handleError = (reason, logMsgHeader) => {
         if (reason.response) {
             const { status } = reason.response;
@@ -140,6 +150,11 @@ const DataInputManagement = () => {
     const [diagnosisName, setDiagnosisName] = React.useState('');
     const handleDiagnosisNameChange = event => {
         setDiagnosisName(event.target.value);
+    };
+    const handleDiagnosisKeyPress = event => {
+        if (event.key === 'Enter') {
+            handleDiagnosisDone();
+        }
     };
 
     const handleDiagnosisDone = () => {
@@ -162,6 +177,7 @@ const DataInputManagement = () => {
     const handleDiagnosisDelete = () => {
         const { id } = selectedDiagnosisRow;
         deleteDiagnosis(id);
+        setOpenDiagnosis(false);
     };
 
     const handleDiagnosisReset = () => {
@@ -259,6 +275,11 @@ const DataInputManagement = () => {
     const handleUnitNameChange = event => {
         setUnitName(event.target.value);
     };
+    const handleUnitKeyPress = event => {
+        if (event.key === 'Enter') {
+            handleUnitDone();
+        }
+    };
 
     const handleUnitDone = () => {
         if (!unitName.trim()) {
@@ -280,6 +301,7 @@ const DataInputManagement = () => {
     const handleUnitDelete = () => {
         const { id } = selectedUnitRow;
         deleteUnit(id);
+        setOpenUnit(false);
     };
 
     const handleUnitReset = () => {
@@ -325,7 +347,7 @@ const DataInputManagement = () => {
                 refreshUnitData();
             }
         }).catch((reason) => {
-            handleError(reason, updateUnitLogMsfHeader);
+            handleError(reason, addUnitLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi thêm tên đơn vị của thuốc!');
         });
     };
@@ -354,7 +376,7 @@ const DataInputManagement = () => {
                 refreshUnitData();
             }
         }).catch((reason) => {
-            handleError(reason, updateUnitLogMsfHeader);
+            handleError(reason, deleteUnitLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa tên đơn vị của thuốc!');
         });
     };
@@ -401,6 +423,7 @@ const DataInputManagement = () => {
                                         label="Tên chẩn đoán"
                                         value={diagnosisName}
                                         onChange={handleDiagnosisNameChange}
+                                        onKeyPress={handleDiagnosisKeyPress}
                                     />
                                 </Grid>
                             </Grid>
@@ -421,39 +444,25 @@ const DataInputManagement = () => {
                                 </Grid>
                                 {
                                     selectedDiagnosisRow &&
-                                    <React.Fragment>
-                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                            <Button
-                                                fullWidth
-                                                color="danger"
-                                                children="Xóa"
-                                                iconName="delete"
-                                                onClick={handleDiagnosisDelete}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                            <Button
-                                                fullWidth
-                                                color="success"
-                                                children="Lưu"
-                                                iconName="save"
-                                                onClick={handleDiagnosisDone}
-                                            />
-                                        </Grid>
-                                    </React.Fragment>
-                                }
-                                {
-                                    !selectedDiagnosisRow &&
-                                    <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
                                             fullWidth
-                                            color="success"
-                                            children="Hoàn tất"
-                                            iconName="done"
-                                            onClick={handleDiagnosisDone}
+                                            color="danger"
+                                            children="Xóa"
+                                            iconName="delete"
+                                            onClick={onOpenDiagnosis}
                                         />
                                     </Grid>
                                 }
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Button
+                                        fullWidth
+                                        color="success"
+                                        children={selectedDiagnosisRow ? 'Lưu' : 'Hoàn tất'}
+                                        iconName={selectedDiagnosisRow ? 'save' : 'done'}
+                                        onClick={handleDiagnosisDone}
+                                    />
+                                </Grid>
                             </Grid>
                         </Paper>
                     </CardContent>
@@ -512,6 +521,7 @@ const DataInputManagement = () => {
                                         label="Tên đơn vị"
                                         value={unitName}
                                         onChange={handleUnitNameChange}
+                                        onKeyPress={handleUnitKeyPress}
                                     />
                                 </Grid>
                             </Grid>
@@ -532,39 +542,25 @@ const DataInputManagement = () => {
                                 </Grid>
                                 {
                                     selectedUnitRow &&
-                                    <React.Fragment>
-                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                            <Button
-                                                fullWidth
-                                                color="danger"
-                                                children="Xóa"
-                                                iconName="delete"
-                                                onClick={handleUnitDelete}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                            <Button
-                                                fullWidth
-                                                color="success"
-                                                children="Lưu"
-                                                iconName="save"
-                                                onClick={handleUnitDone}
-                                            />
-                                        </Grid>
-                                    </React.Fragment>
-                                }
-                                {
-                                    !selectedUnitRow &&
-                                    <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
                                             fullWidth
-                                            color="success"
-                                            children="Hoàn tất"
-                                            iconName="done"
-                                            onClick={handleUnitDone}
+                                            color="danger"
+                                            children="Xóa"
+                                            iconName="delete"
+                                            onClick={onOpenUnit}
                                         />
                                     </Grid>
                                 }
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Button
+                                        fullWidth
+                                        color="success"
+                                        children={selectedUnitRow ? 'Lưu' : 'Hoàn tất'}
+                                        iconName={selectedUnitRow ? 'save' : 'done'}
+                                        onClick={handleUnitDone}
+                                    />
+                                </Grid>
                             </Grid>
                         </Paper>
                     </CardContent>
@@ -598,6 +594,16 @@ const DataInputManagement = () => {
                     </CardContent>
                 </Card>
             </Grid>
+            <DeleteConfirm
+                open={openDiagnosis}
+                handleClose={handleCloseDiagnosis}
+                handleDelete={handleDiagnosisDelete}
+            />
+            <DeleteConfirm
+                open={openUnit}
+                handleClose={handleCloseUnit}
+                handleDelete={handleUnitDelete}
+            />
             <Snackbar
                 vertical="bottom"
                 horizontal="right"

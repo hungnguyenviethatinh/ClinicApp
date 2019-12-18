@@ -16,19 +16,20 @@ import { Select } from '../../components/Select';
 import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
 import { SearchInput } from '../../components/SearchInput';
+import { DeleteConfirm } from '../../components/DeleteConfirm';
 
-import { 
+import {
     GetAllEmployeesUrl,
     GetEmployeeUrl,
     AddEmployeeUrl,
     UpdateEmployeeUrl,
     DeleteEmployeeUrl,
 } from '../../config';
-import Axios, { 
+import Axios, {
     axiosRequestConfig,
 } from '../../common';
-import { 
-    RoleConstants, 
+import {
+    RoleConstants,
 } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -104,6 +105,14 @@ const UserManagement = () => {
         setOpenSnackbar(true);
     };
 
+    const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
+    const onOpenDeleteConfirm = () => {
+        setOpenDeleteConfirm(true);
+    };
+    const handlCloseDeleteConfirm = () => {
+        setOpenDeleteConfirm(false);
+    };
+
     const handleError = (reason, logMsgHeader) => {
         if (reason.response) {
             const { status } = reason.response;
@@ -132,6 +141,11 @@ const UserManagement = () => {
             [prop]: event.target.value,
         })
     };
+    const handleKeyPress = event => {
+        if (event.key === 'Enter') {
+            handleDone();
+        }
+    };
 
     const [searchValue, setSearchValue] = React.useState('');
     const handleSearchChange = event => {
@@ -158,7 +172,7 @@ const UserManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên tài khoản!');
             return;
         }
-        if (!updateMode && !values.Password.trim()){
+        if (!updateMode && !values.Password.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập mật khẩu!');
             return;
         }
@@ -190,6 +204,7 @@ const UserManagement = () => {
     const handleDelete = () => {
         const { id } = selectedRow;
         deleteUser(id);
+        setOpenDeleteConfirm(false);
     };
 
     const config = axiosRequestConfig();
@@ -328,6 +343,7 @@ const UserManagement = () => {
                                         label="Tên tài khoản"
                                         value={values.UserName}
                                         onChange={handleValueChange('UserName')}
+                                        onKeyPress={handleKeyPress}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -337,6 +353,7 @@ const UserManagement = () => {
                                         label="Họ & Tên"
                                         value={values.FullName}
                                         onChange={handleValueChange('FullName')}
+                                        onKeyPress={handleKeyPress}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -356,6 +373,7 @@ const UserManagement = () => {
                                         label="Email"
                                         value={values.Email}
                                         onChange={handleValueChange('Email')}
+                                        onKeyPress={handleKeyPress}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -365,6 +383,7 @@ const UserManagement = () => {
                                         label="Số điện thoại"
                                         value={values.PhoneNumber}
                                         onChange={handleValueChange('PhoneNumber')}
+                                        onKeyPress={handleKeyPress}
                                         maxLength={10}
                                     />
                                 </Grid>
@@ -376,6 +395,7 @@ const UserManagement = () => {
                                         label="Mật khẩu"
                                         value={values.Password}
                                         onChange={handleValueChange('Password')}
+                                        onKeyPress={handleKeyPress}
                                     />
                                 </Grid>
                             </Grid>
@@ -396,39 +416,25 @@ const UserManagement = () => {
                                 </Grid>
                                 {
                                     selectedRow &&
-                                    <React.Fragment>
-                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                            <Button
-                                                fullWidth
-                                                color="danger"
-                                                children="Xóa"
-                                                iconName="delete"
-                                                onClick={handleDelete}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                            <Button
-                                                fullWidth
-                                                color="success"
-                                                children="Lưu"
-                                                iconName="save"
-                                                onClick={handleDone}
-                                            />
-                                        </Grid>
-                                    </React.Fragment>
-                                }
-                                {
-                                    !selectedRow &&
-                                    <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
                                             fullWidth
-                                            color="success"
-                                            children="Hoàn tất"
-                                            iconName="done"
-                                            onClick={handleDone}
+                                            color="danger"
+                                            children="Xóa"
+                                            iconName="delete"
+                                            onClick={onOpenDeleteConfirm}
                                         />
                                     </Grid>
                                 }
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <Button
+                                        fullWidth
+                                        color="success"
+                                        children={selectedRow ? 'Lưu' : 'Hoàn tất'}
+                                        iconName={selectedRow ? 'save' : 'done'}
+                                        onClick={handleDone}
+                                    />
+                                </Grid>
                             </Grid>
                         </Paper>
                     </CardContent>
@@ -480,6 +486,11 @@ const UserManagement = () => {
                     </CardContent>
                 </Card>
             </Grid>
+            <DeleteConfirm
+                open={openDeleteConfirm}
+                handleClose={handlCloseDeleteConfirm}
+                handleDelete={handleDelete}
+            />
             <Snackbar
                 vertical="bottom"
                 horizontal="right"
