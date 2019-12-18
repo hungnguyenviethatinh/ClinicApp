@@ -31,7 +31,7 @@ namespace ClinicAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPrescription(int id)
         {
-            var prescription = await _unitOfWork.Prescriptions.FindAsync(id);
+            var prescription = await _unitOfWork.Prescriptions.GetPrescription(id);
 
             return Ok(new[] { prescription, });
         }
