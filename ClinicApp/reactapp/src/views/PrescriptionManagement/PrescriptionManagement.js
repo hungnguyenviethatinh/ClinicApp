@@ -138,30 +138,26 @@ const PrescriptionManagement = () => {
                 ...patient,
                 AppointmentDate: date.format(DataDateTimeFormat),
             });
-            medicines.map((medicine) => {
-                const afterBreakfast = _.toNumber(medicine.AfterBreakfast);
-                const afterLunch = _.toNumber(medicine.AfterLunch);
-                const afterNoon = _.toNumber(medicine.Afternoon);
-                const afterDinner = _.toNumber(medicine.AfterDinner);
-                const quantity = (afterBreakfast + afterLunch + afterNoon + afterDinner) * days;
-                medicine.Quantity = _.toString(quantity);
-            });
-            setMedicines([...medicines]);
         } else {
             setPatient({
                 ...patient,
                 AppointmentDate: null,
             });
-            medicines.map((medicine) => {
-                const afterBreakfast = _.toNumber(medicine.AfterBreakfast);
-                const afterLunch = _.toNumber(medicine.AfterLunch);
-                const afterNoon = _.toNumber(medicine.Afternoon);
-                const afterDinner = _.toNumber(medicine.AfterDinner);
-                const quantity = afterBreakfast + afterLunch + afterNoon + afterDinner;
-                medicine.Quantity = _.toString(quantity);
-            });
-            setMedicines([...medicines]);
         }
+        
+        medicines.map((medicine) => {
+            const afterBreakfast = _.toNumber(medicine.AfterBreakfast);
+            const afterLunch = _.toNumber(medicine.AfterLunch);
+            const afterNoon = _.toNumber(medicine.Afternoon);
+            const afterDinner = _.toNumber(medicine.AfterDinner);
+            
+            let quantity = afterBreakfast + afterLunch + afterNoon + afterDinner;
+            if (_.isFinite(days)) {
+                quantity *= days;
+            }
+            medicine.Quantity = _.toString(quantity);
+        });
+        setMedicines([...medicines]);
     };
 
     const [prescription, setPrescription] = React.useState({
