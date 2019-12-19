@@ -7,7 +7,7 @@
     <IsPackable>false</IsPackable>
     <Platforms>x86</Platforms>
     <ApplicationIcon>app.ico</ApplicationIcon>
-    <AssemblyName>ClinicApp</AssemblyName>
+    <AssemblyName>DrKhoaClinicApp</AssemblyName>
     <StartupObject></StartupObject>
   </PropertyGroup>
 
@@ -35,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\" />
     <Folder Include="templates\" />
   </ItemGroup>
 
