@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ClinicAPI.ViewModels
+﻿namespace ClinicAPI.ViewModels
 {
+    public class UserUpdateModel
+    {
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string CurrentPassword { get; set; }
+        public string NewPassword { get; set; }
+    }
+
     public class UserEditModel
     {
         public string UserName { get; set; }

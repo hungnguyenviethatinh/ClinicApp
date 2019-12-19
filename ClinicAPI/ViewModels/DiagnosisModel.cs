@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ClinicAPI.ViewModels
+﻿namespace ClinicAPI.ViewModels
 {
     public class DiagnosisModel
     {

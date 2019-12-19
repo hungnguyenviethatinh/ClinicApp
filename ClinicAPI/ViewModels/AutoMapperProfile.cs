@@ -38,6 +38,7 @@ namespace ClinicAPI.ViewModels
                 .ForMember(u => u.RoleName, map => map.Ignore())
                 .ForMember(u => u.Password, map => map.Ignore());
             CreateMap<UserEditModel, User>();
+            CreateMap<UserUpdateModel, User>();
 
             CreateMap<Medicine, MedicineModel>();
             CreateMap<MedicineModel, Medicine>();
