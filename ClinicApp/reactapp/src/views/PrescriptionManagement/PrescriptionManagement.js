@@ -17,7 +17,6 @@ import { Select } from '../../components/Select';
 import { Snackbar } from '../../components/Snackbar';
 import { Button, FabButton } from '../../components/Button';
 import { Autocomplete } from '../../components/Autocomplete';
-// import { DateTimePicker } from '../../components/DateTimePicker';
 
 import Axios, {
     axiosRequestConfig,
@@ -216,8 +215,8 @@ const PrescriptionManagement = () => {
 
     const [medicineName, setMedicineName] = React.useState(null);
     const handleMedicineNameChange = index => (event, value) => {
-        medicines[index].MedicineId = value.id;
-        medicines[index].Unit = value.unit;
+        medicines[index].MedicineId = value ? value.id : '';
+        medicines[index].Unit = value ? value.unit : '';
         setMedicines([...medicines]);
         setMedicineName(value);
     };
@@ -772,13 +771,6 @@ const PrescriptionManagement = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    {/* <DateTimePicker
-                                        fullWidth
-                                        id="AppointmentDate"
-                                        label="Hẹn tái khám (nếu có)"
-                                        value={patient.AppointmentDate}
-                                        onChange={(date) => handleAppointmentDateChange(date)}
-                                    /> */}
                                     <Select
                                         fullWidth
                                         id="AppointmentDate"

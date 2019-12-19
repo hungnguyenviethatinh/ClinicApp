@@ -24,10 +24,10 @@ const DeleteConfirmDialog = (props) => {
                 onClose={handleClose}
                 aria-labelledby="responsive-dialog-title"
             >
-                <DialogTitle id="responsive-dialog-title">{"Xác nhận xóa"}</DialogTitle>
+                <DialogTitle id="responsive-dialog-title">Xác nhận xóa</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-
+                        Nhấn Xác nhận để xóa, Hủy để hủy hành động này!
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

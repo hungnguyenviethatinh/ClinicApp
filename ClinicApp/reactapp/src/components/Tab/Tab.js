@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
@@ -22,28 +21,24 @@ const useStyles = makeStyles(theme => ({
 const TabComponent = (props) => {
     const classes = useStyles();
 
-    const { 
-        value, 
-        names, 
-        handleChange, 
-        children, 
-        ...rest 
+    const {
+        value,
+        names,
+        handleChange,
+        children,
+        ...rest
     } = props;
 
     return (
         <div className={classes.root}>
-            {/* <AppBar
-                color="inherit" 
-                position="static"> */}
-                <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="tabs"
-                    {...rest}
-                >
-                    {names.map((name, index) => <Tab key={index} label={name} {...a11yProps(index)} />)}
-                </Tabs>
-            {/* </AppBar> */}
+            <Tabs
+                value={value}
+                onChange={handleChange}
+                aria-label="tabs"
+                {...rest}
+            >
+                {names.map((name, index) => <Tab key={index} label={name} {...a11yProps(index)} />)}
+            </Tabs>
             {children}
         </div>
     );
