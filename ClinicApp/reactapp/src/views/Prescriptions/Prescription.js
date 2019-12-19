@@ -148,8 +148,8 @@ const Prescription = () => {
 
         chromely.post(PrescriptionPrintUrl, null, data, response => {
             const { ResponseText } = response;
-            const { Status } = ResponseText;
-            if (Status === 200) {
+            const { ReadyState, Status } = JSON.parse(ResponseText);
+            if (ReadyState === 4 && Status === 200) {
                 handleSnackbarOption('success', 'Đơn thuốc đã được in thành công!');
                 updatePrescriptionStatus();
             } else {
