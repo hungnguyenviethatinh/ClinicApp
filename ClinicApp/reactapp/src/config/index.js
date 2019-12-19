@@ -66,3 +66,5 @@ export const PrescriptionUrl = '/api/prescription';
 export const HistoryByPatientIdUrl = '/api/history/patient';
 export const PatientCurrentHistoryUrl = 'api/history/patient/current';
 export const SetUserStatusUrl = '/api/account/status';
+export const GetCurrentUserUrl = '/api/account';
+export const UpdateCurrentUserUrl = '/api/account/update';

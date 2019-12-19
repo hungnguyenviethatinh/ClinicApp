@@ -130,8 +130,6 @@ const Login = (props) => {
         };
 
         axios.post(url, qs.stringify(data), config).then((response) => {
-            hideProgress();
-
             const { status, data } = response;
             if (status === 200) {
                 const { access_token } = data;
@@ -174,12 +172,16 @@ const Login = (props) => {
                 active,
             },
         }).then((response) => {
+            hideProgress();
+
             const { status } = response;
             if (status === 200) {
                 console.log('[Set User Status] - OK!');
                 setIsLogined(true);
             }
         }).catch((reason) => {
+            hideProgress();
+            
             console.log('[Set User Status] ', reason);
             if (reason.response) {
                 const { status } = reason.response;

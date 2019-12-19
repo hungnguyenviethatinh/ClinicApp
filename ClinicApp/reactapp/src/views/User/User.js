@@ -15,6 +15,10 @@ import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
 import { TextField } from '../../components/TextField';
 
+import Axios, { axiosRequestConfig } from '../../common';
+import { GetCurrentUserUrl, UpdateCurrentUserUrl } from '../../config';
+import { ExpiredSessionMsg, NotFoundMsg } from '../../constants';
+
 const useStyles = makeStyles(theme => ({
     card: {},
     content: {
@@ -31,6 +35,9 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+const getMyInfoError = '[Get My Info Error]';
+const updateMyInfoError = '[Update My Info Error]';
+
 const UserView = () => {
 
     const classes = useStyles();
@@ -46,7 +53,7 @@ const UserView = () => {
 
     const [snackbarOption, setSnackbarOption] = React.useState({
         variant: 'success',
-        message: 'Data loaded successfully!',
+        message: '',
     });
     const handleSnackbarOption = (variant, message) => {
         setSnackbarOption({
@@ -56,40 +63,121 @@ const UserView = () => {
         setOpenSnackbar(true);
     };
 
-    const [values, setValues] = React.useState({
-        ID: '',
+    const handleError = (reason, logMsgHeader) => {
+        if (reason.response) {
+            const { status } = reason.response;
+            if (status === 401) {
+                handleSnackbarOption('error', ExpiredSessionMsg);
+            } else {
+                if (status === 404) {
+                    handleSnackbarOption('error', NotFoundMsg);
+                }
+            }
+        }
+        console.log(`${logMsgHeader}`, reason);
+    }
+
+    const [user, setUser] = React.useState({
         FullName: '',
         Role: '',
         Email: '',
         PhoneNumber: '',
-        Password: '',
+        CurrentPassword: '',
         NewPassword: '',
     });
     const handleValueChange = prop => event => {
-        setValues({
-            ...values,
+        setUser({
+            ...user,
             [prop]: event.target.value,
         })
     };
 
-    const handleResetValue = () => {
-
+    const handleReset = () => {
+        getMyInfo();
     };
 
-    const handleSaveValue = () => {
-        handleSnackbarOption('info', 'Cập nhật thông tin của bạn thành công!')
+    const handleSave = () => {
+        if (!user.FullName.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
+            return;
+        }
+        if (!user.Email.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập email!');
+            return;
+        }
+        if (!user.PhoneNumber.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại!');
+            return;
+        }
+        if (user.CurrentPassword.trim() && !user.NewPassword.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập mật khẩu mới!');
+            return;
+        }
+        if (!user.CurrentPassword.trim() && user.NewPassword.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập mật khẩu hiện tại!');
+            return;
+        }
+
+        const userModel = {
+            FullName: user.FullName,
+            Email: user.Email,
+            PhoneNumber: user.PhoneNumber,
+            CurrentPassword: user.CurrentPassword,
+            NewPassword: user.NewPassword,
+        };
+        updateMyInfo(userModel);
+    };
+
+    const config = axiosRequestConfig();
+
+    const updateMyInfo = (userModel) => {
+        Axios.put(UpdateCurrentUserUrl, userModel, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { fullName, email, phoneNumber } = data;
+                setUser({
+                    ...user,
+                    FullName: fullName,
+                    Email: email,
+                    PhoneNumber: phoneNumber,
+                    CurrentPassword: '',
+                    NewPassword: '',
+                });
+                handleSnackbarOption('success', 'Cập nhật thông tin của bạn thành công!');
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bạn!');
+            }
+        }).catch((reason) => {
+            handleError(reason, updateMyInfoError);
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bạn!');
+        });
+    };
+
+    const getMyInfo = () => {
+        Axios.get(GetCurrentUserUrl, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { currentUser, roles } = data[0];
+                const { fullName, email, phoneNumber } = currentUser;
+                const role = roles[0];
+
+                setUser({
+                    ...user,
+                    FullName: fullName,
+                    Role: role,
+                    Email: email,
+                    PhoneNumber: phoneNumber,
+                    CurrentPassword: '',
+                    NewPassword: '',
+                });
+            }
+        }).catch((reason) => {
+            handleError(reason, getMyInfoError);
+        });
     };
 
     React.useEffect(() => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        setValues({
-            ...values,
-            ID: user.id,
-            FullName: user.name,
-            Email: user.email,
-            Role: user.role,
-            PhoneNumber: user.phonenumber,
-        });
+        getMyInfo();
     }, []);
 
     return (
@@ -106,24 +194,19 @@ const UserView = () => {
                     <CardContent className={classes.content}>
                         <Paper elevation={0} className={classes.paper}>
                             <Container maxWidth="sm">
-                                <Grid container spacing={2} >
-                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                        <TextField
-                                            id="ID"
-                                            label="Mã Nhân Viên"
-                                            value={values.ID}
-                                            onChange={handleValueChange('ID')}
-                                            readOnly
-                                            fullWidth
-                                        />
-                                    </Grid>
+                                <Grid
+                                    container
+                                    spacing={2}
+                                    justify="center"
+                                    alignItems="center"
+                                >
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                         <TextField
                                             fullWidth
                                             autoFocus
                                             id="FullName"
                                             label="Họ & Tên"
-                                            value={values.FullName}
+                                            value={user.FullName}
                                             onChange={handleValueChange('FullName')}
                                         />
                                     </Grid>
@@ -132,8 +215,7 @@ const UserView = () => {
                                             fullWidth
                                             id="Role"
                                             label="Chức vụ"
-                                            value={values.Role}
-                                            onChange={handleValueChange('Role')}
+                                            value={user.Role}
                                             readOnly
                                         />
                                     </Grid>
@@ -142,7 +224,7 @@ const UserView = () => {
                                             fullWidth
                                             id="Email"
                                             label="Email"
-                                            value={values.Email}
+                                            value={user.Email}
                                             onChange={handleValueChange('Email')}
                                         />
                                     </Grid>
@@ -151,25 +233,27 @@ const UserView = () => {
                                             fullWidth
                                             id="PhoneNumber"
                                             label="Số điện thoại"
-                                            value={values.PhoneNumber}
+                                            value={user.PhoneNumber}
                                             onChange={handleValueChange('PhoneNumber')}
                                             maxLength={10}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                        <Typography variant="h5" component="h5">
-                                            Thay đổi mật khẩu
-                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            component="h5"
+                                            children="Thay đổi mật khẩu"
+                                        />
                                         <Divider />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                         <TextField
                                             fullWidth
-                                            id="Password"
+                                            id="CurrentPassword"
                                             type="password"
                                             label="Mật khẩu hiện tại"
-                                            value={values.Password}
-                                            onChange={handleValueChange('Password')}
+                                            value={user.CurrentPassword}
+                                            onChange={handleValueChange('CurrentPassword')}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -178,7 +262,7 @@ const UserView = () => {
                                             id="NewPassword"
                                             type="password"
                                             label="Mật khẩu mới"
-                                            value={values.NewPassword}
+                                            value={user.NewPassword}
                                             onChange={handleValueChange('NewPassword')}
                                         />
                                     </Grid>
@@ -189,15 +273,15 @@ const UserView = () => {
                                                     color="info"
                                                     children="Đặt lại"
                                                     iconName="reset"
-                                                    onClick={handleResetValue}
+                                                    onClick={handleReset}
                                                 />
                                             </Grid>
                                             <Grid item>
                                                 <Button
-                                                    color="primary"
-                                                    children="Lưu"
+                                                    color="success"
+                                                    children="Cập nhật"
                                                     iconName="save"
-                                                    onClick={handleSaveValue}
+                                                    onClick={handleSave}
                                                 />
                                             </Grid>
                                         </Grid>
