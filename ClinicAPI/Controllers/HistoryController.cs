@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using AutoMapper;
-using ClinicAPI.ViewModels;
+using ClinicAPI.Authorization;
 using DAL;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -27,6 +26,7 @@ namespace ClinicAPI.Controllers
         }
 
         [HttpGet("patient/{patientId}")]
+        [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetHistoriesByPatientId(int patientId)
         {
             var histories = _unitOfWork.Histories.GetPatientHistories(patientId);
@@ -35,12 +35,13 @@ namespace ClinicAPI.Controllers
         }
 
         [HttpGet("patient/current/{patientId}")]
+        [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatientCurrentHistory(int patientId)
         {
             var history = _unitOfWork.Histories
                 .GetPatientHistories(patientId)
                 .Where(h => !h.IsChecked)
-                .FirstOrDefault();
+                .SingleOrDefault();
 
             if (history == null)
             {

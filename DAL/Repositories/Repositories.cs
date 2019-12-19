@@ -21,10 +21,10 @@ namespace DAL.Repositories
         public IEnumerable<History> GetPatientHistories(int patientId)
         {
             return _appContext.Histories
-                .Where(h => h.PatientId == patientId)
                 .Include(h => h.Doctor)
                 .Include(h => h.Prescriptions)
                 .Include(h => h.XRayImages)
+                .Where(h => h.PatientId == patientId)
                 .OrderBy(h => h.Id);
                 
         }

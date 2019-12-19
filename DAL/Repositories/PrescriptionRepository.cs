@@ -23,7 +23,7 @@ namespace DAL.Repositories
             return await _appContext.Prescriptions
                 .Include(p => p.Doctor)
                 .Include(p => p.Patient)
-                .Include(p => p.Medicines)
+                .Include(p => p.Medicines).ThenInclude(m => m.Medicine)
                 .Where(p => (!p.IsDeleted && p.Id == id))
                 .SingleOrDefaultAsync();
         }

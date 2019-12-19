@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
+using ClinicAPI.Authorization;
 using DAL;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -29,9 +26,14 @@ namespace ClinicAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public async Task<IActionResult> GetPrescription(int id)
         {
             var prescription = await _unitOfWork.Prescriptions.GetPrescription(id);
+            if (prescription == null)
+            {
+                return NotFound();
+            }
 
             return Ok(new[] { prescription, });
         }

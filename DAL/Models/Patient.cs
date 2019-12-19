@@ -21,7 +21,7 @@ namespace DAL.Models
         public bool IsDeleted { get; set; }
 
         public string DoctorId { get; set; }
-        public User Doctor { get; set; }
+        public virtual User Doctor { get; set; }
 
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }

@@ -14,10 +14,10 @@ namespace DAL.Models
         public bool IsChecked { get; set; }
         
         public string DoctorId { get; set; }
-        public User Doctor { get; set; }
+        public virtual User Doctor { get; set; }
         
         public int PatientId { get; set; }
-        public Patient Patient { get; set; }
+        public virtual Patient Patient { get; set; }
 
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }

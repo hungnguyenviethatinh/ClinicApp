@@ -123,8 +123,6 @@ namespace DAL
 
             builder.Entity<Medicine>()
                 .Property(m => m.Name).IsRequired().HasMaxLength(100);
-            //builder.Entity<Medicine>()
-            //    .HasIndex(m => m.Name).IsUnique();
             builder.Entity<Medicine>()
                 .Property(m => m.Unit).HasMaxLength(100);
             builder.Entity<Medicine>()
@@ -196,11 +194,9 @@ namespace DAL
                 .HasForeignKey(x => x.HistoryId)
                 .IsRequired().OnDelete(DeleteBehavior.Restrict);
 
-            //builder.Entity<Diagnosis>().HasIndex(d => d.Name).IsUnique();
             builder.Entity<Diagnosis>()
                 .Property(d => d.Name).IsRequired().HasMaxLength(100);
 
-            //builder.Entity<Unit>().HasIndex(u => u.Name).IsUnique();
             builder.Entity<Unit>()
                 .Property(u => u.Name).IsRequired().HasMaxLength(15);
         }

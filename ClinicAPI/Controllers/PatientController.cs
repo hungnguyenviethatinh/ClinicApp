@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ClinicAPI.Authorization;
 using DAL;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -29,6 +27,7 @@ namespace ClinicAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policies.ViewAllPatientsPolicy)]
         public async Task<IActionResult> GetPatient(int id)
         {
             var patient = await _unitOfWork.Patients.FindAsync(id);
