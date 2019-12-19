@@ -2,6 +2,7 @@
 using AutoMapper;
 using ClinicAPI.Authorization;
 using DAL;
+using DAL.Core;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,27 @@ namespace ClinicAPI.Controllers
             }
 
             return Ok(new[] { prescription, });
+        }
+
+        [HttpGet("status/{id}")]
+        [Authorize(Policies.ViewAllPrescriptionsPolicy)]
+        public async Task<IActionResult> UpdatePrescriptionStatus(int id)
+        {
+            var prescription = _unitOfWork.Prescriptions.Find(id);
+            if (prescription == null)
+            {
+                return NotFound();
+            }
+
+            prescription.Status = PrescriptionStatus.IsPrinted;
+            _unitOfWork.Prescriptions.Update(prescription);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
         }
     }
 }
