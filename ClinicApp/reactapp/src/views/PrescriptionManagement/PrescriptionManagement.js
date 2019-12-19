@@ -550,6 +550,7 @@ const PrescriptionManagement = () => {
             container
             spacing={2}
             justify="center"
+            alignItems="center"
         >
             <Grid item xs={12} sm={12} md={8} lg={8} xl={8} >
                 <Card

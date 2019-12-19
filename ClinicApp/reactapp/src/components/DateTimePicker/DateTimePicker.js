@@ -51,6 +51,7 @@ const DateTimePickerComponent = props => {
                 KeyboardButtonProps={{
                     "aria-label": `${id}_datetimepicker-label`
                 }}
+                invalidDateMessage="Ngày giờ không hợp lệ"
                 // minDate={minDate}
                 // minDateMessage={minDateMessage}
                 // maxDate={maxDate}

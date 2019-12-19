@@ -18,6 +18,7 @@ import {
     IdPrefix,
     Gender,
     AddressSeperator,
+    RouteConstants,
 } from '../../constants';
 import { GetPatientsByDoctorUrl } from '../../config';
 import Axios, {
@@ -47,7 +48,7 @@ const patientColumns = [
         title: 'Mã BN', field: 'id', defaultSort: 'asc',
         render: rowData =>
             <Link
-                to={`/patient/${rowData.id}`}
+                to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
                 children={
                     encodeId(rowData.id, IdPrefix.Patient)
                 } />,
@@ -134,7 +135,7 @@ const Patients = () => {
             spacing={3}
             style={{ height: '100%' }}
         >
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                 <Card
                     className={classes.card}
                     style={{ height: '100%' }}

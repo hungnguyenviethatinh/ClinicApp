@@ -26,7 +26,7 @@ import {
 import {
     PeriodConstants,
     DataDateTimeFormat,
-    DisplayDateTimeFormat
+    DisplayDateFormat
 } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -156,7 +156,7 @@ const StatisticsView = () => {
                 //     appointedY.push(y);
                 // });
                 if (selectedTimePeriod === PeriodConstants.Day) {
-                    xAxis = xAxis.map(x => moment(x).format(DisplayDateTimeFormat));
+                    xAxis = xAxis.map(x => moment(x).format(DisplayDateFormat));
                 }
                 if (selectedTimePeriod === PeriodConstants.Week) {
                     xAxis = xAxis.map(({ year, week }) => `T${week}-${year}`);
@@ -218,7 +218,7 @@ const StatisticsView = () => {
                     yAxis.push(y);
                 });
                 if (presSelectedTimePeriod === PeriodConstants.Day) {
-                    xAxis = xAxis.map(x => moment(x).format(DisplayDateTimeFormat));
+                    xAxis = xAxis.map(x => moment(x).format(DisplayDateFormat));
                 }
                 if (presSelectedTimePeriod === PeriodConstants.Week) {
                     xAxis = xAxis.map(({ year, week }) => `T${week}-${year}`);

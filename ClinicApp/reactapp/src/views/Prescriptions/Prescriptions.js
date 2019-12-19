@@ -18,7 +18,8 @@ import { SearchInput } from '../../components/SearchInput';
 import { 
     PrescriptionStatus,
     IdPrefix,
-    DisplayDateTimeFormat,
+    DisplayDateFormat,
+    RouteConstants,
 } from '../../constants';
 import { GetPrescriptionsUrl } from '../../config';
 import Axios, { 
@@ -48,7 +49,7 @@ const prescriptionColumns = [
         title: 'Mã ĐT', field: 'id',
         render: rowData => 
             <Link 
-            to={`/prescription/${rowData.id}`} 
+            to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`} 
             children={
                 encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
             } />,
@@ -63,7 +64,7 @@ const prescriptionColumns = [
     },
     {
         title: 'Ngày tạo', field: 'updatedDate',
-        render: rowData => moment(rowData.updatedDate).format(DisplayDateTimeFormat),
+        render: rowData => moment(rowData.updatedDate).format(DisplayDateFormat),
     },
     {
         title: 'Trạng thái', field: 'status',
@@ -139,7 +140,7 @@ const Prescriptions = () => {
             spacing={3}
             style={{ height: '100%' }}
         >
-            <Grid item lg={12} sm={12} md={12} xl={12} xs={12} >
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                 <Card
                     className={classes.card}
                     style={{ height: '100%' }}

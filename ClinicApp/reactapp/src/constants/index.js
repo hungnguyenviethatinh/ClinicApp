@@ -103,7 +103,8 @@ export const ExpiredSessionMsg = 'Phiên làm việc đã hết hạn. Vui lòng
 export const NotFoundMsg = 'Không tìm thấy thông tin!';
 
 export const DataDateTimeFormat = 'YYYY-MM-DD';
-export const DisplayDateTimeFormat = 'DD-MM-YYYY';
+export const DisplayDateFormat = 'DD-MM-YYYY';
+export const DisplayDateTimeFormat = 'HH:mm DD-MM-YYYY';
 
 export const RefreshDataTimer = 10;
 

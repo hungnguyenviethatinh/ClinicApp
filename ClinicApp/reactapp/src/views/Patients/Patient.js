@@ -24,7 +24,7 @@ import {
     PatientStatus,
     ExpiredSessionMsg,
     // NotFoundMsg,
-    DisplayDateTimeFormat,
+    DisplayDateFormat,
     AddressSeperator,
     Gender,
 } from '../../constants';
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
 const historyColumns = [
     {
         title: 'Ngày khám', field: 'createdDate', type: 'date',
-        render: rowData => moment(rowData.createdDate).format(DisplayDateTimeFormat),
+        render: rowData => moment(rowData.createdDate).format(DisplayDateFormat),
     },
     {
         title: 'Bác sĩ khám', field: 'doctorId',
@@ -310,7 +310,7 @@ const Patient = () => {
                 } = data[0];
 
                 const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
-                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(DisplayDateTimeFormat) : null;
+                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(DisplayDateFormat) : null;
                 const Address = address.split(AddressSeperator).filter(value => value.trim() !== '').join(`${AddressSeperator} `);
 
                 setPatient({
