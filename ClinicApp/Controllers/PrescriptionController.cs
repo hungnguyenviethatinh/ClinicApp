@@ -142,6 +142,10 @@ namespace ClinicApp.Controllers
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
             converter.Options.WebPageWidth = 1024;
             converter.Options.WebPageHeight = 1280;
+            if (medicines.Count >= 10)
+            {
+                converter.Options.WebPageHeight = 0;
+            }
 
             string savePath = $"saves\\DonThuoc_{DateTime.Now.ToString("ddMMyyyy_HHmmss")}.pdf";
             PdfDocument pdf = converter.ConvertUrl(url);
