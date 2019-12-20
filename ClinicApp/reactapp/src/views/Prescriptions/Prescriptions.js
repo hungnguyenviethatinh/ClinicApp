@@ -15,15 +15,15 @@ import { Table } from '../../components/Table';
 import { Status } from '../../components/Status';
 import { SearchInput } from '../../components/SearchInput';
 
-import { 
+import {
     PrescriptionStatus,
     IdPrefix,
     DisplayDateFormat,
     RouteConstants,
 } from '../../constants';
 import { GetPrescriptionsUrl } from '../../config';
-import Axios, { 
-    axiosRequestConfig, 
+import Axios, {
+    axiosRequestConfig,
 } from '../../common';
 import { encodeId, decodeId } from '../../utils';
 import moment from 'moment';
@@ -47,12 +47,12 @@ const useStyles = makeStyles(theme => ({
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
-        render: rowData => 
-            <Link 
-            to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`} 
-            children={
-                encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-            } />,
+        render: rowData =>
+            <Link
+                to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
+                children={
+                    encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
+                } />,
     },
     {
         title: 'Bác sĩ kê đơn', field: 'doctorId',
@@ -115,7 +115,7 @@ const Prescriptions = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { totalCount, prescriptions} = data[0];
+                const { totalCount, prescriptions } = data[0];
                 const { page } = query;
                 resolve({
                     data: prescriptions,
@@ -135,8 +135,8 @@ const Prescriptions = () => {
     };
 
     return (
-        <Grid 
-            container 
+        <Grid
+            container
             spacing={3}
             style={{ height: '100%' }}
         >

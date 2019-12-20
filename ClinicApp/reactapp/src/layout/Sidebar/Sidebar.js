@@ -61,7 +61,7 @@ const adminMenus = [
         icon: <StoreIcon />
     },
     {
-        title: 'Quản lí nhập dữ liệu',
+        title: 'Quản lí nhập liệu',
         href: RouteConstants.DataInputManagementView,
         icon: <ImportContactsIcon />
     },

@@ -27,6 +27,8 @@ import {
     DisplayDateFormat,
     AddressSeperator,
     Gender,
+    RouteConstants,
+    IdPrefix,
 } from '../../constants';
 import Axios, {
     axiosRequestConfig,
@@ -36,9 +38,10 @@ import {
     HistoryByPatientIdUrl,
     PatientCurrentHistoryUrl,
 } from '../../config';
+import { encodeId } from '../../utils';
 
 const useStyles = makeStyles(theme => ({
-    card: { },
+    card: {},
     content: {
         padding: theme.spacing(0),
     },
@@ -212,7 +215,11 @@ const getDetailPanel = (rowData) => {
                             {
                                 prescriptions.map((prescription, index) => (
                                     <Grid key={index} item>
-                                        {prescription.id}
+                                        <Link
+                                            to={`${RouteConstants.PrescriptionDetailView.replace(':id', prescription.id)}`}
+                                            children={
+                                                encodeId(prescription.id, `${IdPrefix.Prescription}`)
+                                            } />
                                     </Grid>
                                 ))
                             }

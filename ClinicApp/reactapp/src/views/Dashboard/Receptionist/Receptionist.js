@@ -30,6 +30,7 @@ import {
     PrescriptionStatus,
     IdPrefix,
     RefreshDataTimer,
+    RouteConstants,
 } from '../../../constants';
 import { encodeId } from '../../../utils';
 
@@ -53,6 +54,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const patientQueueColumns = [
+    {
+        title: 'Mã BN', field: 'id',
+        render: rowData =>
+            <Link
+                to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
+                children={
+                    encodeId(rowData.id, IdPrefix.Patient)
+                } />,
+    },
     {
         title: 'Họ & Tên', field: 'fullName',
     },
@@ -92,7 +102,7 @@ const prescriptionColumns = [
         title: 'Mã ĐT', field: 'id',
         render: rowData =>
             <Link
-                to={`/prescription/${rowData.id}`}
+                to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
                 children={
                     encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
                 } />,
