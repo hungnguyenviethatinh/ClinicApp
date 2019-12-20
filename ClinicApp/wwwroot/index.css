@@ -1,25 +1,38 @@
-body {
-    border: 1px solid #e0d8d8;
-}
-
 .main {
+    border: 2px solid black;
     display: flex;
     flex-direction: column;
     flex: 1;
     height: 100vh;
+    padding-top: 15px;
 }
 
 .header {
     display: flex;
 }
 
+.logo {
+    height: auto;
+    width: 100%;
+}
+
 .footer {
-    display: flex;
-    justify-content: center;
     align-items: center;
+    border-top: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 15px;
 }
 
 .content {
     display: flex;
     flex-grow: 1;
+}
+
+.doctor-name {
+    align-items: flex-end;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 15px;
 }
