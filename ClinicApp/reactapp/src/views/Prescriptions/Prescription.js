@@ -154,6 +154,9 @@ const Prescription = () => {
                 updatePrescriptionStatus();
             } else {
                 handleSnackbarOption('error', 'Có lỗi khi in đơn thuốc!');
+                console.log('[Print Prescription Error] - An error occurs during message routing. With url: '
+                    + PrescriptionPrintUrl
+                    + '. Response received: ', response);
             }
         });
     };

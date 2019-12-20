@@ -50,6 +50,10 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+
   <Target Name="DependsOn" DependsOnTargets="ValidateChromelyApp">
     <Message Text="Target : DependsOn" />
   </Target>

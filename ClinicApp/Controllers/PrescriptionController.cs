@@ -9,7 +9,7 @@ using ClinicApp.ViewModels;
 
 namespace ClinicApp.Controllers
 {
-    [ControllerProperty(Name = "DemoController", Route = "prescription")]
+    [ControllerProperty(Name = "PrescriptionController", Route = "prescription")]
     public class PrescriptionController : ChromelyController
     {
         public PrescriptionController()
@@ -160,7 +160,7 @@ namespace ClinicApp.Controllers
             };
             Process.Start(info);
 
-            ChromelyResponse response = new ChromelyResponse();
+            ChromelyResponse response = new ChromelyResponse(request.Id);
 
             return response;
         }
