@@ -1,0 +1,25 @@
+body {
+    border: 1px solid #e0d8d8;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100vh;
+}
+
+.header {
+    display: flex;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content {
+    display: flex;
+    flex-grow: 1;
+}
