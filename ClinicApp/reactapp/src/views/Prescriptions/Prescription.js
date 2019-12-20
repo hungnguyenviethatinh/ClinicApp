@@ -168,7 +168,7 @@ const Prescription = () => {
                 const { diagnosis, note } = data[0];
                 setPrescription({
                     Diagnosis: diagnosis,
-                    Note: note ? note : '............',
+                    Note: note,
                 });
 
                 setDoctor({
@@ -186,8 +186,8 @@ const Prescription = () => {
 
                 const AppointmentDate =
                     (moment(appointmentDate).isValid() && moment(appointmentDate) >= moment()) ?
-                        moment(appointmentDate).format(DisplayDateTimeFormat) : '.........';
-                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).year() : '......';
+                        moment(appointmentDate).format(DisplayDateTimeFormat) : null;
+                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).year() : null;
                 setPatient({
                     Id: encodeId(data[0].patient.id),
                     FullName: fullName,
@@ -215,12 +215,12 @@ const Prescription = () => {
                         MedicineName: medicine.name,
                         Quantity: quantity,
                         Unit: unit,
-                        TimesPerDay: timesPerDay ? timesPerDay : '...',
-                        AfterBreakfast: afterBreakfast ? afterBreakfast : '...',
-                        AfterLunch: afterLunch ? afterLunch : '...',
-                        Afternoon: afternoon ? afternoon : '...',
-                        AfterDinner: afterDinner ? afterDinner : '...',
-                        Note: note ? note : '.........',
+                        TimesPerDay: timesPerDay,
+                        AfterBreakfast: afterBreakfast,
+                        AfterLunch: afterLunch,
+                        Afternoon: afternoon,
+                        AfterDinner: afterDinner,
+                        Note: note,
                     });
                 });
                 setMedicines(ms);
@@ -421,7 +421,7 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="h5"
-                                        children={`${patient.DateOfBirth}`}
+                                        children={`${patient.DateOfBirth || '......'}`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
@@ -566,11 +566,11 @@ const Prescription = () => {
                                                                 component="p"
                                                                 variant="subtitle1"
                                                                 children={
-                                                                    `Ngày uống: ${m.TimesPerDay} lần,
-                                                                    ${' '}Sáng: ${m.AfterBreakfast} ${m.Unit},
-                                                                    ${' '}Trưa: ${m.AfterLunch} ${m.Unit}, 
-                                                                    ${' '}Chiều: ${m.Afternoon} ${m.Unit}, 
-                                                                    ${' '}Tối: ${m.AfterDinner} ${m.Unit}`
+                                                                    `Ngày uống: ${m.TimesPerDay || '...'} lần,
+                                                                    ${' '}Sáng: ${m.AfterBreakfast || '...'} ${m.Unit},
+                                                                    ${' '}Trưa: ${m.AfterLunch || '...'} ${m.Unit}, 
+                                                                    ${' '}Chiều: ${m.Afternoon || '...'} ${m.Unit}, 
+                                                                    ${' '}Tối: ${m.AfterDinner || '...'} ${m.Unit}`
                                                                 }
                                                                 style={{ fontStyle: 'italic' }}
                                                             />
@@ -579,7 +579,7 @@ const Prescription = () => {
                                                             <Typography
                                                                 component="p"
                                                                 variant="subtitle1"
-                                                                children={`Lưu ý: ${m.Note}`}
+                                                                children={`Lưu ý: ${m.Note || '............'}`}
                                                                 style={{ fontStyle: 'italic' }}
                                                             />
                                                         </Grid>
@@ -601,7 +601,7 @@ const Prescription = () => {
                                                 <Typography
                                                     component="h5"
                                                     variant="h5"
-                                                    children={`Dặn dò: ${prescription.Note}`}
+                                                    children={`Dặn dò: ${prescription.Note || '............'}`}
                                                     style={{ textDecoration: 'underline', fontWeight: 600 }}
                                                 />
                                             </Grid>
@@ -624,7 +624,7 @@ const Prescription = () => {
                                                 <Typography
                                                     component="h5"
                                                     variant="h5"
-                                                    children={`Tái khám: ${patient.AppointmentDate}`}
+                                                    children={`Tái khám: ${patient.AppointmentDate || '............'}`}
                                                     style={{ textDecoration: 'underline', fontWeight: 600 }}
                                                 />
                                                 <Typography
