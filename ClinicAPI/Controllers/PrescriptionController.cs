@@ -49,6 +49,11 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
+            if (prescription.Status == PrescriptionStatus.IsPrinted)
+            {
+                return Ok();
+            }
+
             prescription.Status = PrescriptionStatus.IsPrinted;
             _unitOfWork.Prescriptions.Update(prescription);
             int result = await _unitOfWork.SaveChangesAsync();

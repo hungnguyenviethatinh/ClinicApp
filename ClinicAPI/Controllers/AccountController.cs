@@ -48,6 +48,11 @@ namespace ClinicAPI.Controllers
                 return Unauthorized();
             }
 
+            if (currentUser.IsActive == active)
+            {
+                return Ok();
+            }
+
             currentUser.IsActive = active;
 
             var (Succeeded, Errors) = await _accountManager.UpdateUserAsync(currentUser);
