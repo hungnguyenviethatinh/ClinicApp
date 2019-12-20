@@ -9,18 +9,58 @@
     <title>Dr. KHOA Clinic</title>
     <link rel="shortcut icon" href="./app.ico" type="image/x-icon">
     <link rel="stylesheet" href="./bootstrap.css" />
-    <link rel="stylesheet" href="./index.css" />
+    <style>
+        body {
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        .main {
+            border: 2px solid black;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            height: 1280px;
+            padding-top: 15px;
+        }
+
+        .header {
+            display: flex;
+        }
+
+        .logo {
+            height: auto;
+            width: 100%;
+        }
+
+        .footer {
+            align-items: center;
+            border-top: 2px solid black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .content {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        .doctor-name {
+            align-items: flex-end;
+            display: flex;
+            justify-content: center;
+            padding-bottom: 15px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container main">
         <div class="row header">
             <div class="col-12 col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
-                <img 
-                    alt="Dr. KHOA Clinic"
-                    class="logo"
-                    src="./logo.png"
-                />
+                <img alt="Dr. KHOA Clinic" class="logo" src="./logo.png" />
             </div>
             <div class="col-12 col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
                 <h2 style="font-weight: normal;"><b>Dr. KHOA</b> Clinic</h2>
@@ -57,26 +97,26 @@
                         <p class="mb-0" style="text-align: right;">Mã DKC-BN:</p>
                     </div>
                     <div class="col-6">
-                        <p class="mb-0" style="font-weight: bolder; text-align: center;">{patient.Id}</p>
+                        <p class="mb-0" style="font-weight: bolder; text-align: right;">{patient.Id}</p>
                     </div>
                     <div class="col-6">
                         <p class="mb-0" style="text-align: right;">Ngày:</p>
                     </div>
                     <div class="col-6">
-                        <p class="mb-0" style="font-weight: bolder; text-align: center;">{date}</p>
+                        <p class="mb-0" style="font-weight: bolder; text-align: right;">{date}</p>
                     </div>
                     <div class="col-6">
                         <p class="mb-0" style="text-align: right;">Giờ:</p>
                     </div>
                     <div class="col-6">
-                        <p class="mb-0" style="font-weight: bolder; text-align: center;">{time}</p>
+                        <p class="mb-0" style="font-weight: bolder; text-align: right;">{time}</p>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row content">
             <div class="col-12">
-                <h1 style="text-align: center; margin-bottom: 3rem;">ĐƠN THUỐC</h1>
+                <h1 style="text-align: center; margin-bottom: 3rem;"><b>ĐƠN THUỐC</b></h1>
                 <div class="row">
                     <div class="col-2">
                         <p class="mb-0" style="font-weight: bolder;">Họ tên BN:</p>
@@ -135,28 +175,7 @@
                     <div class="col-1"></div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-1">
-                        <p class="mb-0" style="padding-left: 10px;">{index}</p>
-                    </div>
-                    <div class="col-5">
-                        <p class="mb-0" style="font-weight: bolder;">{medicine.Name}</p>
-                    </div>
-                    <div class="col-3">
-                        <p class="mb-0" style="font-weight: bolder; text-align: center;">{medicine.Quantity}</p>
-                    </div>
-                    <div class="col-2">
-                        <p class="mb-0" style="font-weight: bolder; text-align: center;">{medicine.Unit}</p>
-                    </div>
-                    <div class="col-1"></div>
-                    <div class="col-1"></div>
-                    <div class="col-8">
-                        <p class="mb-0" style="font-style: italic;">
-                            Ngày uống: <u>{medicine.TimesPerDay} {medicine.Unit}</u>, Sáng: <u>{medicine.AfterBreakfast}</u> {medicine.Unit}, Trưa: <u>{medicine.AfterLunch}</u> {medicine.Unit}, Chiều: <u>{medicine.Afternoon}</u> {medicine.Unit}, Tối: <u>{medicine.AfterDinner}</u> {medicine.Unit}
-                        </p>
-                    </div>
-                    <div class="col-3">
-                        <p class="mb-0" style="font-style: italic;"><u>Lưu ý:</u> {medicine.Note}</p>
-                    </div>
+                    {medicines}
                 </div>
                 <div class="row">
                     <div class="col-9">
@@ -178,7 +197,8 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <p style="font-style: italic;">* Đơn thuốc có giá trị trong đợt khám. Tái khám khách hàng nhớ mang theo đơn thuốc.</p>
+                        <p style="font-style: italic;">* Đơn thuốc có giá trị trong đợt khám. Tái khám khách hàng nhớ
+                            mang theo đơn thuốc.</p>
                     </div>
                 </div>
             </div>
