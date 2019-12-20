@@ -144,13 +144,13 @@ const PrescriptionManagement = () => {
                 AppointmentDate: null,
             });
         }
-        
+
         medicines.map((medicine) => {
             const afterBreakfast = _.toNumber(medicine.AfterBreakfast);
             const afterLunch = _.toNumber(medicine.AfterLunch);
             const afterNoon = _.toNumber(medicine.Afternoon);
             const afterDinner = _.toNumber(medicine.AfterDinner);
-            
+
             let quantity = afterBreakfast + afterLunch + afterNoon + afterDinner;
             if (_.isFinite(days)) {
                 quantity *= days;
@@ -241,6 +241,7 @@ const PrescriptionManagement = () => {
 
     const handleReset = () => {
         setAppointmentDate('');
+        setMedicineName(null);
         setPatient({
             ...patient,
             AppointmentDate: null,

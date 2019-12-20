@@ -168,7 +168,7 @@ const Prescription = () => {
                 const { diagnosis, note } = data[0];
                 setPrescription({
                     Diagnosis: diagnosis,
-                    Note: note,
+                    Note: note ? note : '............',
                 });
 
                 setDoctor({
@@ -186,8 +186,8 @@ const Prescription = () => {
 
                 const AppointmentDate =
                     (moment(appointmentDate).isValid() && moment(appointmentDate) >= moment()) ?
-                        moment(appointmentDate).format(DisplayDateTimeFormat) : '';
-                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).year() : '';
+                        moment(appointmentDate).format(DisplayDateTimeFormat) : '.........';
+                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).year() : '......';
                 setPatient({
                     Id: encodeId(data[0].patient.id),
                     FullName: fullName,
@@ -215,12 +215,12 @@ const Prescription = () => {
                         MedicineName: medicine.name,
                         Quantity: quantity,
                         Unit: unit,
-                        TimesPerDay: timesPerDay,
-                        AfterBreakfast: afterBreakfast,
-                        AfterLunch: afterLunch,
-                        Afternoon: afternoon,
-                        AfterDinner: afterDinner,
-                        Note: note,
+                        TimesPerDay: timesPerDay ? timesPerDay : '...',
+                        AfterBreakfast: afterBreakfast ? afterBreakfast : '...',
+                        AfterLunch: afterLunch ? afterLunch : '...',
+                        Afternoon: afternoon ? afternoon : '...',
+                        AfterDinner: afterDinner ? afterDinner : '...',
+                        Note: note ? note : '.........',
                     });
                 });
                 setMedicines(ms);
