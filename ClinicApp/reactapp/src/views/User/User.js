@@ -92,6 +92,9 @@ const UserView = () => {
         })
     };
 
+    const [disabled, setDisabled] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+
     const handleReset = () => {
         getMyInfo();
     };
@@ -117,6 +120,9 @@ const UserView = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập mật khẩu hiện tại!');
             return;
         }
+
+        setDisabled(true);
+        setLoading(true);
 
         const userModel = {
             FullName: user.FullName,
@@ -147,13 +153,18 @@ const UserView = () => {
             } else {
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bạn!');
             }
+            setDisabled(false);
+            setLoading(false);
         }).catch((reason) => {
             handleError(reason, updateMyInfoError);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bạn!');
+            setDisabled(false);
+            setLoading(false);
         });
     };
 
     const getMyInfo = () => {
+        setDisabled(true);
         Axios.get(GetCurrentUserUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
@@ -171,8 +182,10 @@ const UserView = () => {
                     NewPassword: '',
                 });
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getMyInfoError);
+            setDisabled(false);
         });
     };
 
@@ -274,6 +287,7 @@ const UserView = () => {
                                                     children="Đặt lại"
                                                     iconName="reset"
                                                     onClick={handleReset}
+                                                    disabled={disabled}
                                                 />
                                             </Grid>
                                             <Grid item>
@@ -282,6 +296,8 @@ const UserView = () => {
                                                     children="Cập nhật"
                                                     iconName="save"
                                                     onClick={handleSave}
+                                                    disabled={disabled}
+                                                    loading={loading}
                                                 />
                                             </Grid>
                                         </Grid>

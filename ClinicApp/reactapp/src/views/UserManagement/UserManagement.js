@@ -167,6 +167,10 @@ const UserManagement = () => {
         });
     };
 
+    const [disabled, setDisabled] = React.useState(false);
+    const [loadingDelete, setLoadingDelete] = React.useState(false);
+    const [loadingDone, setLoadingDone] = React.useState(false);
+
     const handleDone = () => {
         if (!values.UserName.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập tên tài khoản!');
@@ -193,6 +197,9 @@ const UserManagement = () => {
             return;
         }
 
+        setDisabled(true);
+        setLoadingDone(true);
+
         if (!updateMode) {
             addUser(values)
         } else {
@@ -203,6 +210,8 @@ const UserManagement = () => {
 
     const handleDelete = () => {
         const { id } = selectedRow;
+        setDisabled(true);
+        setLoadingDelete(true);
         deleteUser(id);
         setOpenDeleteConfirm(false);
     };
@@ -217,9 +226,13 @@ const UserManagement = () => {
                 handleReset();
                 refreshData();
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             handleError(reason, addEmployeeLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi tạo người dùng mới!');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -231,9 +244,13 @@ const UserManagement = () => {
                 handleSnackbarOption('success', 'Cập nhật người dùng thành công!');
                 refreshData();
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             handleError(reason, updateEmployeeLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật người dúng!');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -247,9 +264,13 @@ const UserManagement = () => {
                 setUpdateMode(false);
                 refreshData();
             }
+            setDisabled(false);
+            setLoadingDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteEmployeeLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa người dùng!');
+            setDisabled(false);
+            setLoadingDelete(false);
         });
     };
 
@@ -269,6 +290,7 @@ const UserManagement = () => {
     };
 
     const getEmployee = (id) => {
+        setDisabled(true);
         const url = `${GetEmployeeUrl}/${id}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
@@ -283,13 +305,17 @@ const UserManagement = () => {
                     Email: email,
                 });
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getEmployeeLogMsfHeader);
+            setDisabled(false);
         });
     };
 
     const getEmployees = (resolve, reject, query) => {
         const value = searchValue;
+
+        setDisabled(true);
 
         Axios.get(GetAllEmployeesUrl, {
             ...config,
@@ -310,8 +336,10 @@ const UserManagement = () => {
                     totalCount,
                 });
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getEmployeesLogMsfHeader);
+            setDisabled(false);
         });
     };
 
@@ -408,6 +436,7 @@ const UserManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
                                         color="info"
                                         children="Đặt lại"
                                         iconName="reset"
@@ -419,6 +448,8 @@ const UserManagement = () => {
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
                                             fullWidth
+                                            disabled={disabled}
+                                            loading={loadingDelete}
                                             color="danger"
                                             children="Xóa"
                                             iconName="delete"
@@ -429,6 +460,8 @@ const UserManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
+                                        loading={loadingDone}
                                         color="success"
                                         children={selectedRow ? 'Lưu' : 'Hoàn tất'}
                                         iconName={selectedRow ? 'save' : 'done'}

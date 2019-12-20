@@ -266,6 +266,9 @@ const PrescriptionManagement = () => {
         }]);
     };
 
+    const [disabled, setDisabled] = React.useState(false);
+    const [loadingDone, setLoadingDone] = React.useState(false);
+
     const handleDone = () => {
         if (!patient.FullName.trim()) {
             handleSnackbarOption('error', 'Chưa chọn bệnh nhân để kê đơn!');
@@ -334,6 +337,9 @@ const PrescriptionManagement = () => {
         console.log(prescription);
         console.log(medicines);
 
+        setDisabled(true);
+        setLoadingDone(true);
+
         const prescriptionModel = {
             ...prescription,
         };
@@ -364,6 +370,8 @@ const PrescriptionManagement = () => {
         }).catch((reason) => {
             handleError(reason, addPrescriptionErrorMsg);
             handleSnackbarOption('error', 'Có lỗi khi tạo đơn thuốc mới!');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -376,6 +384,8 @@ const PrescriptionManagement = () => {
         }).catch((reason) => {
             handleError(reason, addMedicineErrorMsg);
             handleSnackbarOption('error', 'Có lỗi khi tạo đơn thuốc mới!');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -402,10 +412,14 @@ const PrescriptionManagement = () => {
                     updateMedicinesQuantity(medicineUpdateModels);
                 } else {
                     handleSnackbarOption('error', 'Có lỗi khi tạo đơn thuốc mới!');
+                    setDisabled(false);
+                    setLoadingDone(false);
                 }
             }).catch((reason) => {
                 handleError(reason, updatePatientErrorMsg);
                 handleSnackbarOption('error', 'Có lỗi khi tạo đơn thuốc mới!');
+                setDisabled(false);
+                setLoadingDone(false);
             });
         } else {
             const url = `${UpdatePatientStatusUrl}/${id}/${PatientStatusEnum[PatientStatus.IsChecked]}`;
@@ -417,10 +431,14 @@ const PrescriptionManagement = () => {
                     updateMedicinesQuantity(medicineUpdateModels);
                 } else {
                     handleSnackbarOption('error', 'Có lỗi khi tạo đơn thuốc mới!');
+                    setDisabled(false);
+                    setLoadingDone(false);
                 }
             }).catch((reason) => {
                 handleError(reason, updatePatientHistoryErrorMsg);
                 handleSnackbarOption('error', 'Có lỗi khi tạo đơn thuốc mới!');
+                setDisabled(false);
+                setLoadingDone(false);
             });
         }
     };
@@ -433,14 +451,19 @@ const PrescriptionManagement = () => {
             } else {
                 console.log('[Update Medicines Quantity; - Error!');
             }
+            setDisabled(false);
+            setLoadingDone(false);
             history.push(RouteConstants.DashboardView);
         }).catch((reason) => {
             handleError(reason, updateMedicinesQuantityErrorMsg);
+            setDisabled(false);
+            setLoadingDone(false);
             history.push(RouteConstants.DashboardView);
         });
     };
 
     const getPatient = () => {
+        setDisabled(true);
         Axios.get(GetCurrentPatientUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
@@ -475,8 +498,10 @@ const PrescriptionManagement = () => {
                     HistoryId: data[0].history.id,
                 });
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getPatientErrorMsg);
+            setDisabled(false);
         });
     };
 
@@ -788,6 +813,7 @@ const PrescriptionManagement = () => {
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
                                         color="info"
                                         children="Đặt lại"
                                         iconName="reset"
@@ -797,6 +823,8 @@ const PrescriptionManagement = () => {
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
+                                        loading={loadingDone}
                                         color="success"
                                         children="Hoàn tất"
                                         iconName="done"

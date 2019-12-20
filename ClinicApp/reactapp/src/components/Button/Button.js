@@ -2,8 +2,19 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
-import { Add, Autorenew, Edit, Delete, Done, Save, Print, Visibility, Search, Cancel, BorderColor } from '@material-ui/icons';
-import { FormControl } from '@material-ui/core';
+import { 
+    Add, 
+    Autorenew, 
+    Edit, 
+    Delete, 
+    Done, 
+    Save, 
+    Print, 
+    Visibility,
+    Search, 
+    Cancel,
+    BorderColor } from '@material-ui/icons';
+import { CircularProgress, FormControl } from '@material-ui/core';
 
 const styledBy = (property, mapping) => props => mapping[props[property]];
 
@@ -61,7 +72,7 @@ const ButtonComponent = props => {
     const {
         id, style, color, children, variant,
         disabled, size, onClick, iconName,
-        fullWidth, ...rest
+        fullWidth, loading, ...rest
     } = props;
 
     return (
@@ -79,6 +90,7 @@ const ButtonComponent = props => {
                 onClick={onClick}
                 {...rest}
             >
+                { loading && <CircularProgress size={20} style={{ position: 'absolute', color: 'white' }} /> }
                 <Icon name={iconName} />
                 {children}
             </CustomButton>
@@ -93,6 +105,7 @@ ButtonComponent.propTypes = {
     children: PropTypes.string.isRequired,
     variant: PropTypes.string,
     disabled: PropTypes.bool,
+    loading: PropTypes.bool,
     fullWidth: PropTypes.bool,
     size: PropTypes.string,
     style: PropTypes.object,
@@ -106,6 +119,7 @@ ButtonComponent.defaultProps = {
     children: '',
     variant: 'contained',
     disabled: false,
+    loading: false,
     fullWidth: false,
     size: 'small',
     style: null,

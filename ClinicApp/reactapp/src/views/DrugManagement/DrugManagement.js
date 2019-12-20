@@ -172,6 +172,10 @@ const DrugManagement = () => {
         });
     };
 
+    const [disabled, setDisabled] = React.useState(false);
+    const [loadingDelete, setLoadingDelete] = React.useState(false);
+    const [loadingDone, setLoadingDone] = React.useState(false);
+
     const handleDone = () => {
         if (!medicine.Name.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập tên thuốc!');
@@ -198,6 +202,9 @@ const DrugManagement = () => {
             return;
         }
 
+        setDisabled(true);
+        setLoadingDone(true);
+
         const medicineModel = {
             Name: medicine.Name.trim(),
             Quantity: _.toNumber(medicine.Quantity),
@@ -215,6 +222,8 @@ const DrugManagement = () => {
 
     const handleDelete = () => {
         const { id } = selectedRow;
+        setDisabled(true);
+        setLoadingDelete(true);
         deleteMedicine(id);
         setOpenDeleteConfirm(false);
     };
@@ -229,9 +238,13 @@ const DrugManagement = () => {
                 handleReset();
                 refreshData();
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             handleError(reason, addMedicineLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi thêm thuốc vào kho dữ liệu!');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -243,9 +256,13 @@ const DrugManagement = () => {
                 handleSnackbarOption('success', 'Cập nhật dữ liệu thuốc thành công!');
                 refreshData();
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             handleError(reason, updateMedicineLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin thuốc!');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -259,9 +276,13 @@ const DrugManagement = () => {
                 setUpdateMode(false);
                 refreshData();
             }
+            setDisabled(false);
+            setLoadingDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteMedicineLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa loại thuốc này!');
+            setDisabled(false);
+            setLoadingDelete(false);
         });
     };
 
@@ -281,6 +302,7 @@ const DrugManagement = () => {
     };
 
     const getMedicine = (id) => {
+        setDisabled(true);
         const url = `${GetMedicineUrl}/${id}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
@@ -293,12 +315,15 @@ const DrugManagement = () => {
                     Price: price,
                 });
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getMedicineLogMsfHeader);
+            setDisabled(false);
         });
     };
 
     const getMedicines = (resolve, reject, query) => {
+        setDisabled(true);
         const value = searchValue.trim();
         Axios.get(GetAllMedicinesUrl, {
             ...config,
@@ -319,8 +344,10 @@ const DrugManagement = () => {
                     totalCount,
                 });
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getMedicinesLogMsfHeader);
+            setDisabled(false);
         });
     };
 
@@ -329,6 +356,7 @@ const DrugManagement = () => {
         value: '',
     }]);
     const getUnitOptions = () => {
+        setDisabled(true);
         Axios.get(GetUnitUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
@@ -339,8 +367,10 @@ const DrugManagement = () => {
                 }));
                 setUnitOptions(options);
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getUnitsLogMsfHeader);
+            setDisabled(false);
         });
     };
 
@@ -420,6 +450,7 @@ const DrugManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
                                         color="info"
                                         children="Đặt lại"
                                         iconName="reset"
@@ -431,6 +462,8 @@ const DrugManagement = () => {
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
                                             fullWidth
+                                            disabled={disabled}
+                                            loading={loadingDelete}
                                             color="danger"
                                             children="Xóa"
                                             iconName="delete"
@@ -441,6 +474,8 @@ const DrugManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
+                                        loading={loadingDone}
                                         color="success"
                                         children={selectedRow ? 'Lưu' : 'Hoàn tất'}
                                         iconName={selectedRow ? 'save' : 'done'}

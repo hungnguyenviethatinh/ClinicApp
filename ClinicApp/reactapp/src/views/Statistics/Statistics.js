@@ -110,6 +110,10 @@ const StatisticsView = () => {
 
     const config = axiosRequestConfig();
 
+    const [disabled, setDisabled] = React.useState(false);
+    const [loadingSearch, setLoadingSearch] = React.useState(false);
+    const [loadingPrescriptionSearch, setLoadingPrescriptionSearch] = React.useState(false);
+
     const [xAxisPatientData, setXAxisPatientData] = React.useState([]);
     const [allPatientData, setAllPatientData] = React.useState([]);
     // const [isNewPatientData, setIsNewPatientData] = React.useState([]);
@@ -120,6 +124,9 @@ const StatisticsView = () => {
         const startDate = selectedStartDate.format(DataDateTimeFormat);
         const endDate = selectedEndDate.format(DataDateTimeFormat);
         const period = selectedTimePeriod;
+
+        setDisabled(true);
+        setLoadingSearch(true);
 
         Axios.get(GetPatientStatUrl, {
             ...config,
@@ -171,8 +178,12 @@ const StatisticsView = () => {
                 // setRecheckPatientData(recheckY);
                 // setAppointedPatientData(appointedY);
             }
+            setDisabled(false);
+            setLoadingSearch(false);
         }).catch((reason) => {
             handleError(reason, getPatientStatErrorMsg);
+            setDisabled(false);
+            setLoadingSearch(false);
         });
     };
 
@@ -200,6 +211,9 @@ const StatisticsView = () => {
         const startDate = presSelectedStartDate.format(DataDateTimeFormat);
         const endDate = presSelectedEndDate.format(DataDateTimeFormat);
         const period = presSelectedTimePeriod;
+
+        setDisabled(true);
+        setLoadingPrescriptionSearch(true);
 
         Axios.get(GetPrescriptionStatUrl, {
             ...config,
@@ -229,8 +243,12 @@ const StatisticsView = () => {
                 setXAxisPrescriptionData(xAxis);
                 setPrescriptionData(yAxis);
             }
+            setDisabled(false);
+            setLoadingPrescriptionSearch(false);
         }).catch((reason) => {
             handleError(reason, getPrescriptionStatErrorMsg);
+            setDisabled(false);
+            setLoadingPrescriptionSearch(false);
         });
     };
 
@@ -307,6 +325,8 @@ const StatisticsView = () => {
                                         iconName="search"
                                         style={{ marginTop: 0, marginBottom: 0 }}
                                         onClick={handleSearch}
+                                        disabled={disabled}
+                                        loading={loadingSearch}
                                     />
                                 </Grid>
                             </Grid>
@@ -430,6 +450,8 @@ const StatisticsView = () => {
                                         iconName="search"
                                         style={{ marginTop: 0, marginBottom: 0 }}
                                         onClick={handlePrescriptionStatSearch}
+                                        disabled={disabled}
+                                        loading={loadingPrescriptionSearch}
                                     />
                                 </Grid>
                             </Grid>

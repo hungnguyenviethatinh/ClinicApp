@@ -201,6 +201,10 @@ const PatientManagement = () => {
         }
     };
 
+    const [disabled, setDisabled] = React.useState(false);
+    const [loadingDelete, setLoadingDelete] = React.useState(false);
+    const [loadingDone, setLoadingDone] = React.useState(false);
+
     const handleDone = () => {
         if (!values.FullName.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
@@ -234,6 +238,9 @@ const PatientManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu chọn bác sĩ phụ trách khám!');
             return;
         }
+
+        setDisabled(true);
+        setLoadingDone(true);
 
         const DateOfBirth = values.DateOfBirth.format(DataDateTimeFormat);
         const Address = [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(AddressSeperator);
@@ -284,10 +291,14 @@ const PatientManagement = () => {
             } else {
                 console.log('[Add Patient Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân.');
+                setDisabled(false);
+                setLoadingDone(false);
             }
         }).catch((reason) => {
             console.log('[Add Patient Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân.');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -311,10 +322,14 @@ const PatientManagement = () => {
             } else {
                 console.log('[Add History Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi tạo hồ sơ cho bệnh nhân.');
+                setDisabled(false);
+                setLoadingDone(false);
             }
         }).catch((reason) => {
             console.log('[Add History Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi tạo hồ sơ cho bệnh nhân.');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -327,9 +342,13 @@ const PatientManagement = () => {
                 console.log('[Add XRays Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi lưu trữ XQ của bệnh nhân.');
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Add XRays Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi lưu trữ XQ của bệnh nhân.');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -352,10 +371,14 @@ const PatientManagement = () => {
             } else {
                 console.log('[Update Patient Reponse] ', reason);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
+                setDisabled(false);
+                setLoadingDone(false);
             }
         }).catch((reason) => {
             console.log('[Update Patient Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -379,10 +402,14 @@ const PatientManagement = () => {
             } else {
                 console.log('[Update History Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật hồ sơ của bệnh nhân.');
+                setDisabled(false);
+                setLoadingDone(false);
             }
         }).catch((reason) => {
             console.log('[Update History Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật hồ sơ của bệnh nhân.');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -395,14 +422,20 @@ const PatientManagement = () => {
                 console.log('[Update XRays Response] ', response);
                 handleSnackbarOption('error', 'Cập khi lưu trữ XQ của bệnh nhân.');
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Update XRays Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật XQ của bệnh nhân.');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
     const handleDelete = () => {
         const { id } = selectedRow;
+        setDisabled(true);
+        setLoadingDelete(true);
         deletePatient(id);
         setOpenDeleteConfirm(false);
     };
@@ -417,9 +450,13 @@ const PatientManagement = () => {
                 setUpdateMode(false);
                 refreshData();
             }
+            setDisabled(false);
+            setLoadingDelete(false);
         }).catch((reason) => {
             console.log('[Delete Patient Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
+            setDisabled(false);
+            setLoadingDelete(false);
         });
     };
 
@@ -476,6 +513,7 @@ const PatientManagement = () => {
         value: '',
     }]);
     const getDoctorOptions = () => {
+        setDisabled(true);
         Axios.get(GetDoctorsUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
@@ -486,12 +524,15 @@ const PatientManagement = () => {
                 }));
                 setDoctorOptions(options);
             }
+            setDisabled(false);
         }).catch((reason) => {
             console.log('[Get Doctor Options Error] ', reason);
+            setDisabled(false);
         });
     };
 
     const getPatient = (id) => {
+        setDisabled(true);
         const url = `${GetPatientUrl}/${id}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
@@ -541,6 +582,7 @@ const PatientManagement = () => {
                     Pulse: '',
                 });
             }
+            setDisabled(false);
         }).catch((reason) => {
             if (reason.response) {
                 const { status } = reason.response;
@@ -551,10 +593,12 @@ const PatientManagement = () => {
                 }
             }
             console.log('[Get Patient By Id Error] ', reason);
+            setDisabled(false);
         });
     };
 
     const getPatients = (resolve, reject, query) => {
+        setDisabled(true);
         let value = searchValue.toLowerCase();
         const prefix = IdPrefix.Patient.toLowerCase();
         if (value.startsWith(prefix)) {
@@ -579,6 +623,7 @@ const PatientManagement = () => {
                     totalCount,
                 });
             }
+            setDisabled(false);
         }).catch((reason) => {
             if (reason.response) {
                 const { status } = reason.response;
@@ -587,6 +632,7 @@ const PatientManagement = () => {
                 }
             }
             console.log('[Get Patients Error] ', reason);
+            setDisabled(false);
         });
     };
 
@@ -869,6 +915,7 @@ const PatientManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
                                         color="info"
                                         children="Đặt lại"
                                         iconName="reset"
@@ -878,6 +925,8 @@ const PatientManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
+                                        loading={loadingDone}
                                         color="success"
                                         children={selectedRow ? 'Lưu' : 'Hoàn tất'}
                                         iconName={selectedRow ? 'save' : 'done'}
@@ -904,6 +953,8 @@ const PatientManagement = () => {
                                         children="Xóa"
                                         iconName="delete"
                                         onClick={onOpenDeleteConfirm}
+                                        disabled={disabled}
+                                        loading={loadingDelete}
                                     />
                                 }
                             </React.Fragment>

@@ -147,6 +147,12 @@ const DataInputManagement = () => {
 
     const config = axiosRequestConfig();
 
+    const [disabled, setDisabled] = React.useState(false);
+    const [loadingDiagnosisDelete, setLoadingDiagnosisDelete] = React.useState(false);
+    const [loadingDiagnosisDone, setLoadingDiagnosisDone] = React.useState(false);
+    const [loadingUnitDelete, setLoadingUnitDelete] = React.useState(false);
+    const [loadingUnitDone, setLoadingUnitDone] = React.useState(false);
+
     const [diagnosisName, setDiagnosisName] = React.useState('');
     const handleDiagnosisNameChange = event => {
         setDiagnosisName(event.target.value);
@@ -163,6 +169,9 @@ const DataInputManagement = () => {
             return;
         }
 
+        setDisabled(true);
+        setLoadingDiagnosisDone(true);
+
         const diagnosisModel = {
             Name: diagnosisName.trim(),
         };
@@ -176,6 +185,8 @@ const DataInputManagement = () => {
 
     const handleDiagnosisDelete = () => {
         const { id } = selectedDiagnosisRow;
+        setDisabled(true);
+        setLoadingDiagnosisDelete(true);
         deleteDiagnosis(id);
         setOpenDiagnosis(false);
     };
@@ -185,6 +196,7 @@ const DataInputManagement = () => {
     };
 
     const getDiagnoses = (resolve, reject, query) => {
+        setDisabled(true);
         Axios.get(GetDiagnosesUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
@@ -197,20 +209,25 @@ const DataInputManagement = () => {
                     totalCount,
                 });
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getDiagnosesLogMsfHeader);
+            setDisabled(false);
         });
     };
 
     const getDiagnosis = (id) => {
+        setDisabled(true);
         Axios.get(`${GetDiagnosisUrl}/${id}`, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { name } = data[0];
                 setDiagnosisName(name);
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getDiagnosisLogMsfHeader);
+            setDisabled(false);
         });
     };
 
@@ -222,9 +239,13 @@ const DataInputManagement = () => {
                 handleDiagnosisReset();
                 refreshDiagnosisData();
             }
+            setDisabled(false);
+            setLoadingDiagnosisDone(false);
         }).catch((reason) => {
             handleError(reason, addDiagnosisLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi thêm chẩn đoán!');
+            setDisabled(false);
+            setLoadingDiagnosisDone(false);
         });
     };
 
@@ -235,9 +256,13 @@ const DataInputManagement = () => {
                 handleSnackbarOption('success', 'Cập nhật chẩn đoán thành công!');
                 refreshDiagnosisData();
             }
+            setDisabled(false);
+            setLoadingDiagnosisDone(false);
         }).catch((reason) => {
             handleError(reason, updateDiagnosisLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật chẩn đoán!');
+            setDisabled(false);
+            setLoadingDiagnosisDone(false);
         });
     };
 
@@ -251,9 +276,13 @@ const DataInputManagement = () => {
                 setUpdateDiagnosisMode(false);
                 refreshDiagnosisData();
             }
+            setDisabled(false);
+            setLoadingDiagnosisDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteDiagnosisLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa chẩn đoán!');
+            setDisabled(false);
+            setLoadingDiagnosisDelete(false);
         });
     };
 
@@ -287,6 +316,9 @@ const DataInputManagement = () => {
             return;
         }
 
+        setDisabled(true);
+        setLoadingUnitDone(true);
+
         const unitModel = {
             Name: unitName.trim(),
         };
@@ -300,6 +332,8 @@ const DataInputManagement = () => {
 
     const handleUnitDelete = () => {
         const { id } = selectedUnitRow;
+        setDisabled(true);
+        setLoadingUnitDelete(true);
         deleteUnit(id);
         setOpenUnit(false);
     };
@@ -309,6 +343,7 @@ const DataInputManagement = () => {
     };
 
     const getUnits = (resolve, reject, query) => {
+        setDisabled(true);
         Axios.get(GetUnitsUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
@@ -321,20 +356,25 @@ const DataInputManagement = () => {
                     totalCount,
                 });
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getUnitsLogMsfHeader);
+            setDisabled(false);
         });
     };
 
     const getUnit = (id) => {
+        setDisabled(true);
         Axios.get(`${GetUnitUrl}/${id}`, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { name } = data[0];
                 setUnitName(name);
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getUnitLogMsfHeader);
+            setDisabled(false);
         });
     };
 
@@ -346,9 +386,13 @@ const DataInputManagement = () => {
                 handleUnitReset();
                 refreshUnitData();
             }
+            setDisabled(false);
+            setLoadingUnitDone(false);
         }).catch((reason) => {
             handleError(reason, addUnitLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi thêm tên đơn vị của thuốc!');
+            setDisabled(false);
+            setLoadingUnitDone(false);
         });
     };
 
@@ -359,9 +403,13 @@ const DataInputManagement = () => {
                 handleSnackbarOption('success', 'Cập nhật tên đơn vị của thuốc thành công!');
                 refreshUnitData();
             }
+            setDisabled(false);
+            setLoadingUnitDone(false);
         }).catch((reason) => {
             handleError(reason, updateUnitLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật tên đơn vị của thuốc!');
+            setDisabled(false);
+            setLoadingUnitDone(false);
         });
     };
 
@@ -375,9 +423,13 @@ const DataInputManagement = () => {
                 setUpdateUnitMode(false);
                 refreshUnitData();
             }
+            setDisabled(false);
+            setLoadingUnitDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteUnitLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa tên đơn vị của thuốc!');
+            setDisabled(false);
+            setLoadingUnitDelete(false);
         });
     };
 
@@ -436,6 +488,7 @@ const DataInputManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
                                         color="info"
                                         children="Đặt lại"
                                         iconName="reset"
@@ -447,6 +500,8 @@ const DataInputManagement = () => {
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
                                             fullWidth
+                                            disabled={disabled}
+                                            loading={loadingDiagnosisDelete}
                                             color="danger"
                                             children="Xóa"
                                             iconName="delete"
@@ -457,6 +512,8 @@ const DataInputManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
+                                        loading={loadingDiagnosisDone}
                                         color="success"
                                         children={selectedDiagnosisRow ? 'Lưu' : 'Hoàn tất'}
                                         iconName={selectedDiagnosisRow ? 'save' : 'done'}
@@ -534,6 +591,7 @@ const DataInputManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
                                         color="info"
                                         children="Đặt lại"
                                         iconName="reset"
@@ -545,6 +603,8 @@ const DataInputManagement = () => {
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
                                             fullWidth
+                                            disabled={disabled}
+                                            loading={loadingUnitDelete}
                                             color="danger"
                                             children="Xóa"
                                             iconName="delete"
@@ -555,6 +615,8 @@ const DataInputManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
+                                        disabled={disabled}
+                                        loading={loadingUnitDone}
                                         color="success"
                                         children={selectedUnitRow ? 'Lưu' : 'Hoàn tất'}
                                         iconName={selectedUnitRow ? 'save' : 'done'}

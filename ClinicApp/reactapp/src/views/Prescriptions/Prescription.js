@@ -138,6 +138,9 @@ const Prescription = () => {
         Note: '',
     }]);
 
+    const [disabled, setDisabled] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+
     const handlePrint = () => {
         const data = JSON.stringify({
             doctor,
@@ -145,6 +148,9 @@ const Prescription = () => {
             prescription,
             medicines,
         });
+
+        setDisabled(true);
+        setLoading(true);
 
         chromely.post(PrescriptionPrintUrl, null, data, response => {
             const { ResponseText } = response;
@@ -157,6 +163,9 @@ const Prescription = () => {
                 console.log('[Print Prescription Error] - An error occurs during message routing. With url: '
                     + PrescriptionPrintUrl
                     + '. Response received: ', response);
+                
+                setDisabled(false);
+                setLoading(false);
             }
         });
     };
@@ -164,6 +173,7 @@ const Prescription = () => {
     const config = axiosRequestConfig();
 
     const getPrescription = () => {
+        setDisabled(true);
         const url = `${PrescriptionUrl}/${id}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
@@ -228,8 +238,10 @@ const Prescription = () => {
                 });
                 setMedicines(ms);
             }
+            setDisabled(false);
         }).catch((reason) => {
             handleError(reason, getPrescriptionError);
+            setDisabled(false);
         });
     };
 
@@ -242,8 +254,12 @@ const Prescription = () => {
             } else {
                 console.log(response);
             }
+            setDisabled(false);
+            setLoading(false);
         }).catch((reason) => {
             handleError(reason, updatePrescriptionError);
+            setDisabled(false);
+            setLoading(false);
         });
     }
 
@@ -270,6 +286,8 @@ const Prescription = () => {
                         action={
                             <Button
                                 color="warning"
+                                disabled={disabled}
+                                loading={loading}
                                 children="In"
                                 iconName="print"
                                 onClick={handlePrint}
