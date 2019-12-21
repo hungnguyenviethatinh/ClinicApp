@@ -181,11 +181,12 @@ const Login = (props) => {
             }
         }).catch((reason) => {
             hideProgress();
-            
+            setErrorMessage('Có lỗi xảy ra. Vui lòng thử lại sau!');
             console.log('[Set User Status] ', reason);
             if (reason.response) {
                 const { status } = reason.response;
                 if (status === 401) {
+                    setErrorMessage('Tài khoản hoặc mật khẩu không đúng.');
                     localStorage.removeItem(AccessTokenKey);
                 }
             }
