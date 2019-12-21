@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ClinicAPI.Authorization;
+using ClinicAPI.Helpers;
 using ClinicAPI.ViewModels;
 using DAL;
 using DAL.Core;
@@ -245,7 +246,8 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllUsersPolicy)]
         public async Task<IActionResult> GetEmployees([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var employees = _unitOfWork.Users.Where(e => !e.IsDeleted);
+            string currentUserId = Utilities.GetUserId(User);
+            var employees = _unitOfWork.Users.Where(e => (!e.IsDeleted && e.Id != currentUserId));
             int totalCount = employees.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
