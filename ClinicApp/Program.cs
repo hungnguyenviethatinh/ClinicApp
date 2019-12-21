@@ -30,7 +30,7 @@ namespace ClinicApp
                                               .WithStartUrl(startUrl)
                                               .WithLogFile("logs\\app.log")
                                               .WithLogSeverity(LogSeverity.Info)
-                                              .WithDebuggingMode(true)
+                                              .WithDebuggingMode(false) // In production mode, set false
                                               .UseDefaultLogger("logs\\app.log")
                                               .UseDefaultResourceSchemeHandler("local", string.Empty)
                                               .UseDefaultHttpSchemeHandler("http", "clinicapp.com")

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace ClinicAPI
 {
@@ -38,6 +39,11 @@ namespace ClinicAPI
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureServices((context, services) =>
+                {
+                    services.Configure<KestrelServerOptions>(
+                        context.Configuration.GetSection("Kestrel"));
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
