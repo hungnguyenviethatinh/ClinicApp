@@ -11,6 +11,8 @@ import {
     Typography,
 } from '@material-ui/core';
 
+import moment from 'moment';
+
 import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';
 import { Snackbar } from '../../../components/Snackbar';
@@ -18,7 +20,7 @@ import { SearchInput } from '../../../components/SearchInput';
 
 import Axios, {
     axiosRequestConfig,
-    useInterval,
+    // useInterval,
 } from '../../../common';
 import {
     GetAllPatientsUrl,
@@ -33,12 +35,11 @@ import {
     PrescriptionStatus,
     UserStatus,
     DrugStatus,
-    RefreshDataTimer,
+    // RefreshDataTimer,
     AddressSeperator,
     RouteConstants,
 } from '../../../constants';
 import { encodeId, decodeId } from '../../../utils';
-import moment from 'moment';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -211,29 +212,29 @@ const AdminView = () => {
     // const [countPatientTable, setCountPatientTable] = React.useState(0);
     // const [countPrescriptionTable, setCountPrescriptionTable] = React.useState(0);
     // const [countEmployeeTable, setCountEmployeeTable] = React.useState(0);
-    const [countMedicineTable, setCountMedicineTable] = React.useState(0);
-    useInterval(() => {
-        // if (countPatientTable > 0 && countPatientTable < RefreshDataTimer) {
-        //     setCountPatientTable(countPatientTable + 1);
-        // } else {
-        //     refreshPatientData();
-        // }
-        // if (countPrescriptionTable > 0 && countPrescriptionTable < RefreshDataTimer) {
-        //     setCountPrescriptionTable(countPrescriptionTable + 1);
-        // } else {
-        //     refreshPrescriptionData();
-        // }
-        // if (countEmployeeTable > 0 && countEmployeeTable < RefreshDataTimer) {
-        //     setCountEmployeeTable(countEmployeeTable + 1);
-        // } else {
-        //     refreshEmployeeData();
-        // }
-        if (countMedicineTable > 0 && countMedicineTable < RefreshDataTimer) {
-            setCountMedicineTable(countMedicineTable + 1);
-        } else {
-            refreshMedicineData();
-        }
-    }, 1000);
+    // const [countMedicineTable, setCountMedicineTable] = React.useState(0);
+    // useInterval(() => {
+    //     if (countPatientTable > 0 && countPatientTable < RefreshDataTimer) {
+    //         setCountPatientTable(countPatientTable + 1);
+    //     } else {
+    //         refreshPatientData();
+    //     }
+    //     if (countPrescriptionTable > 0 && countPrescriptionTable < RefreshDataTimer) {
+    //         setCountPrescriptionTable(countPrescriptionTable + 1);
+    //     } else {
+    //         refreshPrescriptionData();
+    //     }
+    //     if (countEmployeeTable > 0 && countEmployeeTable < RefreshDataTimer) {
+    //         setCountEmployeeTable(countEmployeeTable + 1);
+    //     } else {
+    //         refreshEmployeeData();
+    //     }
+    //     if (countMedicineTable > 0 && countMedicineTable < RefreshDataTimer) {
+    //         setCountMedicineTable(countMedicineTable + 1);
+    //     } else {
+    //         refreshMedicineData();
+    //     }
+    // }, 1000);
 
     const [patientSearchValue, setPatientSearchValue] = React.useState('');
     const [prescriptionSearchValue, setPrescriptionSearchValue] = React.useState('');
@@ -404,10 +405,10 @@ const AdminView = () => {
                     totalCount,
                 });
             }
-            setCountMedicineTable(1);
+            // setCountMedicineTable(1);
         }).catch((reason) => {
             handleError(reason, getMedicineLogMsfHeader);
-            setCountMedicineTable(1);
+            // setCountMedicineTable(1);
         });
     };
 
