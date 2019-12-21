@@ -24,7 +24,7 @@ import {
     PatientStatus,
     ExpiredSessionMsg,
     // NotFoundMsg,
-    DisplayDateFormat,
+    DisplayDateTimeFormat,
     AddressSeperator,
     Gender,
     RouteConstants,
@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
 const historyColumns = [
     {
         title: 'Ngày khám', field: 'createdDate', type: 'date',
-        render: rowData => moment(rowData.createdDate).format(DisplayDateFormat),
+        render: rowData => moment(rowData.createdDate).format(DisplayDateTimeFormat),
     },
     {
         title: 'Bác sĩ khám', field: 'doctorId',
@@ -178,10 +178,13 @@ const getDetailPanel = (rowData) => {
                                 xRayImages.map((image, index) => (
                                     <Grid key={index} item xs={12} sm={12} md={12} lg={12} xl={12}>
                                         <div style={{ textAlign: 'center' }}>
-                                            <img
-                                                src={image.data}
-                                                alt={image.name}
-                                            />
+                                            {
+                                                !image.isDeleted &&
+                                                <img
+                                                    src={image.data}
+                                                    alt={image.name}
+                                                />
+                                            }
                                         </div>
                                     </Grid>
                                 ))
@@ -649,10 +652,13 @@ const Patient = () => {
                                                             history.XRayImages.map((image, index) => (
                                                                 <Grid key={index} item xs={12} sm={12} md={12} lg={12} xl={12}>
                                                                     <div style={{ textAlign: 'center' }}>
-                                                                        <img
-                                                                            src={image.data}
-                                                                            alt={image.name}
-                                                                        />
+                                                                        {
+                                                                            !image.isDeleted &&
+                                                                            <img
+                                                                                src={image.data}
+                                                                                alt={image.name}
+                                                                            />
+                                                                        }
                                                                     </div>
                                                                 </Grid>
                                                             ))

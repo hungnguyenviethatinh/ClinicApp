@@ -52,9 +52,9 @@ const DatePickerComponent = props => {
                 }}
                 invalidDateMessage="Ngày không hợp lệ"
                 // minDate={minDate}
-                // minDateMessage={minDateMessage}
+                minDateMessage="Ngày nhỏ hơn ngày tối thiểu"
                 // maxDate={maxDate}
-                // maxDateMessage={maxDateMessage}
+                maxDateMessage="Ngày lớn hơn ngày tối đa"
                 {...rest}
             />
         </FormControl>

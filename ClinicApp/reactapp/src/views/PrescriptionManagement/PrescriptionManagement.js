@@ -209,17 +209,22 @@ const PrescriptionManagement = () => {
         }
     };
 
-    const [medicineName, setMedicineName] = React.useState(null);
+    const [medicineNames, setMedicineNames] = React.useState([{
+        value: null,
+    }]);
     const handleMedicineNameChange = index => (event, value) => {
         medicines[index].MedicineId = value ? value.id : '';
         medicines[index].Unit = value ? value.unit : '';
+        medicineNames[index].value = value;
         setMedicines([...medicines]);
-        setMedicineName(value);
+        setMedicineNames([...medicineNames]);
     };
 
     const handlePopMedicine = index => event => {
         medicines.splice(index, 1);
+        medicineNames.splice(index, 1);
         setMedicines([...medicines]);
+        setMedicineNames([...medicineNames]);
     };
 
     const handlePushMedicine = () => {
@@ -236,12 +241,18 @@ const PrescriptionManagement = () => {
             AfterDinner: '',
             Note: '',
         });
+        medicineNames.push({
+            value: null,
+        });
         setMedicines([...medicines]);
+        setMedicineNames([...medicineNames]);
     };
 
     const handleReset = () => {
         setAppointmentDate('');
-        setMedicineName(null);
+        setMedicineNames([{
+            value: null,
+        }]);
         setPatient({
             ...patient,
             AppointmentDate: null,
@@ -416,7 +427,7 @@ const PrescriptionManagement = () => {
                     setLoadingDone(false);
                 }
             }).catch((reason) => {
-                handleError(reason, updatePatientErrorMsg);
+                handleError(reason, updatePatientHistoryErrorMsg);
                 handleSnackbarOption('error', 'Có lỗi khi tạo đơn thuốc mới!');
                 setDisabled(false);
                 setLoadingDone(false);
@@ -662,7 +673,7 @@ const PrescriptionManagement = () => {
                                                     label="Mặt hàng thuốc"
                                                     options={medicineNameOptions}
                                                     getOptionLabel={option => getOptionLabel(option)}
-                                                    value={medicineName}
+                                                    value={medicineNames[index].value}
                                                     onChange={handleMedicineNameChange(index)}
                                                 />
                                             </Grid>

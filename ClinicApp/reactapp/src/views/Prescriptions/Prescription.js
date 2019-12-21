@@ -21,6 +21,7 @@ import { HistoryButton as Back } from '../../components/Button';
 import Axios, {
     axiosRequestConfig,
     chromely,
+    verifyJWT,
 } from '../../common';
 import {
     PrescriptionUrl,
@@ -34,9 +35,11 @@ import {
     DisplayDateFormat,
     DisplayDateTimeFormat,
     PrescriptionStatus,
+    AccessTokenKey,
+    RoleConstants,
 } from '../../constants';
 
-import logo from '../../assets/images/logo.png';
+import { logo } from '../../components/Logo';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -163,7 +166,7 @@ const Prescription = () => {
                 console.log('[Print Prescription Error] - An error occurs during message routing. With url: '
                     + PrescriptionPrintUrl
                     + '. Response received: ', response);
-                
+
                 setDisabled(false);
                 setLoading(false);
             }
@@ -261,9 +264,16 @@ const Prescription = () => {
             setDisabled(false);
             setLoading(false);
         });
-    }
+    };
+
+    const [canPrint, setCanPrint] = React.useState(false);
+    const checkCanPrint = () => {
+        const token = localStorage.getItem(AccessTokenKey);
+        verifyJWT(token, RoleConstants.ReceptionistRoleName) && setCanPrint(true);
+    };
 
     React.useEffect(() => {
+        checkCanPrint();
         getPrescription();
     }, []);
 
@@ -284,14 +294,19 @@ const Prescription = () => {
                 >
                     <CardHeader
                         action={
-                            <Button
-                                color="warning"
-                                disabled={disabled}
-                                loading={loading}
-                                children="In"
-                                iconName="print"
-                                onClick={handlePrint}
-                            />
+                            <React.Fragment>
+                                {
+                                    canPrint &&
+                                    <Button
+                                        color="warning"
+                                        disabled={disabled}
+                                        loading={loading}
+                                        children="In"
+                                        iconName="print"
+                                        onClick={handlePrint}
+                                    />
+                                }
+                            </React.Fragment>
                         }
                         title="ĐƠN THUỐC"
                         subheader="Xem chi tiết thuốc và in"
@@ -309,7 +324,7 @@ const Prescription = () => {
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                     <div style={{ width: '100%' }} >
                                         <img
-                                            src={`/${logo}`}
+                                            src={logo}
                                             alt="Dr. Khoa Clinic"
                                             style={{ height: 'auto', width: '100%', }}
                                         />

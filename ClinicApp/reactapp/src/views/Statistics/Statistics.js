@@ -82,7 +82,7 @@ const StatisticsView = () => {
     };
 
     const [selectedStartDate, setSelectedStartDate] = React.useState(moment().subtract(7, 'day'));
-    const [selectedEndDate, setSelectedEndDate] = React.useState(moment());
+    const [selectedEndDate, setSelectedEndDate] = React.useState(moment().add(1, 'day'));
     const handleStartDateChange = date => {
         setSelectedStartDate(date);
     };
@@ -193,7 +193,7 @@ const StatisticsView = () => {
     };
 
     const [presSelectedStartDate, setPresSelectedStartDate] = React.useState(moment().subtract(7, 'day'));
-    const [presSelectedEndDate, setPresSelectedEndDate] = React.useState(moment());
+    const [presSelectedEndDate, setPresSelectedEndDate] = React.useState(moment().add(1, 'day'));
     const handlePresStartDateChange = date => {
         setPresSelectedStartDate(date);
     };
@@ -294,7 +294,7 @@ const StatisticsView = () => {
                             <Grid container spacing={3} justify="center" alignItems="center" >
                                 <Grid item>
                                     <DatePicker
-                                        id="startDatePicker1"
+                                        id="patientStartDatePicker"
                                         label="Từ ngày"
                                         value={selectedStartDate}
                                         onChange={(date) => handleStartDateChange(date)}
@@ -302,7 +302,7 @@ const StatisticsView = () => {
                                 </Grid>
                                 <Grid item>
                                     <DatePicker
-                                        id="endDatePicker1"
+                                        id="patientEndDatePicker"
                                         label="Tới ngày"
                                         value={selectedEndDate}
                                         onChange={(date) => handleEndDateChange(date)}
@@ -311,7 +311,7 @@ const StatisticsView = () => {
                                 <Grid item>
                                     <Select
                                         className={classes.select}
-                                        id="timePeriod1"
+                                        id="patientTimePeriod"
                                         label="Theo"
                                         value={selectedTimePeriod}
                                         onChange={handleTimePeriodChange}
@@ -419,7 +419,7 @@ const StatisticsView = () => {
                             <Grid container spacing={3} justify="center" alignItems="center" >
                                 <Grid item>
                                     <DatePicker
-                                        id="startDatePicker2"
+                                        id="presStartDatePicker"
                                         label="Từ ngày"
                                         value={presSelectedStartDate}
                                         onChange={(date) => handlePresStartDateChange(date)}
@@ -427,7 +427,7 @@ const StatisticsView = () => {
                                 </Grid>
                                 <Grid item>
                                     <DatePicker
-                                        id="endDatePicker2"
+                                        id="presEndDatePicker"
                                         label="Tới ngày"
                                         value={presSelectedEndDate}
                                         onChange={(date) => handlePresEndDateChange(date)}
@@ -436,7 +436,7 @@ const StatisticsView = () => {
                                 <Grid item>
                                     <Select
                                         className={classes.select}
-                                        id="timePeriod2"
+                                        id="presTimePeriod"
                                         label="Theo"
                                         value={presSelectedTimePeriod}
                                         onChange={handlePresTimePeriodChange}
