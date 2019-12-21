@@ -18,7 +18,7 @@ namespace ClinicAPI
 
             var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-            builder.UseSqlServer(configuration["ConnectionStrings:DefaultConnection"], b => b.MigrationsAssembly("ClinicAPI"));
+            builder.UseSqlServer(configuration["ConnectionStrings:DefaultConnection"], b => b.MigrationsAssembly("DrKhoaClinicApi"));
 
             return new ApplicationDbContext(builder.Options);
         }

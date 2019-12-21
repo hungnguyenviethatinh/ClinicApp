@@ -39,7 +39,7 @@ namespace ClinicAPI
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration["ConnectionStrings:DefaultConnection"],
-                    b => b.MigrationsAssembly("ClinicAPI")
+                    b => b.MigrationsAssembly("DrKhoaClinicApi")
                 )
             );
 
