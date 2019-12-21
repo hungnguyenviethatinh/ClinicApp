@@ -12,10 +12,10 @@ namespace ClinicAPI
 {
     public class IdentityServerConfig
     {
-        public const string ApiName = "clinicapi";
-        public const string ApiFriendlyName = "Clinic API";
-        public const string ClinicAppClientID = "clinicapp";
-        public const string SwaggerClientID = "swaggerui";
+        public const string ApiName = "DrKhoaClinicApi";
+        public const string ApiFriendlyName = "Dr. Khoa Clinic Api";
+        public const string ClinicAppClientID = "DrKhoaClinicApp";
+        public const string SwaggerClientID = "SwaggerUI";
 
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {
