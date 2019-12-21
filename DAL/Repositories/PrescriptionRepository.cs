@@ -1,6 +1,7 @@
 ﻿using DAL.Models;
 using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@ namespace DAL.Repositories
 {
     public interface IPrescriptionRepository : IRepository<Prescription>
     {
+        IEnumerable<Prescription> GetPrescriptions();
         Task<Prescription> GetPrescription(int id);
     }
 
@@ -18,6 +20,14 @@ namespace DAL.Repositories
 
         }
 
+        public IEnumerable<Prescription> GetPrescriptions()
+        {
+            return _appContext.Prescriptions
+                .Include(p => p.Doctor)
+                .Include(p => p.Patient)
+                .Include(p => p.Medicines).ThenInclude(m => m.Medicine)
+                .Where(p => !p.IsDeleted);
+        }
         public async Task<Prescription> GetPrescription(int id)
         {
             return await _appContext.Prescriptions

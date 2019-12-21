@@ -338,20 +338,18 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public IActionResult GetPrescriptions([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var prescriptions = _unitOfWork.Prescriptions.Where(p => !p.IsDeleted);
+            var prescriptions = _unitOfWork.Prescriptions.GetPrescriptions();
             int totalCount = prescriptions.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
             {
                 int.TryParse(query, out int id);
-                var patientIds = _unitOfWork.Patients.Where(p => p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)).Select(p => p.Id);
-                var doctorIds = _unitOfWork.Users.Where(d => d.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)).Select(d => d.Id);
 
                 prescriptions = prescriptions
                     .Where(p =>
                         p.PatientId == id ||
-                        patientIds.Contains(p.PatientId) ||
-                        doctorIds.Contains(p.DoctorId))
+                        p.Patient.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                        p.Doctor.FullName.Contains(query, StringComparison.OrdinalIgnoreCase))
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
@@ -360,12 +358,6 @@ namespace ClinicAPI.Controllers
                 prescriptions = prescriptions
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
-            }
-
-            foreach (var prescription in prescriptions)
-            {
-                prescription.Doctor = _unitOfWork.Users.Find(prescription.DoctorId);
-                prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
             }
 
             return Ok(new[]
