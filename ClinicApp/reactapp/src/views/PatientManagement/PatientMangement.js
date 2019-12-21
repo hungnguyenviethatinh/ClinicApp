@@ -291,9 +291,9 @@ const PatientManagement = () => {
             } else {
                 console.log('[Add Patient Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân.');
-                setDisabled(false);
-                setLoadingDone(false);
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Add Patient Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân.');
@@ -322,9 +322,9 @@ const PatientManagement = () => {
             } else {
                 console.log('[Add History Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi tạo hồ sơ cho bệnh nhân.');
-                setDisabled(false);
-                setLoadingDone(false);
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Add History Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi tạo hồ sơ cho bệnh nhân.');
@@ -371,9 +371,9 @@ const PatientManagement = () => {
             } else {
                 console.log('[Update Patient Reponse] ', reason);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
-                setDisabled(false);
-                setLoadingDone(false);
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Update Patient Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
@@ -402,9 +402,9 @@ const PatientManagement = () => {
             } else {
                 console.log('[Update History Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật hồ sơ của bệnh nhân.');
-                setDisabled(false);
-                setLoadingDone(false);
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Update History Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật hồ sơ của bệnh nhân.');
