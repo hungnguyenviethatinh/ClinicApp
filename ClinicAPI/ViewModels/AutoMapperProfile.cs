@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DAL.Core;
 using DAL.Models;
 
 namespace ClinicAPI.ViewModels
@@ -47,7 +48,8 @@ namespace ClinicAPI.ViewModels
                 map => map.MapFrom((medicineModel, medicine) => medicine.Quantity - medicineModel.Quantity));
 
             CreateMap<Medicine, MedicineViewModel>()
-                .ForMember(m => m.Status, map => map.Ignore());
+                .ForMember(m => m.Status,
+                map => map.MapFrom((medicine) => medicine.Quantity > 0 ? MedicineStatus.Yes : MedicineStatus.No));
 
             CreateMap<Diagnosis, DiagnosisModel>();
             CreateMap<DiagnosisModel, Diagnosis>();

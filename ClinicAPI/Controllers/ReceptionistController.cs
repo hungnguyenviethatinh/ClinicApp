@@ -49,7 +49,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var patients = _unitOfWork.Patients.Where(p => !p.IsDeleted);
+            var patients = _unitOfWork.Patients.GetPatients();
             int totalCount = patients.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -71,11 +71,6 @@ namespace ClinicAPI.Controllers
                     .Take(pageSize);
             }
 
-            foreach (var patient in patients)
-            {
-                patient.Doctor = _unitOfWork.Users.Find(patient.DoctorId);
-            }
-
             return Ok(new[]
             {
                new
@@ -91,15 +86,11 @@ namespace ClinicAPI.Controllers
         public IActionResult GetPatientsInQueue()
         {
             IEnumerable<Patient> patients = _unitOfWork.Patients
+                .GetPatients()
                 .Where(p => 
-                (!p.IsDeleted && p.Status != PatientStatus.IsChecked && 
+                (p.Status != PatientStatus.IsChecked && 
                 (p.AppointmentDate == null || p.AppointmentDate <= DateTime.Now)))
                 .OrderBy(p => p.UpdatedDate);
-
-            foreach (var patient in patients)
-            {
-                patient.Doctor = _unitOfWork.Users.Find(patient.DoctorId);
-            }
 
             return Ok(patients);
         }
@@ -108,13 +99,11 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public async Task<IActionResult> GetPatient(int id)
         {
-            var patient = await _unitOfWork.Patients.FindAsync(id);
+            var patient = await _unitOfWork.Patients.GetPatient(id);
             if (patient == null)
             {
                 return NotFound();
             }
-
-            patient.Doctor = _unitOfWork.Users.Find(patient.DoctorId);
 
             return Ok(new[] { patient, });
         }

@@ -41,7 +41,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var patients = _unitOfWork.Patients.Where(p => !p.IsDeleted);
+            var patients = _unitOfWork.Patients.GetPatients();
             int totalCount = patients.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -61,11 +61,6 @@ namespace ClinicAPI.Controllers
                 patients = patients
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
-            }
-
-            foreach (var patient in patients)
-            {
-                patient.Doctor = _unitOfWork.Users.Find(patient.DoctorId);
             }
 
             return Ok(new[]
@@ -136,10 +131,7 @@ namespace ClinicAPI.Controllers
             }
 
             var medicineVMs = _mapper.Map<IEnumerable<MedicineViewModel>>(medicines);
-            foreach (var medicine in medicineVMs)
-            {
-                medicine.Status = medicine.Quantity <= 0 ? MedicineStatus.No : MedicineStatus.Yes;
-            }
+
             return Ok(new[]
             {
                 new
