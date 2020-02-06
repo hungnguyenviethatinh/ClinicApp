@@ -673,7 +673,7 @@ const PrescriptionManagement = () => {
                                                     label="Mặt hàng thuốc"
                                                     options={medicineNameOptions}
                                                     getOptionLabel={option => getOptionLabel(option)}
-                                                    value={medicineNames[index].value}
+                                                    value={medicineNames[index] ? medicineNames[index].value : null}
                                                     onChange={handleMedicineNameChange(index)}
                                                 />
                                             </Grid>

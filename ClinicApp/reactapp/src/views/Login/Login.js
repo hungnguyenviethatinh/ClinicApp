@@ -34,6 +34,12 @@ const useStyles = makeStyles(theme => ({
             [theme.breakpoints.up('md')]: {
                 margin: '-32px -32px 32px -32px',
             },
+            [theme.breakpoints.up('lg')]: {
+                margin: '-32px -32px 32px -32px',
+            },
+            [theme.breakpoints.up('xl')]: {
+                margin: '-32px -32px 32px -32px',
+            },
         },
         '#progress': {
             width: '0%',

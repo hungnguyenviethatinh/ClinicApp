@@ -157,9 +157,10 @@ const Prescription = () => {
 
         chromely.post(PrescriptionPrintUrl, null, data, response => {
             const { ResponseText } = response;
-            const { ReadyState, Status } = JSON.parse(ResponseText);
+            const { ReadyState, Status, Data } = JSON.parse(ResponseText);
             if (ReadyState === 4 && Status === 200) {
-                handleSnackbarOption('success', 'Đơn thuốc đã được in thành công!');
+                const { Message } = Data;
+                handleSnackbarOption('success', Message);
                 updatePrescriptionStatus();
             } else {
                 handleSnackbarOption('error', 'Có lỗi khi in đơn thuốc!');
@@ -253,7 +254,8 @@ const Prescription = () => {
         Axios.get(url, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                handleSnackbarOption('success', `Đã cập nhật trạng thái đơn thuốc thành ${PrescriptionStatus.IsPrinted}!`);
+                // handleSnackbarOption('success', `Đã cập nhật trạng thái đơn thuốc thành ${PrescriptionStatus.IsPrinted}!`);
+                console.log(`Đã cập nhật trạng thái đơn thuốc thành ${PrescriptionStatus.IsPrinted}!`);
             } else {
                 console.log(response);
             }
