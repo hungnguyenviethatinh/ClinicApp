@@ -41,13 +41,16 @@ namespace ClinicApp.Controllers
             var prescription = data.Prescription;
             var medicines = data.Medicines;
 
+            string dots = "............";
+            string threeDots = "...";
+
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("HH:mm");
-            string dateOfBirth = patient.DateOfBirth != null ? patient.DateOfBirth.ToString() : "......";
-            string address = !string.IsNullOrWhiteSpace(patient.Address) ? patient.Address : "............";
-            string phoneNumber = !string.IsNullOrWhiteSpace(patient.PhoneNumber) ? patient.PhoneNumber : "............";
-            string appointedDate = !string.IsNullOrWhiteSpace(patient.AppointmentDate) ? patient.AppointmentDate : "............";
-            string prescriptionNote = !string.IsNullOrWhiteSpace(prescription.Note) ? prescription.Note : "............";
+            string dateOfBirth = patient.DateOfBirth != null ? patient.DateOfBirth.ToString() : dots;
+            string address = !string.IsNullOrWhiteSpace(patient.Address) ? patient.Address : dots;
+            string phoneNumber = !string.IsNullOrWhiteSpace(patient.PhoneNumber) ? patient.PhoneNumber : dots;
+            string appointedDate = !string.IsNullOrWhiteSpace(patient.AppointmentDate) ? patient.AppointmentDate : dots;
+            string prescriptionNote = !string.IsNullOrWhiteSpace(prescription.Note) ? prescription.Note : dots;
 
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string templateHtml = $"{appDirectory}/wwwroot/templates/prescription.html";
@@ -108,12 +111,12 @@ namespace ClinicApp.Controllers
                     medicineHtml = medicineHtml.Replace("{medicine.Quantity}", medicine.Quantity.ToString());
                     medicineHtml = medicineHtml.Replace("{medicine.Unit}", medicine.Unit);
 
-                    string timesPerDay = medicine.TimesPerDay != null ? medicine.TimesPerDay.ToString() : "...";
-                    string afterBreakfast = medicine.AfterBreakfast != null ? medicine.AfterBreakfast.ToString() : "...";
-                    string afterLunch = medicine.AfterLunch != null ? medicine.AfterLunch.ToString() : "...";
-                    string afternoon = medicine.Afternoon != null ? medicine.Afternoon.ToString() : "...";
-                    string afterDinner = medicine.AfterDinner != null ? medicine.AfterDinner.ToString() : "...";
-                    string note = !string.IsNullOrWhiteSpace(medicine.Note) ? medicine.Note : "............";
+                    string timesPerDay = medicine.TimesPerDay != null ? medicine.TimesPerDay.ToString() : threeDots;
+                    string afterBreakfast = medicine.AfterBreakfast != null ? medicine.AfterBreakfast.ToString() : threeDots;
+                    string afterLunch = medicine.AfterLunch != null ? medicine.AfterLunch.ToString() : threeDots;
+                    string afternoon = medicine.Afternoon != null ? medicine.Afternoon.ToString() : threeDots;
+                    string afterDinner = medicine.AfterDinner != null ? medicine.AfterDinner.ToString() : threeDots;
+                    string note = !string.IsNullOrWhiteSpace(medicine.Note) ? medicine.Note : dots;
                     medicineHtml = medicineHtml.Replace("{medicine.TimesPerDay}", timesPerDay);
                     medicineHtml = medicineHtml.Replace("{medicine.AfterBreakfast}", afterBreakfast);
                     medicineHtml = medicineHtml.Replace("{medicine.AfterLunch}", afterLunch);
@@ -125,6 +128,7 @@ namespace ClinicApp.Controllers
                     index++;
                 }
             }
+
             html = html.Replace("{medicines}", medicineHtmls);
             html = html.Replace("{prescription.Note}", prescriptionNote);
             html = html.Replace("{patient.AppointedDate}", appointedDate);
@@ -147,7 +151,15 @@ namespace ClinicApp.Controllers
                 converter.Options.WebPageHeight = 0;
             }
 
-            string savePath = $"saves\\DonThuoc_{DateTime.Now.ToString("ddMMyyyy_HHmmss")}.pdf";
+            string patientId = string.Concat("DKC-BN", patient.Id);
+            string patientName = patient.FullName;
+            string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
+            string saveFile = $"{patientId}_{patientName}_{createdTime}.pdf";
+
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string saveDirectory = $"{desktopPath}\\DonThuoc";
+
+            string savePath = $"{saveDirectory}\\{saveFile}";
             PdfDocument pdf = converter.ConvertUrl(url);
             pdf.Save(savePath);
             pdf.Close();
@@ -160,7 +172,13 @@ namespace ClinicApp.Controllers
             };
             Process.Start(info);
 
-            ChromelyResponse response = new ChromelyResponse(request.Id);
+            ChromelyResponse response = new ChromelyResponse(request.Id)
+            {
+                Data = new
+                {
+                    Message = $"Đã lưu đơn thuốc tại {savePath}",
+                }
+            };
 
             return response;
         }
