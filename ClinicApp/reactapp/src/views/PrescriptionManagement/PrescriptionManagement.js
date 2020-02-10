@@ -377,6 +377,8 @@ const PrescriptionManagement = () => {
                     });
                     addMedicines(medicineModels);
                 }
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi tạo đơn thuốc mới!');
             }
         }).catch((reason) => {
             handleError(reason, addPrescriptionErrorMsg);
@@ -391,6 +393,8 @@ const PrescriptionManagement = () => {
             const { status } = response;
             if (status === 200) {
                 updatePatientHistory();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi tạo đơn thuốc mới!');
             }
         }).catch((reason) => {
             handleError(reason, addMedicineErrorMsg);

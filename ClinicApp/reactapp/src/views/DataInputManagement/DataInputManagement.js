@@ -238,6 +238,8 @@ const DataInputManagement = () => {
                 handleSnackbarOption('success', 'Thêm chẩn đoán thành công!');
                 handleDiagnosisReset();
                 refreshDiagnosisData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi thêm chẩn đoán!');
             }
             setDisabled(false);
             setLoadingDiagnosisDone(false);
@@ -255,6 +257,8 @@ const DataInputManagement = () => {
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật chẩn đoán thành công!');
                 refreshDiagnosisData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật chẩn đoán!');
             }
             setDisabled(false);
             setLoadingDiagnosisDone(false);
@@ -275,6 +279,8 @@ const DataInputManagement = () => {
                 setSelectedDiagnosisRow(null);
                 setUpdateDiagnosisMode(false);
                 refreshDiagnosisData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi xóa chẩn đoán!');
             }
             setDisabled(false);
             setLoadingDiagnosisDelete(false);
@@ -385,6 +391,8 @@ const DataInputManagement = () => {
                 handleSnackbarOption('success', 'Thêm tên đơn vị của thuốc thành công!');
                 handleUnitReset();
                 refreshUnitData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi thêm tên đơn vị của thuốc!');
             }
             setDisabled(false);
             setLoadingUnitDone(false);
@@ -402,6 +410,8 @@ const DataInputManagement = () => {
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật tên đơn vị của thuốc thành công!');
                 refreshUnitData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật tên đơn vị của thuốc!');
             }
             setDisabled(false);
             setLoadingUnitDone(false);
@@ -422,6 +432,8 @@ const DataInputManagement = () => {
                 setSelectedUnitRow(null);
                 setUpdateUnitMode(false);
                 refreshUnitData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi xóa tên đơn vị của thuốc!');
             }
             setDisabled(false);
             setLoadingUnitDelete(false);

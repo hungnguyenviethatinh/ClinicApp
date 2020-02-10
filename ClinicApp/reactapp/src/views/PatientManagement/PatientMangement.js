@@ -420,7 +420,7 @@ const PatientManagement = () => {
                 handleSnackbarOption('success', 'Cập nhật XQ của bệnh nhân thành công.');
             } else {
                 console.log('[Update XRays Response] ', response);
-                handleSnackbarOption('error', 'Cập khi lưu trữ XQ của bệnh nhân.');
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật XQ của bệnh nhân.');
             }
             setDisabled(false);
             setLoadingDone(false);
@@ -449,6 +449,8 @@ const PatientManagement = () => {
                 setSelectedRow(null);
                 setUpdateMode(false);
                 refreshData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
             }
             setDisabled(false);
             setLoadingDelete(false);

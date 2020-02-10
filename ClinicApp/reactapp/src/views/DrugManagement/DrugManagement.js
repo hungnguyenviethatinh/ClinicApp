@@ -237,6 +237,8 @@ const DrugManagement = () => {
                 handleSnackbarOption('success', 'Thêm thuốc vào kho dữ liêu thành công!');
                 handleReset();
                 refreshData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi thêm thuốc vào kho dữ liệu!');
             }
             setDisabled(false);
             setLoadingDone(false);
@@ -255,6 +257,8 @@ const DrugManagement = () => {
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật dữ liệu thuốc thành công!');
                 refreshData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin thuốc!');
             }
             setDisabled(false);
             setLoadingDone(false);
@@ -275,6 +279,8 @@ const DrugManagement = () => {
                 setSelectedRow(null);
                 setUpdateMode(false);
                 refreshData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi xóa loại thuốc này!');
             }
             setDisabled(false);
             setLoadingDelete(false);
