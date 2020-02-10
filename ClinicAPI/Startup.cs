@@ -49,7 +49,6 @@ namespace ClinicAPI
 
             services.Configure<IdentityOptions>(options =>
             {
-                options.User.RequireUniqueEmail = true;
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 4;
                 options.Password.RequireNonAlphanumeric = false;

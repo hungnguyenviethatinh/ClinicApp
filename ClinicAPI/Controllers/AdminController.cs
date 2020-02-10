@@ -315,10 +315,20 @@ namespace ClinicAPI.Controllers
                 }
 
                 var user = _mapper.Map<User>(userEditModel);
-                var result = await _accountManager.CreateUserAsync(user, new string[] { userEditModel.RoleName }, userEditModel.Password);
-                if (!result.Succeeded)
+                var (Succeeded, Errors) = await _accountManager.CreateUserAsync(user, new string[] { userEditModel.RoleName }, userEditModel.Password);
+                if (!Succeeded)
                 {
-                    return NoContent();
+                    if (Errors[0].StartsWith("User name") && Errors[0].EndsWith("is already taken."))
+                    {
+                        return Ok(new
+                        {
+                            Message = $"Tên tài khoản {userEditModel.UserName} đã tồn tại!",
+                        });
+                    }
+                    else
+                    {
+                        return NoContent();
+                    }
                 }
 
                 return Ok(user);
