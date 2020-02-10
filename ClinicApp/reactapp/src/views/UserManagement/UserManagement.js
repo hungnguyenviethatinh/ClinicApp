@@ -176,8 +176,20 @@ const UserManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên tài khoản!');
             return;
         }
+        if (!/^[a-zA-Z0-9]+$/.test(values.UserName)) {
+            handleSnackbarOption('error', 'Tên tài khoản chỉ cho phép chứa các kí tự chữ cái a-z A-Z và chữ số 0-9!');
+            return;
+        }
         if (!updateMode && !values.Password.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập mật khẩu!');
+            return;
+        }
+        if (values.Password.length > 0 && values.Password.length < 4) {
+            handleSnackbarOption('error', 'Độ dài mật khẩu tối thiểu 4 kí tự!');
+            return;
+        }
+        if (values.Password.length > 0 && /\s/.test(values.Password)) {
+            handleSnackbarOption('error', 'Mật khẩu không được có khoảng trắng!');
             return;
         }
         if (!values.FullName.trim()) {
@@ -220,11 +232,18 @@ const UserManagement = () => {
 
     const addUser = (userModel) => {
         Axios.post(AddEmployeeUrl, userModel, config).then((response) => {
-            const { status } = response;
+            const { status, data } = response;
             if (status === 200) {
-                handleSnackbarOption('success', 'Tạo người dùng mới thành công!');
-                handleReset();
-                refreshData();
+                if (data.message) {
+                    handleSnackbarOption('error', `Có lỗi: ${data.message}`);
+                }
+                else {
+                    handleSnackbarOption('success', 'Tạo người dùng mới thành công!');
+                    handleReset();
+                    refreshData();
+                }
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi tạo người dùng mới!');
             }
             setDisabled(false);
             setLoadingDone(false);
@@ -243,12 +262,14 @@ const UserManagement = () => {
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật người dùng thành công!');
                 refreshData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật người dùng!');
             }
             setDisabled(false);
             setLoadingDone(false);
         }).catch((reason) => {
             handleError(reason, updateEmployeeLogMsfHeader);
-            handleSnackbarOption('error', 'Có lỗi khi cập nhật người dúng!');
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật người dùng!');
             setDisabled(false);
             setLoadingDone(false);
         });
@@ -263,6 +284,8 @@ const UserManagement = () => {
                 setSelectedRow(null);
                 setUpdateMode(false);
                 refreshData();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi xóa người dùng!');
             }
             setDisabled(false);
             setLoadingDelete(false);
@@ -299,6 +322,7 @@ const UserManagement = () => {
                 setValues({
                     ...values,
                     UserName: userName,
+                    Password: '',
                     FullName: fullName,
                     RoleName: roleName,
                     PhoneNumber: phoneNumber,
@@ -372,6 +396,7 @@ const UserManagement = () => {
                                         value={values.UserName}
                                         onChange={handleValueChange('UserName')}
                                         onKeyPress={handleKeyPress}
+                                        readOnly={updateMode}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
