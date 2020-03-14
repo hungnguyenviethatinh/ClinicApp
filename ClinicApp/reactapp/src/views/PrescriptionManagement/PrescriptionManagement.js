@@ -17,6 +17,7 @@ import { Select } from '../../components/Select';
 import { Snackbar } from '../../components/Snackbar';
 import { Button, FabButton } from '../../components/Button';
 import { Autocomplete } from '../../components/Autocomplete';
+import { DateTimePicker } from '../../components/DateTimePicker';
 
 import Axios, {
     axiosRequestConfig,
@@ -72,12 +73,12 @@ const addMedicineErrorMsg = '[Add Medicines Error] ';
 const getDiagnosesErrMsg = '[Get Diagnoses Error] ';
 const getUnitsErrorMsg = '[Get Units Error] ';
 
-const appointmentDateOptions = [
-    { label: 'Vui lòng chọn...', value: '' },
-    { label: '1 tuần', value: 7 },
-    { label: '2 tuần', value: 14 },
-    { label: '1 tháng', value: 30 },
-];
+// const appointmentDateOptions = [
+//     { label: 'Vui lòng chọn...', value: '' },
+//     { label: '1 tuần', value: 7 },
+//     { label: '2 tuần', value: 14 },
+//     { label: '1 tháng', value: 30 },
+// ];
 
 const PrescriptionManagement = () => {
     const classes = useStyles();
@@ -118,7 +119,7 @@ const PrescriptionManagement = () => {
         console.log(`${logMsgHeader}`, reason);
     };
 
-    const [appointmentDate, setAppointmentDate] = React.useState('');
+    // const [appointmentDate, setAppointmentDate] = React.useState('');
     const [patient, setPatient] = React.useState({
         Id: '',
         FullName: '',
@@ -128,15 +129,11 @@ const PrescriptionManagement = () => {
         PhoneNumber: '',
         AppointmentDate: null,
     });
-    const handleAppointmentDateChange = (event) => {
-        const days = event.target.value;
-        setAppointmentDate(days);
-
-        if (_.isFinite(days)) {
-            const date = moment().add(days, 'day');
+    const handleAppointmentDateChange = (date) => {
+        if (moment(date).isValid()) {
             setPatient({
                 ...patient,
-                AppointmentDate: date.format(DataDateTimeFormat),
+                AppointmentDate: date.format(),
             });
         } else {
             setPatient({
@@ -145,6 +142,11 @@ const PrescriptionManagement = () => {
             });
         }
 
+        let days = 0;
+        const now = moment();
+        if (moment(date).isValid()) {
+            days = date.diff(now, 'days');
+        }
         medicines.map((medicine) => {
             const afterBreakfast = _.toNumber(medicine.AfterBreakfast);
             const afterLunch = _.toNumber(medicine.AfterLunch);
@@ -152,7 +154,7 @@ const PrescriptionManagement = () => {
             const afterDinner = _.toNumber(medicine.AfterDinner);
 
             let quantity = afterBreakfast + afterLunch + afterNoon + afterDinner;
-            if (_.isFinite(days)) {
+            if (days > 1) {
                 quantity *= days;
             }
             medicine.Quantity = _.toString(quantity);
@@ -198,7 +200,18 @@ const PrescriptionManagement = () => {
         const afterLunch = _.toNumber(medicine.AfterLunch);
         const afterNoon = _.toNumber(medicine.Afternoon);
         const afterDinner = _.toNumber(medicine.AfterDinner);
-        const quantity = afterBreakfast + afterLunch + afterNoon + afterDinner;
+
+        let days = 0;
+        const now = moment();
+        if (moment(patient.AppointmentDate).isValid()) {
+            days = moment(patient.AppointmentDate).diff(now, 'days');
+        }
+
+        let quantity = afterBreakfast + afterLunch + afterNoon + afterDinner;
+        if (days > 1) {
+            quantity *= days;
+        }
+
         const maxQuantity = medicineNameOptions.find(m => m.id === medicine.MedicineId).quantity;
 
         if (quantity > _.toNumber(maxQuantity)) {
@@ -249,7 +262,7 @@ const PrescriptionManagement = () => {
     };
 
     const handleReset = () => {
-        setAppointmentDate('');
+        // setAppointmentDate('');
         setMedicineNames([{
             value: null,
         }]);
@@ -809,13 +822,20 @@ const PrescriptionManagement = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    <Select
+                                    {/* <Select
                                         fullWidth
                                         id="AppointmentDate"
                                         label="Hẹn tái khám (nếu có)"
                                         value={appointmentDate}
                                         options={appointmentDateOptions}
                                         onChange={handleAppointmentDateChange}
+                                    /> */}
+                                    <DateTimePicker
+                                        fullWidth
+                                        id="AppointmentDate"
+                                        label="Hẹn tái khám (nếu có)"
+                                        value={patient.AppointmentDate}
+                                        onChange={(date) => handleAppointmentDateChange(date)}
                                     />
                                 </Grid>
                             </Grid>

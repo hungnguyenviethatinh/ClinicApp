@@ -198,7 +198,7 @@ namespace ClinicAPI.Controllers
                 .FirstOrDefault();
             if (history == null)
             {
-                return NotFound();
+                return Ok();
             }
 
             history.IsChecked = true;

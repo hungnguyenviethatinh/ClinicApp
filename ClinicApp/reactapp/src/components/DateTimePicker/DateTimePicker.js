@@ -14,7 +14,7 @@ const DateTimePickerComponent = props => {
     const { 
         classes, 
         format, 
-        views, 
+        // views, 
         id, 
         label,
         value, 
@@ -42,7 +42,7 @@ const DateTimePickerComponent = props => {
                 variant={variant}
                 format={format}
                 margin="dense"
-                views={views}
+                // views={views}
                 id={id}
                 inputVariant="outlined"
                 label={label}
@@ -65,7 +65,7 @@ const DateTimePickerComponent = props => {
 DateTimePickerComponent.protoTypes = {
     classes: PropTypes.object,
     format: PropTypes.string,
-    views: PropTypes.arrayOf(PropTypes.string),
+    // views: PropTypes.arrayOf(PropTypes.string),
     id: PropTypes.string,
     label: PropTypes.string,
     value: PropTypes.string,
@@ -82,7 +82,7 @@ DateTimePickerComponent.protoTypes = {
 DateTimePickerComponent.defaultProps = {
     classes: null,
     format: 'DD-MM-YYYY HH:mm',
-    views: ['date', 'month', 'year', 'hours', 'minutes'],
+    // views: ['date', 'month', 'year', 'hours', 'minutes'],
     id: '',
     label: '',
     value: '',
