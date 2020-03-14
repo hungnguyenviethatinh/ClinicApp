@@ -56,6 +56,9 @@ const roleOptions = [
 
 const employeeColumns = [
     {
+        title: 'Tên tài khoản', field: 'userName',
+    },
+    {
         title: 'Họ & Tên', field: 'fullName',
     },
     {
@@ -74,6 +77,9 @@ const getEmployeesLogMsfHeader = '[Get Employees Error]';
 const addEmployeeLogMsfHeader = '[Add Employee Error]';
 const updateEmployeeLogMsfHeader = '[Update Employee Error]';
 const deleteEmployeeLogMsfHeader = '[Delete Employee Error]';
+
+const validUserNameMessage = 'Tên tài khoản chỉ cho phép chứa các chữ cái a-z A-Z, chữ số 0-9 và kí tự .';
+const validPasswordMessage = 'Mật khẩu dài tối thiểu 4 kí tự và không có khoảng trắng';
 
 const UserManagement = () => {
 
@@ -176,8 +182,8 @@ const UserManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên tài khoản!');
             return;
         }
-        if (!/^[a-zA-Z0-9]+$/.test(values.UserName)) {
-            handleSnackbarOption('error', 'Tên tài khoản chỉ cho phép chứa các kí tự chữ cái a-z A-Z và chữ số 0-9!');
+        if (!/^[a-zA-Z0-9\.]+$/.test(values.UserName)) {
+            handleSnackbarOption('error', validUserNameMessage);
             return;
         }
         if (!updateMode && !values.Password.trim()) {
@@ -200,14 +206,14 @@ const UserManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu chọn chức vụ!');
             return;
         }
-        if (!values.Email.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập email!');
-            return;
-        }
-        if (!values.PhoneNumber.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại!');
-            return;
-        }
+        // if (!values.Email.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập email!');
+        //     return;
+        // }
+        // if (!values.PhoneNumber.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại!');
+        //     return;
+        // }
 
         setDisabled(true);
         setLoadingDone(true);
@@ -393,6 +399,7 @@ const UserManagement = () => {
                                         autoFocus
                                         id="UserName"
                                         label="Tên tài khoản"
+                                        placeholder={validUserNameMessage}
                                         value={values.UserName}
                                         onChange={handleValueChange('UserName')}
                                         onKeyPress={handleKeyPress}
@@ -446,6 +453,7 @@ const UserManagement = () => {
                                         id="Password"
                                         type="password"
                                         label="Mật khẩu"
+                                        placeholder={validPasswordMessage}
                                         value={values.Password}
                                         onChange={handleValueChange('Password')}
                                         onKeyPress={handleKeyPress}

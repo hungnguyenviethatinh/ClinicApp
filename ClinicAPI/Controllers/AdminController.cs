@@ -384,7 +384,12 @@ namespace ClinicAPI.Controllers
             {
                 return NotFound();
             }
+            if (user.IsDeleted)
+            {
+                return Ok(user);
+            }
 
+            user.UserName += $"{id}_removed";
             user.IsDeleted = true;
             var (Succeeded, Errors) = await _accountManager.UpdateUserAsync(user);
             if (!Succeeded)
