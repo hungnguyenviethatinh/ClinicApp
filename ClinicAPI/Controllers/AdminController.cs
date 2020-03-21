@@ -587,6 +587,14 @@ namespace ClinicAPI.Controllers
             return Ok(units);
         }
 
+        [HttpGet("opentimes")]
+        public IActionResult GetOpenTimes()
+        {
+            var openTimes = _unitOfWork.OpenTimes.GetAll();
+
+            return Ok(openTimes);
+        }
+
         [HttpGet("units/{id}")]
         public async Task<IActionResult> GetUnit(int id)
         {
@@ -597,6 +605,18 @@ namespace ClinicAPI.Controllers
             }
 
             return Ok(new[] { unit, });
+        }
+
+        [HttpGet("opentimes/{id}")]
+        public async Task<IActionResult> GetOpenTime(int id)
+        {
+            var openTime = await _unitOfWork.OpenTimes.FindAsync(id);
+            if (openTime == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new[] { openTime, });
         }
 
         [HttpPost("units")]
@@ -621,6 +641,30 @@ namespace ClinicAPI.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+
+        [HttpPost("opentimes")]
+        public async Task<IActionResult> AddOpenTime([FromBody] OpenTimeModel openTimeModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if(openTimeModel == null)
+                {
+                    return BadRequest($"{nameof(openTimeModel)} can not be null.");
+                }
+
+                var openTime = _mapper.Map<OpenTime>(openTimeModel);
+                _unitOfWork.OpenTimes.Add(openTime);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(openTime);
+            }
+
+            return BadRequest();
         }
 
         [HttpPut("units/{id}")]
@@ -653,6 +697,36 @@ namespace ClinicAPI.Controllers
             return BadRequest(ModelState);
         }
 
+        [HttpPut("opentimes/{id}")]
+        public async Task<IActionResult> UpdateOpenTime(int id, [FromBody] OpenTimeModel openTimeModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (openTimeModel == null)
+                {
+                    return BadRequest($"{nameof(openTimeModel)} can not be null.");
+                }
+
+                var openTime = _unitOfWork.OpenTimes.Find(id);
+                if (openTime == null)
+                {
+                    return NotFound();
+                }
+
+                _mapper.Map(openTimeModel, openTime);
+                _unitOfWork.OpenTimes.Update(openTime);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(openTime);
+            }
+
+            return BadRequest();
+        }
+
         [HttpDelete("units/{id}")]
         public async Task<IActionResult> DeleteUnit(int id)
         {
@@ -671,6 +745,25 @@ namespace ClinicAPI.Controllers
             }
 
             return Ok(unit);
+        }
+
+        [HttpDelete("opentimes/{id}")]
+        public async Task<IActionResult> DeleteOpenTime(int id)
+        {
+            var openTime = _unitOfWork.OpenTimes.Find(id);
+            if(openTime == null)
+            {
+                return NotFound();
+            }
+
+            _unitOfWork.OpenTimes.Remove(openTime);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
         }
 
         [HttpGet("stat/patient")]

@@ -22,6 +22,7 @@ namespace DAL
         public DbSet<Diagnosis> Diagnoses { get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
+        public DbSet<OpenTime> OpenTimes { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -125,6 +126,12 @@ namespace DAL
             builder.Entity<Medicine>()
                 .Property(m => m.Name).IsRequired().HasMaxLength(100);
             builder.Entity<Medicine>()
+               .Property(m => m.IdCode).HasMaxLength(30);
+            builder.Entity<Medicine>()
+               .Property(m => m.ShortName).HasMaxLength(30);
+            builder.Entity<Medicine>()
+                .Property(m => m.NetWeight).HasMaxLength(30);
+            builder.Entity<Medicine>()
                 .Property(m => m.Unit).HasMaxLength(100);
             builder.Entity<Medicine>()
                 .Property(m => m.Price).HasColumnType(decimalType);
@@ -213,6 +220,9 @@ namespace DAL
                 .WithMany(m => m.Ingredients)
                 .HasForeignKey(i => i.MedicineId)
                 .IsRequired().OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<OpenTime>()
+                .Property(o => o.OpenClosedTime).IsRequired().HasMaxLength(100);
         }
 
         public override int SaveChanges()

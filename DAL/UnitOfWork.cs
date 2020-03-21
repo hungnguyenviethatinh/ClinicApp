@@ -17,6 +17,7 @@ namespace DAL
         private IDiagnosisRepository _diagnoses;
         private IUnitRepository _units;
         private IIngredientRepository _ingredients;
+        private IOpenTimeRepository _openTimes;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -163,6 +164,19 @@ namespace DAL
                 }
 
                 return _ingredients;
+            }
+        }
+
+        public IOpenTimeRepository OpenTimes
+        {
+            get
+            {
+                if(_openTimes == null)
+                {
+                    _openTimes = new OpenTimeRepository(_context);
+                }
+
+                return _openTimes;
             }
         }
 

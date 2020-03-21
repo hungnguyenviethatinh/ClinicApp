@@ -95,4 +95,17 @@ namespace DAL.Repositories
 
         }
     }
+
+    public interface IOpenTimeRepository : IRepository<OpenTime>
+    {
+
+    }
+
+    public class OpenTimeRepository : Repository<OpenTime>, IOpenTimeRepository
+    {
+        public OpenTimeRepository(ApplicationDbContext context) : base(context)
+        {
+
+        }
+    }
 }

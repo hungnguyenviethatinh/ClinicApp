@@ -81,10 +81,10 @@ namespace ClinicAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdCode = table.Column<string>(nullable: true),
+                    IdCode = table.Column<string>(maxLength: 30, nullable: true),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
-                    ShortName = table.Column<string>(nullable: true),
-                    NetWeight = table.Column<string>(nullable: true),
+                    ShortName = table.Column<string>(maxLength: 30, nullable: true),
+                    NetWeight = table.Column<string>(maxLength: 30, nullable: true),
                     Quantity = table.Column<int>(nullable: false),
                     Unit = table.Column<string>(maxLength: 100, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -97,6 +97,23 @@ namespace ClinicAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Medicines", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenTimes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OpenClosedTime = table.Column<string>(maxLength: 100, nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenTimes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -263,7 +280,11 @@ namespace ClinicAPI.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
-                    MedicineId = table.Column<int>(nullable: false)
+                    MedicineId = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -528,6 +549,9 @@ namespace ClinicAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Ingredients");
+
+            migrationBuilder.DropTable(
+                name: "OpenTimes");
 
             migrationBuilder.DropTable(
                 name: "PrescriptionMedicines");

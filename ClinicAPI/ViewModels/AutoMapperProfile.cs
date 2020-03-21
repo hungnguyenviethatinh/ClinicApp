@@ -59,6 +59,9 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<Ingredient, IngredientModel>();
             CreateMap<IngredientModel, Ingredient>();
+
+            CreateMap<OpenTime, OpenTimeModel>();
+            CreateMap<OpenTimeModel, OpenTime>();
         }
     }
 }
