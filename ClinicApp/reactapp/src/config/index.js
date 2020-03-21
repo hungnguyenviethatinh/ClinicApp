@@ -63,6 +63,11 @@ export const DeleteUnitUrl = '/api/admin/units';
 export const GetIngredientsUrl = '/api/admin/ingredients';
 export const AddIngredientsUrl = '/api/admin/ingredients';
 export const DeleteIngredientsUrl = '/api/admin/ingredients';
+export const GetOpenTimesUrl = '/api/admin/opentimes';
+export const GetOpenTimeUrl = '/api/admin/opentimes';
+export const AddOpenTimeUrl = '/api/admin/opentimes';
+export const UpdateOpenTimeUrl = '/api/admin/opentimes';
+export const DeleteOpenTimeUrl = '/api/admin/opentimes';
 // Shared:
 export const PatientUrl = '/api/patient';
 export const PrescriptionUrl = '/api/prescription';

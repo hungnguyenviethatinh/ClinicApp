@@ -10,6 +10,7 @@ import { PrescriptionManagementView } from './views/PrescriptionManagement';
 import { UserManagementView } from './views/UserManagement';
 import { DrugManagementView } from './views/DrugManagement';
 import { DataInputManagementView } from './views/DataInputManagement';
+import { OpenTimeManagementView } from './views/OpenTimeManagement';
 import { StatisticsView } from './views/Statistics';
 import { UserView } from './views/User';
 
@@ -31,6 +32,7 @@ const App = () => {
                 <PrivateRoute exact path={RouteConstants.UserManagementView} component={UserManagementView} />
                 <PrivateRoute exact path={RouteConstants.DrugManagementView} component={DrugManagementView} />
                 <PrivateRoute exact path={RouteConstants.DataInputManagementView} component={DataInputManagementView} />
+                <PrivateRoute exact path={RouteConstants.OpenTimeManagementView} component={OpenTimeManagementView} />
                 <PrivateRoute exact path={RouteConstants.StatisticsView} component={StatisticsView} />
                 <PrivateRoute exact path={RouteConstants.UserView}component={UserView} />
                 <Route exact path={RouteConstants.LoginView} component={LoginView} />

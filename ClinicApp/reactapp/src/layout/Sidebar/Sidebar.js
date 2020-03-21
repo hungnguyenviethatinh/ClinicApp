@@ -10,6 +10,7 @@ import StoreIcon from '@material-ui/icons/Store';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import ViewListIcon from '@material-ui/icons/ViewList';
 import ImportContactsIcon from '@material-ui/icons/ImportContacts';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 
 import { Menu } from '../Menu';
 import Profile from '../Profile';
@@ -64,6 +65,11 @@ const adminMenus = [
         title: 'Quản lí nhập liệu',
         href: RouteConstants.DataInputManagementView,
         icon: <ImportContactsIcon />
+    },
+    {
+        title: 'Quản lí giờ khám',
+        href: RouteConstants.OpenTimeManagementView,
+        icon: <AccessTimeIcon />
     },
     {
         title: 'Thống kê',

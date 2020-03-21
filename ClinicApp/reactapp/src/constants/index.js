@@ -9,6 +9,7 @@ export const RouteConstants = {
     UserManagementView: '/user-management',
     DrugManagementView: '/drug-management',
     DataInputManagementView: '/datainput-management',
+    OpenTimeManagementView: '/opentime-management',
     StatisticsView: '/statistics',
     UserView: '/account/me',
     LoginView: '/login',
