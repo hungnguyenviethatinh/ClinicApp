@@ -41,28 +41,34 @@ const Layout = props => {
         defaultMatches: true
     });
 
-    const [openSidebar, setOpenSidebar] = useState(false);
+    // const [openSidebar, setOpenSidebar] = useState(false);
+    const [openSidebar, setOpenSidebar] = useState(isDesktop);
     const handleSidebarOpen = () => {
         setOpenSidebar(true);
     };
     const handleSidebarClose = () => {
         setOpenSidebar(false);
     };
+    const handleToggleSidebar = () => {
+        setOpenSidebar(!openSidebar);
+    };
 
-    const shouldOpenSidebar = isDesktop ? true : openSidebar;
+    // const shouldOpenSidebar = isDesktop ? true : openSidebar;
 
     return (
         <Route {...rest} render={matchProps => (
             <div
                 className={clsx({
                     [classes.root]: true,
-                    [classes.shiftContent]: isDesktop
+                    // [classes.shiftContent]: isDesktop,
+                    [classes.shiftContent]: isDesktop && openSidebar,
                 })}
             >
-                <Header onSidebarOpen={handleSidebarOpen} />
+                <Header onSidebarOpen={handleSidebarOpen} onToggleSidebar={handleToggleSidebar} />
                 <Sidebar
                     onClose={handleSidebarClose}
-                    open={shouldOpenSidebar}
+                    // open={shouldOpenSidebar}
+                    open={openSidebar}
                     variant={isDesktop ? 'persistent' : 'temporary'}
                 />
                 <main className={classes.content}>

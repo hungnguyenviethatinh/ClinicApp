@@ -82,13 +82,13 @@ const LogoutButton = withRouter((props) => {
     return (
         <Button color="inherit" variant="text" className={classes.signOutButton} onClick={handleLogout}>
             Đăng xuất
-			<ExitToAppIcon className={classes.signOutIcon} />
+            <ExitToAppIcon className={classes.signOutIcon} />
         </Button>
     );
 });
 
 const Header = (props) => {
-    const { className, onSidebarOpen, ...rest } = props;
+    const { className, onSidebarOpen, onToggleSidebar, ...rest } = props;
 
     const classes = useStyles();
 
@@ -101,6 +101,12 @@ const Header = (props) => {
         >
             <Toolbar>
                 <Hidden mdDown>
+                    <IconButton
+                        color="inherit"
+                        onClick={onToggleSidebar}
+                    >
+                        <MenuIcon />
+                    </IconButton>
                     <Typography component="h5" variant="h5" color="inherit" noWrap className={classes.appTitle}>
                         Hệ thống quản lý phòng khám Dr. Khoa Clinic
 					</Typography>
