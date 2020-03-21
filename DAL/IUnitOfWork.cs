@@ -15,6 +15,7 @@ namespace DAL
         IXRayImageRepository XRayImages { get; }
         IDiagnosisRepository Diagnoses { get; }
         IUnitRepository Units { get; }
+        IIngredientRepository Ingredients { get; }
 
         int SaveChanges();
         Task<int> SaveChangesAsync();

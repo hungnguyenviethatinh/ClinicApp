@@ -82,4 +82,17 @@ namespace DAL.Repositories
 
         }
     }
+
+    public interface IIngredientRepository : IRepository<Ingredient>
+    {
+
+    }
+
+    public class IngredientRepository : Repository<Ingredient>, IIngredientRepository
+    {
+        public IngredientRepository(ApplicationDbContext context) : base(context)
+        {
+
+        }
+    }
 }

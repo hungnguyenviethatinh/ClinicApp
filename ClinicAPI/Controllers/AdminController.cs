@@ -111,23 +111,54 @@ namespace ClinicAPI.Controllers
 
         [HttpGet("medicines")]
         [Authorize(Policies.ViewAllMedicinesPolicy)]
-        public IActionResult GetMedicines([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
+        public IActionResult GetMedicines([FromQuery] int page, [FromQuery] int pageSize,
+            [FromQuery] string findBy, [FromQuery] string query = null, [FromQuery] string filterDate = null)
         {
             var medicines = _unitOfWork.Medicines.Where(m => !m.IsDeleted);
             int totalCount = medicines.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                medicines = medicines
-                    .Where(m => m.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize);
+                if (findBy == "IdCode")
+                {
+                    medicines = medicines
+                    .Where(m => m.IdCode.Contains(query, StringComparison.OrdinalIgnoreCase));
+                }
+                else if (findBy == "Name")
+                {
+                    medicines = medicines
+                    .Where(m => m.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
+                }
+                else if (findBy == "ShortName")
+                {
+                    medicines = medicines
+                    .Where(m => m.ShortName.Contains(query, StringComparison.OrdinalIgnoreCase));
+                }
+                else if (findBy == "Ingredient")
+                {
+                    var ingredients = _unitOfWork.Ingredients.GetAll();
+                    var medicineIds = ingredients
+                        .Where(i => i.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
+                        .Select(i => i.MedicineId);
+                    medicines = medicines.Where(m => medicineIds.Contains(m.Id));
+                }
+
+                medicines = medicines.Skip((page - 1) * pageSize).Take(pageSize);
             }
             else
             {
                 medicines = medicines
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filterDate))
+            {
+                DateTime date = DateTime.Parse(filterDate);
+                medicines = medicines
+                .Where(m => m.CreatedDate.Date == date.Date)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize);
             }
 
             var medicineVMs = _mapper.Map<IEnumerable<MedicineViewModel>>(medicines);
@@ -232,6 +263,60 @@ namespace ClinicAPI.Controllers
             }
 
             return Ok(medicine);
+        }
+
+        [HttpGet("ingredients/{medicineId}")]
+        [Authorize(Policies.ViewAllMedicinesPolicy)]
+        public IActionResult GetIngredients(int medicineId)
+        {
+            var ingredients = _unitOfWork.Ingredients.Where(i => i.MedicineId == medicineId);
+
+            return Ok(ingredients);
+        }
+
+        [HttpPost("ingredients")]
+        [Authorize(Policies.ManageAllMedicinesPolicy)]
+        public async Task<IActionResult> AddIngredients([FromBody] IEnumerable<IngredientModel> ingredientModels)
+        {
+            if (ModelState.IsValid)
+            {
+                if (ingredientModels == null)
+                {
+                    return BadRequest($"{nameof(ingredientModels)} can not be null.");
+                }
+
+                var ingredients = _mapper.Map<IEnumerable<Ingredient>>(ingredientModels);
+                _unitOfWork.Ingredients.AddRange(ingredients);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        [HttpDelete("ingredients/{medicineId}")]
+        [Authorize(Policies.ManageAllMedicinesPolicy)]
+        public async Task<IActionResult> RemoveIngredients(int medicineId)
+        {
+            var ingredients = _unitOfWork.Ingredients.Where(i => i.MedicineId == medicineId);
+            if (!ingredients.Any())
+            {
+                return Ok();
+            }
+
+            _unitOfWork.Ingredients.RemoveRange(ingredients);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
         }
 
         [HttpGet("employees")]

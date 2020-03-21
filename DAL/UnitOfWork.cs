@@ -16,6 +16,7 @@ namespace DAL
         private IXRayImageRepository _xRayImages;
         private IDiagnosisRepository _diagnoses;
         private IUnitRepository _units;
+        private IIngredientRepository _ingredients;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -149,6 +150,19 @@ namespace DAL
                 }
 
                 return _units;
+            }
+        }
+
+        public IIngredientRepository Ingredients
+        {
+            get
+            {
+                if (_ingredients == null)
+                {
+                    _ingredients = new IngredientRepository(_context);
+                }
+
+                return _ingredients;
             }
         }
 

@@ -21,6 +21,7 @@ namespace DAL
         public DbSet<XRayImage> XRayImages { get; set; }
         public DbSet<Diagnosis> Diagnoses { get; set; }
         public DbSet<Unit> Units { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -132,6 +133,11 @@ namespace DAL
                 .WithOne(pm => pm.Medicine)
                 .HasForeignKey(pm => pm.MedicineId)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Medicine>()
+                .HasMany(m => m.Ingredients)
+                .WithOne(i => i.Medicine)
+                .HasForeignKey(i => i.MedicineId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<History>()
                 .Property(h => h.Height).HasMaxLength(10);
@@ -199,6 +205,14 @@ namespace DAL
 
             builder.Entity<Unit>()
                 .Property(u => u.Name).IsRequired().HasMaxLength(15);
+
+            builder.Entity<Ingredient>()
+                .Property(i => i.Name).IsRequired().HasMaxLength(100);
+            builder.Entity<Ingredient>()
+                .HasOne(i => i.Medicine)
+                .WithMany(m => m.Ingredients)
+                .HasForeignKey(i => i.MedicineId)
+                .IsRequired().OnDelete(DeleteBehavior.Restrict);
         }
 
         public override int SaveChanges()

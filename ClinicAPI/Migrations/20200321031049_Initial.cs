@@ -81,7 +81,10 @@ namespace ClinicAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    IdCode = table.Column<string>(nullable: true),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
+                    ShortName = table.Column<string>(nullable: true),
+                    NetWeight = table.Column<string>(nullable: true),
                     Quantity = table.Column<int>(nullable: false),
                     Unit = table.Column<string>(maxLength: 100, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -249,6 +252,26 @@ namespace ClinicAPI.Migrations
                         name: "FK_Patients_AspNetUsers_DoctorId",
                         column: x => x.DoctorId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Ingredients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    MedicineId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ingredients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Ingredients_Medicines_MedicineId",
+                        column: x => x.MedicineId,
+                        principalTable: "Medicines",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -443,6 +466,11 @@ namespace ClinicAPI.Migrations
                 column: "PatientId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Ingredients_MedicineId",
+                table: "Ingredients",
+                column: "MedicineId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Patients_DoctorId",
                 table: "Patients",
                 column: "DoctorId");
@@ -497,6 +525,9 @@ namespace ClinicAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Diagnoses");
+
+            migrationBuilder.DropTable(
+                name: "Ingredients");
 
             migrationBuilder.DropTable(
                 name: "PrescriptionMedicines");
