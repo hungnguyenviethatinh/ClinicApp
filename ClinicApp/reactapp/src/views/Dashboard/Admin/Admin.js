@@ -464,7 +464,7 @@ const AdminView = () => {
                 >
                     <CardHeader
                         title="DANH SÁCH ĐƠN THUỐC"
-                        subheader="Tất ơn thuốc đã được kê và lưu trữ trên hệ thống"
+                        subheader="Tất cả đơn thuốc đã được kê và lưu trữ trên hệ thống"
                     />
                     <Divider />
                     <CardContent className={classes.content}>

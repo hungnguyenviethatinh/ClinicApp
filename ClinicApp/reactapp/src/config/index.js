@@ -60,6 +60,9 @@ export const GetUnitUrl = '/api/admin/units';
 export const AddUnitUrl = '/api/admin/units';
 export const UpdateUnitUrl = '/api/admin/units';
 export const DeleteUnitUrl = '/api/admin/units';
+export const GetIngredientsUrl = '/api/admin/ingredients';
+export const AddIngredientsUrl = '/api/admin/ingredients';
+export const DeleteIngredientsUrl = '/api/admin/ingredients';
 // Shared:
 export const PatientUrl = '/api/patient';
 export const PrescriptionUrl = '/api/prescription';
