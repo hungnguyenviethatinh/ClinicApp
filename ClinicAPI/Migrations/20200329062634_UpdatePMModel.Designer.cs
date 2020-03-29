@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200321100034_Initial")]
-    partial class Initial
+    [Migration("20200329062634_UpdatePMModel")]
+    partial class UpdatePMModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -320,6 +320,9 @@ namespace ClinicAPI.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OtherDiagnosis")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
@@ -363,6 +366,13 @@ namespace ClinicAPI.Migrations
                     b.Property<int?>("Afternoon")
                         .HasColumnType("int");
 
+                    b.Property<int?>("AmountPerTime")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Ingredient")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -375,7 +385,15 @@ namespace ClinicAPI.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("TimesPerDay")
+                    b.Property<string>("TakeMethod")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("TakePeriod")
+                        .HasColumnType("nvarchar(30)")
+                        .HasMaxLength(30);
+
+                    b.Property<int>("TakeTimes")
                         .HasColumnType("int");
 
                     b.Property<string>("Unit")

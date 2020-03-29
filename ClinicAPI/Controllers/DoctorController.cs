@@ -67,6 +67,17 @@ namespace ClinicAPI.Controllers
             return Ok(units);
         }
 
+        [HttpGet("ingredients/{medicineId}")]
+        [Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        public IActionResult GetIngredients(int medicineId)
+        {
+            var ingredients = _unitOfWork.Ingredients
+                .Where(i => i.MedicineId == medicineId)
+                .Select(i => new { i.Name });
+
+            return Ok(ingredients);
+        }
+
         [HttpGet("patients")]
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)

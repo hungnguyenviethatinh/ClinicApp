@@ -178,6 +178,12 @@ namespace DAL
             builder.Entity<PrescriptionMedicine>()
                 .HasKey(pm => new { pm.PrescriptionId, pm.MedicineId });
             builder.Entity<PrescriptionMedicine>()
+                .Property(pm => pm.Ingredient).HasMaxLength(100);
+            builder.Entity<PrescriptionMedicine>()
+                .Property(pm => pm.TakePeriod).HasMaxLength(30);
+            builder.Entity<PrescriptionMedicine>()
+                .Property(pm => pm.TakeMethod).HasMaxLength(50);
+            builder.Entity<PrescriptionMedicine>()
                 .Property(pm => pm.Unit).HasMaxLength(100);
             builder.Entity<PrescriptionMedicine>()
                 .Property(pm => pm.Price).HasColumnType(decimalType);
