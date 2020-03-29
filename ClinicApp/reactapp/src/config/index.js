@@ -34,6 +34,7 @@ export const AddPrescriptionsUrl = 'api/doctor/prescriptions';
 export const AddMedicinesUrl = 'api/doctor/medicines';
 export const UpdatePatientHistoryUrl = 'api/doctor/patients';
 export const UpdateMedicinesQuantityUrl = 'api/doctor/medicines/quantity';
+export const GetIngredientOptionsUrl = 'api/doctor/ingredients';
 // Addmin Api:
 export const GetAllPatientsUrl = '/api/admin/patients';
 export const GetAllPrescriptionsUrl = '/api/admin/prescriptions';

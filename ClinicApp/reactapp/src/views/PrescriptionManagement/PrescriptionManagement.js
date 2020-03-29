@@ -29,7 +29,6 @@ import {
     ExpiredSessionMsg,
     NotFoundMsg,
     AddressSeperator,
-    DataDateTimeFormat,
     Gender,
     PatientStatusEnum,
     PatientStatus,
@@ -39,6 +38,7 @@ import {
 import {
     GetMedicineNameOptionsUrl,
     GetDiagnosisNameOptionsUrl,
+    GetIngredientOptionsUrl,
     GetUnitNameOptionsUrl,
     GetCurrentPatientUrl,
     AddPrescriptionsUrl,
@@ -72,6 +72,7 @@ const addPrescriptionErrorMsg = '[Add Prescription Error] ';
 const addMedicineErrorMsg = '[Add Medicines Error] ';
 const getDiagnosesErrMsg = '[Get Diagnoses Error] ';
 const getUnitsErrorMsg = '[Get Units Error] ';
+const getIngredientsErrorMsg = '[Get Ingredients Error] ';
 
 // const appointmentDateOptions = [
 //     { label: 'Vui lòng chọn...', value: '' },
@@ -79,6 +80,18 @@ const getUnitsErrorMsg = '[Get Units Error] ';
 //     { label: '2 tuần', value: 14 },
 //     { label: '1 tháng', value: 30 },
 // ];
+
+const takePeriodValue = {
+    Day: 'Ngày',
+    Week: 'Tuần',
+    Month: 'Tháng',
+};
+
+const takePeriodOptions = [
+    { label: takePeriodValue.Day, value: takePeriodValue.Day },
+    { label: takePeriodValue.Week, value: takePeriodValue.Week },
+    { label: takePeriodValue.Month, value: takePeriodValue.Month },
+];
 
 const PrescriptionManagement = () => {
     const classes = useStyles();
@@ -148,14 +161,28 @@ const PrescriptionManagement = () => {
             days = date.diff(now, 'days');
         }
         medicines.map((medicine) => {
+            const takeTimes = _.toNumber(medicine.TakeTimes);
+            const amountPerTime = _.toNumber(medicine.AmountPerTime);
             const afterBreakfast = _.toNumber(medicine.AfterBreakfast);
             const afterLunch = _.toNumber(medicine.AfterLunch);
             const afterNoon = _.toNumber(medicine.Afternoon);
             const afterDinner = _.toNumber(medicine.AfterDinner);
 
             let quantity = afterBreakfast + afterLunch + afterNoon + afterDinner;
+            if (medicine.TakePeriod !== takePeriodValue.Day) {
+                quantity = amountPerTime * takeTimes;
+            }
+
             if (days > 1) {
-                quantity *= days;
+                if (medicine.TakePeriod === takePeriodValue.Day) {
+                    quantity *= days;
+                }
+                if (medicine.TakePeriod === takePeriodValue.Week && days % 7 === 0) {
+                    quantity *= (days / 7);
+                }
+                if (medicine.TakePeriod === takePeriodValue.Month && days % 30 === 0) {
+                    quantity *= (days / 30);
+                }
             }
             medicine.Quantity = _.toString(quantity);
         });
@@ -164,6 +191,7 @@ const PrescriptionManagement = () => {
 
     const [prescription, setPrescription] = React.useState({
         Diagnosis: '',
+        OtherDiagnosis: '',
         Note: '',
         Status: PrescriptionStatusEnum[PrescriptionStatus.IsNew],
         PatientId: '',
@@ -180,10 +208,14 @@ const PrescriptionManagement = () => {
     const [medicines, setMedicines] = React.useState([{
         PrescriptionId: '',
         MedicineId: '',
+        Ingredient: '',
         Quantity: '',
         Unit: '',
         Price: '',
-        TimesPerDay: '',
+        TakePeriod: takePeriodValue.Day,
+        TakeMethod: '',
+        TakeTimes: '',
+        AmountPerTime: '',
         AfterBreakfast: '',
         AfterLunch: '',
         Afternoon: '',
@@ -196,6 +228,8 @@ const PrescriptionManagement = () => {
     };
     const handleMedicinesBlur = (index, prop) => event => {
         const medicine = medicines[index];
+        const takeTimes = _.toNumber(medicine.TakeTimes);
+        const amountPerTime = _.toNumber(medicine.AmountPerTime);
         const afterBreakfast = _.toNumber(medicine.AfterBreakfast);
         const afterLunch = _.toNumber(medicine.AfterLunch);
         const afterNoon = _.toNumber(medicine.Afternoon);
@@ -208,8 +242,20 @@ const PrescriptionManagement = () => {
         }
 
         let quantity = afterBreakfast + afterLunch + afterNoon + afterDinner;
+        if (medicine.TakePeriod !== takePeriodValue.Day) {
+            quantity = amountPerTime * takeTimes;
+        }
+
         if (days > 1) {
-            quantity *= days;
+            if (medicine.TakePeriod === takePeriodValue.Day) {
+                quantity *= days;
+            }
+            if (medicine.TakePeriod === takePeriodValue.Week && days % 7 === 0) {
+                quantity *= (days / 7);
+            }
+            if (medicine.TakePeriod === takePeriodValue.Month && days % 30 === 0) {
+                quantity *= (days / 30);
+            }
         }
 
         const maxQuantity = medicineNameOptions.find(m => m.id === medicine.MedicineId).quantity;
@@ -226,28 +272,46 @@ const PrescriptionManagement = () => {
         value: null,
     }]);
     const handleMedicineNameChange = index => (event, value) => {
-        medicines[index].MedicineId = value ? value.id : '';
-        medicines[index].Unit = value ? value.unit : '';
+        const medicineId = value ? value.id : '';
+        const unit = value ? value.unit : '';
+        medicines[index].MedicineId = medicineId;
+        medicines[index].Unit = unit;
         medicineNames[index].value = value;
         setMedicines([...medicines]);
         setMedicineNames([...medicineNames]);
+        getIngredientOptions(index, medicineId);
+    };
+
+    const [diagnosisValue, setDiagnosisValue] = React.useState(null);
+    const handleDiagnosisValueChange = (event, value) => {
+        setPrescription({
+            ...prescription,
+            Diagnosis: value ? value.name : '',
+        })
+        setDiagnosisValue(value);
     };
 
     const handlePopMedicine = index => event => {
         medicines.splice(index, 1);
         medicineNames.splice(index, 1);
+        ingredientOptions.splice(index, 1);
         setMedicines([...medicines]);
         setMedicineNames([...medicineNames]);
+        setIngredientOptions([...ingredientOptions]);
     };
 
     const handlePushMedicine = () => {
         medicines.push({
             PrescriptionId: '',
             MedicineId: '',
+            Ingredient: '',
             Quantity: '',
             Unit: '',
             Price: '',
-            TimesPerDay: '',
+            TakePeriod: takePeriodValue.Day,
+            TakeMethod: '',
+            TakeTimes: '',
+            AmountPerTime: '',
             AfterBreakfast: '',
             AfterLunch: '',
             Afternoon: '',
@@ -257,8 +321,10 @@ const PrescriptionManagement = () => {
         medicineNames.push({
             value: null,
         });
+        ingredientOptions.push(ingredientOption);
         setMedicines([...medicines]);
         setMedicineNames([...medicineNames]);
+        setIngredientOptions([...ingredientOptions]);
     };
 
     const handleReset = () => {
@@ -266,6 +332,8 @@ const PrescriptionManagement = () => {
         setMedicineNames([{
             value: null,
         }]);
+        setIngredientOptions([ingredientOption]);
+        setDiagnosisValue(null);
         setPatient({
             ...patient,
             AppointmentDate: null,
@@ -273,15 +341,20 @@ const PrescriptionManagement = () => {
         setPrescription({
             ...prescription,
             Diagnosis: '',
+            OtherDiagnosis: '',
             Note: '',
         });
         setMedicines([{
             PrescriptionId: '',
             MedicineId: '',
+            Ingredient: '',
             Quantity: '',
             Unit: '',
             Price: '',
-            TimesPerDay: '',
+            TakePeriod: takePeriodValue.Day,
+            TakeMethod: '',
+            TakeTimes: '',
+            AmountPerTime: '',
             AfterBreakfast: '',
             AfterLunch: '',
             Afternoon: '',
@@ -323,20 +396,25 @@ const PrescriptionManagement = () => {
                 handleSnackbarOption('error', 'Yêu cầu nhập đơn vị!');
                 return;
             }
-            if (!medicine.TimesPerDay.trim()) {
+            if (!medicine.TakeTimes.trim()) {
                 handleSnackbarOption('error', 'Yêu cầu nhập số lần uống Mỗi ngày!');
                 return;
             }
-            if (medicine.TimesPerDay.trim() && !_.isFinite(_.toNumber(medicine.TimesPerDay))) {
+            if (medicine.TakeTimes.trim() && !_.isFinite(_.toNumber(medicine.TakeTimes))) {
                 handleSnackbarOption('error', 'Yêu cầu nhập số cho trường Mỗi ngày!');
                 return;
             }
-            if (_.toNumber(medicine.TimesPerDay) !== [
+            if (medicine.TakePeriod === takePeriodValue.Day &&
+                _.toNumber(medicine.TakeTimes) !== [
                 medicine.AfterBreakfast,
                 medicine.AfterLunch,
                 medicine.Afternoon,
                 medicine.AfterDinner].filter(value => (value.trim() && true)).length) {
                 handleSnackbarOption('error', 'Số lần uống mỗi ngày dư hoặc thiếu!');
+                return;
+            }
+            if (medicine.AmountPerTime.trim() && !_.isFinite(_.toNumber(medicine.AmountPerTime))) {
+                handleSnackbarOption('error', 'Yêu cầu nhập số cho trường Mỗi lần dùng!');
                 return;
             }
             if (medicine.AfterBreakfast.trim() && !_.isFinite(_.toNumber(medicine.AfterBreakfast))) {
@@ -552,18 +630,26 @@ const PrescriptionManagement = () => {
         });
     };
 
+    // const [diagnosisOptions, setDiagnosisOptions] = React.useState([{
+    //     label: '',
+    //     value: '',
+    // }]);
     const [diagnosisOptions, setDiagnosisOptions] = React.useState([{
-        label: '',
-        value: '',
+        id: '',
+        name: '',
     }]);
     const getDiagnosisOptions = () => {
         Axios.get(GetDiagnosisNameOptionsUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const options = [];
-                data.map(({ name }) => options.push({
-                    label: name,
-                    value: name,
+                // data.map(({ name }) => options.push({
+                //     label: name,
+                //     value: name,
+                // }));
+                data.map(({ id, name }) => options.push({
+                    id,
+                    name,
                 }));
                 setDiagnosisOptions(options);
             }
@@ -589,6 +675,33 @@ const PrescriptionManagement = () => {
             }
         }).catch((reason) => {
             handleError(reason, getUnitsErrorMsg);
+        });
+    };
+
+    const ingredientOption = [{
+        label: '',
+        value: '',
+    }];
+    const [ingredientOptions, setIngredientOptions] = React.useState([ingredientOption]);
+    const getIngredientOptions = (index, medicineId) => {
+        if (medicineId === '') {
+            medicineId = 0;
+        }
+
+        const url = `${GetIngredientOptionsUrl}/${medicineId}`;
+        Axios.get(url, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200 && !_.isEmpty(data)) {
+                const options = [];
+                data.map(({ name }) => options.push({
+                    label: name,
+                    value: name,
+                }));
+                ingredientOptions[index] = options;
+                setIngredientOptions([...ingredientOptions]);
+            }
+        }).catch((reason) => {
+            handleError(reason, getIngredientsErrorMsg);
         });
     };
 
@@ -671,19 +784,37 @@ const PrescriptionManagement = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                                    <Select
+                                    {/* <Select
                                         fullWidth
                                         id="Diagnosis"
                                         label="Chẩn đoán"
                                         value={prescription.Diagnosis}
                                         options={diagnosisOptions}
                                         onChange={handlePrescriptionChange('Diagnosis')}
+                                    /> */}
+                                    <Autocomplete
+                                        fullWidth
+                                        id="Diagnosis"
+                                        label="Chẩn đoán"
+                                        options={diagnosisOptions}
+                                        getOptionLabel={option => getOptionLabel(option)}
+                                        value={diagnosisValue}
+                                        onChange={handleDiagnosisValueChange}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <TextField
+                                        id="OtherDiagnosis"
+                                        label="Chẩn đoán khác"
+                                        value={prescription.OtherDiagnosis}
+                                        onChange={handlePrescriptionChange('OtherDiagnosis')}
+                                        fullWidth
                                     />
                                 </Grid>
                                 {
                                     medicines.map((medicine, index) => (
                                         <React.Fragment key={index}>
-                                            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                                 <Autocomplete
                                                     fullWidth
                                                     id={`MedicineId${index}`}
@@ -692,6 +823,16 @@ const PrescriptionManagement = () => {
                                                     getOptionLabel={option => getOptionLabel(option)}
                                                     value={medicineNames[index] ? medicineNames[index].value : null}
                                                     onChange={handleMedicineNameChange(index)}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                                <Select
+                                                    fullWidth
+                                                    id={`Ingredient${index}`}
+                                                    label="Hoạt chất"
+                                                    value={medicine.Ingredient}
+                                                    options={ingredientOptions[index]}
+                                                    onChange={handleMedicinesChange(index, 'Ingredient')}
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
@@ -745,59 +886,102 @@ const PrescriptionManagement = () => {
                                                 </Grid>
                                             </Grid>
                                             <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                                <Select
+                                                    fullWidth
+                                                    id={`TakePeriod${index}`}
+                                                    llabel="Thời gian"
+                                                    value={medicine.TakePeriod}
+                                                    options={takePeriodOptions}
+                                                    onChange={handleMedicinesChange(index, 'TakePeriod')} />
+                                            </Grid>
+                                            <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                                 <TextField
-                                                    id={`TimesPerDay${index}`}
-                                                    label="Ngày uống"
-                                                    value={medicine.TimesPerDay}
-                                                    onChange={handleMedicinesChange(index, 'TimesPerDay')}
+                                                    id={`TakeMethod${index}`}
+                                                    label="Phương thức"
+                                                    value={medicine.TakeMethod}
+                                                    onChange={handleMedicinesChange(index, 'TakeMethod')}
+                                                    fullWidth
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                                <TextField
+                                                    id={`TakeTimes${index}`}
+                                                    label="Số lần"
+                                                    value={medicine.TakeTimes}
+                                                    onChange={handleMedicinesChange(index, 'TakeTimes')}
                                                     placeholder="...lần"
                                                     fullWidth
                                                 />
                                             </Grid>
-                                            <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                                <TextField
-                                                    id={`AfterBreakfast${index}`}
-                                                    label="Sáng"
-                                                    value={medicine.AfterBreakfast}
-                                                    onChange={handleMedicinesChange(index, 'AfterBreakfast')}
-                                                    onBlur={handleMedicinesBlur(index, 'AfterBreakfast')}
-                                                    placeholder={`...${medicine.Unit}`}
-                                                    fullWidth
-                                                />
-                                            </Grid>
-                                            <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                                <TextField
-                                                    id={`AfterLunch${index}`}
-                                                    label="Trưa"
-                                                    value={medicine.AfterLunch}
-                                                    onChange={handleMedicinesChange(index, 'AfterLunch')}
-                                                    onBlur={handleMedicinesBlur(index, 'AfterLunch')}
-                                                    placeholder={`...${medicine.Unit}`}
-                                                    fullWidth
-                                                />
-                                            </Grid>
-                                            <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                                <TextField
-                                                    id={`Afternoon${index}`}
-                                                    label="Chiều"
-                                                    value={medicine.Afternoon}
-                                                    onChange={handleMedicinesChange(index, 'Afternoon')}
-                                                    onBlur={handleMedicinesBlur(index, 'Afternoon')}
-                                                    placeholder={`...${medicine.Unit}`}
-                                                    fullWidth
-                                                />
-                                            </Grid>
-                                            <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                                <TextField
-                                                    id={`AfterDinner${index}`}
-                                                    label="Tối"
-                                                    value={medicine.AfterDinner}
-                                                    onChange={handleMedicinesChange(index, 'AfterDinner')}
-                                                    onBlur={handleMedicinesBlur(index, 'AfterDinner')}
-                                                    placeholder={`...${medicine.Unit}`}
-                                                    fullWidth
-                                                />
-                                            </Grid>
+                                            {
+                                                medicine.TakePeriod === takePeriodValue.Day ?
+                                                    <React.Fragment>
+                                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                                            <TextField
+                                                                id={`AfterBreakfast${index}`}
+                                                                label="Sáng"
+                                                                value={medicine.AfterBreakfast}
+                                                                onChange={handleMedicinesChange(index, 'AfterBreakfast')}
+                                                                onBlur={handleMedicinesBlur(index, 'AfterBreakfast')}
+                                                                placeholder={`...${medicine.Unit}`}
+                                                                fullWidth
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                                            <TextField
+                                                                id={`AfterLunch${index}`}
+                                                                label="Trưa"
+                                                                value={medicine.AfterLunch}
+                                                                onChange={handleMedicinesChange(index, 'AfterLunch')}
+                                                                onBlur={handleMedicinesBlur(index, 'AfterLunch')}
+                                                                placeholder={`...${medicine.Unit}`}
+                                                                fullWidth
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                                            <TextField
+                                                                id={`Afternoon${index}`}
+                                                                label="Chiều"
+                                                                value={medicine.Afternoon}
+                                                                onChange={handleMedicinesChange(index, 'Afternoon')}
+                                                                onBlur={handleMedicinesBlur(index, 'Afternoon')}
+                                                                placeholder={`...${medicine.Unit}`}
+                                                                fullWidth
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                                            <TextField
+                                                                id={`AfterDinner${index}`}
+                                                                label="Tối"
+                                                                value={medicine.AfterDinner}
+                                                                onChange={handleMedicinesChange(index, 'AfterDinner')}
+                                                                onBlur={handleMedicinesBlur(index, 'AfterDinner')}
+                                                                placeholder={`...${medicine.Unit}`}
+                                                                fullWidth
+                                                            />
+                                                        </Grid>
+                                                    </React.Fragment>
+                                                    :
+                                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                                        <Grid
+                                                            container
+                                                            spacing={2}
+                                                            justify="flex-start"
+                                                        >
+                                                            <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                                                <TextField
+                                                                    id={`AmountPerTime${index}`}
+                                                                    label="Mỗi lần dùng"
+                                                                    value={medicine.AmountPerTime}
+                                                                    onChange={handleMedicinesChange(index, 'AmountPerTime')}
+                                                                    onBlur={handleMedicinesBlur(index, 'AmountPerTime')}
+                                                                    placeholder={`...${medicine.Unit}`}
+                                                                    fullWidth
+                                                                />
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Grid>
+                                            }
                                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                                 <TextField
                                                     id={`Note${index}`}
