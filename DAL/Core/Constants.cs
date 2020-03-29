@@ -72,4 +72,15 @@
 
         public const string Month = "MONTH";
     }
+
+    public static class FindMedicineByConstants
+    {
+        public const string IdCode = "IdCode";
+
+        public const string Name = "Name";
+
+        public const string ShortName = "ShortName";
+
+        public const string Ingredient = "Ingredient";
+    }
 }

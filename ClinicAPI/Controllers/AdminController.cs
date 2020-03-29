@@ -119,22 +119,22 @@ namespace ClinicAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                if (findBy == "IdCode")
+                if (findBy == FindMedicineByConstants.IdCode)
                 {
                     medicines = medicines
                     .Where(m => m.IdCode.Contains(query, StringComparison.OrdinalIgnoreCase));
                 }
-                else if (findBy == "Name")
+                else if (findBy == FindMedicineByConstants.Name)
                 {
                     medicines = medicines
                     .Where(m => m.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
                 }
-                else if (findBy == "ShortName")
+                else if (findBy == FindMedicineByConstants.ShortName)
                 {
                     medicines = medicines
                     .Where(m => m.ShortName.Contains(query, StringComparison.OrdinalIgnoreCase));
                 }
-                else if (findBy == "Ingredient")
+                else if (findBy == FindMedicineByConstants.Ingredient)
                 {
                     var ingredients = _unitOfWork.Ingredients.GetAll();
                     var medicineIds = ingredients
