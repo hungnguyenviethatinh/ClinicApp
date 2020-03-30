@@ -67,16 +67,27 @@ namespace ClinicAPI.Controllers
             return Ok(units);
         }
 
-        [HttpGet("ingredients/{medicineId}")]
+        [HttpGet("ingredients")]
         [Authorize(Policies.ManageAllPrescriptionsPolicy)]
-        public IActionResult GetIngredients(int medicineId)
+        public IActionResult GetIngredients()
         {
             var ingredients = _unitOfWork.Ingredients
-                .Where(i => i.MedicineId == medicineId)
-                .Select(i => new { i.Name });
+                .GetAll()
+                .Select(i => new { i.MedicineId, i.Name });
 
             return Ok(ingredients);
         }
+
+        //[HttpGet("ingredients/{medicineId}")]
+        //[Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        //public IActionResult GetIngredients(int medicineId)
+        //{
+        //    var ingredients = _unitOfWork.Ingredients
+        //        .Where(i => i.MedicineId == medicineId)
+        //        .Select(i => new { i.Name });
+
+        //    return Ok(ingredients);
+        //}
 
         [HttpGet("patients")]
         [Authorize(Policies.ViewAllPatientsPolicy)]
@@ -275,6 +286,15 @@ namespace ClinicAPI.Controllers
             var prescriptions = _unitOfWork.Prescriptions.GetPrescriptionList(patientId);
 
             return Ok(prescriptions);
+        }
+
+        [HttpGet("medicinelist/{prescriptionId}")]
+        [Authorize(Policies.ViewAllPrescriptionsPolicy)]
+        public IActionResult GetMedicineList(int prescriptionId)
+        {
+            var medicines = _unitOfWork.PrescriptionMedicines.Where(pm => !pm.IsDeleted && pm.PrescriptionId == prescriptionId);
+
+            return Ok(medicines);
         }
 
         [HttpPost("prescriptions")]
