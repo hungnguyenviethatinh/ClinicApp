@@ -7,7 +7,7 @@ import { icons } from './icons';
 import { localization } from './localization';
 
 const Table = props => {
-    const { selectedRow, customOptions, ...rest } = props;
+    const { selectedRow, customOptions, pageSizeOptions, ...rest } = props;
 
     const styleSelectedRow = rowData => ({
         backgroundColor: (
@@ -15,7 +15,8 @@ const Table = props => {
         ) ? '#EEE' : '#FFF',
     });
 
-    const [pageSize, setPageSize] = React.useState(10);
+    const { 0: pages } = pageSizeOptions;
+    const [pageSize, setPageSize] = React.useState(pages);
     const updatePageSize = (pageSize) => {
 		setPageSize(pageSize);
 	};
@@ -33,7 +34,7 @@ const Table = props => {
                 toolbar: false,
                 rowStyle: styleSelectedRow,
                 pageSize,
-                pageSizeOptions: [10, 20, 50],
+                pageSizeOptions,
                 debounceInterval: 500,
                 ...customOptions,
             }}
@@ -47,6 +48,12 @@ const Table = props => {
 
 Table.propTypes = {
     customOptions: PropTypes.object,
+    pageSizeOptions: PropTypes.arrayOf(PropTypes.number),
+};
+
+Table.defaultProps = {
+    customOptions: { },
+    pageSizeOptions: [10, 20, 50],
 };
 
 export default Table;

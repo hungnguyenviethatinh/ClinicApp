@@ -105,7 +105,7 @@ export const NotFoundMsg = 'Không tìm thấy thông tin!';
 
 export const DataDateTimeFormat = 'YYYY-MM-DD';
 export const DisplayDateFormat = 'DD-MM-YYYY';
-export const DisplayDateTimeFormat = 'HH:mm DD-MM-YYYY';
+export const DisplayDateTimeFormat = 'DD-MM-YYYY HH:mm:ss';
 
 export const RefreshDataTimer = 10;
 

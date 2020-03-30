@@ -13,7 +13,8 @@ import {
     Visibility,
     Search, 
     Cancel,
-    BorderColor } from '@material-ui/icons';
+    BorderColor,
+    FileCopy } from '@material-ui/icons';
 import { CircularProgress, FormControl } from '@material-ui/core';
 
 const styledBy = (property, mapping) => props => mapping[props[property]];
@@ -63,6 +64,8 @@ const Icon = props => {
             return <Cancel style={{ marginRight: 16 }} />;
         case 'pen':
             return <BorderColor style={{ marginRight: 16 }} />;
+        case 'copy':
+            return <FileCopy style={{ marginRight: 16 }} />;
         default:
             return <React.Fragment />
     }

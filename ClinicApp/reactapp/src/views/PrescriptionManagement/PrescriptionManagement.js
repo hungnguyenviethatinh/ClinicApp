@@ -18,6 +18,7 @@ import { Snackbar } from '../../components/Snackbar';
 import { Button, FabButton } from '../../components/Button';
 import { Autocomplete } from '../../components/Autocomplete';
 import { DateTimePicker } from '../../components/DateTimePicker';
+import { PrescriptionListView } from './PrescriptionList';
 
 import Axios, {
     axiosRequestConfig,
@@ -406,10 +407,10 @@ const PrescriptionManagement = () => {
             }
             if (medicine.TakePeriod === takePeriodValue.Day &&
                 _.toNumber(medicine.TakeTimes) !== [
-                medicine.AfterBreakfast,
-                medicine.AfterLunch,
-                medicine.Afternoon,
-                medicine.AfterDinner].filter(value => (value.trim() && true)).length) {
+                    medicine.AfterBreakfast,
+                    medicine.AfterLunch,
+                    medicine.Afternoon,
+                    medicine.AfterDinner].filter(value => (value.trim() && true)).length) {
                 handleSnackbarOption('error', 'Số lần uống mỗi ngày dư hoặc thiếu!');
                 return;
             }
@@ -705,6 +706,18 @@ const PrescriptionManagement = () => {
         });
     };
 
+    const [openPrescriptionList, setOpenPrescriptionList] = React.useState(false);
+    const onOpenPrescriptionList = () => {
+        setOpenPrescriptionList(true);
+    };
+    const onClosePrescriptionList = () => {
+        setOpenPrescriptionList(false);
+    };
+    const onCopyPrescription = (prescriptionId) => {
+        console.log('prescriptionId:', prescriptionId);
+        setOpenPrescriptionList(false);
+    };
+
     React.useEffect(() => {
         getPatient();
         getMedicineNameOptions();
@@ -725,6 +738,14 @@ const PrescriptionManagement = () => {
                     style={{ height: '100%' }}
                 >
                     <CardHeader
+                        action={
+                            <Button
+                                color="warning"
+                                children="Sao chép"
+                                iconName="copy"
+                                onClick={onOpenPrescriptionList}
+                            />
+                        }
                         title="PHIẾU KÊ ĐƠN THUỐC"
                         subheader="Kê đơn thuốc mới cho bệnh nhân hiện tại đang khám"
                     />
@@ -1055,6 +1076,12 @@ const PrescriptionManagement = () => {
                     </CardContent>
                 </Card>
             </Grid>
+            <PrescriptionListView
+                open={openPrescriptionList}
+                patientId={`${patient.Id}`}
+                handleClose={onClosePrescriptionList}
+                handleCopy={(prescriptionId) => onCopyPrescription(prescriptionId)}
+            />
             <Snackbar
                 vertical="bottom"
                 horizontal="right"
