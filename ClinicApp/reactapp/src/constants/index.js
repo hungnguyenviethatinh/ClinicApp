@@ -110,3 +110,9 @@ export const DisplayDateTimeFormat = 'DD-MM-YYYY HH:mm:ss';
 export const RefreshDataTimer = 10;
 
 export const AddressSeperator = ',';
+
+export const SnackbarMessage = {
+    GetMedicineListError: 'Có lỗi khi sao chép đơn thuốc cũ. Vui lòng thử lại sau!',
+    CreatePrescriptionError: 'Có lỗi khi tạo đơn thuốc mới!',
+    CreatePrescriptionSuccess: 'Đơn thuốc mới đã được tạo thành công!',
+};

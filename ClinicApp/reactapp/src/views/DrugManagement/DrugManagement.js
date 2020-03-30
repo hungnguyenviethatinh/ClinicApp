@@ -283,11 +283,11 @@ const DrugManagement = () => {
                 }
             }
         }
-        if (!medicine.Quantity.toString().trim()) {
+        if (!_.toString(medicine.Quantity).trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập số lượng thuốc!');
             return;
         }
-        if (medicine.Quantity.toString().trim() && !_.isFinite(_.toNumber(medicine.Quantity))) {
+        if (_.toString(medicine.Quantity).trim() && !_.isFinite(_.toNumber(medicine.Quantity))) {
             handleSnackbarOption('error', 'Yêu cầu nhập số cho số lượng thuốc!');
             return;
         }
@@ -295,11 +295,11 @@ const DrugManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập đơn vị thuốc!');
             return;
         }
-        if (!medicine.Price.toString().trim()) {
+        if (!_.toString(medicine.Price).trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập giá bán thuốc!');
             return;
         }
-        if (medicine.Price.toString().trim() && !_.isFinite(_.toNumber(medicine.Price))) {
+        if (_.toString(medicine.Price).trim() && !_.isFinite(_.toNumber(medicine.Price))) {
             handleSnackbarOption('error', 'Yêu cầu nhập số cho giá thuốc!');
             return;
         }
