@@ -268,6 +268,15 @@ namespace ClinicAPI.Controllers
             return Ok(new[] { prescription, });
         }
 
+        [HttpGet("prescriptionlist/{patientId}")]
+        [Authorize(Policies.ViewAllPrescriptionsPolicy)]
+        public IActionResult GetPrescriptionList(int patientId)
+        {
+            var prescriptions = _unitOfWork.Prescriptions.GetPrescriptionList(patientId);
+
+            return Ok(prescriptions);
+        }
+
         [HttpPost("prescriptions")]
         [Authorize(Policies.ManageAllPrescriptionsPolicy)]
         public async Task<IActionResult> AddPrescription([FromBody] PrescriptionModel prescriptionModel)

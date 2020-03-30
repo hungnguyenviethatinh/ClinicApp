@@ -11,6 +11,7 @@ namespace DAL.Repositories
     {
         IEnumerable<Prescription> GetPrescriptions();
         Task<Prescription> GetPrescription(int id);
+        IEnumerable<Prescription> GetPrescriptionList(int patientId);
     }
 
     public class PrescriptionRepository : Repository<Prescription>, IPrescriptionRepository
@@ -36,6 +37,13 @@ namespace DAL.Repositories
                 .Include(p => p.Medicines).ThenInclude(m => m.Medicine)
                 .Where(p => (!p.IsDeleted && p.Id == id))
                 .SingleOrDefaultAsync();
+        }
+
+        public IEnumerable<Prescription> GetPrescriptionList(int patientId)
+        {
+            return _appContext.Prescriptions
+                .Include(p => p.Doctor)
+                .Where(p => !p.IsDeleted && p.PatientId == patientId);
         }
 
         private ApplicationDbContext _appContext => (ApplicationDbContext)_context;
