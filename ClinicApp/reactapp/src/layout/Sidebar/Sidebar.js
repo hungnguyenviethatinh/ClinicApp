@@ -103,7 +103,7 @@ const receptionistMenus = [
         icon: <DashboardIcon />
     },
     {
-        title: 'Tiếp nhận bệnh nhân',
+        title: 'Quản lý và Tiếp nhận bệnh nhân',
         href: RouteConstants.PatientMangementView,
         icon: <ViewListIcon />
     },

@@ -27,6 +27,7 @@ export const PatientStatus = {
     IsChecking: 'Đang khám',
     IsChecked: 'Đã khám',
     IsRechecking: 'Tái khám',
+    IsToAddDocs: 'BS Hồ Sơ',
 };
 
 export const PatientStatusEnum = {
@@ -35,6 +36,7 @@ export const PatientStatusEnum = {
     'Đang khám': 2,
     'Đã khám': 3,
     'Tái khám': 4,
+    'BSHS': 5,
 };
 
 export const PrescriptionStatus = {

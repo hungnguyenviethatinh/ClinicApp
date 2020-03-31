@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
 
 const statusColors = {
     [PatientStatus.IsNew]: color.success,
+    [PatientStatus.IsToAddDocs]: color.warning,
     [PatientStatus.IsAppointed]: color.secondary,
     [PatientStatus.IsChecking]: color.primary,
     [PatientStatus.IsChecked]: color.danger,
