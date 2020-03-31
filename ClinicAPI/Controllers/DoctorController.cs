@@ -93,7 +93,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)
         {
-            var patients = _unitOfWork.Patients.Where(p => !p.IsDeleted && p.DoctorId == GetCurrentUserId());
+            var patients = GetCurrentDoctorPatients();
             int totalCount = patients.Count();
 
             if (!string.IsNullOrWhiteSpace(query))
@@ -129,9 +129,9 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatientsInQueue()
         {
-            var patients = _unitOfWork.Patients
+            var patients = GetCurrentDoctorPatients()
                 .Where(p =>
-                (!p.IsDeleted && p.DoctorId == GetCurrentUserId() && p.Status != PatientStatus.IsChecked &&
+                (p.Status != PatientStatus.IsChecked &&
                 (p.AppointmentDate == null || p.AppointmentDate <= DateTime.Now)))
                 .OrderBy(p => p.UpdatedDate);
 
@@ -142,8 +142,8 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetCurrentPatient()
         {
-            var patient = _unitOfWork.Patients
-                .Where(p => (p.DoctorId == GetCurrentUserId() && !p.IsDeleted && p.Status == PatientStatus.IsChecking))
+            var patient = GetCurrentDoctorPatients()
+                .Where(p => (p.Status == PatientStatus.IsChecking))
                 .OrderBy(p => p.UpdatedDate)
                 .FirstOrDefault();
 
@@ -172,8 +172,8 @@ namespace ClinicAPI.Controllers
         {
             if (status == PatientStatus.IsChecking)
             {
-                var patients = _unitOfWork.Patients
-                    .Where(p => (p.DoctorId == GetCurrentUserId() && !p.IsDeleted && p.Status == PatientStatus.IsChecking));
+                var patients = GetCurrentDoctorPatients()
+                    .Where(p => (p.Status == PatientStatus.IsChecking));
                 if (patients.Any())
                 {
                     return NoContent();
@@ -238,12 +238,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public IActionResult GetPrescriptions()
         {
-            var prescriptions = _unitOfWork.Prescriptions.Where(p => !p.IsDeleted && p.DoctorId == GetCurrentUserId());
-
-            foreach (var prescription in prescriptions)
-            {
-                prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
-            }
+            var prescriptions = GetCurrentDoctorPrescriptions();
 
             return Ok(prescriptions);
         }
@@ -252,14 +247,9 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public IActionResult GetPrescriptionsInQueue()
         {
-            var prescriptions = _unitOfWork.Prescriptions
-                .Where(p => (!p.IsDeleted && p.DoctorId == GetCurrentUserId() && p.Status == PrescriptionStatus.IsNew))
+            var prescriptions = GetCurrentDoctorPrescriptions()
+                .Where(p => (p.Status == PrescriptionStatus.IsNew))
                 .OrderBy(p => p.UpdatedDate);
-
-            foreach (var prescription in prescriptions)
-            {
-                prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
-            }
 
             return Ok(prescriptions);
         }
@@ -268,24 +258,31 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public async Task<IActionResult> GetPrescription(int id)
         {
-            var prescription = await _unitOfWork.Prescriptions.FindAsync(id);
+            var prescription = await _unitOfWork.Prescriptions.GetDoctorPrescription(id);
             if (prescription == null)
             {
                 return NotFound();
             }
-
-            prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
 
             return Ok(new[] { prescription, });
         }
 
         [HttpGet("prescriptionlist/{patientId}")]
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
-        public IActionResult GetPrescriptionList(int patientId)
+        public IActionResult GetPrescriptionList(int patientId, [FromQuery] int page, [FromQuery] int pageSize)
         {
             var prescriptions = _unitOfWork.Prescriptions.GetPrescriptionList(patientId);
+            int totalCount = prescriptions.Count();
 
-            return Ok(prescriptions);
+            prescriptions = prescriptions.Skip((page - 1) * pageSize).Take(pageSize);
+
+            return Ok(new[] {
+                new
+                {
+                    totalCount,
+                    prescriptions,
+                }
+            });
         }
 
         [HttpGet("medicinelist/{prescriptionId}")]
@@ -421,6 +418,26 @@ namespace ClinicAPI.Controllers
         private string GetCurrentUserId()
         {
             return Utilities.GetUserId(User);
+        }
+
+        private IEnumerable<Patient> GetCurrentDoctorPatients()
+        {
+            string currentDoctorId = GetCurrentUserId();
+            var patientIds = _unitOfWork.DoctorPatients
+                .Where(dp => dp.DoctorId == currentDoctorId)
+                .Select(dp => dp.PatientId);
+            var patients = _unitOfWork.Patients
+                .Where(p => (!p.IsDeleted && patientIds.Contains(p.Id)));
+
+            return patients;
+        }
+
+        private IEnumerable<Prescription> GetCurrentDoctorPrescriptions()
+        {
+            string currentDoctorId = GetCurrentUserId();
+            var prescriptions = _unitOfWork.Prescriptions.GetDoctorPrescriptions(currentDoctorId);
+
+            return prescriptions;
         }
     }
 }

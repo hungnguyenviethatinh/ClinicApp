@@ -108,4 +108,17 @@ namespace DAL.Repositories
 
         }
     }
+
+    public interface IDoctorpatientRepository : IRepository<DoctorPatient>
+    {
+
+    }
+
+    public class DoctorPatientRepository : Repository<DoctorPatient>, IDoctorpatientRepository
+    {
+        public DoctorPatientRepository(ApplicationDbContext context) : base(context)
+        {
+
+        }
+    }
 }

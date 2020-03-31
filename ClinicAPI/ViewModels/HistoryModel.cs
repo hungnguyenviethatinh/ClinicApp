@@ -10,6 +10,8 @@ namespace ClinicAPI.ViewModels
         public string Weight { get; set; }
         public string BloodPresure { get; set; }
         public string Pulse { get; set; }
+        public string Other { get; set; }
+        public string Note { get; set; }
         public bool IsChecked { get; set; }
 
         public string DoctorId { get; set; }
@@ -23,6 +25,8 @@ namespace ClinicAPI.ViewModels
         public string Weight { get; set; }
         public string BloodPresure { get; set; }
         public string Pulse { get; set; }
+        public string Other { get; set; }
+        public string Note { get; set; }
         public bool IsChecked { get; set; }
         public string DoctorId { get; set; }
         public User Doctor { get; set; }

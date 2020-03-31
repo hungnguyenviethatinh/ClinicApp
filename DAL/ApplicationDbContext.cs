@@ -23,6 +23,7 @@ namespace DAL
         public DbSet<Unit> Units { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<OpenTime> OpenTimes { get; set; }
+        public DbSet<DoctorPatient> DoctorPatients { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -74,6 +75,8 @@ namespace DAL
             builder.Entity<Patient>()
                 .Property(p => p.FullName).IsRequired().HasMaxLength(100);
             builder.Entity<Patient>()
+                .Property(p => p.IdCode).HasMaxLength(30);
+            builder.Entity<Patient>()
                 .Property(p => p.Address).HasMaxLength(200);
             builder.Entity<Patient>()
                 .Property(p => p.Email).HasMaxLength(100);
@@ -82,10 +85,17 @@ namespace DAL
             builder.Entity<Patient>()
                 .Property(p => p.PhoneNumber).IsUnicode(false).HasMaxLength(100);
             builder.Entity<Patient>()
-                .HasOne(p => p.Doctor)
-                .WithMany(d => d.Patients)
-                .HasForeignKey(p => p.DoctorId)
-                .IsRequired().OnDelete(DeleteBehavior.Restrict);
+                .Property(p => p.RelativePhoneNumber).IsUnicode(false).HasMaxLength(100);
+            //builder.Entity<Patient>()
+            //    .HasOne(p => p.Doctor)
+            //    .WithMany(d => d.Patients)
+            //    .HasForeignKey(p => p.DoctorId)
+            //    .IsRequired().OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Patient>()
+                .HasMany(p => p.Doctors)
+                .WithOne(d => d.Patient)
+                .HasForeignKey(d => d.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Patient>()
                 .HasMany(p => p.Histories)
                 .WithOne(h => h.Patient)
@@ -102,6 +112,8 @@ namespace DAL
                 .HasForeignKey(x => x.PatientId)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<Prescription>()
+                .Property(p => p.IdCode).HasMaxLength(30);
             builder.Entity<Prescription>()
                 .HasOne(p => p.Patient)
                 .WithMany(pt => pt.Prescriptions)
@@ -154,6 +166,10 @@ namespace DAL
                 .Property(h => h.BloodPresure).HasMaxLength(10);
             builder.Entity<History>()
                 .Property(h => h.Pulse).HasMaxLength(10);
+            builder.Entity<History>()
+                .Property(h => h.Other).HasMaxLength(100);
+            builder.Entity<History>()
+                .Property(h => h.Note).HasMaxLength(100);
             builder.Entity<History>()
                 .HasOne(h => h.Doctor)
                 .WithMany(d => d.Histories)
@@ -229,6 +245,9 @@ namespace DAL
 
             builder.Entity<OpenTime>()
                 .Property(o => o.OpenClosedTime).IsRequired().HasMaxLength(100);
+
+            builder.Entity<DoctorPatient>()
+                .HasKey(dp => new { dp.DoctorId, dp.PatientId });
         }
 
         public override int SaveChanges()

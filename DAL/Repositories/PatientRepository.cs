@@ -23,14 +23,14 @@ namespace DAL.Repositories
         public IEnumerable<Patient> GetPatients()
         {
             return _appContext.Patients
-                 .Include(p => p.Doctor)
+                 .Include(p => p.Doctors).ThenInclude(d => d.Doctor)
                  .Where(p => !p.IsDeleted);
         }
 
         public async Task<Patient> GetPatient(int id)
         {
             return await _appContext.Patients
-                .Include(p => p.Doctor)
+                .Include(p => p.Doctors).ThenInclude(d => d.Doctor)
                 .Where(p => !p.IsDeleted && p.Id == id)
                 .SingleOrDefaultAsync();
         }

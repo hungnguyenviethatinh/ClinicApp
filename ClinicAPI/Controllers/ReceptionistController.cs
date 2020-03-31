@@ -364,14 +364,9 @@ namespace ClinicAPI.Controllers
         public IActionResult GetPrescriptionsInQueue()
         {
             var prescriptions = _unitOfWork.Prescriptions
-                .Where(p => !p.IsDeleted && p.Status == PrescriptionStatus.IsNew)
+                .GetRcptPrescriptions()
+                .Where(p => p.Status == PrescriptionStatus.IsNew)
                 .OrderBy(p => p.UpdatedDate);
-
-            foreach (var prescription in prescriptions)
-            {
-                prescription.Doctor = _unitOfWork.Users.Find(prescription.DoctorId);
-                prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
-            }
 
             return Ok(prescriptions);
         }
@@ -380,14 +375,11 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public async Task<IActionResult> GetPrescription(int id)
         {
-            var prescription = await _unitOfWork.Prescriptions.FindAsync(id);
+            var prescription = await _unitOfWork.Prescriptions.GetRcptPrescription(id);
             if (prescription == null)
             {
                 return NotFound();
             }
-
-            prescription.Doctor = _unitOfWork.Users.Find(prescription.DoctorId);
-            prescription.Patient = _unitOfWork.Patients.Find(prescription.PatientId);
 
             return Ok(new[] { prescription, });
         }

@@ -62,6 +62,9 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<OpenTime, OpenTimeModel>();
             CreateMap<OpenTimeModel, OpenTime>();
+
+            CreateMap<DoctorPatient, DoctorPatientModel>();
+            CreateMap<DoctorPatientModel, DoctorPatient>();
         }
     }
 }

@@ -46,6 +46,8 @@
         public const string IsChecked = "Đã khám";
 
         public const string IsRechecking = "Tái khám";
+
+        public const string IsToAddDocs = "BS Hồ Sơ";
     }
 
     public static class PrescriptionStatusConstants
