@@ -35,6 +35,6 @@ namespace DAL.Models
         public virtual ICollection<History> Histories { get; set; }
         public virtual ICollection<Prescription> Prescriptions { get; set; }
         public virtual ICollection<XRayImage> XRayImages { get; set; }
-        public virtual ICollection<DoctorPatient> Doctors { get; set; }
+        public virtual ICollection<DoctorPatientHistory> Doctors { get; set; }
     }
 }

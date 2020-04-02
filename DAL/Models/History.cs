@@ -15,8 +15,8 @@ namespace DAL.Models
         public string Note { get; set; }
         public bool IsChecked { get; set; }
         
-        public string DoctorId { get; set; }
-        public virtual User Doctor { get; set; }
+        //public string DoctorId { get; set; }
+        //public virtual User Doctor { get; set; }
         
         public int PatientId { get; set; }
         public virtual Patient Patient { get; set; }
@@ -28,5 +28,6 @@ namespace DAL.Models
 
         public virtual ICollection<Prescription> Prescriptions { get; set; }
         public virtual ICollection<XRayImage> XRayImages { get; set; }
+        public virtual ICollection<DoctorPatientHistory> Doctors { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace DAL
         public DbSet<Unit> Units { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<OpenTime> OpenTimes { get; set; }
-        public DbSet<DoctorPatient> DoctorPatients { get; set; }
+        public DbSet<DoctorPatientHistory> DoctorPatientHistories { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -55,11 +55,11 @@ namespace DAL
                 .WithOne(p => p.Doctor)
                 .HasForeignKey(p => p.DoctorId)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<User>()
-                .HasMany(u => u.Histories)
-                .WithOne(h => h.Doctor)
-                .HasForeignKey(h => h.DoctorId)
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            //builder.Entity<User>()
+            //    .HasMany(u => u.Histories)
+            //    .WithOne(h => h.Doctor)
+            //    .HasForeignKey(h => h.DoctorId)
+            //    .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Role>()
                 .HasMany(r => r.Claims)
@@ -170,11 +170,11 @@ namespace DAL
                 .Property(h => h.Other).HasMaxLength(100);
             builder.Entity<History>()
                 .Property(h => h.Note).HasMaxLength(100);
-            builder.Entity<History>()
-                .HasOne(h => h.Doctor)
-                .WithMany(d => d.Histories)
-                .HasForeignKey(h => h.DoctorId)
-                .IsRequired().OnDelete(DeleteBehavior.Restrict);
+            //builder.Entity<History>()
+            //    .HasOne(h => h.Doctor)
+            //    .WithMany(d => d.Histories)
+            //    .HasForeignKey(h => h.DoctorId)
+            //    .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<History>()
                 .HasOne(h => h.Patient)
                 .WithMany(p => p.Histories)
@@ -189,6 +189,11 @@ namespace DAL
                 .HasMany(h => h.XRayImages)
                 .WithOne(x => x.History)
                 .HasForeignKey(x => x.HistoryId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<History>()
+                .HasMany(h => h.Doctors)
+                .WithOne(d => d.History)
+                .HasForeignKey(d => d.HistoryId)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<PrescriptionMedicine>()
@@ -246,8 +251,8 @@ namespace DAL
             builder.Entity<OpenTime>()
                 .Property(o => o.OpenClosedTime).IsRequired().HasMaxLength(100);
 
-            builder.Entity<DoctorPatient>()
-                .HasKey(dp => new { dp.DoctorId, dp.PatientId });
+            builder.Entity<DoctorPatientHistory>()
+                .HasKey(dp => new { dp.DoctorId, dp.PatientId, dp.HistoryId });
         }
 
         public override int SaveChanges()

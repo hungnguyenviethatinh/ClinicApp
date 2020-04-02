@@ -4,14 +4,16 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ClinicAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200401073155_UpdateDPModel")]
+    partial class UpdateDPModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,7 +53,7 @@ namespace ClinicAPI.Migrations
                     b.ToTable("Diagnoses");
                 });
 
-            modelBuilder.Entity("DAL.Models.DoctorPatientHistory", b =>
+            modelBuilder.Entity("DAL.Models.DoctorPatient", b =>
                 {
                     b.Property<string>("DoctorId")
                         .HasColumnType("nvarchar(450)");
@@ -68,7 +70,7 @@ namespace ClinicAPI.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("DoctorPatientHistories");
+                    b.ToTable("DoctorPatients");
                 });
 
             modelBuilder.Entity("DAL.Models.History", b =>
@@ -87,6 +89,10 @@ namespace ClinicAPI.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DoctorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Height")
                         .HasColumnType("nvarchar(10)")
@@ -121,6 +127,8 @@ namespace ClinicAPI.Migrations
                         .HasMaxLength(10);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId");
 
@@ -736,7 +744,7 @@ namespace ClinicAPI.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("DAL.Models.DoctorPatientHistory", b =>
+            modelBuilder.Entity("DAL.Models.DoctorPatient", b =>
                 {
                     b.HasOne("DAL.Models.User", "Doctor")
                         .WithMany("Patients")
@@ -759,6 +767,12 @@ namespace ClinicAPI.Migrations
 
             modelBuilder.Entity("DAL.Models.History", b =>
                 {
+                    b.HasOne("DAL.Models.User", "Doctor")
+                        .WithMany("Histories")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("DAL.Models.Patient", "Patient")
                         .WithMany("Histories")
                         .HasForeignKey("PatientId")

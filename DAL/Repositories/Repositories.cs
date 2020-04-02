@@ -21,9 +21,10 @@ namespace DAL.Repositories
         public IEnumerable<History> GetPatientHistories(int patientId)
         {
             return _appContext.Histories
-                .Include(h => h.Doctor)
+                //.Include(h => h.Doctor)
                 .Include(h => h.Prescriptions)
                 .Include(h => h.XRayImages)
+                .Include(h => h.Doctors).ThenInclude(d => d.Doctor)
                 .Where(h => h.PatientId == patientId)
                 .OrderBy(h => h.Id);
                 
@@ -109,14 +110,14 @@ namespace DAL.Repositories
         }
     }
 
-    public interface IDoctorpatientRepository : IRepository<DoctorPatient>
+    public interface IDoctorPatientHistoryRepository : IRepository<DoctorPatientHistory>
     {
 
     }
 
-    public class DoctorPatientRepository : Repository<DoctorPatient>, IDoctorpatientRepository
+    public class DoctorPatientHistoryRepository : Repository<DoctorPatientHistory>, IDoctorPatientHistoryRepository
     {
-        public DoctorPatientRepository(ApplicationDbContext context) : base(context)
+        public DoctorPatientHistoryRepository(ApplicationDbContext context) : base(context)
         {
 
         }

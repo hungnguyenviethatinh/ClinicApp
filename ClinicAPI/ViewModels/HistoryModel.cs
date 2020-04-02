@@ -14,7 +14,7 @@ namespace ClinicAPI.ViewModels
         public string Note { get; set; }
         public bool IsChecked { get; set; }
 
-        public string DoctorId { get; set; }
+        //public string DoctorId { get; set; }
         public int PatientId { get; set; }
     }
 
@@ -28,12 +28,13 @@ namespace ClinicAPI.ViewModels
         public string Other { get; set; }
         public string Note { get; set; }
         public bool IsChecked { get; set; }
-        public string DoctorId { get; set; }
-        public User Doctor { get; set; }
+        //public string DoctorId { get; set; }
+        //public User Doctor { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
 
-        public List<Prescription> Prescriptions { get; }
-        public List<XRayImage> XRayImages { get; }
+        //public List<DoctorPatientHistory> Doctors { get; }
+        //public List<Prescription> Prescriptions { get; }
+        //public List<XRayImage> XRayImages { get; }
     }
 }

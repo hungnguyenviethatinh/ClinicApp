@@ -40,9 +40,9 @@ namespace ClinicAPI.Controllers
         public async Task<IActionResult> GetDoctors()
         {
             var doctors = await _accountManager.GetUsersByRoleNameAsync(RoleConstants.DoctorRoleName);
-            doctors = doctors.Where(d => !d.IsDeleted);
+            var data = doctors.Where(d => !d.IsDeleted).Select(i => new { i.Id, i.FullName });
 
-            return Ok(doctors);
+            return Ok(data);
         }
 
         [HttpGet("patients")]
@@ -54,11 +54,11 @@ namespace ClinicAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                int.TryParse(query, out int id);
+                //int.TryParse(query, out int id);
 
                 patients = patients
                     .Where(p => (
-                        p.Id == id ||
+                        ($"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase)) ||
                         p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
                     .Skip((page - 1) * pageSize)
@@ -87,10 +87,11 @@ namespace ClinicAPI.Controllers
         {
             IEnumerable<Patient> patients = _unitOfWork.Patients
                 .GetPatients()
-                .Where(p => 
-                (p.Status != PatientStatus.IsChecked && 
+                .Where(p =>
+                (p.Status != PatientStatus.IsChecked &&
                 (p.AppointmentDate == null || p.AppointmentDate <= DateTime.Now)))
-                .OrderBy(p => p.UpdatedDate);
+                //.OrderBy(p => p.UpdatedDate);
+                .OrderBy(p => p.OrderNumber);
 
             return Ok(patients);
         }
@@ -120,6 +121,9 @@ namespace ClinicAPI.Controllers
                 }
 
                 Patient patient = _mapper.Map<Patient>(patientModel);
+                int orderNumber = CalculateOrderNumber(patient);
+                patient.OrderNumber = orderNumber;
+
                 _unitOfWork.Patients.Add(patient);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
@@ -183,6 +187,31 @@ namespace ClinicAPI.Controllers
             return BadRequest(ModelState);
         }
 
+        [HttpPost("doctors")]
+        [Authorize(Policies.ManageAllPatientsPolicy)]
+        public async Task<IActionResult> AddDoctors([FromBody] IEnumerable<DoctorPatientHistoryModel> doctorModels)
+        {
+            if (ModelState.IsValid)
+            {
+                if (doctorModels == null)
+                {
+                    return BadRequest($"{nameof(doctorModels)} can not be null.");
+                }
+
+                IEnumerable<DoctorPatientHistory> doctors = _mapper.Map<IEnumerable<DoctorPatientHistory>>(doctorModels);
+                _unitOfWork.DoctorPatientHistories.AddRange(doctors);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
         [HttpPut("patients/{id}")]
         [Authorize(Policies.ManageAllPatientsPolicy)]
         public async Task<IActionResult> UpdatePatient(int id, [FromBody] PatientModel patientModel)
@@ -201,6 +230,8 @@ namespace ClinicAPI.Controllers
                 }
 
                 _mapper.Map(patientModel, patient);
+                int orderNumber = CalculateOrderNumber(patient);
+                patient.OrderNumber = orderNumber;
                 _unitOfWork.Patients.Update(patient);
 
                 int result = await _unitOfWork.SaveChangesAsync();
@@ -302,6 +333,43 @@ namespace ClinicAPI.Controllers
             return BadRequest(ModelState);
         }
 
+        [HttpPut("doctors/{historyId}")]
+        [Authorize(Policies.ManageAllPatientsPolicy)]
+        public async Task<IActionResult> UpdateDoctors(int historyId, [FromBody] IEnumerable<DoctorPatientHistoryModel> doctorModels)
+        {
+            if (ModelState.IsValid)
+            {
+                if (doctorModels == null)
+                {
+                    return BadRequest($"{nameof(doctorModels)} can not be null.");
+                }
+
+                int result = 0;
+                var doctors = _unitOfWork.DoctorPatientHistories.Where(d => d.HistoryId == historyId);
+                if (doctors.Any())
+                {
+                    _unitOfWork.DoctorPatientHistories.RemoveRange(doctors);
+                    result = await _unitOfWork.SaveChangesAsync();
+                    if (result < 1)
+                    {
+                        return NoContent();
+                    }
+                }
+
+                var newDoctors = _mapper.Map<IEnumerable<DoctorPatientHistory>>(doctorModels);
+                _unitOfWork.DoctorPatientHistories.AddRange(newDoctors);
+                result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
         [HttpDelete("patients/{id}")]
         [Authorize(Policies.ManageAllPatientsPolicy)]
         public async Task<IActionResult> DeletePatient(int id)
@@ -382,6 +450,38 @@ namespace ClinicAPI.Controllers
             }
 
             return Ok(new[] { prescription, });
+        }
+
+        private int CalculateOrderNumber(Patient patient)
+        {
+            int orderNumber = 1;
+            DateTime currentDate = DateTime.Now.Date;
+
+            var patients = _unitOfWork.Patients
+                .Where(p =>
+                (!p.IsDeleted &&
+                p.Status != PatientStatus.IsChecked &&
+                (((p.CreatedDate.Date == currentDate || p.UpdatedDate == currentDate) && p.AppointmentDate == null) ||
+                p.AppointmentDate.Value.Date == currentDate)));
+
+            orderNumber = patients.Count() + 1;
+
+            if (patient.AppointmentDate != null)
+            {
+                DateTime appointmentDate = patient.AppointmentDate.Value.Date;
+                if (appointmentDate > currentDate)
+                {
+                    var appointedPatients = _unitOfWork.Patients
+                        .Where(p =>
+                        (!p.IsDeleted &&
+                        p.Status != PatientStatus.IsChecked &&
+                        p.AppointmentDate.Value.Date == appointmentDate));
+
+                    orderNumber = appointedPatients.Count() + 1;
+                }
+            }
+
+            return orderNumber;
         }
     }
 }

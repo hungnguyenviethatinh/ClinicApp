@@ -15,10 +15,10 @@ namespace ClinicAPI.ViewModels
             CreateMap<History, HistoryModel>();
             CreateMap<HistoryModel, History>();
 
-            CreateMap<History, HistoryViewModel>()
-                .ForMember(h => h.Doctor, map => map.Ignore())
-                .ForMember(h => h.Prescriptions, map => map.Ignore())
-                .ForMember(h => h.XRayImages, map => map.Ignore());
+            CreateMap<History, HistoryViewModel>();
+                //.ForMember(h => h.Doctor, map => map.Ignore())
+                //.ForMember(h => h.Prescriptions, map => map.Ignore())
+                //.ForMember(h => h.XRayImages, map => map.Ignore());
 
             CreateMap<XRayImage, XRayModel>();
             CreateMap<XRayModel, XRayImage>();
@@ -63,8 +63,8 @@ namespace ClinicAPI.ViewModels
             CreateMap<OpenTime, OpenTimeModel>();
             CreateMap<OpenTimeModel, OpenTime>();
 
-            CreateMap<DoctorPatient, DoctorPatientModel>();
-            CreateMap<DoctorPatientModel, DoctorPatient>();
+            CreateMap<DoctorPatientHistory, DoctorPatientHistoryModel>();
+            CreateMap<DoctorPatientHistoryModel, DoctorPatientHistory>();
         }
     }
 }

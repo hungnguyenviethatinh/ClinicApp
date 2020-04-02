@@ -1,8 +1,9 @@
 ﻿namespace ClinicAPI.ViewModels
 {
-    public class DoctorPatientModel
+    public class DoctorPatientHistoryModel
     {
         public string DoctorId { get; set; }
         public int PatientId { get; set; }
+        public int HistoryId { get; set; }
     }
 }

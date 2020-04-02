@@ -18,7 +18,7 @@ namespace DAL
         private IUnitRepository _units;
         private IIngredientRepository _ingredients;
         private IOpenTimeRepository _openTimes;
-        private IDoctorpatientRepository _doctorPatients;
+        private IDoctorPatientHistoryRepository _doctorPatients;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -181,13 +181,13 @@ namespace DAL
             }
         }
 
-        public IDoctorpatientRepository DoctorPatients
+        public IDoctorPatientHistoryRepository DoctorPatientHistories
         {
             get
             {
                 if (_doctorPatients == null)
                 {
-                    _doctorPatients = new DoctorPatientRepository(_context);
+                    _doctorPatients = new DoctorPatientHistoryRepository(_context);
                 }
 
                 return _doctorPatients;

@@ -423,7 +423,7 @@ namespace ClinicAPI.Controllers
         private IEnumerable<Patient> GetCurrentDoctorPatients()
         {
             string currentDoctorId = GetCurrentUserId();
-            var patientIds = _unitOfWork.DoctorPatients
+            var patientIds = _unitOfWork.DoctorPatientHistories
                 .Where(dp => dp.DoctorId == currentDoctorId)
                 .Select(dp => dp.PatientId);
             var patients = _unitOfWork.Patients

@@ -6,7 +6,7 @@ namespace ClinicAPI.ViewModels
     public class PatientModel
     {
         public string IdCode { get; set; }
-        public int OrderNumber { get; set; }
+        //public int OrderNumber { get; set; }
         public string FullName { get; set; }
         //public DateTime DateOfBirth { get; set; }
         public int Age { get; set; }
@@ -20,6 +20,6 @@ namespace ClinicAPI.ViewModels
         public DateTime? AppointmentDate { get; set; }
         public PatientStatus Status { get; set; }
 
-        public string DoctorId { get; set; }
+        //public string DoctorId { get; set; }
     }
 }

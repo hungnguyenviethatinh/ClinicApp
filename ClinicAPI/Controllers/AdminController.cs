@@ -648,7 +648,7 @@ namespace ClinicAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(openTimeModel == null)
+                if (openTimeModel == null)
                 {
                     return BadRequest($"{nameof(openTimeModel)} can not be null.");
                 }
@@ -751,7 +751,7 @@ namespace ClinicAPI.Controllers
         public async Task<IActionResult> DeleteOpenTime(int id)
         {
             var openTime = _unitOfWork.OpenTimes.Find(id);
-            if(openTime == null)
+            if (openTime == null)
             {
                 return NotFound();
             }

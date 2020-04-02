@@ -17,7 +17,7 @@ namespace DAL
         IUnitRepository Units { get; }
         IIngredientRepository Ingredients { get; }
         IOpenTimeRepository OpenTimes { get;  }
-        IDoctorpatientRepository DoctorPatients { get; }
+        IDoctorPatientHistoryRepository DoctorPatientHistories { get; }
 
         int SaveChanges();
         Task<int> SaveChangesAsync();
