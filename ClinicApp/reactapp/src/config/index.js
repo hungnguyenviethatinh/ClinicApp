@@ -21,6 +21,8 @@ export const DeletePatientUrl = '/api/receptionist/patients';
 export const GetPatientInQueueUrl = '/api/receptionist/patients/queue';
 export const GetPrescriptionsUrl = '/api/receptionist/prescriptions';
 export const GetPrescriptionsInQueueUrl = '/api/receptionist/prescriptions/queue';
+export const AddDoctorsUrl = '/api/receptionist/doctors';
+export const UpdateDoctorsUrl = '/api/receptionist/doctors';
 // Doctor Api:
 export const GetPatientsByDoctorUrl = '/api/doctor/patients';
 export const GetPatientInQueueByDoctorUrl = '/api/doctor/patients/queue';

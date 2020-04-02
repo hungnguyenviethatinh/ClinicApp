@@ -47,12 +47,16 @@ const useStyles = makeStyles(theme => ({
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
+        // render: rowData =>
+        // <Link
+        //     to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
+        //     children={
+        //         encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
+        //     } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-                children={
-                    encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-                } />,
+                children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
     },
     {
         title: 'Bác sĩ kê đơn', field: 'doctorId',

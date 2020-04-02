@@ -18,6 +18,8 @@ const AutocompleteComponent = props => {
         label, 
         value, 
         fullWidth, 
+        multiple,
+        freeSolo,
         options, 
         onChange,
         getOptionLabel,
@@ -30,6 +32,8 @@ const AutocompleteComponent = props => {
             fullWidth={fullWidth}
         >
             <Autocomplete
+                multiple={multiple}
+                freeSolo={freeSolo}
                 id={id}
                 options={options}
                 getOptionLabel={getOptionLabel}
@@ -58,6 +62,8 @@ AutocompleteComponent.propTypes = {
     label: PropTypes.string,
     value: PropTypes.any,
     fullWidth: PropTypes.bool,
+    multiple: PropTypes.bool,
+    freeSolo: PropTypes.bool,
     options: PropTypes.arrayOf(PropTypes.object),
     onChange: PropTypes.func,
     getOptionLabel: PropTypes.func,
@@ -69,6 +75,8 @@ AutocompleteComponent.defaultProps = {
     label: '',
     value: null,
     fullWidth: false,
+    multiple: false,
+    freeSolo: false,
     options: [{ }],
     onChange: () => { },
     getOptionLabel: () => { },

@@ -1142,6 +1142,7 @@ const PrescriptionManagement = () => {
                                     /> */}
                                     <DateTimePicker
                                         fullWidth
+                                        disablePast
                                         id="AppointmentDate"
                                         label="Hẹn tái khám (nếu có)"
                                         value={patient.AppointmentDate}

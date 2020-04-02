@@ -7,6 +7,7 @@ import {
     CardContent,
     Divider,
     Grid,
+    Typography,
 } from '@material-ui/core';
 import clsx from 'clsx';
 import moment from 'moment';
@@ -28,11 +29,13 @@ import {
     Gender,
     PatientStatus,
     PrescriptionStatus,
-    IdPrefix,
+    // IdPrefix,
     RefreshDataTimer,
     RouteConstants,
+    AddressSeperator,
+    DisplayDateTimeFormat,
 } from '../../../constants';
-import { encodeId } from '../../../utils';
+// import { encodeId } from '../../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -55,28 +58,54 @@ const useStyles = makeStyles(theme => ({
 
 const patientQueueColumns = [
     {
+        title: 'STT', field: 'orderNumber', type: 'numeric',
+    },
+    {
+        title: 'Ngày khám', field: 'updatedDate', type: 'date',
+        render: rowData => {
+            if (rowData.appointmentDate) {
+                return moment(rowData.appointmentDate).format(DisplayDateTimeFormat);
+            }
+
+            return moment(rowData.updatedDate).format(DisplayDateTimeFormat);
+        },
+    },
+    {
         title: 'Mã BN', field: 'id',
+        // render: rowData =>
+        //     <Link
+        //         to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
+        //         children={
+        //             encodeId(rowData.id, IdPrefix.Patient)
+        //         } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
-                children={
-                    encodeId(rowData.id, IdPrefix.Patient)
-                } />,
+                children={`${rowData.idCode}${rowData.id}`}
+            />,
     },
     {
         title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
-        render: rowData => moment(rowData.dateOfBirth).year(),
+        // title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
+        // render: rowData => moment(rowData.dateOfBirth).year(),
+        title: 'Tuổi', field: 'age', type: 'numeric',
     },
     {
         title: 'Giới tính', field: 'gender', type: 'numeric',
         render: rowData => [Gender.None, Gender.Male, Gender.Female][rowData.gender],
     },
+    // {
+    //     title: 'Bác sĩ khám', field: 'doctorId',
+    //     render: rowData => rowData.doctor.fullName,
+    // },
     {
-        title: 'Bác sĩ khám', field: 'doctorId',
-        render: rowData => rowData.doctor.fullName,
+        title: 'Số ĐT', field: 'phoneNumber',
+    },
+    {
+        title: 'Địa chỉ', field: 'address',
+        render: rowData => _.last(rowData.address.split(AddressSeperator)),
     },
     {
         title: 'Trạng thái', field: 'status',
@@ -86,7 +115,8 @@ const patientQueueColumns = [
                 PatientStatus.IsAppointed,
                 PatientStatus.IsChecking,
                 PatientStatus.IsChecked,
-                PatientStatus.IsRechecking][rowData.status];
+                PatientStatus.IsRechecking,
+                PatientStatus.IsToAddDocs][rowData.status];
             if (moment(rowData.appointmentDate).isValid()) {
                 if (status !== PatientStatus.IsChecking) {
                     status = PatientStatus.IsAppointed;
@@ -100,12 +130,16 @@ const patientQueueColumns = [
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
+        // render: rowData =>
+        //     <Link
+        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
+        //         children={
+        //             encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
+        //         } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-                children={
-                    encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-                } />,
+                children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
     },
     {
         title: 'Bác sĩ kê đơn', field: 'doctorId',
@@ -228,6 +262,30 @@ const ReceptionistView = () => {
         });
     };
 
+    const getPatientDetailPanel = (rowData) => {
+        return (
+            <div style={{ padding: 10 }}>
+                <Typography
+                    variant="caption"
+                    component="p"
+                    children="CÁC BÁC SĨ HỘI CHUẨN KHÁM"
+                />
+                {
+                    !_.isEmpty(rowData.doctors) &&
+                    rowData.doctors.map(({ doctor }) => (
+                        <Typography
+                            key={doctor.id}
+                            variant="h6"
+                            component="h6"
+                            children={`${doctor.fullName}`}
+                            style={{ fontWeight: 600 }}
+                        />
+                    ))
+                }
+            </div>
+        );
+    };
+
     return (
         <Grid
             container
@@ -235,7 +293,7 @@ const ReceptionistView = () => {
             className={classes.fullHeight} >
             <Grid
                 item
-                xs={12} sm={12} md={6} lg={6} xl={6}
+                xs={12} sm={12} md={12} lg={12} xl={12}
                 className={classes.fullHeight}>
                 <Card
                     className={clsx(classes.card, classes.fullHeight)}
@@ -247,6 +305,7 @@ const ReceptionistView = () => {
                     <CardContent className={classes.content}>
                         <Table
                             tableRef={patientTableRef}
+                            detailPanel={getPatientDetailPanel}
                             customOptions={{
                                 paging: false,
                             }}
@@ -262,7 +321,7 @@ const ReceptionistView = () => {
             </Grid>
             <Grid
                 item
-                xs={12} sm={12} md={6} lg={6} xl={6}
+                xs={12} sm={12} md={12} lg={12} xl={12}
                 className={classes.fullHeight} >
                 <Card
                     className={clsx(classes.card, classes.fullHeight)}

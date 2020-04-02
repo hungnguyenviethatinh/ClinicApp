@@ -36,7 +36,7 @@ export const PatientStatusEnum = {
     'Đang khám': 2,
     'Đã khám': 3,
     'Tái khám': 4,
-    'BSHS': 5,
+    'BS Hồ Sơ': 5,
 };
 
 export const PrescriptionStatus = {

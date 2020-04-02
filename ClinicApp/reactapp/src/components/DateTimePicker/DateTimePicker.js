@@ -22,6 +22,7 @@ const DateTimePickerComponent = props => {
         style,
         variant,
         fullWidth,
+        disablePast,
         // minDate, 
         // maxDate, 
         // minDateMessage, 
@@ -38,6 +39,7 @@ const DateTimePickerComponent = props => {
                 className={classes.picker}
                 autoOk
                 disableToolbar
+                disablePast={disablePast}
                 ampm={false}
                 variant={variant}
                 format={format}
@@ -73,6 +75,7 @@ DateTimePickerComponent.protoTypes = {
     style: PropTypes.object,
     variant: PropTypes.oneOf(['dialog', 'inline', 'static']),
     fullWidth: PropTypes.bool,
+    disablePast: PropTypes.bool,
     // minDate: PropTypes.instanceOf(Date),
     // minDateMessage: PropTypes.string,
     // maxDate: PropTypes.instanceOf(Date),
@@ -90,6 +93,7 @@ DateTimePickerComponent.defaultProps = {
     style: null,
     variant: 'inline',
     fullWidth: false,
+    disablePast: false,
     // minDate: moment(),
     // minDateMessage: '',
     // maxDate: moment(),

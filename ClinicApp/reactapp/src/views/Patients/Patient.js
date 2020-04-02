@@ -182,6 +182,7 @@ const getDetailPanel = (rowData) => {
                                             {
                                                 !image.isDeleted &&
                                                 <img
+                                                    style={{ maxWidth: '100%', }}
                                                     src={image.data}
                                                     alt={image.name}
                                                 />
