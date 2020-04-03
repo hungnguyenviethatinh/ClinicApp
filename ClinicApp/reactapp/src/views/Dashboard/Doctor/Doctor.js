@@ -59,19 +59,25 @@ const useStyles = makeStyles(theme => ({
 const patientQueueColumns = [
     {
         title: 'Mã BN', field: 'id',
+        // render: rowData =>
+        //     <Link
+        //         to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
+        //         children={
+        //             encodeId(rowData.id, IdPrefix.Patient)
+        //         } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
-                children={
-                    encodeId(rowData.id, IdPrefix.Patient)
-                } />,
+                children={`${rowData.idCode}${rowData.id}`}
+            />,
     },
     {
         title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
-        render: rowData => moment(rowData.dateOfBirth).year(),
+        // title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
+        // render: rowData => moment(rowData.dateOfBirth).year(),
+        title: 'Tuổi', field: 'age', type: 'numeric',
     },
     {
         title: 'Giới tính', field: 'gender', type: 'numeric',
@@ -85,7 +91,8 @@ const patientQueueColumns = [
                 PatientStatus.IsAppointed,
                 PatientStatus.IsChecking,
                 PatientStatus.IsChecked,
-                PatientStatus.IsRechecking][rowData.status];
+                PatientStatus.IsRechecking,
+                PatientStatus.IsToAddDocs, ][rowData.status];
             if (moment(rowData.appointmentDate).isValid()) {
                 if (status !== PatientStatus.IsChecking) {
                     status = PatientStatus.IsAppointed;
@@ -99,12 +106,16 @@ const patientQueueColumns = [
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
+        // render: rowData =>
+        //     <Link
+        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
+        //         children={
+        //             encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
+        //         } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-                children={
-                    encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-                } />,
+                children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
     },
     {
         title: 'Bệnh nhân', field: 'patientId',

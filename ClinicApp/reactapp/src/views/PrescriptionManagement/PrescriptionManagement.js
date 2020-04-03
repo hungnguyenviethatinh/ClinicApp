@@ -35,6 +35,8 @@ import {
     PatientStatus,
     RouteConstants,
     SnackbarMessage,
+    IdPrefix,
+    takePeriodValue,
 } from '../../constants';
 
 import {
@@ -46,7 +48,7 @@ import {
     AddPrescriptionsUrl,
     AddMedicinesUrl,
     UpdatePatientHistoryUrl,
-    UpdatePatientStatusUrl,
+    // UpdatePatientStatusUrl,
     UpdateMedicinesQuantityUrl,
     GetMedicineListUrl,
 } from '../../config';
@@ -84,12 +86,6 @@ const getMedicineListErrorMsg = '[Get Medicine List Error] ';
 //     { label: '2 tuần', value: 14 },
 //     { label: '1 tháng', value: 30 },
 // ];
-
-const takePeriodValue = {
-    Day: 'Ngày',
-    Week: 'Tuần',
-    Month: 'Tháng',
-};
 
 const takePeriodOptions = [
     { label: takePeriodValue.Day, value: takePeriodValue.Day },
@@ -140,7 +136,8 @@ const PrescriptionManagement = () => {
     const [patient, setPatient] = React.useState({
         Id: '',
         FullName: '',
-        DateOfBirth: '',
+        // DateOfBirth: '',
+        Age: '',
         Gender: '',
         Address: '',
         PhoneNumber: '',
@@ -194,12 +191,13 @@ const PrescriptionManagement = () => {
     };
 
     const [prescription, setPrescription] = React.useState({
+        // IdCode: '',
         Diagnosis: '',
         OtherDiagnosis: '',
         Note: '',
         Status: PrescriptionStatusEnum[PrescriptionStatus.IsNew],
         PatientId: '',
-        DoctorId: '',
+        // DoctorId: '',
         HistoryId: '',
     });
     const handlePrescriptionChange = prop => event => {
@@ -446,8 +444,10 @@ const PrescriptionManagement = () => {
         setDisabled(true);
         setLoadingDone(true);
 
+        const IdCode = IdPrefix.Prescription;
         const prescriptionModel = {
             ...prescription,
+            IdCode,
         };
         addPrescription(prescriptionModel);
     };
@@ -506,51 +506,57 @@ const PrescriptionManagement = () => {
             Id: MedicineId,
             Quantity,
         }));
+        const url = `${UpdatePatientHistoryUrl}/${id}`;
+        const updatePatientHistoryModel = {
+            AppointmentDate: patient.AppointmentDate,
+            Status: PatientStatusEnum[PatientStatus.IsChecked],
+        };
+        // if (patient.AppointmentDate) {
+        // Axios.get(`${UpdatePatientHistoryUrl}/${id}`, {
+        //     ...config,
+        //     params: {
+        //         appointmentDate: patient.AppointmentDate,
+        //         status: PatientStatusEnum[PatientStatus.IsChecked],
+        //     }
+        // })
 
-        if (patient.AppointmentDate) {
-            Axios.get(`${UpdatePatientHistoryUrl}/${id}`, {
-                ...config,
-                params: {
-                    appointmentDate: patient.AppointmentDate,
-                    status: PatientStatusEnum[PatientStatus.IsChecked],
-                }
-            }).then((response) => {
-                const { status } = response;
-                if (status === 200) {
-                    handleSnackbarOption('success', SnackbarMessage.CreatePrescriptionSuccess);
-                    handleReset();
-                    updateMedicinesQuantity(medicineUpdateModels);
-                } else {
-                    handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-                    setDisabled(false);
-                    setLoadingDone(false);
-                }
-            }).catch((reason) => {
-                handleError(reason, updatePatientHistoryErrorMsg);
+        Axios.patch(url, updatePatientHistoryModel, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', SnackbarMessage.CreatePrescriptionSuccess);
+                handleReset();
+                updateMedicinesQuantity(medicineUpdateModels);
+            } else {
                 handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
                 setDisabled(false);
                 setLoadingDone(false);
-            });
-        } else {
-            const url = `${UpdatePatientStatusUrl}/${id}/${PatientStatusEnum[PatientStatus.IsChecked]}`;
-            Axios.get(url, config).then((response) => {
-                const { status } = response;
-                if (status === 200) {
-                    handleSnackbarOption('success', SnackbarMessage.CreatePrescriptionSuccess);
-                    handleReset();
-                    updateMedicinesQuantity(medicineUpdateModels);
-                } else {
-                    handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-                    setDisabled(false);
-                    setLoadingDone(false);
-                }
-            }).catch((reason) => {
-                handleError(reason, updatePatientHistoryErrorMsg);
-                handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-                setDisabled(false);
-                setLoadingDone(false);
-            });
-        }
+            }
+        }).catch((reason) => {
+            handleError(reason, updatePatientHistoryErrorMsg);
+            handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
+            setDisabled(false);
+            setLoadingDone(false);
+        });
+        // } else {
+        //     const url = `${UpdatePatientStatusUrl}/${id}/${PatientStatusEnum[PatientStatus.IsChecked]}`;
+        //     Axios.get(url, config).then((response) => {
+        //         const { status } = response;
+        //         if (status === 200) {
+        //             handleSnackbarOption('success', SnackbarMessage.CreatePrescriptionSuccess);
+        //             handleReset();
+        //             updateMedicinesQuantity(medicineUpdateModels);
+        //         } else {
+        //             handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
+        //             setDisabled(false);
+        //             setLoadingDone(false);
+        //         }
+        //     }).catch((reason) => {
+        //         handleError(reason, updatePatientHistoryErrorMsg);
+        //         handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
+        //         setDisabled(false);
+        //         setLoadingDone(false);
+        //     });
+        // }
     };
 
     const updateMedicinesQuantity = (medicineUpdateModels) => {
@@ -579,9 +585,10 @@ const PrescriptionManagement = () => {
             if (status === 200) {
                 const {
                     id,
-                    doctorId,
+                    // doctorId,
                     fullName,
-                    dateOfBirth,
+                    // dateOfBirth,
+                    age,
                     gender,
                     address,
                     phoneNumber,
@@ -596,7 +603,8 @@ const PrescriptionManagement = () => {
                     ...patient,
                     Id: id,
                     FullName: fullName,
-                    DateOfBirth: moment(dateOfBirth).year(),
+                    // DateOfBirth: moment(dateOfBirth).year(),
+                    Age: age,
                     Gender: [Gender.None, Gender.Male, Gender.Female][gender],
                     Address,
                     PhoneNumber: phoneNumber,
@@ -604,7 +612,7 @@ const PrescriptionManagement = () => {
                 setPrescription({
                     ...prescription,
                     PatientId: id,
-                    DoctorId: doctorId,
+                    // DoctorId: doctorId,
                     HistoryId: data[0].history.id,
                 });
             }
@@ -874,10 +882,17 @@ const PrescriptionManagement = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
-                                    <TextField
+                                    {/* <TextField
                                         id="DateOfBirth"
                                         label="Năm sinh"
                                         value={patient.DateOfBirth}
+                                        readOnly
+                                        fullWidth
+                                    /> */}
+                                    <TextField
+                                        id="Age"
+                                        label="Tuổi"
+                                        value={patient.Age}
                                         readOnly
                                         fullWidth
                                     />

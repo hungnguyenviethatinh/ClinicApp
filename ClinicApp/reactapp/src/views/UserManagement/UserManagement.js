@@ -375,7 +375,7 @@ const UserManagement = () => {
 
     return (
         <Grid container spacing={3} >
-            <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                 <Card
                     className={classes.card}
                     style={{ height: '100%' }}
@@ -398,7 +398,7 @@ const UserManagement = () => {
                                         fullWidth
                                         autoFocus
                                         id="UserName"
-                                        label="Tên tài khoản"
+                                        label="Tên tài khoản (*)"
                                         placeholder={validUserNameMessage}
                                         value={values.UserName}
                                         onChange={handleValueChange('UserName')}
@@ -409,7 +409,7 @@ const UserManagement = () => {
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
-                                        id="FullName"
+                                        id="FullName (*)"
                                         label="Họ & Tên"
                                         value={values.FullName}
                                         onChange={handleValueChange('FullName')}
@@ -420,7 +420,7 @@ const UserManagement = () => {
                                     <Select
                                         fullWidth
                                         id="RoleName"
-                                        label="Chức vụ"
+                                        label="Chức vụ (*)"
                                         value={values.RoleName}
                                         options={roleOptions}
                                         onChange={handleValueChange('RoleName')}
@@ -466,7 +466,8 @@ const UserManagement = () => {
                                 justify="flex-end"
                                 style={{ marginTop: 8 }}
                             >
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}> */}
+                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                                     <Button
                                         fullWidth
                                         disabled={disabled}
@@ -478,7 +479,8 @@ const UserManagement = () => {
                                 </Grid>
                                 {
                                     selectedRow &&
-                                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                    // <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                    <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                                         <Button
                                             fullWidth
                                             disabled={disabled}
@@ -490,7 +492,8 @@ const UserManagement = () => {
                                         />
                                     </Grid>
                                 }
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}> */}
+                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                                     <Button
                                         fullWidth
                                         disabled={disabled}
@@ -506,7 +509,7 @@ const UserManagement = () => {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                 <Card
                     className={classes.card}
                     style={{ height: '100%' }}

@@ -76,6 +76,7 @@ export const DeleteOpenTimeUrl = '/api/admin/opentimes';
 // Shared:
 export const PatientUrl = '/api/patient';
 export const PrescriptionUrl = '/api/prescription';
+export const OpenTimesUrl = '/api/prescription/opentimes';
 export const UpdatePrescriptionStatusUrl = '/api/prescription/status';
 export const HistoryByPatientIdUrl = '/api/history/patient';
 export const PatientCurrentHistoryUrl = 'api/history/patient/current';

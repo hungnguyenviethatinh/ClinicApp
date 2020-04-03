@@ -60,19 +60,25 @@ const useStyles = makeStyles(theme => ({
 const patientQueueColumns = [
     {
         title: 'Mã BN', field: 'id',
+        // render: rowData =>
+        //     <Link
+        //         to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
+        //         children={
+        //             encodeId(rowData.id, IdPrefix.Patient)
+        //         } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
-                children={
-                    encodeId(rowData.id, IdPrefix.Patient)
-                } />,
+                children={`${rowData.idCode}${rowData.id}`}
+            />,
     },
     {
         title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
-        render: rowData => moment(rowData.dateOfBirth).year(),
+        // title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
+        // render: rowData => moment(rowData.dateOfBirth).year(),
+        title: 'Tuổi', field: 'age', type: 'numeric',
     },
     {
         title: 'Giới tính', field: 'gender', type: 'numeric',
@@ -99,7 +105,8 @@ const patientQueueColumns = [
                 PatientStatus.IsAppointed,
                 PatientStatus.IsChecking,
                 PatientStatus.IsChecked,
-                PatientStatus.IsRechecking][rowData.status];
+                PatientStatus.IsRechecking,
+                PatientStatus.IsToAddDocs, ][rowData.status];
             if (moment(rowData.appointmentDate).isValid()) {
                 if (status !== PatientStatus.IsChecked && status !== PatientStatus.IsChecking) {
                     status = PatientStatus.IsAppointed;
@@ -113,12 +120,16 @@ const patientQueueColumns = [
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
+        // render: rowData =>
+        //     <Link
+        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
+        //         children={
+        //             encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
+        //         } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-                children={
-                    encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-                } />,
+                children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
     },
     {
         title: 'Bác sĩ kê đơn', field: 'doctorId',
@@ -205,9 +216,9 @@ const AdminView = () => {
     const refreshEmployeeData = () => {
         employeeTableRef.current && employeeTableRef.current.onQueryChange();
     };
-    const refreshMedicineData = () => {
-        medicineTableRef.current && medicineTableRef.current.onQueryChange();
-    };
+    // const refreshMedicineData = () => {
+    //     medicineTableRef.current && medicineTableRef.current.onQueryChange();
+    // };
 
     // const [countPatientTable, setCountPatientTable] = React.useState(0);
     // const [countPrescriptionTable, setCountPrescriptionTable] = React.useState(0);
@@ -295,17 +306,17 @@ const AdminView = () => {
     const config = axiosRequestConfig();
 
     const getPatients = (resolve, reject, query) => {
-        let value = patientSearchValue.toLowerCase();
-        const prefix = IdPrefix.Patient.toLowerCase();
-        if (value.startsWith(prefix)) {
-            value = decodeId(value, prefix);
-        }
+        // let value = patientSearchValue.toLowerCase();
+        // const prefix = IdPrefix.Patient.toLowerCase();
+        // if (value.startsWith(prefix)) {
+        //     value = decodeId(value, prefix);
+        // }
         Axios.get(GetAllPatientsUrl, {
             ...config,
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
-                query: value,
+                query: patientSearchValue,
             }
         }).then((response) => {
             const { status, data } = response;
@@ -327,17 +338,17 @@ const AdminView = () => {
     };
 
     const getPrescriptions = (resolve, reject, query) => {
-        let value = prescriptionSearchValue.toLowerCase();
-        const prefix = `${IdPrefix.Prescription}${IdPrefix.Patient}`.toLowerCase();
-        if (value.startsWith(prefix)) {
-            value = decodeId(value, prefix);
-        }
+        // let value = prescriptionSearchValue.toLowerCase();
+        // const prefix = `${IdPrefix.Prescription}${IdPrefix.Patient}`.toLowerCase();
+        // if (value.startsWith(prefix)) {
+        //     value = decodeId(value, prefix);
+        // }
         Axios.get(GetAllPrescriptionsUrl, {
             ...config,
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
-                query: value,
+                query: prescriptionSearchValue,
             }
         }).then((response) => {
             const { status, data } = response;

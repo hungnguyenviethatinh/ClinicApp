@@ -103,18 +103,18 @@ const Prescriptions = () => {
     const config = axiosRequestConfig();
 
     const getPrescriptions = (resolve, reject, query) => {
-        let value = searchValue.toLowerCase();
-        const prefix = `${IdPrefix.Prescription}${IdPrefix.Patient}`.toLowerCase();
-        if (value.startsWith(prefix)) {
-            value = decodeId(value, prefix);
-        }
+        // let value = searchValue.toLowerCase();
+        // const prefix = `${IdPrefix.Prescription}${IdPrefix.Patient}`.toLowerCase();
+        // if (value.startsWith(prefix)) {
+        //     value = decodeId(value, prefix);
+        // }
 
         Axios.get(GetPrescriptionsUrl, {
             ...config,
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
-                query: value,
+                query: searchValue,
             }
         }).then((response) => {
             const { status, data } = response;

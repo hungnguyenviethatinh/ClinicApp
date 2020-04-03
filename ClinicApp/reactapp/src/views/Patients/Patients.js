@@ -46,19 +46,25 @@ const useStyles = makeStyles(theme => ({
 const patientColumns = [
     {
         title: 'Mã BN', field: 'id', defaultSort: 'asc',
+        // render: rowData =>
+        //     <Link
+        //         to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
+        //         children={
+        //             encodeId(rowData.id, IdPrefix.Patient)
+        //         } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
-                children={
-                    encodeId(rowData.id, IdPrefix.Patient)
-                } />,
+                children={`${rowData.idCode}${rowData.id}`}
+            />,
     },
     {
         title: 'Họ & Tên', field: 'fullName',
     },
     {
-        title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
-        render: rowData => moment(rowData.dateOfBirth).year(),
+        // title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
+        // render: rowData => moment(rowData.dateOfBirth).year(),
+        title: 'Tuổi', field: 'age', type: 'numeric',
     },
     {
         title: 'Giới tính', field: 'gender', type: 'numeric',
@@ -94,18 +100,19 @@ const Patients = () => {
     const config = axiosRequestConfig();
 
     const getPatients = (resolve, reject, query) => {
-        let value = searchValue.toLowerCase();
-        const prefix = IdPrefix.Patient.toLowerCase();
-        if (value.startsWith(prefix)) {
-            value = decodeId(value, prefix);
-        }
+        // let value = searchValue.toLowerCase();
+        // const prefix = IdPrefix.Patient.toLowerCase();
+        // if (value.startsWith(prefix)) {
+        //     value = decodeId(value, prefix);
+        // }
 
         Axios.get(GetPatientsByDoctorUrl, {
             ...config,
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
-                query: value,
+                // query: value,
+                query: searchValue,
             }
         }).then((response) => {
             const { status, data } = response;

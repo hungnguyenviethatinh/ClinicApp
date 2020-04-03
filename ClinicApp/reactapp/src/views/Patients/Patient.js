@@ -59,13 +59,15 @@ const useStyles = makeStyles(theme => ({
 
 const historyColumns = [
     {
-        title: 'Ngày khám', field: 'createdDate', type: 'date',
-        render: rowData => moment(rowData.createdDate).format(DisplayDateTimeFormat),
+        // title: 'Ngày khám', field: 'createdDate', type: 'date',
+        // render: rowData => moment(rowData.createdDate).format(DisplayDateTimeFormat),
+        title: 'Ngày khám', field: 'updatedDate', type: 'datetime',
+        render: rowData => moment(rowData.updatedDate).format(DisplayDateTimeFormat),
     },
-    {
-        title: 'Bác sĩ khám', field: 'doctorId',
-        render: rowData => rowData.doctor.fullName,
-    },
+    // {
+    //     title: 'Bác sĩ khám', field: 'doctorId',
+    //     render: rowData => rowData.doctor.fullName,
+    // },
     {
         title: 'Trạng thái', field: 'isChecked',
         render: rowData => {
@@ -81,6 +83,9 @@ const getDetailPanel = (rowData) => {
         weight,
         bloodPresure,
         pulse,
+        other,
+        note,
+        doctors,
         prescriptions,
         xRayImages,
     } = rowData;
@@ -159,6 +164,62 @@ const getDetailPanel = (rowData) => {
                         style={{ fontWeight: 600 }}
                     />
                 </Grid>
+                <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                    <Typography
+                        variant="body1"
+                        component="p"
+                        children="Khác:"
+                    />
+                </Grid>
+                <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                    <Typography
+                        variant="h6"
+                        component="h6"
+                        children={`${other}`}
+                        style={{ fontWeight: 600 }}
+                    />
+                </Grid>
+                <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                    <Typography
+                        variant="body1"
+                        component="p"
+                        children="Ghi chú:"
+                    />
+                </Grid>
+                <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                    <Typography
+                        variant="h6"
+                        component="h6"
+                        children={`${note}`}
+                        style={{ fontWeight: 600 }}
+                    />
+                </Grid>
+            </Grid>
+            <Typography
+                variant="caption"
+                component="p"
+                children="CÁC BÁC SĨ HỘI CHUẨN KHÁM"
+            />
+            <Grid
+                container
+                spacing={2}
+                justify="center"
+                alignItems="center"
+                style={{ marginTop: 8, marginBottom: 24 }}
+            >
+                {
+                    !_.isEmpty(doctors) &&
+                    doctors.map(({ doctor }) => (
+                        <Grid item key={doctor.id} xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Typography
+                                variant="h6"
+                                component="h6"
+                                children={`${doctor.fullName}`}
+                                style={{ fontWeight: 600 }}
+                            />
+                        </Grid>
+                    ))
+                }
             </Grid>
             <Typography
                 variant="caption"
@@ -220,11 +281,14 @@ const getDetailPanel = (rowData) => {
                             {
                                 prescriptions.map((prescription, index) => (
                                     <Grid key={index} item>
-                                        <Link
+                                        {/* <Link
                                             to={`${RouteConstants.PrescriptionDetailView.replace(':id', prescription.id)}`}
                                             children={
                                                 encodeId(prescription.id, `${IdPrefix.Prescription}`)
-                                            } />
+                                            } /> */}
+                                        <Link
+                                            to={`${RouteConstants.PrescriptionDetailView.replace(':id', prescription.id)}`}
+                                            children={`${prescription.patient.idCode}${prescription.patient.id}${prescription.idCode}${prescription.id}`} />,
                                     </Grid>
                                 ))
                             }
@@ -293,14 +357,16 @@ const Patient = () => {
 
     const [patient, setPatient] = React.useState({
         FullName: '',
-        DateOfBirth: null,
+        // DateOfBirth: null,
+        Age: '',
         Gender: '',
         Address: '',
         Job: '',
         PhoneNumber: '',
+        RelativePhoneNumber: '',
         Email: '',
         AppointmentDate: null,
-        Status: PatientStatus.IsNew,
+        // Status: PatientStatus.IsNew,
     });
 
     const config = axiosRequestConfig();
@@ -312,26 +378,30 @@ const Patient = () => {
             if (status === 200) {
                 const {
                     fullName,
-                    dateOfBirth,
+                    // dateOfBirth,
+                    age,
                     gender,
                     address,
                     job,
                     phoneNumber,
+                    relativePhoneNumber,
                     email,
                     appointmentDate,
                 } = data[0];
 
                 const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
-                const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(DisplayDateFormat) : null;
+                // const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(DisplayDateFormat) : null;
                 const Address = address.split(AddressSeperator).filter(value => value.trim() !== '').join(`${AddressSeperator} `);
 
                 setPatient({
                     FullName: fullName,
-                    DateOfBirth,
+                    // DateOfBirth,
+                    Age: age,
                     Gender: [Gender.None, Gender.Male, Gender.Female][gender],
                     Address,
                     Job: job,
                     PhoneNumber: phoneNumber,
+                    RelativePhoneNumber: relativePhoneNumber,
                     Email: email,
                     AppointmentDate,
                 });
@@ -352,6 +422,8 @@ const Patient = () => {
                     weight,
                     bloodPresure,
                     pulse,
+                    other,
+                    note,
                     xRayImages,
                 } = data[0];
 
@@ -360,6 +432,8 @@ const Patient = () => {
                     Weight: weight,
                     BloodPresure: bloodPresure,
                     Pulse: pulse,
+                    Other: other,
+                    Note: note,
                     XRayImages: xRayImages,
                 });
             }
@@ -462,14 +536,16 @@ const Patient = () => {
                                                 <Typography
                                                     variant="body1"
                                                     component="p"
-                                                    children="Ngày, tháng, năm sinh:"
+                                                    // children="Ngày, tháng, năm sinh:"
+                                                    children="Tuổi:"
                                                 />
                                             </Grid>
                                             <Grid item xs={6} sm={6} md={3} lg={3} xl={3}>
                                                 <Typography
                                                     variant="h6"
                                                     component="h6"
-                                                    children={`${patient.DateOfBirth}`}
+                                                    // children={`${patient.DateOfBirth}`}
+                                                    children={`${patient.Age}`}
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
@@ -545,6 +621,21 @@ const Patient = () => {
                                                     variant="h6"
                                                     component="h6"
                                                     children={`${patient.Email}`}
+                                                    style={{ fontWeight: 600 }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                <Typography
+                                                    variant="body1"
+                                                    component="p"
+                                                    children="Số điện thoại người thân:"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                <Typography
+                                                    variant="h6"
+                                                    component="h6"
+                                                    children={`${patient.RelativePhoneNumber}`}
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
@@ -624,6 +715,36 @@ const Patient = () => {
                                                                 style={{ fontWeight: 600 }}
                                                             />
                                                         </Grid>
+                                                        <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="p"
+                                                                children="Khác:"
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                component="h6"
+                                                                children={`${history.Other}`}
+                                                                style={{ fontWeight: 600 }}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="p"
+                                                                children="Ghi chú:"
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                component="h6"
+                                                                children={`${history.Note}`}
+                                                                style={{ fontWeight: 600 }}
+                                                            />
+                                                        </Grid>
                                                     </React.Fragment>
                                                     :
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -657,6 +778,7 @@ const Patient = () => {
                                                                         {
                                                                             !image.isDeleted &&
                                                                             <img
+                                                                                style={{ maxWidth: '100%', }}
                                                                                 src={image.data}
                                                                                 alt={image.name}
                                                                             />

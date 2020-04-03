@@ -118,3 +118,9 @@ export const SnackbarMessage = {
     CreatePrescriptionError: 'Có lỗi khi tạo đơn thuốc mới!',
     CreatePrescriptionSuccess: 'Đơn thuốc mới đã được tạo thành công!',
 };
+
+export const takePeriodValue = {
+    Day: 'Ngày',
+    Week: 'Tuần',
+    Month: 'Tháng',
+};
