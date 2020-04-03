@@ -11,7 +11,7 @@ namespace ClinicAPI.ViewModels
         public PrescriptionStatus Status { get; set; }
 
         public int PatientId { get; set; }
-        public string DoctorId { get; set; }
+        //public string DoctorId { get; set; }
         public int HistoryId { get; set; }
     }
 

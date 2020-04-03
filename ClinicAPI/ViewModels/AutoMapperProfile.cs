@@ -65,6 +65,8 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<DoctorPatientHistory, DoctorPatientHistoryModel>();
             CreateMap<DoctorPatientHistoryModel, DoctorPatientHistory>();
+
+            CreateMap<PatientHistoryUpdateModel, Patient>();
         }
     }
 }

@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using ClinicAPI.Authorization;
+using ClinicAPI.ViewModels;
 using DAL;
 using DAL.Core;
+using DAL.Models;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +40,16 @@ namespace ClinicAPI.Controllers
             }
 
             return Ok(new[] { prescription, });
+        }
+
+        [HttpGet("opentimes")]
+        [Authorize(Policies.ViewAllPrescriptionsPolicy)]
+        public IActionResult GetOpenTimes()
+        {
+            var openTimes = _unitOfWork.OpenTimes.GetAll();
+            var openTimeVMs = _mapper.Map<IEnumerable<OpenTimeModel>>(openTimes);
+
+            return Ok(openTimeVMs);
         }
 
         [HttpGet("status/{id}")]

@@ -98,11 +98,12 @@ namespace ClinicAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                int.TryParse(query, out int id);
+                //int.TryParse(query, out int id);
 
                 patients = patients
                     .Where(p => (
-                        p.Id == id ||
+                        //p.Id == id ||
+                        ($"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase)) ||
                         p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
                     .Skip((page - 1) * pageSize)
@@ -153,7 +154,7 @@ namespace ClinicAPI.Controllers
             }
 
             var history = _unitOfWork.Histories
-                .Where(h => (h.PatientId == patient.Id && h.IsChecked == false))
+                .Where(h => (h.PatientId == patient.Id && !h.IsChecked))
                 .OrderByDescending(h => h.CreatedDate)
                 .FirstOrDefault();
 
@@ -197,41 +198,50 @@ namespace ClinicAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("patients/{id}")]
-        public async Task<IActionResult> UpdatePatientHistory(int id, [FromQuery] DateTime appointmentDate, [FromQuery] PatientStatus status)
+        [HttpPatch("patients/{id}")]
+        public async Task<IActionResult> UpdatePatientHistory(int id, [FromBody] PatientHistoryUpdateModel model)
         {
-            var patient = _unitOfWork.Patients.Find(id);
-            if (patient == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
-            }
+                if (model == null)
+                {
+                    return BadRequest($"{nameof(model)} can not be null.");
+                }
 
-            patient.AppointmentDate = appointmentDate;
-            patient.Status = status;
-            _unitOfWork.Patients.Update(patient);
-            int result = await _unitOfWork.SaveChangesAsync();
-            if (result < 1)
-            {
-                return NoContent();
-            }
+                var patient = _unitOfWork.Patients.Find(id);
+                if (patient == null)
+                {
+                    return NotFound();
+                }
 
-            var history = _unitOfWork.Histories
-                .Where(h => (h.PatientId == id && !h.IsChecked))
-                .FirstOrDefault();
-            if (history == null)
-            {
+                _mapper.Map(model, patient);
+                _unitOfWork.Patients.Update(patient);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                var history = _unitOfWork.Histories
+                    .Where(h => (h.PatientId == id && !h.IsChecked))
+                    .FirstOrDefault();
+                if (history == null)
+                {
+                    return Ok();
+                }
+
+                history.IsChecked = true;
+                _unitOfWork.Histories.Update(history);
+                result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
                 return Ok();
             }
 
-            history.IsChecked = true;
-            _unitOfWork.Histories.Update(history);
-            result = await _unitOfWork.SaveChangesAsync();
-            if (result < 1)
-            {
-                return NoContent();
-            }
-
-            return Ok();
+            return BadRequest();
         }
 
         [HttpGet("prescriptions")]
@@ -306,6 +316,7 @@ namespace ClinicAPI.Controllers
                 }
 
                 var prescription = _mapper.Map<Prescription>(prescriptionModel);
+                prescription.DoctorId = GetCurrentUserId();
                 _unitOfWork.Prescriptions.Add(prescription);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)

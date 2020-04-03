@@ -22,9 +22,9 @@ namespace DAL.Repositories
         {
             return _appContext.Histories
                 //.Include(h => h.Doctor)
-                .Include(h => h.Prescriptions)
-                .Include(h => h.XRayImages)
                 .Include(h => h.Doctors).ThenInclude(d => d.Doctor)
+                .Include(h => h.Prescriptions).ThenInclude(p => p.Patient)
+                .Include(h => h.XRayImages)
                 .Where(h => h.PatientId == patientId)
                 .OrderBy(h => h.Id);
                 

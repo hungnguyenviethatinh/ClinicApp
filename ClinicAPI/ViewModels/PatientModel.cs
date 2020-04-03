@@ -22,4 +22,12 @@ namespace ClinicAPI.ViewModels
 
         //public string DoctorId { get; set; }
     }
+
+
+
+    public class PatientHistoryUpdateModel
+    {
+        public DateTime? AppointmentDate { get; set; }
+        public PatientStatus Status { get; set; }
+    }
 }

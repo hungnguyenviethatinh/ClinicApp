@@ -58,6 +58,7 @@ namespace ClinicAPI.Controllers
 
                 patients = patients
                     .Where(p => (
+                        //p.Id == id ||
                         ($"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase)) ||
                         p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
@@ -400,11 +401,12 @@ namespace ClinicAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                int.TryParse(query, out int id);
+                //int.TryParse(query, out int id);
 
                 prescriptions = prescriptions
                     .Where(p =>
-                        p.PatientId == id ||
+                        //p.PatientId == id ||
+                        (query.Contains($"{p.IdCode}{p.Id}", StringComparison.OrdinalIgnoreCase)) ||
                         p.Patient.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.Doctor.FullName.Contains(query, StringComparison.OrdinalIgnoreCase))
                     .Skip((page - 1) * pageSize)

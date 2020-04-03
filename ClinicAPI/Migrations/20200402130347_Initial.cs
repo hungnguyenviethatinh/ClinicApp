@@ -117,6 +117,35 @@ namespace ClinicAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Patients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdCode = table.Column<string>(maxLength: 30, nullable: true),
+                    OrderNumber = table.Column<int>(nullable: false),
+                    FullName = table.Column<string>(maxLength: 100, nullable: false),
+                    Age = table.Column<int>(nullable: false),
+                    Gender = table.Column<int>(nullable: false),
+                    Address = table.Column<string>(maxLength: 200, nullable: true),
+                    Job = table.Column<string>(maxLength: 100, nullable: true),
+                    PhoneNumber = table.Column<string>(unicode: false, maxLength: 100, nullable: true),
+                    RelativePhoneNumber = table.Column<string>(unicode: false, maxLength: 100, nullable: true),
+                    Email = table.Column<string>(maxLength: 100, nullable: true),
+                    AppointmentDate = table.Column<DateTime>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Patients", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Units",
                 columns: table => new
                 {
@@ -241,39 +270,6 @@ namespace ClinicAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Patients",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(maxLength: 100, nullable: false),
-                    DateOfBirth = table.Column<DateTime>(nullable: false),
-                    Gender = table.Column<int>(nullable: false),
-                    Address = table.Column<string>(maxLength: 200, nullable: true),
-                    Job = table.Column<string>(maxLength: 100, nullable: true),
-                    PhoneNumber = table.Column<string>(unicode: false, maxLength: 100, nullable: true),
-                    Email = table.Column<string>(maxLength: 100, nullable: true),
-                    AppointmentDate = table.Column<DateTime>(nullable: true),
-                    Status = table.Column<int>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    DoctorId = table.Column<string>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    UpdatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    UpdatedDate = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Patients", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Patients_AspNetUsers_DoctorId",
-                        column: x => x.DoctorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Ingredients",
                 columns: table => new
                 {
@@ -307,8 +303,9 @@ namespace ClinicAPI.Migrations
                     Weight = table.Column<string>(maxLength: 10, nullable: true),
                     BloodPresure = table.Column<string>(maxLength: 10, nullable: true),
                     Pulse = table.Column<string>(maxLength: 10, nullable: true),
+                    Other = table.Column<string>(maxLength: 100, nullable: true),
+                    Note = table.Column<string>(maxLength: 100, nullable: true),
                     IsChecked = table.Column<bool>(nullable: false),
-                    DoctorId = table.Column<string>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
                     UpdatedBy = table.Column<string>(nullable: true),
@@ -319,12 +316,6 @@ namespace ClinicAPI.Migrations
                 {
                     table.PrimaryKey("PK_Histories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Histories_AspNetUsers_DoctorId",
-                        column: x => x.DoctorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Histories_Patients_PatientId",
                         column: x => x.PatientId,
                         principalTable: "Patients",
@@ -333,11 +324,43 @@ namespace ClinicAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DoctorPatientHistories",
+                columns: table => new
+                {
+                    DoctorId = table.Column<string>(nullable: false),
+                    PatientId = table.Column<int>(nullable: false),
+                    HistoryId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DoctorPatientHistories", x => new { x.DoctorId, x.PatientId, x.HistoryId });
+                    table.ForeignKey(
+                        name: "FK_DoctorPatientHistories_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorPatientHistories_Histories_HistoryId",
+                        column: x => x.HistoryId,
+                        principalTable: "Histories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DoctorPatientHistories_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Prescriptions",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    IdCode = table.Column<string>(maxLength: 30, nullable: true),
                     Diagnosis = table.Column<string>(nullable: true),
                     OtherDiagnosis = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true),
@@ -410,11 +433,12 @@ namespace ClinicAPI.Migrations
                 {
                     PrescriptionId = table.Column<int>(nullable: false),
                     MedicineId = table.Column<int>(nullable: false),
+                    Ingredient = table.Column<string>(maxLength: 100, nullable: true),
                     Quantity = table.Column<int>(nullable: false),
                     Unit = table.Column<string>(maxLength: 100, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TakePeriod = table.Column<string>(nullable: true),
-                    TakeMethod = table.Column<string>(nullable: true),
+                    TakePeriod = table.Column<string>(maxLength: 30, nullable: true),
+                    TakeMethod = table.Column<string>(maxLength: 50, nullable: true),
                     TakeTimes = table.Column<int>(nullable: false),
                     AmountPerTime = table.Column<int>(nullable: true),
                     AfterBreakfast = table.Column<int>(nullable: true),
@@ -481,9 +505,14 @@ namespace ClinicAPI.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Histories_DoctorId",
-                table: "Histories",
-                column: "DoctorId");
+                name: "IX_DoctorPatientHistories_HistoryId",
+                table: "DoctorPatientHistories",
+                column: "HistoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DoctorPatientHistories_PatientId",
+                table: "DoctorPatientHistories",
+                column: "PatientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Histories_PatientId",
@@ -494,11 +523,6 @@ namespace ClinicAPI.Migrations
                 name: "IX_Ingredients_MedicineId",
                 table: "Ingredients",
                 column: "MedicineId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Patients_DoctorId",
-                table: "Patients",
-                column: "DoctorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PrescriptionMedicines_MedicineId",
@@ -552,6 +576,9 @@ namespace ClinicAPI.Migrations
                 name: "Diagnoses");
 
             migrationBuilder.DropTable(
+                name: "DoctorPatientHistories");
+
+            migrationBuilder.DropTable(
                 name: "Ingredients");
 
             migrationBuilder.DropTable(
@@ -576,13 +603,13 @@ namespace ClinicAPI.Migrations
                 name: "Prescriptions");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "Histories");
 
             migrationBuilder.DropTable(
                 name: "Patients");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }
