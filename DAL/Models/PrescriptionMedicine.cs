@@ -8,7 +8,7 @@
         public virtual Medicine Medicine { get; set; }
 
         public string Ingredient { get; set; }
-
+        public string NetWeight { get; set; }
         public int Quantity { get; set; }
         public string Unit { get; set; }
         public decimal Price { get; set; }

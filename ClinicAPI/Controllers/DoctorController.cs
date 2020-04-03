@@ -40,7 +40,7 @@ namespace ClinicAPI.Controllers
         {
             var medicines = _unitOfWork.Medicines
                 .Where(m => !m.IsDeleted && m.Quantity > 0)
-                .Select(m => new { m.Id, m.Name, m.Quantity, m.Unit, m.Price });
+                .Select(m => new { m.Id, m.Name, m.NetWeight, m.Quantity, m.Unit, m.Price });
 
             return Ok(medicines);
         }
@@ -139,14 +139,15 @@ namespace ClinicAPI.Controllers
             return Ok(patients);
         }
 
-        [HttpGet("patients/current")]
+        [HttpGet("patients/current/{id}")]
         [Authorize(Policies.ViewAllPatientsPolicy)]
-        public IActionResult GetCurrentPatient()
+        public IActionResult GetCurrentPatient(int id)
         {
-            var patient = GetCurrentDoctorPatients()
-                .Where(p => (p.Status == PatientStatus.IsChecking))
-                .OrderBy(p => p.UpdatedDate)
-                .FirstOrDefault();
+            //var patient = GetCurrentDoctorPatients()
+            //    .Where(p => (p.Status == PatientStatus.IsChecking))
+            //    .OrderBy(p => p.UpdatedDate)
+            //    .FirstOrDefault();
+            var patient = _unitOfWork.Patients.Find(id);
 
             if (patient == null)
             {
@@ -154,8 +155,8 @@ namespace ClinicAPI.Controllers
             }
 
             var history = _unitOfWork.Histories
-                .Where(h => (h.PatientId == patient.Id && !h.IsChecked))
-                .OrderByDescending(h => h.CreatedDate)
+                .Where(h => (h.PatientId == id && !h.IsChecked))
+                .OrderByDescending(h => h.UpdatedDate)
                 .FirstOrDefault();
 
             return Ok(new[]

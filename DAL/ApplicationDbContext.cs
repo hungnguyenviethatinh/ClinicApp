@@ -201,6 +201,8 @@ namespace DAL
             builder.Entity<PrescriptionMedicine>()
                 .Property(pm => pm.Ingredient).HasMaxLength(100);
             builder.Entity<PrescriptionMedicine>()
+                .Property(pm => pm.NetWeight).HasMaxLength(30);
+            builder.Entity<PrescriptionMedicine>()
                 .Property(pm => pm.TakePeriod).HasMaxLength(30);
             builder.Entity<PrescriptionMedicine>()
                 .Property(pm => pm.TakeMethod).HasMaxLength(50);

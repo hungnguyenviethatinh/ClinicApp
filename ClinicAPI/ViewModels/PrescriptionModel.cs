@@ -21,6 +21,7 @@ namespace ClinicAPI.ViewModels
         public int MedicineId { get; set; }
 
         public string Ingredient { get; set; }
+        public string NetWeight { get; set; }
         public int Quantity { get; set; }
         public string Unit { get; set; }
         public decimal Price { get; set; }

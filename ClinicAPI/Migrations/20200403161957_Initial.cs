@@ -434,6 +434,7 @@ namespace ClinicAPI.Migrations
                     PrescriptionId = table.Column<int>(nullable: false),
                     MedicineId = table.Column<int>(nullable: false),
                     Ingredient = table.Column<string>(maxLength: 100, nullable: true),
+                    NetWeight = table.Column<string>(maxLength: 30, nullable: true),
                     Quantity = table.Column<int>(nullable: false),
                     Unit = table.Column<string>(maxLength: 100, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),

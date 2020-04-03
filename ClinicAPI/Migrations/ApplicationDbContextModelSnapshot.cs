@@ -406,6 +406,10 @@ namespace ClinicAPI.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("NetWeight")
+                        .HasColumnType("nvarchar(30)")
+                        .HasMaxLength(30);
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 

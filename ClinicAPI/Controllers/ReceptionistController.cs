@@ -62,12 +62,14 @@ namespace ClinicAPI.Controllers
                         ($"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase)) ||
                         p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
+                    .OrderByDescending(p => p.UpdatedDate)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
             else
             {
                 patients = patients
+                    .OrderByDescending(p => p.UpdatedDate)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
@@ -464,9 +466,13 @@ namespace ClinicAPI.Controllers
                 (!p.IsDeleted &&
                 p.Status != PatientStatus.IsChecked &&
                 (((p.CreatedDate.Date == currentDate || p.UpdatedDate == currentDate) && p.AppointmentDate == null) ||
-                p.AppointmentDate.Value.Date == currentDate)));
+                p.AppointmentDate.Value.Date == currentDate)))
+                .OrderBy(p => p.OrderNumber);
 
-            orderNumber = patients.Count() + 1;
+            if (patients.Any())
+            {
+                orderNumber = patients.Last().OrderNumber + 1;
+            }
 
             if (patient.AppointmentDate != null)
             {
@@ -477,9 +483,13 @@ namespace ClinicAPI.Controllers
                         .Where(p =>
                         (!p.IsDeleted &&
                         p.Status != PatientStatus.IsChecked &&
-                        p.AppointmentDate.Value.Date == appointmentDate));
+                        p.AppointmentDate.Value.Date == appointmentDate))
+                        .OrderBy(p => p.OrderNumber);
 
-                    orderNumber = appointedPatients.Count() + 1;
+                    if (patients.Any())
+                    {
+                        orderNumber = patients.Last().OrderNumber + 1;
+                    }
                 }
             }
 
