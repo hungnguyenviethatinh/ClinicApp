@@ -9,5 +9,6 @@ namespace ClinicApp.ViewModels
         public Patient Patient { get; set; }
         public Prescription Prescription { get; set; }
         public List<Medicine> Medicines { get; set; }
+        public List<OpenTime> OpenTimes { get; set; }
     }
 }

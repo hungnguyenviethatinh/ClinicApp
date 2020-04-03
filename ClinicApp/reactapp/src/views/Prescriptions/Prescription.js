@@ -142,6 +142,7 @@ const Prescription = () => {
     const [medicines, setMedicines] = React.useState([{
         MedicineName: '',
         Ingredient: '',
+        NetWeight: '',
         Quantity: '',
         Unit: '',
         Price: '',
@@ -185,9 +186,9 @@ const Prescription = () => {
                     + PrescriptionPrintUrl
                     + '. Response received: ', response);
 
-                setDisabled(false);
-                setLoading(false);
             }
+            setDisabled(false);
+            setLoading(false);
         });
     };
 
@@ -243,6 +244,7 @@ const Prescription = () => {
                     const {
                         medicine,
                         ingredient,
+                        netWeight,
                         quantity,
                         unit,
                         price,
@@ -260,6 +262,7 @@ const Prescription = () => {
                     ms.push({
                         MedicineName: medicine.name,
                         Ingredient: ingredient,
+                        NetWeight: netWeight,
                         Quantity: quantity,
                         Unit: unit,
                         Price: price,
@@ -643,7 +646,7 @@ const Prescription = () => {
                                                             <Typography
                                                                 component="h5"
                                                                 variant="h5"
-                                                                children={`${m.MedicineName}${!m.Ingredient.trim() ? '' : ` (${m.Ingredient})`}`}
+                                                                children={`${m.MedicineName} ${m.NetWeight}${!m.Ingredient.trim() ? '' : ` (${m.Ingredient})`}`}
                                                                 style={{ fontWeight: 600 }}
                                                             />
                                                         </Grid>

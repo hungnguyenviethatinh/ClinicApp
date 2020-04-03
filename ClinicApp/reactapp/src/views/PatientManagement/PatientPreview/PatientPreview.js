@@ -30,12 +30,12 @@ const PatientPreview = (props) => {
 
     const handleSaveAndPrint = () => {
         handleSave();
-        handlePrint();
+        // handlePrint();
     };
 
-    const handlePrint = () => {
-        // Chromely here
-    };
+    // const handlePrint = () => {
+    //     // Chromely here
+    // };
 
     return (
         <Dialog

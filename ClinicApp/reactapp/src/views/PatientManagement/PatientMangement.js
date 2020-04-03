@@ -29,9 +29,7 @@ import PatientPreview from './PatientPreview';
 import _ from 'lodash';
 import moment from 'moment';
 
-import Axios, {
-    axiosRequestConfig,
-} from '../../common';
+import Axios, { axiosRequestConfig, chromely } from '../../common';
 import {
     PatientStatus,
     GenderEnum,
@@ -42,6 +40,7 @@ import {
     // DataDateTimeFormat,
     AddressSeperator,
     RouteConstants,
+    DisplayDateTimeFormat,
 } from '../../constants';
 import {
     GetDoctorsUrl,
@@ -55,8 +54,9 @@ import {
     UpdateXRayUrl,
     AddDoctorsUrl,
     UpdateDoctorsUrl,
+    PatientPrintUrl,
 } from '../../config';
-import { encodeId, decodeId } from '../../utils';
+// import { encodeId, decodeId } from '../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -149,6 +149,7 @@ const PatientManagement = () => {
         setOpenDeleteConfirm(false);
     };
 
+    const [patient, setPatient] = React.useState(null);
     const [values, setValues] = React.useState({
         FullName: '',
         // DateOfBirth: null,
@@ -299,8 +300,8 @@ const PatientManagement = () => {
                 Status = PatientStatusEnum[PatientStatus.IsChecked];
             }
         }
-        const IdCode = `${IdPrefix.Patient}: ${moment().format('YYYY/MM')}`;
 
+        const IdCode = `${IdPrefix.Patient}: ${moment().format('YYYY/MM')}`;
         const patientModel = {
             IdCode,
             FullName: values.FullName,
@@ -330,8 +331,14 @@ const PatientManagement = () => {
         Axios.post(AddPatientUrl, patientModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { id } = data;
+                const { id, idCode, orderNumber } = data;
                 handleSnackbarOption('success', 'Bệnh nhân được tạo thành công.');
+                const patientPrintModel = {
+                    ...patient,
+                    Id: id,
+                    IdCode: idCode,
+                    OrderNumber: orderNumber,
+                };
                 handleReset();
                 refreshData();
                 const historyModel = {
@@ -345,7 +352,7 @@ const PatientManagement = () => {
                     // DoctorId: values.DoctorId,
                     PatientId: id,
                 };
-                addHistory(historyModel);
+                addHistory(historyModel, patientPrintModel);
             } else {
                 console.log('[Add Patient Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân.');
@@ -364,7 +371,7 @@ const PatientManagement = () => {
         });
     };
 
-    const addHistory = (historyModel) => {
+    const addHistory = (historyModel, patientPrintModel) => {
         Axios.post(AddHistoryUrl, historyModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
@@ -377,7 +384,7 @@ const PatientManagement = () => {
                         PatientId: patientId,
                         DoctorId: doctor.id,
                     }));
-                    addDoctors(doctorModels);
+                    addDoctors(doctorModels, patientPrintModel);
                 }
                 if (!_.isEmpty(values.XRayImages)) {
                     const xRayModels = [];
@@ -408,18 +415,22 @@ const PatientManagement = () => {
         });
     };
 
-    const addDoctors = (doctorModels) => {
+    const addDoctors = (doctorModels, patientPrintModel) => {
         Axios.post(AddDoctorsUrl, doctorModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 console.log('[Add Doctors Success] - Ok.');
+                handlePrint(patientPrintModel);
             } else {
                 console.log('[Add Doctors Error] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
+                setDisabled(false);
+                setLoadingDone(false);
+                setOpenPatientPreview(false);
             }
-            setDisabled(false);
-            setLoadingDone(false);
-            setOpenPatientPreview(false);
+            // setDisabled(false);
+            // setLoadingDone(false);
+            // setOpenPatientPreview(false);
         }).catch((reason) => {
             console.log('[Add Doctors Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
@@ -451,9 +462,16 @@ const PatientManagement = () => {
 
     const updatePatient = (id, patientModel) => {
         Axios.put(`${UpdatePatientUrl}/${id}`, patientModel, config).then((response) => {
-            const { status } = response;
+            const { status, data } = response;
             if (status === 200) {
+                const { idCode, orderNumber } = data;
                 handleSnackbarOption('success', 'Cập nhật thông tin của bệnh nhân thành công.');
+                const patientPrintModel = {
+                    ...patient,
+                    Id: data.id,
+                    IdCode: idCode,
+                    OrderNumber: orderNumber,
+                };
                 refreshData();
                 const historyModel = {
                     Height: values.Height,
@@ -466,7 +484,7 @@ const PatientManagement = () => {
                     // DoctorId: values.DoctorId,
                     PatientId: id,
                 };
-                updateHistory(id, historyModel);
+                updateHistory(id, historyModel, patientPrintModel);
             } else {
                 console.log('[Update Patient Reponse] ', reason);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
@@ -485,7 +503,7 @@ const PatientManagement = () => {
         });
     };
 
-    const updateHistory = (patientId, historyModel) => {
+    const updateHistory = (patientId, historyModel, patientPrintModel) => {
         Axios.put(`${UpdateHistoryUrl}/${patientId}`, historyModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
@@ -498,7 +516,7 @@ const PatientManagement = () => {
                         PatientId: patientId,
                         DoctorId: doctor.id,
                     }));
-                    updateDoctors(id, doctorModels);
+                    updateDoctors(id, doctorModels, patientPrintModel);
                 }
                 if (!_.isEmpty(values.XRayImages)) {
                     const xRayModels = [];
@@ -529,18 +547,22 @@ const PatientManagement = () => {
         });
     };
 
-    const updateDoctors = (historyId, doctorModels) => {
+    const updateDoctors = (historyId, doctorModels, patientPrintModel) => {
         Axios.put(`${UpdateDoctorsUrl}/${historyId}`, doctorModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 console.log('[Update Doctors Success] - Ok.');
+                handlePrint(patientPrintModel);
             } else {
                 console.log('[Update Doctors Error] ', reason);
                 handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
+                setDisabled(false);
+                setLoadingDone(false);
+                setOpenPatientPreview(false);
             }
-            setDisabled(false);
-            setLoadingDone(false);
-            setOpenPatientPreview(false);
+            // setDisabled(false);
+            // setLoadingDone(false);
+            // setOpenPatientPreview(false);
         }).catch((reason) => {
             console.log('[Update Doctors Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
@@ -857,10 +879,89 @@ const PatientManagement = () => {
             return;
         }
 
+        setPatient({
+            ...values,
+        });
         setOpenPatientPreview(true);
     };
     const handleClosePatientPreview = () => {
         setOpenPatientPreview(false);
+    };
+    
+    const handlePrint = (patientPrintModel) => {
+        const {
+            Id,
+            IdCode,
+            OrderNumber,
+            FullName,
+            // DateOfBirth: null,
+            Age,
+            // Gender,
+            HouseNo,
+            Street,
+            Ward,
+            District,
+            City,
+            PhoneNumber,
+            RelativePhoneNumber,
+            Status,
+            Height,
+            Weight,
+            BloodPresure,
+            Pulse,
+            Other,
+            Note,
+            // Doctors,
+        } = patientPrintModel;
+
+        const Address = [HouseNo, Street, Ward, District, City].join(`${AddressSeperator} `);
+        const AppointmentDate = moment(patient.AppointmentDate).isValid() ? patient.AppointmentDate.format(DisplayDateTimeFormat) : null;
+        const Doctors = [];
+        if (!_.isEmpty(patient.Doctors)) {
+            patient.Doctors.map(({ fullName }) => Doctors.push({
+                FullName: fullName,
+            }));
+        }
+        const data = JSON.stringify({
+            Id,
+            IdCode,
+            OrderNumber,
+            FullName,
+            // DateOfBirth: null,
+            Age: _.toNumber(Age),
+            Gender: [Gender.None, Gender.Male, Gender.Female][patient.Gender],
+            Address,
+            PhoneNumber,
+            RelativePhoneNumber,
+            AppointmentDate,
+            Status,
+            Height,
+            Weight,
+            BloodPresure,
+            Pulse,
+            Other,
+            Note,
+            Doctors,
+        });
+
+        console.log(JSON.parse(data));
+
+        chromely.post(PatientPrintUrl, null, data, response => {
+            const { ResponseText } = response;
+            const { ReadyState, Status, Data } = JSON.parse(ResponseText);
+            if (ReadyState === 4 && Status === 200) {
+                const { Message } = Data;
+                console.log(`[Print Patient Success] - ${Message}`);
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi in phiếu tiếp nhận bệnh nhân!');
+                console.log('[Print Patient Error] - An error occurs during message routing. With url: '
+                    + PatientPrintUrl
+                    + '. Response received: ', response);
+            }
+            setDisabled(false);
+            setLoadingDone(false);
+            setOpenPatientPreview(false);
+        });
     };
 
     React.useEffect(() => {
@@ -1287,7 +1388,7 @@ const PatientManagement = () => {
                 disabled={disabled}
                 loading={loadingDone}
                 open={openPatientPreview}
-                patient={values}
+                patient={patient}
                 handleCancel={handleClosePatientPreview}
                 handleSave={handleDone}
             />

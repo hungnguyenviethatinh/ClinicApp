@@ -33,9 +33,10 @@ import {
     RefreshDataTimer,
     PatientStatusEnum,
     RouteConstants,
-    IdPrefix,
+    // IdPrefix,
+    CurrentCheckingPatientId,
 } from '../../../constants';
-import { encodeId } from '../../../utils';
+// import { encodeId } from '../../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -255,6 +256,7 @@ const DoctorView = () => {
         Axios.get(url, config).then((response) => {
             const { status } = response;
             if (status === 200) {
+                localStorage.removeItem(CurrentCheckingPatientId);
                 handleSnackbarOption('success', 'Hủy kê đơn thành công!');
                 setSelectedRow(null);
             } else {
@@ -273,7 +275,10 @@ const DoctorView = () => {
         Axios.get(url, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                history.push(RouteConstants.PrescriptionManagementView);
+                localStorage.setItem(CurrentCheckingPatientId, id);
+                setTimeout(() => {
+                    history.push(RouteConstants.PrescriptionManagementView);
+                }, 1000);
             } else {
                 handleSnackbarOption('error', 'Đang kê đơn cho bệnh nhân khác!');
             }

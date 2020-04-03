@@ -86,3 +86,4 @@ export const UpdateCurrentUserUrl = '/api/account/update';
 // Chromely controller:
 export const PrescriptionPrintUrl = '/prescription/print';
 export const GetAppConfigurationUrl = '/app/configuration';
+export const PatientPrintUrl = '/patient/print';

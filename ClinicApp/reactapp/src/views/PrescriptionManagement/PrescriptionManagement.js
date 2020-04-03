@@ -37,6 +37,7 @@ import {
     SnackbarMessage,
     IdPrefix,
     takePeriodValue,
+    CurrentCheckingPatientId,
 } from '../../constants';
 
 import {
@@ -211,6 +212,7 @@ const PrescriptionManagement = () => {
         PrescriptionId: '',
         MedicineId: '',
         Ingredient: '',
+        NetWeight: '',
         Quantity: '',
         Unit: '',
         Price: '',
@@ -276,7 +278,9 @@ const PrescriptionManagement = () => {
     const handleMedicineNameChange = index => (event, value) => {
         const medicineId = value ? value.id : '';
         const unit = value ? value.unit : '';
+        const netWeight = value ? value.netWeight : '';
         medicines[index].MedicineId = medicineId;
+        medicines[index].NetWeight = netWeight;
         medicines[index].Unit = unit;
         medicineNames[index].value = value;
         setMedicines([...medicines]);
@@ -307,6 +311,7 @@ const PrescriptionManagement = () => {
             PrescriptionId: '',
             MedicineId: '',
             Ingredient: '',
+            NetWeight: '',
             Quantity: '',
             Unit: '',
             Price: '',
@@ -350,6 +355,7 @@ const PrescriptionManagement = () => {
             PrescriptionId: '',
             MedicineId: '',
             Ingredient: '',
+            NetWeight: '',
             Quantity: '',
             Unit: '',
             Price: '',
@@ -580,7 +586,10 @@ const PrescriptionManagement = () => {
 
     const getPatient = () => {
         setDisabled(true);
-        Axios.get(GetCurrentPatientUrl, config).then((response) => {
+        
+        const id = localStorage.getItem(CurrentCheckingPatientId) || 0;
+        const url = `${GetCurrentPatientUrl}/${id}`;
+        Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const {
@@ -626,6 +635,7 @@ const PrescriptionManagement = () => {
     const [medicineNameOptions, setMedicineNameOptions] = React.useState([{
         id: '',
         name: '',
+        netWeight: '',
         quantity: '',
         unit: '',
         price: '',
@@ -753,6 +763,7 @@ const PrescriptionManagement = () => {
                     const {
                         medicineId,
                         ingredient,
+                        netWeight,
                         unit,
                         price,
                         takePeriod,
@@ -774,6 +785,7 @@ const PrescriptionManagement = () => {
                         PrescriptionId: '',
                         MedicineId: medicineId,
                         Ingredient: ingredient,
+                        NetWeight: netWeight,
                         Quantity: quantity,
                         Unit: unit,
                         Price: price,

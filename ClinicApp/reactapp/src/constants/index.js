@@ -124,3 +124,5 @@ export const takePeriodValue = {
     Week: 'Tuần',
     Month: 'Tháng',
 };
+
+export const CurrentCheckingPatientId = 'currentCheckingPatientId';
