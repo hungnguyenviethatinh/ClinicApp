@@ -118,7 +118,7 @@ namespace ClinicApp.Controllers
                                 <input type=""checkbox"" id=""istoadddoc"" name=""istoadddoc"" value=""istoadddoc"">
                             </div>";
             }
-            else
+            else if (patient.Status.Equals(PatientStatusConstants.IsToAddDocs, StringComparison.OrdinalIgnoreCase))
             {
                 status = @"<div class=""col-4"" style=""text-align: left;"">
                                 <label for=""isnew"" style=""margin-right: 30px;"">Khám lần đầu</label>
@@ -131,6 +131,21 @@ namespace ClinicApp.Controllers
                             <div class=""col-4"" style=""text-align: right;"">
                                 <label for=""istoadddoc"" style=""margin-right: 30px;"">BS Hồ Sơ</label>
                                 <input type=""checkbox"" id=""istoadddoc"" name=""istoadddoc"" value=""istoadddoc"" checked>
+                            </div>";
+            }
+            else
+            {
+                status = @"<div class=""col-4"" style=""text-align: left;"">
+                                <label for=""isnew"" style=""margin-right: 30px;"">Khám lần đầu</label>
+                                <input type=""checkbox"" id=""isnew"" name=""isnew"" value=""isnew"">
+                            </div>
+                            <div class=""col-4"" style=""text-align: center;"">
+                                <label for=""isrechecking"" style=""margin-right: 30px;"">Tái khám</label>
+                                <input type=""checkbox"" id=""isrechecking"" name=""isrechecking"" value=""isrechecking"">
+                            </div>
+                            <div class=""col-4"" style=""text-align: right;"">
+                                <label for=""istoadddoc"" style=""margin-right: 30px;"">BS Hồ Sơ</label>
+                                <input type=""checkbox"" id=""istoadddoc"" name=""istoadddoc"" value=""istoadddoc"">
                             </div>";
             }
 

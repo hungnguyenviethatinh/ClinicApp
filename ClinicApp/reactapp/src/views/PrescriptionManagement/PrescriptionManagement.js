@@ -575,20 +575,26 @@ const PrescriptionManagement = () => {
             }
             setDisabled(false);
             setLoadingDone(false);
-            history.push(RouteConstants.DashboardView);
+            localStorage.removeItem(CurrentCheckingPatientId);
+            setTimeout(() => {
+                history.push(RouteConstants.DashboardView);
+            }, 1000);
         }).catch((reason) => {
             handleError(reason, updateMedicinesQuantityErrorMsg);
             setDisabled(false);
             setLoadingDone(false);
-            history.push(RouteConstants.DashboardView);
+            localStorage.removeItem(CurrentCheckingPatientId);
+            setTimeout(() => {
+                history.push(RouteConstants.DashboardView);
+            }, 1000);
         });
     };
 
     const getPatient = () => {
         setDisabled(true);
         
-        const id = localStorage.getItem(CurrentCheckingPatientId) || 0;
-        const url = `${GetCurrentPatientUrl}/${id}`;
+        const currentPatientId = localStorage.getItem(CurrentCheckingPatientId) || 0;
+        const url = `${GetCurrentPatientUrl}/${currentPatientId}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {

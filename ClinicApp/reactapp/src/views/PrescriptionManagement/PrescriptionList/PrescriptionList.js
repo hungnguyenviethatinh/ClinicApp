@@ -63,15 +63,17 @@ const PrescriptionList = (props) => {
 
     const getPrescriptionList = (resolve, reject, query) => {
         const url = `${GetPrescriptionListUrl}/${patientId}`;
-        const { page, pageSize } = query;
         Axios.get(url, {
             ...config,
-            page: page + 1,
-            pageSize,
+            params: {
+                page: query.page + 1,
+                pageSize: query.pageSize,
+            },
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { totalCount, prescriptions } = data[0];
+                const { page } = query;
                 resolve({
                     data: prescriptions,
                     page,

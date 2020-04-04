@@ -155,7 +155,7 @@ const UserManagement = () => {
 
     const [searchValue, setSearchValue] = React.useState('');
     const handleSearchChange = event => {
-        setSearchValue(event.target.value.trim());
+        setSearchValue(event.target.value);
     };
     const handleSearch = event => {
         event.preventDefault();

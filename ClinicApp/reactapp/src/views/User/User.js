@@ -104,14 +104,14 @@ const UserView = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
             return;
         }
-        if (!user.Email.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập email!');
-            return;
-        }
-        if (!user.PhoneNumber.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại!');
-            return;
-        }
+        // if (!user.Email.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập email!');
+        //     return;
+        // }
+        // if (!user.PhoneNumber.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại!');
+        //     return;
+        // }
         if (user.CurrentPassword.trim() && !user.NewPassword.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập mật khẩu mới!');
             return;

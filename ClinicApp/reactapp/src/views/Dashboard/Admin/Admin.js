@@ -251,21 +251,21 @@ const AdminView = () => {
     const [prescriptionSearchValue, setPrescriptionSearchValue] = React.useState('');
     const [employeeSearchValue, setEmployeeSearchValue] = React.useState('');
     const handlePatientSearchChange = event => {
-        setPatientSearchValue(event.target.value.trim());
+        setPatientSearchValue(event.target.value);
     };
     const handlePatientSearch = event => {
         event.preventDefault();
         refreshPatientData();
     };
     const handlePrescriptionSearchChange = event => {
-        setPrescriptionSearchValue(event.target.value.trim());
+        setPrescriptionSearchValue(event.target.value);
     };
     const handlePrescriptionSearch = event => {
         event.preventDefault();
         refreshPrescriptionData();
     };
     const handleEmployeeSearchChange = event => {
-        setEmployeeSearchValue(event.target.value.trim());
+        setEmployeeSearchValue(event.target.value);
     };
     const handleEmployeeSearch = event => {
         event.preventDefault();
