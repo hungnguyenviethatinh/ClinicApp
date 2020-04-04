@@ -62,14 +62,15 @@ namespace ClinicAPI.Controllers
                         ($"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase)) ||
                         p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
-                    .OrderByDescending(p => p.UpdatedDate)
+                    //.OrderByDescending(p => p.UpdatedDate)
+                    //.OrderByDescending(p => p.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
             else
             {
                 patients = patients
-                    .OrderByDescending(p => p.UpdatedDate)
+                    //.OrderByDescending(p => p.UpdatedDate)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
