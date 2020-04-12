@@ -22,6 +22,7 @@ import { DeleteConfirm } from '../../components/DeleteConfirm';
 import { Select } from '../../components/Select';
 import { CheckBox } from '../../components/CheckBox';
 import { DatePicker } from '../../components/DatePicker';
+import { ActionOption } from '../../components/ActionOption';
 
 import {
     DrugStatus,
@@ -41,6 +42,7 @@ import {
     AddIngredientsUrl,
     GetIngredientsUrl,
     DeleteIngredientsUrl,
+    UpdateIngredientsUrl,
 } from '../../config';
 
 const useStyles = makeStyles(theme => ({
@@ -111,13 +113,9 @@ const updateIngredientLogHeader = '[Update Ingredients Error]';
 const deleteIngredientLogHeader = '[Delete Ingredients Error]';
 
 const DrugManagement = () => {
-
+    // [Start] Common
     const classes = useStyles();
-
-    const tableRef = React.useRef(null);
-    const refreshData = () => {
-        tableRef.current && tableRef.current.onQueryChange();
-    };
+    const config = axiosRequestConfig();
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -140,14 +138,6 @@ const DrugManagement = () => {
         setOpenSnackbar(true);
     };
 
-    const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
-    const onOpenDeleteConfirm = () => {
-        setOpenDeleteConfirm(true);
-    };
-    const handlCloseDeleteConfirm = () => {
-        setOpenDeleteConfirm(false);
-    };
-
     const handleError = (reason, logMsgHeader) => {
         if (reason.response) {
             const { status } = reason.response;
@@ -160,6 +150,51 @@ const DrugManagement = () => {
             }
         }
         console.log(`${logMsgHeader}`, reason);
+    };
+
+    // [End] Common.
+
+    // [Start] State declaration and event handlers
+    const [disabled, setDisabled] = React.useState(false);
+    // const [loadingDelete, setLoadingDelete] = React.useState(false);
+    const [loadingDone, setLoadingDone] = React.useState(false);
+    // const [loadingSearch, setLoadingSearch] = React.useState(false);
+
+    const tableRef = React.useRef(null);
+    const refreshData = () => {
+        tableRef.current && tableRef.current.onQueryChange();
+    };
+
+    const [updateMode, setUpdateMode] = React.useState(false);
+    const [selectedRow, setSelectedRow] = React.useState(null);
+    const handleSelectRow = (event, rowData) => {
+        if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
+            setSelectedRow(rowData);
+            setOpenActionOption(true);
+            // const { id } = rowData;
+            // getMedicine(id);
+            // setUpdateMode(true);
+        } else {
+            setSelectedRow(null);
+            handleReset();
+            setUpdateMode(false);
+            setIsChecked(false);
+        }
+    };
+
+    const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
+    const [openActionOption, setOpenActionOption] = React.useState(false);
+    const onOpenDeleteConfirm = () => {
+        setOpenActionOption(false);
+        setOpenDeleteConfirm(true);
+    };
+    const handleCloseDeleteConfirm = () => {
+        setSelectedRow(null);
+        setOpenDeleteConfirm(false);
+    };
+    const handleCloseActionOption = () => {
+        setSelectedRow(null);
+        setOpenActionOption(false);
     };
 
     const [isChecked, setIsChecked] = React.useState(false);
@@ -237,27 +272,6 @@ const DrugManagement = () => {
         }
     };
 
-    const handleReset = () => {
-        setMedicine({
-            IdCode: '',
-            Name: '',
-            ShortName: '',
-            NetWeight: '',
-            Quantity: '',
-            Unit: '',
-            Price: '',
-        });
-        setIngredients([{
-            Name: '',
-            MedicineId: 0,
-        }]);
-    };
-
-    const [disabled, setDisabled] = React.useState(false);
-    const [loadingDelete, setLoadingDelete] = React.useState(false);
-    const [loadingDone, setLoadingDone] = React.useState(false);
-    // const [loadingSearch, setLoadingSearch] = React.useState(false);
-
     const handleDone = () => {
         if (!medicine.Name.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập tên thuốc!');
@@ -325,16 +339,40 @@ const DrugManagement = () => {
         }
     };
 
+    const handleReset = () => {
+        setMedicine({
+            IdCode: '',
+            Name: '',
+            ShortName: '',
+            NetWeight: '',
+            Quantity: '',
+            Unit: '',
+            Price: '',
+        });
+        setIngredients([{
+            Name: '',
+            MedicineId: 0,
+        }]);
+    };
+
+    const handleUpdate = () => {
+        const { id } = selectedRow;
+        getMedicine(id);
+        setUpdateMode(true);
+        setOpenActionOption(false);
+    };
+
     const handleDelete = () => {
         const { id } = selectedRow;
         setDisabled(true);
-        setLoadingDelete(true);
+        // setLoadingDelete(true);
         deleteMedicine(id);
         setOpenDeleteConfirm(false);
     };
 
-    const config = axiosRequestConfig();
+    // [End] State declaration and event handlers.
 
+    // [Start] Api handlers
     const addMedicine = (medicineModel) => {
         Axios.post(AddMedicineUrl, medicineModel, config).then((response) => {
             const { status, data } = response;
@@ -348,15 +386,21 @@ const DrugManagement = () => {
                         MedicineId: id,
                     }));
                     addIngredients(ingredientModels);
+                } else {
+                    setDisabled(false);
+                    setLoadingDone(false);
                 }
 
                 handleReset();
                 refreshData();
             } else {
+                handleError(response, addMedicineLogMsfHeader);
                 handleSnackbarOption('error', 'Có lỗi khi thêm thuốc vào kho dữ liệu. Vui lòng thử lại!');
+                setDisabled(false);
+                setLoadingDone(false);
             }
-            setDisabled(false);
-            setLoadingDone(false);
+            // setDisabled(false);
+            // setLoadingDone(false);
         }).catch((reason) => {
             handleError(reason, addMedicineLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi thêm thuốc vào kho dữ liệu. Vui lòng thử lại!');
@@ -371,11 +415,16 @@ const DrugManagement = () => {
             if (status === 200) {
                 handleSnackbarOption('success', 'Thêm hoạt chất/biệt dược thành công!');
             } else {
+                handleError(response, addIngredientLogHeader);
                 handleSnackbarOption('error', 'Có lỗi khi thêm hoạt chất/biệt dược. Vui lòng thử lại!');
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             handleError(reason, addIngredientLogHeader);
             handleSnackbarOption('error', 'Có lỗi khi thêm hoạt chất/biệt dược. Vui lòng thử lại!');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -386,17 +435,52 @@ const DrugManagement = () => {
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật dữ liệu thuốc thành công!');
                 if (isChecked) {
-                    deleteIngredients(id);
+                    if (ingredients.length > 1 || (true && ingredients[0].Name.trim())) {
+                        const ingredientModels = [];
+                        ingredients.map(({ Name }) => ingredientModels.push({
+                            Name,
+                            MedicineId: id,
+                        }));
+                        updateIngredients(id, ingredientModels);
+                    } else {
+                        deleteIngredients(id);
+                    }
+                } else {
+                    setDisabled(false);
+                    setLoadingDone(false);
                 }
                 refreshData();
             } else {
+                handleError(response, updateMedicineLogMsfHeader);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin thuốc. Vui lòng thử lại!');
+                setDisabled(false);
+                setLoadingDone(false);
+            }
+            // setDisabled(false);
+            // setLoadingDone(false);
+        }).catch((reason) => {
+            handleError(reason, updateMedicineLogMsfHeader);
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin thuốc. Vui lòng thử lại!');
+            setDisabled(false);
+            setLoadingDone(false);
+        });
+    };
+
+    const updateIngredients = (medicineId, ingredientModels) => {
+        const url = `${UpdateIngredientsUrl}/${medicineId}`;
+        Axios.put(url, ingredientModels, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Cập nhật lại hoạt chất/biệt dược thành công!');
+            } else {
+                handleError(response, updateIngredientLogHeader);
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật lại hoạt chất/biệt dược. Vui lòng thử lại!');
             }
             setDisabled(false);
             setLoadingDone(false);
         }).catch((reason) => {
-            handleError(reason, updateMedicineLogMsfHeader);
-            handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin thuốc. Vui lòng thử lại!');
+            handleError(reason, updateIngredientLogHeader);
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật lại hoạt chất/biệt dược. Vui lòng thử lại!');
             setDisabled(false);
             setLoadingDone(false);
         });
@@ -412,15 +496,16 @@ const DrugManagement = () => {
                 setUpdateMode(false);
                 refreshData();
             } else {
+                handleError(response, deleteMedicineLogMsfHeader);
                 handleSnackbarOption('error', 'Có lỗi khi xóa loại thuốc này. Vui lòng thử lại!');
             }
             setDisabled(false);
-            setLoadingDelete(false);
+            // setLoadingDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteMedicineLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa loại thuốc này. Vui lòng thử lại!');
             setDisabled(false);
-            setLoadingDelete(false);
+            // setLoadingDelete(false);
         });
     };
 
@@ -429,38 +514,19 @@ const DrugManagement = () => {
         Axios.delete(url, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                console.log(`Remove all ingredients of medicine ${medicineId}.`);
-
-                if (ingredients.length > 1 || (true && ingredients[0].Name.trim())) {
-                    const ingredientModels = [];
-                    ingredients.map(({ Name }) => ingredientModels.push({
-                        Name,
-                        MedicineId: medicineId,
-                    }));
-                    addIngredients(ingredientModels);
-                }
+                handleSnackbarOption('success', 'Cập nhật lại hoạt chất/biệt dược thành công!');
             } else {
                 handleError(response, deleteIngredientLogHeader);
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật lại hoạt chất/biệt dược. Vui lòng thử lại!');
             }
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             handleError(reason, deleteIngredientLogHeader);
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật lại hoạt chất/biệt dược. Vui lòng thử lại!');
+            setDisabled(false);
+            setLoadingDone(false);
         });
-    };
-
-    const [updateMode, setUpdateMode] = React.useState(false);
-    const [selectedRow, setSelectedRow] = React.useState(null);
-    const handleSelectRow = (event, rowData) => {
-        if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
-            setSelectedRow(rowData);
-            const { id } = rowData;
-            getMedicine(id);
-            setUpdateMode(true);
-        } else {
-            setSelectedRow(null);
-            handleReset();
-            setUpdateMode(false);
-            setIsChecked(false);
-        }
     };
 
     const getMedicine = (id) => {
@@ -570,6 +636,8 @@ const DrugManagement = () => {
         });
     };
 
+    // [End] Api handlers.
+
     React.useEffect(() => {
         getUnitOptions();
     }, []);
@@ -591,7 +659,7 @@ const DrugManagement = () => {
                             <Typography
                                 variant="caption"
                                 component="p"
-                                children="BIỂU MẪU THÊM THUỐC"
+                                children="BIỂU MẪU THÊM/SỬA THUỐC"
                             />
                             <Grid container spacing={2} style={{ marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -652,7 +720,7 @@ const DrugManagement = () => {
                                                 <TextField
                                                     fullWidth
                                                     id={`Name_${index}`}
-                                                    label="Thêm Hoạt chất/ Biệt dược"
+                                                    label="Hoạt chất/ Biệt dược"
                                                     value={ingredient.Name}
                                                     onChange={handleIngredientsChange(index, 'Name')}
                                                     readOnly={updateMode && !isChecked}
@@ -733,13 +801,13 @@ const DrugManagement = () => {
                                     <Button
                                         fullWidth
                                         disabled={disabled}
-                                        color="info"
+                                        color="warning"
                                         children="Đặt lại"
                                         iconName="reset"
                                         onClick={handleReset}
                                     />
                                 </Grid>
-                                {
+                                {/* {
                                     selectedRow &&
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
@@ -752,7 +820,7 @@ const DrugManagement = () => {
                                             onClick={onOpenDeleteConfirm}
                                         />
                                     </Grid>
-                                }
+                                } */}
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
@@ -846,8 +914,14 @@ const DrugManagement = () => {
             </Grid>
             <DeleteConfirm
                 open={openDeleteConfirm}
-                handleClose={handlCloseDeleteConfirm}
+                handleClose={handleCloseDeleteConfirm}
                 handleDelete={handleDelete}
+            />
+            <ActionOption
+                open={openActionOption}
+                handleUpdate={handleUpdate}
+                handleDelete={onOpenDeleteConfirm}
+                handleClose={handleCloseActionOption}
             />
             <Snackbar
                 vertical="bottom"

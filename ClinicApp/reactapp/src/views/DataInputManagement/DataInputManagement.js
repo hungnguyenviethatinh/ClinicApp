@@ -15,6 +15,7 @@ import { TextField } from '../../components/TextField';
 import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
 import { DeleteConfirm } from '../../components/DeleteConfirm';
+import { ActionOption } from '../../components/ActionOption';
 
 import {
     ExpiredSessionMsg
@@ -83,16 +84,7 @@ const deleteUnitLogMsfHeader = '[Delete Unit Error]';
 const DataInputManagement = () => {
 
     const classes = useStyles();
-
-    const diagnosisTableRef = React.useRef(null);
-    const refreshDiagnosisData = () => {
-        diagnosisTableRef.current && diagnosisTableRef.current.onQueryChange();
-    };
-
-    const unitTableRef = React.useRef(null);
-    const refreshUnitData = () => {
-        unitTableRef.current && unitTableRef.current.onQueryChange();
-    };
+    const config = axiosRequestConfig();
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -115,22 +107,6 @@ const DataInputManagement = () => {
         setOpenSnackbar(true);
     };
 
-    const [openDiagnosis, setOpenDiagnosis] = React.useState(false);
-    const onOpenDiagnosis = () => {
-        setOpenDiagnosis(true);
-    };
-    const handleCloseDiagnosis = () => {
-        setOpenDiagnosis(false);
-    };
-
-    const [openUnit, setOpenUnit] = React.useState(false);
-    const onOpenUnit = () => {
-        setOpenUnit(true);
-    };
-    const handleCloseUnit = () => {
-        setOpenUnit(false);
-    };
-
     const handleError = (reason, logMsgHeader) => {
         if (reason.response) {
             const { status } = reason.response;
@@ -145,13 +121,46 @@ const DataInputManagement = () => {
         console.log(`${logMsgHeader}`, reason);
     };
 
-    const config = axiosRequestConfig();
-
     const [disabled, setDisabled] = React.useState(false);
-    const [loadingDiagnosisDelete, setLoadingDiagnosisDelete] = React.useState(false);
+
+    // [Start] Diagnosis handle
+    // const [loadingDiagnosisDelete, setLoadingDiagnosisDelete] = React.useState(false);
     const [loadingDiagnosisDone, setLoadingDiagnosisDone] = React.useState(false);
-    const [loadingUnitDelete, setLoadingUnitDelete] = React.useState(false);
-    const [loadingUnitDone, setLoadingUnitDone] = React.useState(false);
+
+    const diagnosisTableRef = React.useRef(null);
+    const refreshDiagnosisData = () => {
+        diagnosisTableRef.current && diagnosisTableRef.current.onQueryChange();
+    };
+
+    const [updateDiagnosisMode, setUpdateDiagnosisMode] = React.useState(false);
+    const [selectedDiagnosisRow, setSelectedDiagnosisRow] = React.useState(null);
+    const handleSelectDiagnosisRow = (event, rowData) => {
+        if (!selectedDiagnosisRow || selectedDiagnosisRow.tableData.id !== rowData.tableData.id) {
+            setSelectedDiagnosisRow(rowData);
+            setOpenDiagnosisActionOption(true);
+            // setUpdateDiagnosisMode(true);
+            // getDiagnosis(rowData.id);
+        } else {
+            setSelectedDiagnosisRow(null);
+            setUpdateDiagnosisMode(false);
+            handleDiagnosisReset();
+        }
+    };
+
+    const [openDiagnosis, setOpenDiagnosis] = React.useState(false);
+    const [openDiagnosisActionOption, setOpenDiagnosisActionOption] = React.useState(false);
+    const onOpenDiagnosis = () => {
+        setOpenDiagnosisActionOption(false);
+        setOpenDiagnosis(true);
+    };
+    const handleCloseDiagnosis = () => {
+        setSelectedDiagnosisRow(null);
+        setOpenDiagnosis(false);
+    };
+    const handleCloseDiagnosisActionOption = () => {
+        setSelectedDiagnosisRow(null);
+        setOpenDiagnosisActionOption(false);
+    };
 
     const [diagnosisName, setDiagnosisName] = React.useState('');
     const handleDiagnosisNameChange = event => {
@@ -186,9 +195,16 @@ const DataInputManagement = () => {
     const handleDiagnosisDelete = () => {
         const { id } = selectedDiagnosisRow;
         setDisabled(true);
-        setLoadingDiagnosisDelete(true);
+        // setLoadingDiagnosisDelete(true);
         deleteDiagnosis(id);
         setOpenDiagnosis(false);
+    };
+
+    const handleDiagnosisUpdate = () => {
+        const { id } = selectedDiagnosisRow;
+        getDiagnosis(id);
+        setUpdateDiagnosisMode(true);
+        setOpenDiagnosisActionOption(false);
     };
 
     const handleDiagnosisReset = () => {
@@ -283,27 +299,54 @@ const DataInputManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi xóa chẩn đoán!');
             }
             setDisabled(false);
-            setLoadingDiagnosisDelete(false);
+            // setLoadingDiagnosisDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteDiagnosisLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa chẩn đoán!');
             setDisabled(false);
-            setLoadingDiagnosisDelete(false);
+            // setLoadingDiagnosisDelete(false);
         });
     };
 
-    const [updateDiagnosisMode, setUpdateDiagnosisMode] = React.useState(false);
-    const [selectedDiagnosisRow, setSelectedDiagnosisRow] = React.useState(null);
-    const handleSelectDiagnosisRow = (event, rowData) => {
-        if (!selectedDiagnosisRow || selectedDiagnosisRow.tableData.id !== rowData.tableData.id) {
-            setSelectedDiagnosisRow(rowData);
-            setUpdateDiagnosisMode(true);
-            getDiagnosis(rowData.id);
+    // [End] Diagnosis handle.
+
+    // [Start] Unit handle    
+    // const [loadingUnitDelete, setLoadingUnitDelete] = React.useState(false);
+    const [loadingUnitDone, setLoadingUnitDone] = React.useState(false);
+
+    const unitTableRef = React.useRef(null);
+    const refreshUnitData = () => {
+        unitTableRef.current && unitTableRef.current.onQueryChange();
+    };
+
+    const [updateUnitMode, setUpdateUnitMode] = React.useState(false);
+    const [selectedUnitRow, setSelectedUnitRow] = React.useState(null);
+    const handleSelectUnitRow = (event, rowData) => {
+        if (!selectedUnitRow || selectedUnitRow.tableData.id !== rowData.tableData.id) {
+            setSelectedUnitRow(rowData);
+            setOpenUnitActionOption(true);
+            // setUpdateUnitMode(true);
+            // getUnit(rowData.id);
         } else {
-            setSelectedDiagnosisRow(null);
-            setUpdateDiagnosisMode(false);
-            handleDiagnosisReset();
+            setSelectedUnitRow(null);
+            setUpdateUnitMode(false);
+            handleUnitReset();
         }
+    };
+
+    const [openUnit, setOpenUnit] = React.useState(false);
+    const [openUnitActionOption, setOpenUnitActionOption] = React.useState(false);
+    const onOpenUnit = () => {
+        setOpenUnitActionOption(false);
+        setOpenUnit(true);
+    };
+    const handleCloseUnit = () => {
+        setSelectedUnitRow(null);
+        setOpenUnit(false);
+    };
+    const handleCloseUnitActionOption = () => {
+        setSelectedUnitRow(null);
+        setOpenUnitActionOption(false);
     };
 
     const [unitName, setUnitName] = React.useState('');
@@ -339,9 +382,16 @@ const DataInputManagement = () => {
     const handleUnitDelete = () => {
         const { id } = selectedUnitRow;
         setDisabled(true);
-        setLoadingUnitDelete(true);
+        // setLoadingUnitDelete(true);
         deleteUnit(id);
         setOpenUnit(false);
+    };
+
+    const handleUnitUpdate = () => {
+        const { id } = selectedUnitRow;
+        getUnit(id);
+        setUpdateUnitMode(true);
+        setOpenUnitActionOption(false);
     };
 
     const handleUnitReset = () => {
@@ -436,28 +486,16 @@ const DataInputManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi xóa tên đơn vị của thuốc!');
             }
             setDisabled(false);
-            setLoadingUnitDelete(false);
+            // setLoadingUnitDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteUnitLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa tên đơn vị của thuốc!');
             setDisabled(false);
-            setLoadingUnitDelete(false);
+            // setLoadingUnitDelete(false);
         });
     };
 
-    const [updateUnitMode, setUpdateUnitMode] = React.useState(false);
-    const [selectedUnitRow, setSelectedUnitRow] = React.useState(null);
-    const handleSelectUnitRow = (event, rowData) => {
-        if (!selectedUnitRow || selectedUnitRow.tableData.id !== rowData.tableData.id) {
-            setSelectedUnitRow(rowData);
-            setUpdateUnitMode(true);
-            getUnit(rowData.id);
-        } else {
-            setSelectedUnitRow(null);
-            setUpdateUnitMode(false);
-            handleUnitReset();
-        }
-    };
+    // [End] Unit handle.
 
     return (
         <Grid container spacing={3} >
@@ -476,7 +514,7 @@ const DataInputManagement = () => {
                             <Typography
                                 variant="caption"
                                 component="p"
-                                children="BIỂU MẪU THÊM CHẨN ĐOÁN BỆNH"
+                                children="BIỂU MẪU THÊM/SỬA CHẨN ĐOÁN BỆNH"
                             />
                             <Grid container spacing={2} style={{ marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -501,13 +539,13 @@ const DataInputManagement = () => {
                                     <Button
                                         fullWidth
                                         disabled={disabled}
-                                        color="info"
+                                        color="warning"
                                         children="Đặt lại"
                                         iconName="reset"
                                         onClick={handleDiagnosisReset}
                                     />
                                 </Grid>
-                                {
+                                {/* {
                                     selectedDiagnosisRow &&
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
@@ -520,7 +558,7 @@ const DataInputManagement = () => {
                                             onClick={onOpenDiagnosis}
                                         />
                                     </Grid>
-                                }
+                                } */}
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
@@ -580,7 +618,7 @@ const DataInputManagement = () => {
                             <Typography
                                 variant="caption"
                                 component="p"
-                                children="BIỂU MẪU THÊM ĐƠN VỊ THUỐC"
+                                children="BIỂU MẪU THÊM/SỬA ĐƠN VỊ THUỐC"
                             />
                             <Grid container spacing={2} style={{ marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -604,13 +642,13 @@ const DataInputManagement = () => {
                                     <Button
                                         fullWidth
                                         disabled={disabled}
-                                        color="info"
+                                        color="warning"
                                         children="Đặt lại"
                                         iconName="reset"
                                         onClick={handleUnitReset}
                                     />
                                 </Grid>
-                                {
+                                {/* {
                                     selectedUnitRow &&
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
@@ -623,7 +661,7 @@ const DataInputManagement = () => {
                                             onClick={onOpenUnit}
                                         />
                                     </Grid>
-                                }
+                                } */}
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
@@ -677,6 +715,18 @@ const DataInputManagement = () => {
                 open={openUnit}
                 handleClose={handleCloseUnit}
                 handleDelete={handleUnitDelete}
+            />
+            <ActionOption
+                open={openDiagnosisActionOption}
+                handleUpdate={handleDiagnosisUpdate}
+                handleDelete={onOpenDiagnosis}
+                handleClose={handleCloseDiagnosisActionOption}
+            />
+            <ActionOption
+                open={openUnitActionOption}
+                handleUpdate={handleUnitUpdate}
+                handleDelete={onOpenUnit}
+                handleClose={handleCloseUnitActionOption}
             />
             <Snackbar
                 vertical="bottom"

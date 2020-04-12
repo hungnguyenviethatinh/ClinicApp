@@ -24,6 +24,8 @@ import { Label } from '../../components/Label';
 import { SearchInput } from '../../components/SearchInput';
 import { DeleteConfirm } from '../../components/DeleteConfirm';
 import { Autocomplete } from '../../components/Autocomplete';
+import { ActionOption } from '../../components/ActionOption';
+
 import PatientPreview from './PatientPreview';
 
 import _ from 'lodash';
@@ -46,7 +48,7 @@ import {
     GetDoctorsUrl,
     AddPatientUrl,
     AddHistoryUrl,
-    AddXrayUrl,
+    AddXRayUrl,
     GetPatientUrl,
     UpdatePatientUrl,
     UpdateHistoryUrl,
@@ -112,13 +114,9 @@ const patientColumns = [
 ];
 
 const PatientManagement = () => {
-
+    // [Start] Common
     const classes = useStyles();
-
-    const tableRef = React.useRef(null);
-    const refreshData = () => {
-        tableRef.current && tableRef.current.onQueryChange();
-    };
+    const config = axiosRequestConfig();
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -141,15 +139,48 @@ const PatientManagement = () => {
         setOpenSnackbar(true);
     };
 
-    const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
-    const onOpenDeleteConfirm = () => {
-        setOpenDeleteConfirm(true);
-    };
-    const handlCloseDeleteConfirm = () => {
-        setOpenDeleteConfirm(false);
+    // [End] Common.
+
+    // [Start] State declaration and event handlers
+    const [disabled, setDisabled] = React.useState(false);
+    // const [loadingDelete, setLoadingDelete] = React.useState(false);
+    const [loadingDone, setLoadingDone] = React.useState(false);
+
+    const tableRef = React.useRef(null);
+    const refreshData = () => {
+        tableRef.current && tableRef.current.onQueryChange();
     };
 
-    const [patient, setPatient] = React.useState(null);
+    const [updateMode, setUpdateMode] = React.useState(false);
+    const [selectedRow, setSelectedRow] = React.useState(null);
+    const handleSelectRow = (event, rowData) => {
+        if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
+            setSelectedRow(rowData);
+            setOpenActionOption(true);
+            // setUpdateMode(true);
+            // getPatient(rowData.id);
+        } else {
+            setSelectedRow(null);
+            setUpdateMode(false);
+            handleReset();
+        }
+    };
+
+    const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
+    const [openActionOption, setOpenActionOption] = React.useState(false);
+    const onOpenDeleteConfirm = () => {
+        setOpenActionOption(false);
+        setOpenDeleteConfirm(true);
+    };
+    const handleCloseDeleteConfirm = () => {
+        setSelectedRow(null);
+        setOpenDeleteConfirm(false);
+    };
+    const handleCloseActionOption = () => {
+        setSelectedRow(null);
+        setOpenActionOption(false);
+    };
+
     const [values, setValues] = React.useState({
         FullName: '',
         // DateOfBirth: null,
@@ -225,9 +256,79 @@ const PatientManagement = () => {
         }
     };
 
-    const [disabled, setDisabled] = React.useState(false);
-    const [loadingDelete, setLoadingDelete] = React.useState(false);
-    const [loadingDone, setLoadingDone] = React.useState(false);
+    const [searchValue, setSearchValue] = React.useState('');
+    const handleSearchChange = event => {
+        setSearchValue(event.target.value);
+    };
+    const handleSearch = event => {
+        event.preventDefault();
+        refreshData();
+    };
+
+    const [patient, setPatient] = React.useState(null);
+    const [openPatientPreview, setOpenPatientPreview] = React.useState(false);
+    const handleOpenPatientPreview = () => {
+        if (!values.FullName.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
+            return;
+        }
+        // if (!moment(values.DateOfBirth).isValid()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập ngày tháng năm sinh!');
+        //     return;
+        // }
+        if (!_.toString(values.Age).trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập tuổi!');
+            return;
+        }
+        if (_.toString(values.Age).trim() && !_.isFinite(_.toNumber(values.Age))) {
+            handleSnackbarOption('error', 'Yêu cầu nhập số tuổi!');
+            return;
+        }
+        if (values.AppointmentDate && !moment(values.AppointmentDate).isValid()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập ngày giờ hẹn hợp lệ (không hẹn để trống)!');
+            return;
+        }
+        if (values.AppointmentDate && moment(values.AppointmentDate) <= moment()) {
+            handleSnackbarOption('error', 'Ngày giờ hẹn phải sau thời gian hiện tại (không hẹn để trống)!');
+            return;
+        }
+        if (!_.isFinite(values.Gender)) {
+            handleSnackbarOption('error', 'Yêu cầu nhập giới tính!');
+            return;
+        }
+        if (!values.City.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập thành phố (tỉnh)!');
+            return;
+        }
+        if (!_.isFinite(_.toNumber(values.PhoneNumber))) {
+            handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại (hợp lệ)!');
+            return;
+        }
+        if (!updateMode && !values.Status.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu chọn trạng thái cho bệnh nhân!');
+            return;
+        }
+        if (hasXRay && _.isEmpty(values.XRayImages)) {
+            handleSnackbarOption('error', 'Yêu cầu nhập cung cấp XQ!');
+            return;
+        }
+        // if (!values.DoctorId.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu chọn bác sĩ phụ trách khám!');
+        //     return;
+        // }
+        if (_.isEmpty(values.Doctors)) {
+            handleSnackbarOption('error', 'Yêu cầu chọn bác sĩ phụ trách khám!');
+            return;
+        }
+
+        setPatient({
+            ...values,
+        });
+        setOpenPatientPreview(true);
+    };
+    const handleClosePatientPreview = () => {
+        setOpenPatientPreview(false);
+    };
 
     const handleDone = () => {
         // if (!values.FullName.trim()) {
@@ -325,8 +426,54 @@ const PatientManagement = () => {
         }
     };
 
-    const config = axiosRequestConfig();
+    const handleUpdate = () => {
+        const { id } = selectedRow;
+        getPatient(id);
+        setUpdateMode(true);
+        setOpenActionOption(false);
+    };
 
+    const handleDelete = () => {
+        const { id } = selectedRow;
+        setDisabled(true);
+        // setLoadingDelete(true);
+        deletePatient(id);
+        setOpenDeleteConfirm(false);
+    };
+
+    const handleReset = () => {
+        setValues({
+            FullName: '',
+            // DateOfBirth: null,
+            Age: '',
+            Gender: '',
+            HouseNo: '',
+            Street: '',
+            Ward: '',
+            District: '',
+            City: '',
+            Job: '',
+            PhoneNumber: '',
+            RelativePhoneNumber: '',
+            Email: '',
+            AppointmentDate: null,
+            Status: PatientStatus.IsNew,
+            XRayImages: [],
+            Height: '',
+            Weight: '',
+            BloodPresure: '',
+            Pulse: '',
+            // DoctorId: '',
+            Other: '',
+            Note: '',
+            Doctors: [],
+        });
+        setHasXRay(false);
+    };
+
+    // [End] State declaration and event handlers
+
+    // [Start] Api handlers
     const addPatient = (patientModel) => {
         Axios.post(AddPatientUrl, patientModel, config).then((response) => {
             const { status, data } = response;
@@ -395,7 +542,7 @@ const PatientManagement = () => {
                         HistoryId: id,
                         PatientId: patientId,
                     }));
-                    addXrays(xRayModels);
+                    addXRays(xRayModels);
                 }
             } else {
                 console.log('[Add History Response] ', response);
@@ -440,8 +587,8 @@ const PatientManagement = () => {
         });
     };
 
-    const addXrays = (xRayModels) => {
-        Axios.post(AddXrayUrl, xRayModels, config).then((response) => {
+    const addXRays = (xRayModels) => {
+        Axios.post(AddXRayUrl, xRayModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 // handleSnackbarOption('success', 'Lưu trữ XQ của bệnh nhân thành công.');
@@ -592,14 +739,6 @@ const PatientManagement = () => {
         });
     };
 
-    const handleDelete = () => {
-        const { id } = selectedRow;
-        setDisabled(true);
-        setLoadingDelete(true);
-        deletePatient(id);
-        setOpenDeleteConfirm(false);
-    };
-
     const deletePatient = (id) => {
         Axios.delete(`${DeletePatientUrl}/${id}`, config).then((response) => {
             const { status } = response;
@@ -613,66 +752,13 @@ const PatientManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
             }
             setDisabled(false);
-            setLoadingDelete(false);
+            // setLoadingDelete(false);
         }).catch((reason) => {
             console.log('[Delete Patient Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
             setDisabled(false);
-            setLoadingDelete(false);
+            // setLoadingDelete(false);
         });
-    };
-
-    const handleReset = () => {
-        setValues({
-            FullName: '',
-            // DateOfBirth: null,
-            Age: '',
-            Gender: '',
-            HouseNo: '',
-            Street: '',
-            Ward: '',
-            District: '',
-            City: '',
-            Job: '',
-            PhoneNumber: '',
-            RelativePhoneNumber: '',
-            Email: '',
-            AppointmentDate: null,
-            Status: PatientStatus.IsNew,
-            XRayImages: [],
-            Height: '',
-            Weight: '',
-            BloodPresure: '',
-            Pulse: '',
-            // DoctorId: '',
-            Other: '',
-            Note: '',
-            Doctors: [],
-        });
-        setHasXRay(false);
-    };
-
-    const [searchValue, setSearchValue] = React.useState('');
-    const handleSearchChange = event => {
-        setSearchValue(event.target.value);
-    };
-    const handleSearch = event => {
-        event.preventDefault();
-        refreshData();
-    };
-
-    const [updateMode, setUpdateMode] = React.useState(false);
-    const [selectedRow, setSelectedRow] = React.useState(null);
-    const handleSelectRow = (event, rowData) => {
-        if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
-            setSelectedRow(rowData);
-            setUpdateMode(true);
-            getPatient(rowData.id);
-        } else {
-            setSelectedRow(null);
-            setUpdateMode(false);
-            handleReset();
-        }
     };
 
     // const [doctorOptions, setDoctorOptions] = React.useState([{
@@ -824,70 +910,9 @@ const PatientManagement = () => {
         });
     };
 
-    const [openPatientPreview, setOpenPatientPreview] = React.useState(false);
-    const handleOpenPatientPreview = () => {
-        if (!values.FullName.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
-            return;
-        }
-        // if (!moment(values.DateOfBirth).isValid()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập ngày tháng năm sinh!');
-        //     return;
-        // }
-        if (!_.toString(values.Age).trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập tuổi!');
-            return;
-        }
-        if (_.toString(values.Age).trim() && !_.isFinite(_.toNumber(values.Age))) {
-            handleSnackbarOption('error', 'Yêu cầu nhập số tuổi!');
-            return;
-        }
-        if (values.AppointmentDate && !moment(values.AppointmentDate).isValid()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập ngày giờ hẹn hợp lệ (không hẹn để trống)!');
-            return;
-        }
-        if (values.AppointmentDate && moment(values.AppointmentDate) <= moment()) {
-            handleSnackbarOption('error', 'Ngày giờ hẹn phải sau thời gian hiện tại (không hẹn để trống)!');
-            return;
-        }
-        if (!_.isFinite(values.Gender)) {
-            handleSnackbarOption('error', 'Yêu cầu nhập giới tính!');
-            return;
-        }
-        if (!values.City.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập thành phố (tỉnh)!');
-            return;
-        }
-        if (!_.isFinite(_.toNumber(values.PhoneNumber))) {
-            handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại (hợp lệ)!');
-            return;
-        }
-        if (!updateMode && !values.Status.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu chọn trạng thái cho bệnh nhân!');
-            return;
-        }
-        if (hasXRay && _.isEmpty(values.XRayImages)) {
-            handleSnackbarOption('error', 'Yêu cầu nhập cung cấp XQ!');
-            return;
-        }
-        // if (!values.DoctorId.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu chọn bác sĩ phụ trách khám!');
-        //     return;
-        // }
-        if (_.isEmpty(values.Doctors)) {
-            handleSnackbarOption('error', 'Yêu cầu chọn bác sĩ phụ trách khám!');
-            return;
-        }
+    // [End] Api handlers.
 
-        setPatient({
-            ...values,
-        });
-        setOpenPatientPreview(true);
-    };
-    const handleClosePatientPreview = () => {
-        setOpenPatientPreview(false);
-    };
-    
+    // [Start] Print handler
     const handlePrint = (patientPrintModel) => {
         const {
             Id,
@@ -963,6 +988,8 @@ const PatientManagement = () => {
             setOpenPatientPreview(false);
         });
     };
+
+    // [End] Print handler
 
     React.useEffect(() => {
         getDoctorOptions();
@@ -1300,7 +1327,7 @@ const PatientManagement = () => {
                                     <Button
                                         fullWidth
                                         disabled={disabled}
-                                        color="info"
+                                        color="warning"
                                         children="Đặt lại"
                                         iconName="reset"
                                         onClick={handleReset}
@@ -1329,21 +1356,21 @@ const PatientManagement = () => {
                     style={{ height: '100%' }}
                 >
                     <CardHeader
-                        action={
-                            <React.Fragment>
-                                {
-                                    selectedRow &&
-                                    <Button
-                                        color="danger"
-                                        children="Xóa"
-                                        iconName="delete"
-                                        onClick={onOpenDeleteConfirm}
-                                        disabled={disabled}
-                                        loading={loadingDelete}
-                                    />
-                                }
-                            </React.Fragment>
-                        }
+                        // action={
+                        //     <React.Fragment>
+                        //         {
+                        //             selectedRow &&
+                        //             <Button
+                        //                 color="danger"
+                        //                 children="Xóa"
+                        //                 iconName="delete"
+                        //                 onClick={onOpenDeleteConfirm}
+                        //                 disabled={disabled}
+                        //                 loading={loadingDelete}
+                        //             />
+                        //         }
+                        //     </React.Fragment>
+                        // }
                         title="DANH SÁCH BỆNH NHÂN"
                         subheader="Danh sách bệnh nhân đã có dữ liệu trên hệ thống"
                     />
@@ -1394,8 +1421,14 @@ const PatientManagement = () => {
             />
             <DeleteConfirm
                 open={openDeleteConfirm}
-                handleClose={handlCloseDeleteConfirm}
+                handleClose={handleCloseDeleteConfirm}
                 handleDelete={handleDelete}
+            />
+            <ActionOption
+                open={openActionOption}
+                handleUpdate={handleUpdate}
+                handleDelete={onOpenDeleteConfirm}
+                handleClose={handleCloseActionOption}
             />
             <Snackbar
                 vertical="bottom"

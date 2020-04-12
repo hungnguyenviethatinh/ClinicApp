@@ -283,7 +283,7 @@ const UserView = () => {
                                         <Grid container justify="flex-end" spacing={2}>
                                             <Grid item>
                                                 <Button
-                                                    color="info"
+                                                    color="warning"
                                                     children="Đặt lại"
                                                     iconName="reset"
                                                     onClick={handleReset}

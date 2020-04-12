@@ -17,6 +17,7 @@ import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
 import { SearchInput } from '../../components/SearchInput';
 import { DeleteConfirm } from '../../components/DeleteConfirm';
+import { ActionOption } from '../../components/ActionOption';
 
 import {
     GetAllEmployeesUrl,
@@ -82,13 +83,9 @@ const validUserNameMessage = 'Tên tài khoản chỉ cho phép chứa các ch�
 const validPasswordMessage = 'Mật khẩu dài tối thiểu 4 kí tự và không có khoảng trắng';
 
 const UserManagement = () => {
-
+    // [Start] Common
     const classes = useStyles();
-
-    const tableRef = React.useRef(null);
-    const refreshData = () => {
-        tableRef.current && tableRef.current.onQueryChange();
-    };
+    const config = axiosRequestConfig();
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -111,14 +108,6 @@ const UserManagement = () => {
         setOpenSnackbar(true);
     };
 
-    const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
-    const onOpenDeleteConfirm = () => {
-        setOpenDeleteConfirm(true);
-    };
-    const handlCloseDeleteConfirm = () => {
-        setOpenDeleteConfirm(false);
-    };
-
     const handleError = (reason, logMsgHeader) => {
         if (reason.response) {
             const { status } = reason.response;
@@ -131,6 +120,49 @@ const UserManagement = () => {
             }
         }
         console.log(`${logMsgHeader}`, reason);
+    };
+
+    // [End] Common.
+
+    // [Start] State declaration and event handlers
+    const [disabled, setDisabled] = React.useState(false);
+    // const [loadingDelete, setLoadingDelete] = React.useState(false);
+    const [loadingDone, setLoadingDone] = React.useState(false);
+
+    const tableRef = React.useRef(null);
+    const refreshData = () => {
+        tableRef.current && tableRef.current.onQueryChange();
+    };
+
+    const [updateMode, setUpdateMode] = React.useState(false);
+    const [selectedRow, setSelectedRow] = React.useState(null);
+    const handleSelectRow = (event, rowData) => {
+        if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
+            setSelectedRow(rowData);
+            setOpenActionOption(true);
+            // const { id } = rowData;
+            // getEmployee(id);
+            // setUpdateMode(true);
+        } else {
+            setSelectedRow(null);
+            handleReset();
+            setUpdateMode(false);
+        }
+    };
+
+    const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
+    const [openActionOption, setOpenActionOption] = React.useState(false);
+    const onOpenDeleteConfirm = () => {
+        setOpenActionOption(false);
+        setOpenDeleteConfirm(true);
+    };
+    const handleCloseDeleteConfirm = () => {
+        setSelectedRow(null);
+        setOpenDeleteConfirm(false);
+    };
+    const handleCloseActionOption = () => {
+        setSelectedRow(null);
+        setOpenActionOption(false);
     };
 
     const [values, setValues] = React.useState({
@@ -161,21 +193,6 @@ const UserManagement = () => {
         event.preventDefault();
         refreshData();
     };
-
-    const handleReset = () => {
-        setValues({
-            UserName: '',
-            Password: '',
-            FullName: '',
-            RoleName: '',
-            PhoneNumber: '',
-            Email: '',
-        });
-    };
-
-    const [disabled, setDisabled] = React.useState(false);
-    const [loadingDelete, setLoadingDelete] = React.useState(false);
-    const [loadingDone, setLoadingDone] = React.useState(false);
 
     const handleDone = () => {
         if (!values.UserName.trim()) {
@@ -226,16 +243,35 @@ const UserManagement = () => {
         }
     };
 
+    const handleUpdate = () => {
+        const { id } = selectedRow;
+        getEmployee(id);
+        setUpdateMode(true);
+        setOpenActionOption(false);
+    };
+
     const handleDelete = () => {
         const { id } = selectedRow;
         setDisabled(true);
-        setLoadingDelete(true);
+        // setLoadingDelete(true);
         deleteUser(id);
         setOpenDeleteConfirm(false);
     };
 
-    const config = axiosRequestConfig();
+    const handleReset = () => {
+        setValues({
+            UserName: '',
+            Password: '',
+            FullName: '',
+            RoleName: '',
+            PhoneNumber: '',
+            Email: '',
+        });
+    };
 
+    // [End] State declaration and event handlers.
+
+    // [Start] Api handlers
     const addUser = (userModel) => {
         Axios.post(AddEmployeeUrl, userModel, config).then((response) => {
             const { status, data } = response;
@@ -294,28 +330,13 @@ const UserManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi xóa người dùng!');
             }
             setDisabled(false);
-            setLoadingDelete(false);
+            // setLoadingDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteEmployeeLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa người dùng!');
             setDisabled(false);
-            setLoadingDelete(false);
+            // setLoadingDelete(false);
         });
-    };
-
-    const [updateMode, setUpdateMode] = React.useState(false);
-    const [selectedRow, setSelectedRow] = React.useState(null);
-    const handleSelectRow = (event, rowData) => {
-        if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
-            setSelectedRow(rowData);
-            const { id } = rowData;
-            getEmployee(id);
-            setUpdateMode(true);
-        } else {
-            setSelectedRow(null);
-            handleReset();
-            setUpdateMode(false);
-        }
     };
 
     const getEmployee = (id) => {
@@ -373,6 +394,8 @@ const UserManagement = () => {
         });
     };
 
+    // [End] Api handlers.
+
     return (
         <Grid container spacing={3} >
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
@@ -390,7 +413,7 @@ const UserManagement = () => {
                             <Typography
                                 variant="caption"
                                 component="p"
-                                children="FORM QUẢN LÍ NHÂN VIÊN"
+                                children="BIỂU MẪU THÊM/SỬA NHÂN VIÊN"
                             />
                             <Grid container spacing={2} style={{ marginBottom: 8 }}>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -471,13 +494,13 @@ const UserManagement = () => {
                                     <Button
                                         fullWidth
                                         disabled={disabled}
-                                        color="info"
+                                        color="warning"
                                         children="Đặt lại"
                                         iconName="reset"
                                         onClick={handleReset}
                                     />
                                 </Grid>
-                                {
+                                {/* {
                                     selectedRow &&
                                     // <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                     <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
@@ -491,7 +514,7 @@ const UserManagement = () => {
                                             onClick={onOpenDeleteConfirm}
                                         />
                                     </Grid>
-                                }
+                                } */}
                                 {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}> */}
                                 <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                                     <Button
@@ -557,8 +580,14 @@ const UserManagement = () => {
             </Grid>
             <DeleteConfirm
                 open={openDeleteConfirm}
-                handleClose={handlCloseDeleteConfirm}
+                handleClose={handleCloseDeleteConfirm}
                 handleDelete={handleDelete}
+            />
+            <ActionOption
+                open={openActionOption}
+                handleUpdate={handleUpdate}
+                handleDelete={onOpenDeleteConfirm}
+                handleClose={handleCloseActionOption}
             />
             <Snackbar
                 vertical="bottom"

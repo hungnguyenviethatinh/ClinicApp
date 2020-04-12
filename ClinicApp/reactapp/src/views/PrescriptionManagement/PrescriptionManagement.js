@@ -59,6 +59,9 @@ const useStyles = makeStyles(theme => ({
     content: {
         padding: theme.spacing(0),
     },
+    action: {
+        marginRight: 0,
+    },
     actions: {
         justifyContent: 'flex-end',
     },
@@ -592,7 +595,7 @@ const PrescriptionManagement = () => {
 
     const getPatient = () => {
         setDisabled(true);
-        
+
         const currentPatientId = localStorage.getItem(CurrentCheckingPatientId) || 0;
         const url = `${GetCurrentPatientUrl}/${currentPatientId}`;
         Axios.get(url, config).then((response) => {
@@ -869,6 +872,9 @@ const PrescriptionManagement = () => {
                     style={{ height: '100%' }}
                 >
                     <CardHeader
+                        classes={{
+                            action: classes.action,
+                        }}
                         action={
                             <Button
                                 color="warning"
@@ -936,7 +942,7 @@ const PrescriptionManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
                                     <TextField
                                         id="PhoneNumber"
-                                        label="Số iện thoại"
+                                        label="Số điện thoại"
                                         value={patient.PhoneNumber}
                                         readOnly
                                         fullWidth
@@ -1193,7 +1199,7 @@ const PrescriptionManagement = () => {
                                     <Button
                                         fullWidth
                                         disabled={disabled}
-                                        color="info"
+                                        color="warning"
                                         children="Đặt lại"
                                         iconName="reset"
                                         onClick={handleReset}

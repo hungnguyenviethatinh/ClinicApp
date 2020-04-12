@@ -27,7 +27,7 @@ const useStyles = makeStyles({
 });
 
 const DeleteConfirmDialog = (props) => {
-    const { open, handleClose, handleDelete } = props;
+    const { open, handleClose, handleDelete, handleUpdate } = props;
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -39,28 +39,26 @@ const DeleteConfirmDialog = (props) => {
                 fullScreen={fullScreen}
                 open={open}
                 onClose={handleClose}
-                aria-labelledby="delete-confirmation"
+                aria-labelledby="action-options"
                 classes={{
                     paper: classes.paper,
                 }}
             >
                 <DialogTitle
-                    id="delete-confirmation"
+                    id="action-options"
                     classes={{
                         root: classes.title,
-                    }}>Xác nhận xóa</DialogTitle>
-                <DialogContent
-                    classes={{
-                        root: classes.content,
-                    }}>
+                    }}>Tùy chọn thao tác</DialogTitle>
+                <DialogContent classes={{
+                    root: classes.content,
+                }}>
                     <DialogContentText>
-                        Nhấn Xóa để xóa, Hủy để hủy thao tác này!
+                        Chọn thao tác mà bạn muốn thực hiện!
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions
-                    classes={{
-                        root: classes.action,
-                    }}>
+                <DialogActions classes={{
+                    root: classes.action,
+                }}>
                     <Grid container spacing={2} justify="center">
                         <Grid item sm={6}>
                             <Button
@@ -69,17 +67,16 @@ const DeleteConfirmDialog = (props) => {
                                 children="Xóa"
                                 iconName="delete"
                                 onClick={handleDelete}
+                                style={{ marginRight: 16 }}
                             />
                         </Grid>
                         <Grid item sm={6}>
                             <Button
-                                autoFocus
                                 fullWidth
-                                color="warning"
-                                children="Hủy"
-                                iconName="cancel"
-                                onClick={handleClose}
-                                style={{ marginRight: 16 }}
+                                color="info"
+                                children="Sửa"
+                                iconName="edit"
+                                onClick={handleUpdate}
                             />
                         </Grid>
                     </Grid>
@@ -93,12 +90,14 @@ DeleteConfirmDialog.propTypes = {
     open: PropTypes.bool,
     handleClose: PropTypes.func,
     handleDelete: PropTypes.func,
+    handleUpdate: PropTypes.func,
 };
 
 DeleteConfirmDialog.defaultProps = {
     open: false,
     handleClose: () => { },
     handleDelete: () => { },
+    handleUpdate: () => { },
 };
 
 export default DeleteConfirmDialog;

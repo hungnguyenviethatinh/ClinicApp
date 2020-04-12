@@ -15,6 +15,7 @@ import { TextField } from '../../components/TextField';
 import { Snackbar } from '../../components/Snackbar';
 import { Button } from '../../components/Button';
 import { DeleteConfirm } from '../../components/DeleteConfirm';
+import { ActionOption } from '../../components/ActionOption';
 
 import {
     ExpiredSessionMsg
@@ -62,13 +63,9 @@ const updateOpenTimeLogMsfHeader = '[Update OpenTime Error]';
 const deleteOpenTimeLogMsfHeader = '[Delete OpenTime Error]';
 
 const OpenTimeManagement = () => {
-
+    // [Start] Common
     const classes = useStyles();
-
-    const openTimeTableRef = React.useRef(null);
-    const refreshOpenTimeData = () => {
-        openTimeTableRef.current && openTimeTableRef.current.onQueryChange();
-    };
+    const config = axiosRequestConfig();
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -91,14 +88,6 @@ const OpenTimeManagement = () => {
         setOpenSnackbar(true);
     };
 
-    const [openOpenTime, setOpenOpenTime] = React.useState(false);
-    const onOpenOpenTime = () => {
-        setOpenOpenTime(true);
-    };
-    const handleCloseOpenTime = () => {
-        setOpenOpenTime(false);
-    };
-
     const handleError = (reason, logMsgHeader) => {
         if (reason.response) {
             const { status } = reason.response;
@@ -113,11 +102,47 @@ const OpenTimeManagement = () => {
         console.log(`${logMsgHeader}`, reason);
     };
 
-    const config = axiosRequestConfig();
+    // [End] Common.
 
+    // [Start] State declaration and event handlers
     const [disabled, setDisabled] = React.useState(false);
-    const [loadingOpenTimeDelete, setLoadingOpenTimeDelete] = React.useState(false);
+    // const [loadingOpenTimeDelete, setLoadingOpenTimeDelete] = React.useState(false);
     const [loadingOpenTimeDone, setLoadingOpenTimeDone] = React.useState(false);
+
+    const openTimeTableRef = React.useRef(null);
+    const refreshOpenTimeData = () => {
+        openTimeTableRef.current && openTimeTableRef.current.onQueryChange();
+    };
+
+    const [updateOpenTimeMode, setUpdateOpenTimeMode] = React.useState(false);
+    const [selectedOpenTimeRow, setSelectedOpenTimeRow] = React.useState(null);
+    const handleSelectOpenTimeRow = (event, rowData) => {
+        if (!selectedOpenTimeRow || selectedOpenTimeRow.tableData.id !== rowData.tableData.id) {
+            setSelectedOpenTimeRow(rowData);
+            setOpenActionOption(true);
+            // setUpdateOpenTimeMode(true);
+            // getOpenTime(rowData.id);
+        } else {
+            setSelectedOpenTimeRow(null);
+            setUpdateOpenTimeMode(false);
+            handleOpenTimeReset();
+        }
+    };
+
+    const [openOpenTime, setOpenOpenTime] = React.useState(false);
+    const [openActionOption, setOpenActionOption] = React.useState(false);
+    const onOpenOpenTime = () => {
+        setOpenActionOption(false);
+        setOpenOpenTime(true);
+    };
+    const handleCloseOpenTime = () => {
+        setSelectedOpenTimeRow(null);
+        setOpenOpenTime(false);
+    };
+    const handleCloseActionOption = () => {
+        setSelectedOpenTimeRow(null);
+        setOpenActionOption(false);
+    };
 
     const [openTimeValue, setOpenTimeValue] = React.useState('');
     const handleOpenTimeChange = event => {
@@ -149,10 +174,17 @@ const OpenTimeManagement = () => {
         }
     };
 
+    const handleOpenTimeUpdate = () => {
+        const { id } = selectedOpenTimeRow;
+        getOpenTime(id);
+        setUpdateOpenTimeMode(true);
+        setOpenActionOption(false);
+    };
+
     const handleOpenTimeDelete = () => {
         const { id } = selectedOpenTimeRow;
         setDisabled(true);
-        setLoadingOpenTimeDelete(true);
+        // setLoadingOpenTimeDelete(true);
         deleteOpenTime(id);
         setOpenOpenTime(false);
     };
@@ -161,6 +193,9 @@ const OpenTimeManagement = () => {
         setOpenTimeValue('');
     };
 
+    // [End] State declaration and event handlers.
+
+    // [Start] Api handlers
     const getOpenTimes = (resolve, reject, query) => {
         setDisabled(true);
         Axios.get(GetOpenTimesUrl, config).then((response) => {
@@ -249,28 +284,16 @@ const OpenTimeManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi xóa dữ liệu!');
             }
             setDisabled(false);
-            setLoadingOpenTimeDelete(false);
+            // setLoadingOpenTimeDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteOpenTimeLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa dữ liệu!');
             setDisabled(false);
-            setLoadingOpenTimeDelete(false);
+            // setLoadingOpenTimeDelete(false);
         });
     };
 
-    const [updateOpenTimeMode, setUpdateOpenTimeMode] = React.useState(false);
-    const [selectedOpenTimeRow, setSelectedOpenTimeRow] = React.useState(null);
-    const handleSelectOpenTimeRow = (event, rowData) => {
-        if (!selectedOpenTimeRow || selectedOpenTimeRow.tableData.id !== rowData.tableData.id) {
-            setSelectedOpenTimeRow(rowData);
-            setUpdateOpenTimeMode(true);
-            getOpenTime(rowData.id);
-        } else {
-            setSelectedOpenTimeRow(null);
-            setUpdateOpenTimeMode(false);
-            handleOpenTimeReset();
-        }
-    };
+    // [End] Api handlers.
 
     return (
         <Grid container spacing={3} >
@@ -289,7 +312,7 @@ const OpenTimeManagement = () => {
                             <Typography
                                 variant="caption"
                                 component="p"
-                                children="BIỂU MẪU THÊM THỜI GIAN KHÁM/NGHỈ"
+                                children="BIỂU MẪU THÊM/SỬA THỜI GIAN KHÁM/NGHỈ"
                             />
                             <Grid container spacing={2} style={{ marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -314,13 +337,13 @@ const OpenTimeManagement = () => {
                                     <Button
                                         fullWidth
                                         disabled={disabled}
-                                        color="info"
+                                        color="warning"
                                         children="Đặt lại"
                                         iconName="reset"
                                         onClick={handleOpenTimeReset}
                                     />
                                 </Grid>
-                                {
+                                {/* {
                                     selectedOpenTimeRow &&
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <Button
@@ -333,7 +356,7 @@ const OpenTimeManagement = () => {
                                             onClick={onOpenOpenTime}
                                         />
                                     </Grid>
-                                }
+                                } */}
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
@@ -382,6 +405,12 @@ const OpenTimeManagement = () => {
                 open={openOpenTime}
                 handleClose={handleCloseOpenTime}
                 handleDelete={handleOpenTimeDelete}
+            />
+            <ActionOption
+                open={openActionOption}
+                handleUpdate={handleOpenTimeUpdate}
+                handleDelete={onOpenOpenTime}
+                handleClose={handleCloseActionOption}
             />
             <Snackbar
                 vertical="bottom"
