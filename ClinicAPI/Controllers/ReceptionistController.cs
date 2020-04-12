@@ -348,7 +348,7 @@ namespace ClinicAPI.Controllers
                     return BadRequest($"{nameof(doctorModels)} can not be null.");
                 }
 
-                int result = 0;
+                int result;
                 var doctors = _unitOfWork.DoctorPatientHistories.Where(d => d.HistoryId == historyId);
                 if (doctors.Any())
                 {

@@ -301,6 +301,43 @@ namespace ClinicAPI.Controllers
             return BadRequest();
         }
 
+        [HttpPut("ingredients/{medicineId}")]
+        [Authorize(Policies.ManageAllMedicinesPolicy)]
+        public async Task<IActionResult> UpdateIngredients(int medicineId, [FromBody] IEnumerable<IngredientModel> ingredientModels)
+        {
+            if (ModelState.IsValid)
+            {
+                if (ingredientModels == null)
+                {
+                    return BadRequest($"{nameof(ingredientModels)} can not be null.");
+                }
+
+                int result;
+                var ingredients = _unitOfWork.Ingredients.Where(i => i.MedicineId == medicineId);
+                if (ingredients.Any())
+                {
+                    _unitOfWork.Ingredients.RemoveRange(ingredients);
+                    result = await _unitOfWork.SaveChangesAsync();
+                    if (result < 1)
+                    {
+                        return NoContent();
+                    }
+                }
+
+                var newIngredients = _mapper.Map<IEnumerable<Ingredient>>(ingredientModels);
+                _unitOfWork.Ingredients.AddRange(newIngredients);
+                result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
         [HttpDelete("ingredients/{medicineId}")]
         [Authorize(Policies.ManageAllMedicinesPolicy)]
         public async Task<IActionResult> RemoveIngredients(int medicineId)
