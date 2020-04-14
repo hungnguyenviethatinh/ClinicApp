@@ -68,8 +68,11 @@ const employeeColumns = [
     {
         title: 'Số ĐT', field: 'phoneNumber',
     },
+    // {
+    //     title: 'Email', field: 'email',
+    // },
     {
-        title: 'Email', field: 'email',
+        title: 'Thông tin khác', field: 'additionalInfo',
     },
 ];
 
@@ -171,7 +174,8 @@ const UserManagement = () => {
         FullName: '',
         RoleName: '',
         PhoneNumber: '',
-        Email: '',
+        // Email: '',
+        AdditionalInfo: '',
     });
     const handleValueChange = prop => event => {
         setValues({
@@ -265,7 +269,8 @@ const UserManagement = () => {
             FullName: '',
             RoleName: '',
             PhoneNumber: '',
-            Email: '',
+            // Email: '',
+            AdditionalInfo: '',
         });
     };
 
@@ -345,7 +350,7 @@ const UserManagement = () => {
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { userName, fullName, roleName, phoneNumber, email } = data[0];
+                const { userName, fullName, roleName, phoneNumber, /* email */ additionalInfo } = data[0];
                 setValues({
                     ...values,
                     UserName: userName,
@@ -353,7 +358,8 @@ const UserManagement = () => {
                     FullName: fullName,
                     RoleName: roleName,
                     PhoneNumber: phoneNumber,
-                    Email: email,
+                    // Email: email,
+                    AdditionalInfo: additionalInfo,
                 });
             }
             setDisabled(false);
@@ -364,7 +370,7 @@ const UserManagement = () => {
     };
 
     const getEmployees = (resolve, reject, query) => {
-        const value = searchValue;
+        // const value = searchValue;
 
         setDisabled(true);
 
@@ -373,7 +379,7 @@ const UserManagement = () => {
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
-                query: value,
+                query: searchValue,
             }
         }).then((response) => {
             const { status, data } = response;
@@ -416,20 +422,20 @@ const UserManagement = () => {
                                 children="BIỂU MẪU THÊM/SỬA NHÂN VIÊN"
                             />
                             <Grid container spacing={2} style={{ marginBottom: 8 }}>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <TextField
                                         fullWidth
                                         autoFocus
                                         id="UserName"
                                         label="Tên tài khoản (*)"
-                                        placeholder={validUserNameMessage}
+                                        // placeholder={validUserNameMessage}
                                         value={values.UserName}
                                         onChange={handleValueChange('UserName')}
                                         onKeyPress={handleKeyPress}
                                         readOnly={updateMode}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <TextField
                                         fullWidth
                                         id="FullName (*)"
@@ -439,7 +445,7 @@ const UserManagement = () => {
                                         onKeyPress={handleKeyPress}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <Select
                                         fullWidth
                                         id="RoleName"
@@ -449,7 +455,7 @@ const UserManagement = () => {
                                         onChange={handleValueChange('RoleName')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
                                         id="Email"
@@ -458,8 +464,8 @@ const UserManagement = () => {
                                         onChange={handleValueChange('Email')}
                                         onKeyPress={handleKeyPress}
                                     />
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                </Grid> */}
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <TextField
                                         fullWidth
                                         id="PhoneNumber"
@@ -470,13 +476,23 @@ const UserManagement = () => {
                                         maxLength={10}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                    <TextField
+                                        fullWidth
+                                        id="AdditionalInfo"
+                                        label="Thông tin khác"
+                                        value={values.AdditionalInfo}
+                                        onChange={handleValueChange('AdditionalInfo')}
+                                        onKeyPress={handleKeyPress}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <TextField
                                         fullWidth
                                         id="Password"
                                         type="password"
                                         label="Mật khẩu"
-                                        placeholder={validPasswordMessage}
+                                        // placeholder={validPasswordMessage}
                                         value={values.Password}
                                         onChange={handleValueChange('Password')}
                                         onKeyPress={handleKeyPress}
@@ -556,7 +572,7 @@ const UserManagement = () => {
                             <Grid container spacing={2} style={{ marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                                     <SearchInput
-                                        placeholder="Nhập tên tài khoản, tên, số dt hoặc email"
+                                        placeholder="Nhập tên tài khoản, tên, số điện thoại"
                                         value={searchValue}
                                         onChange={handleSearchChange}
                                         onSearch={handleSearch}

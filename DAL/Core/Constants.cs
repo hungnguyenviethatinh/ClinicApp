@@ -81,7 +81,8 @@
 
         public const string Name = "Name";
 
-        public const string ShortName = "ShortName";
+        //public const string ShortName = "ShortName";
+        public const string ExpiredDate = "ExpiredDate";
 
         public const string Ingredient = "Ingredient";
     }

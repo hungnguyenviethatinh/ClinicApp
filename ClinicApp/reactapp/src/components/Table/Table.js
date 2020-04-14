@@ -36,6 +36,9 @@ const Table = props => {
                 pageSize,
                 pageSizeOptions,
                 debounceInterval: 500,
+                padding: 'dense',
+                sorting: false,
+                headerStyle: { paddingTop: 0, },
                 ...customOptions,
             }}
             localization={localization}

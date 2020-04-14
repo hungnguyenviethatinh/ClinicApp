@@ -80,8 +80,9 @@ const UserView = () => {
     const [user, setUser] = React.useState({
         FullName: '',
         Role: '',
-        Email: '',
+        // Email: '',
         PhoneNumber: '',
+        AdditionalInfo: '',
         CurrentPassword: '',
         NewPassword: '',
     });
@@ -126,8 +127,9 @@ const UserView = () => {
 
         const userModel = {
             FullName: user.FullName,
-            Email: user.Email,
+            // Email: user.Email,
             PhoneNumber: user.PhoneNumber,
+            AdditionalInfo: user.AdditionalInfo,
             CurrentPassword: user.CurrentPassword,
             NewPassword: user.NewPassword,
         };
@@ -140,12 +142,13 @@ const UserView = () => {
         Axios.put(UpdateCurrentUserUrl, userModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { fullName, email, phoneNumber } = data;
+                const { fullName, /* email, */ phoneNumber, additionalInfo } = data;
                 setUser({
                     ...user,
                     FullName: fullName,
-                    Email: email,
+                    // Email: email,
                     PhoneNumber: phoneNumber,
+                    AdditionalInfo: additionalInfo,
                     CurrentPassword: '',
                     NewPassword: '',
                 });
@@ -169,15 +172,16 @@ const UserView = () => {
             const { status, data } = response;
             if (status === 200) {
                 const { currentUser, roles } = data[0];
-                const { fullName, email, phoneNumber } = currentUser;
+                const { fullName, /* email, */ phoneNumber, additionalInfo } = currentUser;
                 const role = roles[0];
 
                 setUser({
                     ...user,
                     FullName: fullName,
                     Role: role,
-                    Email: email,
+                    // Email: email,
                     PhoneNumber: phoneNumber,
+                    AdditionalInfo: additionalInfo,
                     CurrentPassword: '',
                     NewPassword: '',
                 });
@@ -232,7 +236,7 @@ const UserView = () => {
                                             readOnly
                                         />
                                     </Grid>
-                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                    {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                         <TextField
                                             fullWidth
                                             id="Email"
@@ -240,7 +244,7 @@ const UserView = () => {
                                             value={user.Email}
                                             onChange={handleValueChange('Email')}
                                         />
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                         <TextField
                                             fullWidth
@@ -249,6 +253,15 @@ const UserView = () => {
                                             value={user.PhoneNumber}
                                             onChange={handleValueChange('PhoneNumber')}
                                             maxLength={10}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        <TextField
+                                            fullWidth
+                                            id="AdditionalInfo"
+                                            label="Thông tin khác"
+                                            value={user.AdditionalInfo}
+                                            onChange={handleValueChange('AdditionalInfo')}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

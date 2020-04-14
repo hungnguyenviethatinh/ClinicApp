@@ -8,6 +8,7 @@ namespace DAL.Models
     public class User : IdentityUser, IAuditableEntity
     {
         public string FullName { get; set; }
+        public string AdditionalInfo { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
 

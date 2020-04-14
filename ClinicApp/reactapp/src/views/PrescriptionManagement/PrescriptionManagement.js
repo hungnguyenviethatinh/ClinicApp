@@ -569,7 +569,7 @@ const PrescriptionManagement = () => {
     };
 
     const updateMedicinesQuantity = (medicineUpdateModels) => {
-        Axios.put(UpdateMedicinesQuantityUrl, medicineUpdateModels, config).then((response) => {
+        Axios.patch(UpdateMedicinesQuantityUrl, medicineUpdateModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 console.log('[Update Medicines Quantity; - OK!');

@@ -40,7 +40,7 @@ namespace ClinicAPI.Controllers
         {
             var medicines = _unitOfWork.Medicines
                 .Where(m => !m.IsDeleted && m.Quantity > 0)
-                .Select(m => new { m.Id, m.Name, m.NetWeight, m.Quantity, m.Unit, m.Price });
+                .Select(m => new { m.Id, m.Name, m.NetWeight, m.Quantity, m.Unit });
 
             return Ok(medicines);
         }
@@ -356,7 +356,7 @@ namespace ClinicAPI.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpPut("medicines/quantity")]
+        [HttpPatch("medicines/quantity")]
         [Authorize(Policies.ManageAllPrescriptionsPolicy)]
         public async Task<IActionResult> UpdateMedicinesQuantity([FromBody] IEnumerable<MedicineUpdateModel> medicineUpdateModels)
         {

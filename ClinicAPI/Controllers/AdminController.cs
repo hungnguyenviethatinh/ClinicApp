@@ -54,12 +54,14 @@ namespace ClinicAPI.Controllers
                         ($"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase)) ||
                         p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
+                    .OrderByDescending(p => p.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
             else
             {
                 patients = patients
+                    .OrderByDescending(p => p.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
@@ -91,12 +93,14 @@ namespace ClinicAPI.Controllers
                         (query.Contains($"{p.IdCode}{p.Id}", StringComparison.OrdinalIgnoreCase)) ||
                         p.Patient.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.Doctor.FullName.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .OrderByDescending(p => p.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
             else
             {
                 prescriptions = prescriptions
+                    .OrderByDescending(p => p.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
@@ -114,7 +118,8 @@ namespace ClinicAPI.Controllers
         [HttpGet("medicines")]
         [Authorize(Policies.ViewAllMedicinesPolicy)]
         public IActionResult GetMedicines([FromQuery] int page, [FromQuery] int pageSize,
-            [FromQuery] string findBy, [FromQuery] string query = null, [FromQuery] string filterDate = null)
+            [FromQuery] string findBy = null, [FromQuery] string query = null,
+            [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
             var medicines = _unitOfWork.Medicines.Where(m => !m.IsDeleted);
             int totalCount = medicines.Count();
@@ -131,10 +136,15 @@ namespace ClinicAPI.Controllers
                     medicines = medicines
                     .Where(m => m.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
                 }
-                else if (findBy == FindMedicineByConstants.ShortName)
+                //else if (findBy == FindMedicineByConstants.ShortName)
+                //{
+                //    medicines = medicines
+                //    .Where(m => m.ShortName.Contains(query, StringComparison.OrdinalIgnoreCase));
+                //}
+                else if (findBy == FindMedicineByConstants.ExpiredDate)
                 {
                     medicines = medicines
-                    .Where(m => m.ShortName.Contains(query, StringComparison.OrdinalIgnoreCase));
+                        .Where(m => m.ExpiredDate.Equals(query, StringComparison.OrdinalIgnoreCase));
                 }
                 else if (findBy == FindMedicineByConstants.Ingredient)
                 {
@@ -143,6 +153,11 @@ namespace ClinicAPI.Controllers
                         .Where(i => i.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
                         .Select(i => i.MedicineId);
                     medicines = medicines.Where(m => medicineIds.Contains(m.Id));
+                }
+                else
+                {
+                    medicines = medicines.Where(
+                        m => (m.IdCode.Equals(query, StringComparison.OrdinalIgnoreCase) || m.Name.Contains(query, StringComparison.OrdinalIgnoreCase)));
                 }
 
                 medicines = medicines.Skip((page - 1) * pageSize).Take(pageSize);
@@ -154,23 +169,43 @@ namespace ClinicAPI.Controllers
                     .Take(pageSize);
             }
 
-            if (!string.IsNullOrWhiteSpace(filterDate))
+            if (startDate != null && endDate != null)
             {
-                DateTime date = DateTime.Parse(filterDate);
                 medicines = medicines
-                .Where(m => m.CreatedDate.Date == date.Date)
+                .Where(m => (m.CreatedDate >= startDate && m.CreatedDate <= endDate))
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize);
             }
 
-            var medicineVMs = _mapper.Map<IEnumerable<MedicineViewModel>>(medicines);
+            medicines = medicines.OrderByDescending(m => m.Name);
+
+            if (medicines.Any())
+            {
+                var medicineVMs = _mapper.Map<IEnumerable<MedicineViewModel>>(medicines);
+                foreach (var medicineVM in medicineVMs)
+                {
+                    var ingredientNames = _unitOfWork.Ingredients
+                        .Where(i => i.MedicineId == medicineVM.Id)
+                        .Select(i => i.Name);
+                    medicineVM.Ingredient = string.Join(", ", ingredientNames);
+                }
+
+                return Ok(new[]
+                {
+                    new
+                    {
+                        totalCount,
+                        medicines = medicineVMs,
+                    },
+                });
+            }
 
             return Ok(new[]
             {
                 new
                 {
                     totalCount,
-                    medicines = medicineVMs,
+                    medicines,
                 },
             });
         }
@@ -372,15 +407,16 @@ namespace ClinicAPI.Controllers
                     .Where(e => (
                         e.UserName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         e.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                        e.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                        e.Email.Contains(query, StringComparison.OrdinalIgnoreCase)
+                        e.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)
                     ))
+                    .OrderBy(e => e.FullName)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
             else
             {
                 employees = employees
+                    .OrderBy(e => e.FullName)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }

@@ -16,7 +16,7 @@ import { Table } from '../../components/Table';
 import { TextField } from '../../components/TextField';
 import { Snackbar } from '../../components/Snackbar';
 import { Button, FabButton } from '../../components/Button';
-import { Status } from '../../components/Status';
+import { DrugStatusIcon } from '../../components/Status';
 import { SearchInput } from '../../components/SearchInput';
 import { DeleteConfirm } from '../../components/DeleteConfirm';
 import { Select } from '../../components/Select';
@@ -68,11 +68,17 @@ const medicineColumns = [
     {
         title: 'Tên thuốc', field: 'name',
     },
+    // {
+    //     title: 'Tên tắt', field: 'shortName',
+    // },
     {
-        title: 'Tên tắt', field: 'shortName',
+        title: 'Biệt dược', field: 'ingredient',
     },
     {
         title: 'Hảm lượng', field: 'netWeight',
+    },
+    {
+        title: 'Hạn sử dụng', field: 'expiredDate',
     },
     {
         title: 'Số lượng', field: 'quantity', type: 'numeric',
@@ -80,16 +86,16 @@ const medicineColumns = [
     {
         title: 'Đơn vị', field: 'unit',
     },
-    {
-        title: 'Giá', field: 'price',
-    },
+    // {
+    //     title: 'Giá', field: 'price',
+    // },
     {
         title: 'Trạng thái', field: 'status',
         render: rowData => {
             const status = [
                 DrugStatus.No,
                 DrugStatus.Yes][rowData.status]
-            return <Status status={status} />
+            return <DrugStatusIcon status={status} />
         },
     },
 ];
@@ -97,7 +103,8 @@ const medicineColumns = [
 const findByOptions = [
     { label: 'Mã thuốc', value: 'IdCode' },
     { label: 'Tên thuốc', value: 'Name' },
-    { label: 'Tên tắt', value: 'ShortName' },
+    // { label: 'Tên tắt', value: 'ShortName' },
+    { label: 'Hạn sử dụng', value: 'ExpiredDate' },
     { label: 'Tên hoạt chất', value: 'Ingredient' },
 ];
 
@@ -217,23 +224,24 @@ const DrugManagement = () => {
         refreshData();
     };
 
-    const [filterDateValue, setFilterDateValue] = React.useState(null);
-    const handleFilterDateChange = date => {
-        setFilterDateValue(date);
-        if (moment(date).isValid()) {
-            // setLoadingSearch(true);
-            refreshData();
-        }
+    const [startDateValue, setStartDateValue] = React.useState(null);
+    const [endDateValue, setEndDateValue] = React.useState(null);
+    const handleStartDateChange = date => {
+        setStartDateValue(date);
     };
+    const handleEndDateChange = date => {
+        setEndDateValue(date);
+    }
 
     const [medicine, setMedicine] = React.useState({
         IdCode: '',
         Name: '',
-        ShortName: '',
+        // ShortName: '',
+        ExpiredDate: '',
         NetWeight: '',
         Quantity: '',
         Unit: '',
-        Price: '',
+        // Price: '',
     });
     const handleMedicineChange = prop => event => {
         setMedicine({
@@ -277,18 +285,18 @@ const DrugManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên thuốc!');
             return;
         }
-        if (!medicine.IdCode.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập mã thuốc!');
-            return;
-        }
-        if (!medicine.ShortName.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập tên tắt của thuốc!');
-            return;
-        }
-        if (!medicine.NetWeight.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập hàm lượng thuốc!');
-            return;
-        }
+        // if (!medicine.IdCode.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập mã thuốc!');
+        //     return;
+        // }
+        // if (!medicine.ShortName.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập tên tắt của thuốc!');
+        //     return;
+        // }
+        // if (!medicine.NetWeight.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập hàm lượng thuốc!');
+        //     return;
+        // }
         if (ingredients.length > 1) {
             for (let ingredient of ingredients) {
                 if (!ingredient.Name.trim()) {
@@ -297,26 +305,26 @@ const DrugManagement = () => {
                 }
             }
         }
-        if (!_.toString(medicine.Quantity).trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập số lượng thuốc!');
-            return;
-        }
+        // if (!_.toString(medicine.Quantity).trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập số lượng thuốc!');
+        //     return;
+        // }
         if (_.toString(medicine.Quantity).trim() && !_.isFinite(_.toNumber(medicine.Quantity))) {
             handleSnackbarOption('error', 'Yêu cầu nhập số cho số lượng thuốc!');
             return;
         }
-        if (!medicine.Unit.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập đơn vị thuốc!');
-            return;
-        }
-        if (!_.toString(medicine.Price).trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập giá bán thuốc!');
-            return;
-        }
-        if (_.toString(medicine.Price).trim() && !_.isFinite(_.toNumber(medicine.Price))) {
-            handleSnackbarOption('error', 'Yêu cầu nhập số cho giá thuốc!');
-            return;
-        }
+        // if (!medicine.Unit.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập đơn vị thuốc!');
+        //     return;
+        // }
+        // if (!_.toString(medicine.Price).trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập giá bán thuốc!');
+        //     return;
+        // }
+        // if (_.toString(medicine.Price).trim() && !_.isFinite(_.toNumber(medicine.Price))) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập số cho giá thuốc!');
+        //     return;
+        // }
 
         setDisabled(true);
         setLoadingDone(true);
@@ -324,11 +332,12 @@ const DrugManagement = () => {
         const medicineModel = {
             IdCode: medicine.IdCode.trim(),
             Name: medicine.Name.trim(),
-            ShortName: medicine.ShortName.trim(),
+            // ShortName: medicine.ShortName.trim(),
+            ExpiredDate: medicine.ExpiredDate.trim(),
             NetWeight: medicine.NetWeight.trim(),
             Quantity: _.toNumber(medicine.Quantity),
             Unit: medicine.Unit,
-            Price: _.toNumber(medicine.Price),
+            // Price: _.toNumber(medicine.Price),
         };
 
         if (!updateMode) {
@@ -343,11 +352,12 @@ const DrugManagement = () => {
         setMedicine({
             IdCode: '',
             Name: '',
-            ShortName: '',
+            // ShortName: '',
+            ExpiredDate: '',
             NetWeight: '',
             Quantity: '',
             Unit: '',
-            Price: '',
+            // Price: '',
         });
         setIngredients([{
             Name: '',
@@ -535,15 +545,16 @@ const DrugManagement = () => {
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { idCode, name, shortName, netWeight, quantity, unit, price } = data[0];
+                const { idCode, name, /* shortName */ expiredDate, netWeight, quantity, unit, price } = data[0];
                 setMedicine({
                     IdCode: idCode,
                     Name: name,
-                    ShortName: shortName,
+                    // ShortName: shortName,
+                    ExpiredDate: expiredDate,
                     NetWeight: netWeight,
                     Quantity: quantity,
                     Unit: unit,
-                    Price: price,
+                    // Price: price,
                 });
                 getIngredients(id);
             }
@@ -582,17 +593,18 @@ const DrugManagement = () => {
 
     const getMedicines = (resolve, reject, query) => {
         setDisabled(true);
-        const value = searchValue.trim();
-        const filterDate = filterDateValue ? filterDateValue.format(DataDateTimeFormat) : null;
+        const startDate = moment(startDateValue).isValid() ? startDateValue.format() : null;
+        const endDate = moment(endDateValue).isValid() ? endDateValue.format() : null;
 
         Axios.get(GetAllMedicinesUrl, {
             ...config,
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
-                query: value,
+                query: searchValue,
                 findBy: findByValue,
-                filterDate,
+                startDate,
+                endDate,
             }
         }).then((response) => {
             const { status, data } = response;
@@ -683,7 +695,7 @@ const DrugManagement = () => {
                                         onKeyPress={handleMedicineKeyPress}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <TextField
                                         fullWidth
                                         id="ShortName"
@@ -692,7 +704,7 @@ const DrugManagement = () => {
                                         onChange={handleMedicineChange('ShortName')}
                                         onKeyPress={handleMedicineKeyPress}
                                     />
-                                </Grid>
+                                </Grid> */}
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <TextField
                                         fullWidth
@@ -700,6 +712,16 @@ const DrugManagement = () => {
                                         label="Hàm lượng"
                                         value={medicine.NetWeight}
                                         onChange={handleMedicineChange('NetWeight')}
+                                        onKeyPress={handleMedicineKeyPress}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                    <TextField
+                                        fullWidth
+                                        id="ExpiredDate"
+                                        label="Hạn sử dụng"
+                                        value={medicine.ExpiredDate}
+                                        onChange={handleMedicineChange('ExpiredDate')}
                                         onKeyPress={handleMedicineKeyPress}
                                     />
                                 </Grid>
@@ -779,7 +801,7 @@ const DrugManagement = () => {
                                         onChange={handleMedicineChange('Unit')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <TextField
                                         fullWidth
                                         id="Price"
@@ -789,7 +811,7 @@ const DrugManagement = () => {
                                         onChange={handleMedicineChange('Price')}
                                         onKeyPress={handleMedicineKeyPress}
                                     />
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                             <Grid
                                 container
@@ -871,18 +893,26 @@ const DrugManagement = () => {
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={8} lg={8} xl={8} >
                                     <SearchInput
-                                        placeholder="Nhập tên thuốc, mã thuốc, tên tắt, tên hoạt chất để tìm kiếm"
+                                        placeholder="Nhập tên thuốc, mã thuốc, hạn sử dụng, tên hoạt chất để tìm kiếm"
                                         value={searchValue}
                                         onChange={handleSearchChange}
                                         onSearch={handleSearch}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={8} lg={8} xl={8} >
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
                                     <DatePicker
-                                        id="filterDatePicker"
-                                        label="Lọc theo ngày"
-                                        value={filterDateValue}
-                                        onChange={(date) => handleFilterDateChange(date)}
+                                        id="startDatePicker"
+                                        label="Từ ngày"
+                                        value={startDateValue}
+                                        onChange={(date) => handleStartDateChange(date)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
+                                    <DatePicker
+                                        id="endDatePicker"
+                                        label="Tới ngày"
+                                        value={endDateValue}
+                                        onChange={(date) => handleEndDateChange(date)}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>

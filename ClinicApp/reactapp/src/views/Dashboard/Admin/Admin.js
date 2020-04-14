@@ -14,7 +14,7 @@ import {
 import moment from 'moment';
 
 import { Table } from '../../../components/Table';
-import { Status } from '../../../components/Status';
+import { DrugStatusIcon, Status } from '../../../components/Status';
 import { Snackbar } from '../../../components/Snackbar';
 import { SearchInput } from '../../../components/SearchInput';
 
@@ -161,8 +161,11 @@ const employeeColumns = [
     {
         title: 'Số ĐT', field: 'phoneNumber',
     },
+    // {
+    //     title: 'Email', field: 'email',
+    // },
     {
-        title: 'Email', field: 'email',
+        title: 'Thông tin khác', field: 'additionalInfo',
     },
     {
         title: 'Trạng thái', field: 'isActive',
@@ -175,7 +178,19 @@ const employeeColumns = [
 
 const medicineColumns = [
     {
+        title: 'Mã thuốc', field: 'idCode',
+    },
+    {
         title: 'Tên thuốc', field: 'name',
+    },
+    {
+        title: 'Biệt dược', field: 'ingredient',
+    },
+    {
+        title: 'Hảm lượng', field: 'netWeight',
+    },
+    {
+        title: 'HSD', field: 'expiredDate',
     },
     {
         title: 'Số lượng', field: 'quantity', type: 'numeric',
@@ -189,7 +204,7 @@ const medicineColumns = [
             const status = [
                 DrugStatus.No,
                 DrugStatus.Yes][rowData.status]
-            return <Status status={status} />
+            return <DrugStatusIcon status={status} />
         },
     },
 ];
@@ -201,6 +216,29 @@ const getEmployeeLogMsfHeader = '[Get Employees Error]';
 
 const AdminView = () => {
     const classes = useStyles();
+    const config = axiosRequestConfig();
+
+    const [snackbarOption, setSnackbarOption] = React.useState({
+        variant: 'success',
+        message: '',
+    });
+    const handleSnackbarOption = (variant, message) => {
+        setSnackbarOption({
+            variant,
+            message,
+        });
+        setOpenSnackbar(true);
+    };
+
+    const handleError = (reason, logMsgHeader) => {
+        if (reason.response) {
+            const { status } = reason.response;
+            if (status === 401) {
+                handleSnackbarOption('error', ExpiredSessionMsg);
+            }
+        }
+        console.log(`${logMsgHeader}`, reason);
+    };
 
     let patientTableRef = React.createRef();
     let prescriptionTableRef = React.createRef();
@@ -216,9 +254,9 @@ const AdminView = () => {
     const refreshEmployeeData = () => {
         employeeTableRef.current && employeeTableRef.current.onQueryChange();
     };
-    // const refreshMedicineData = () => {
-    //     medicineTableRef.current && medicineTableRef.current.onQueryChange();
-    // };
+    const refreshMedicineData = () => {
+        medicineTableRef.current && medicineTableRef.current.onQueryChange();
+    };
 
     // const [countPatientTable, setCountPatientTable] = React.useState(0);
     // const [countPrescriptionTable, setCountPrescriptionTable] = React.useState(0);
@@ -250,6 +288,7 @@ const AdminView = () => {
     const [patientSearchValue, setPatientSearchValue] = React.useState('');
     const [prescriptionSearchValue, setPrescriptionSearchValue] = React.useState('');
     const [employeeSearchValue, setEmployeeSearchValue] = React.useState('');
+    const [medicineSearchValue, setMedicineSearchValue] = React.useState('');
     const handlePatientSearchChange = event => {
         setPatientSearchValue(event.target.value);
     };
@@ -271,6 +310,13 @@ const AdminView = () => {
         event.preventDefault();
         refreshEmployeeData();
     };
+    const handleMedicineSearchChange = event => {
+        setMedicineSearchValue(event.target.value);
+    };
+    const handleMedicineSearch = () => {
+        event.preventDefault();
+        refreshMedicineData();
+    };
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -280,30 +326,6 @@ const AdminView = () => {
 
         setOpenSnackbar(false);
     };
-
-    const [snackbarOption, setSnackbarOption] = React.useState({
-        variant: 'success',
-        message: '',
-    });
-    const handleSnackbarOption = (variant, message) => {
-        setSnackbarOption({
-            variant,
-            message,
-        });
-        setOpenSnackbar(true);
-    };
-
-    const handleError = (reason, logMsgHeader) => {
-        if (reason.response) {
-            const { status } = reason.response;
-            if (status === 401) {
-                handleSnackbarOption('error', ExpiredSessionMsg);
-            }
-        }
-        console.log(`${logMsgHeader}`, reason);
-    };
-
-    const config = axiosRequestConfig();
 
     const getPatients = (resolve, reject, query) => {
         // let value = patientSearchValue.toLowerCase();
@@ -370,13 +392,13 @@ const AdminView = () => {
     };
 
     const getEmployees = (resolve, reject, query) => {
-        let value = employeeSearchValue;
+        // let value = employeeSearchValue;
         Axios.get(GetAllEmployeesUrl, {
             ...config,
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
-                query: value,
+                query: employeeSearchValue,
             }
         }).then((response) => {
             const { status, data } = response;
@@ -403,6 +425,10 @@ const AdminView = () => {
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
+                query: medicineSearchValue,
+                findBy: null,
+                startDate: null,
+                endDate: null,
             }
         }).then((response) => {
             const { status, data } = response;
@@ -536,7 +562,7 @@ const AdminView = () => {
                             <Grid container spacing={2} style={{ marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                                     <SearchInput
-                                        placeholder="Nhập tên tài khoản, tên, số dt hoặc email"
+                                        placeholder="Nhập tên tài khoản, tên, số điện thoại"
                                         value={employeeSearchValue}
                                         onChange={handleEmployeeSearchChange}
                                         onSearch={handleEmployeeSearch}
@@ -567,6 +593,28 @@ const AdminView = () => {
                     />
                     <Divider />
                     <CardContent className={classes.content}>
+                    <Paper
+                            elevation={0}
+                            className={classes.paper}
+                            style={{ paddingBottom: 10 }}
+                        >
+                            <Typography
+                                variant="caption"
+                                component="p"
+                                children="TÌM KIẾM THUỐC"
+                            />
+                            <Grid container spacing={2} style={{ marginBottom: 8 }} >
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                                    <SearchInput
+                                        placeholder="Nhập mã thuốc, tên thuốc"
+                                        value={medicineSearchValue}
+                                        onChange={handleMedicineSearchChange}
+                                        onSearch={handleMedicineSearch}
+                                        id="medicineSearchInput"
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Paper>
                         <Table
                             tableRef={medicineTableRef}
                             columns={medicineColumns}

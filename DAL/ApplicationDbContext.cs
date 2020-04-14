@@ -139,14 +139,16 @@ namespace DAL
                 .Property(m => m.Name).IsRequired().HasMaxLength(100);
             builder.Entity<Medicine>()
                .Property(m => m.IdCode).HasMaxLength(30);
+            //builder.Entity<Medicine>()
+            //   .Property(m => m.ShortName).HasMaxLength(30);
             builder.Entity<Medicine>()
-               .Property(m => m.ShortName).HasMaxLength(30);
+               .Property(m => m.ExpiredDate).HasMaxLength(30);
             builder.Entity<Medicine>()
                 .Property(m => m.NetWeight).HasMaxLength(30);
             builder.Entity<Medicine>()
                 .Property(m => m.Unit).HasMaxLength(100);
-            builder.Entity<Medicine>()
-                .Property(m => m.Price).HasColumnType(decimalType);
+            //builder.Entity<Medicine>()
+            //    .Property(m => m.Price).HasColumnType(decimalType);
             builder.Entity<Medicine>()
                 .HasMany(m => m.Prescriptions)
                 .WithOne(pm => pm.Medicine)
