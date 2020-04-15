@@ -39,7 +39,7 @@ namespace ClinicAPI.Controllers
         public IActionResult GetMedicines()
         {
             var medicines = _unitOfWork.Medicines
-                .Where(m => !m.IsDeleted && m.Quantity > 0)
+                .Where(m => !m.IsDeleted)
                 .Select(m => new { m.Id, m.Name, m.NetWeight, m.Quantity, m.Unit });
 
             return Ok(medicines);

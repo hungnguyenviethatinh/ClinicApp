@@ -466,7 +466,7 @@ namespace ClinicAPI.Controllers
                 .Where(p =>
                 (!p.IsDeleted &&
                 p.Status != PatientStatus.IsChecked &&
-                (((p.CreatedDate.Date == currentDate || p.UpdatedDate == currentDate) && p.AppointmentDate == null) ||
+                (((p.CreatedDate.Date == currentDate || p.UpdatedDate.Date == currentDate) && p.AppointmentDate == null) ||
                 p.AppointmentDate.Value.Date == currentDate)))
                 .OrderBy(p => p.OrderNumber);
 

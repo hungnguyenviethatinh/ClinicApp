@@ -34,6 +34,7 @@ import {
     RouteConstants,
     AddressSeperator,
     DisplayDateTimeFormat,
+    DisplayDateFormat,
 } from '../../../constants';
 // import { encodeId } from '../../../utils';
 
@@ -52,7 +53,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
     },
     fullHeight: {
-        height: '100%',
+        // height: '100%',
     }
 }));
 
@@ -61,13 +62,17 @@ const patientQueueColumns = [
         title: 'STT', field: 'orderNumber', type: 'numeric',
     },
     {
-        title: 'Ngày khám', field: 'updatedDate', type: 'date',
+        title: 'Ngày khám', field: 'checkedDate', type: 'date',
         render: rowData => {
             if (rowData.appointmentDate) {
-                return moment(rowData.appointmentDate).format(DisplayDateTimeFormat);
+                return moment(rowData.appointmentDate).format(DisplayDateFormat);
             }
 
-            return moment(rowData.updatedDate).format(DisplayDateTimeFormat);
+            if (rowData.checkedDate) {
+                return moment(rowData.checkedDate).format(DisplayDateFormat);
+            }
+
+            return moment().format(DisplayDateFormat);
         },
     },
     {
@@ -105,7 +110,7 @@ const patientQueueColumns = [
     },
     {
         title: 'Địa chỉ', field: 'address',
-        render: rowData => _.last(rowData.address.split(AddressSeperator)),
+        // render: rowData => _.last(rowData.address.split(AddressSeperator)),
     },
     {
         title: 'Trạng thái', field: 'status',
@@ -139,7 +144,8 @@ const prescriptionColumns = [
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-                children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
+                children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`}
+            />,
     },
     {
         title: 'Bác sĩ kê đơn', field: 'doctorId',
@@ -147,7 +153,12 @@ const prescriptionColumns = [
     },
     {
         title: 'Bệnh nhân', field: 'patientId',
-        render: rowData => rowData.patient.fullName,
+        // render: rowData => rowData.patient.fullName,
+        render: rowData =>
+            <Link
+                to={`${RouteConstants.PatientDetailView.replace(':id', rowData.patientId)}`}
+                children={`${rowData.patient.fullName}`}
+            />,
     },
     {
         title: 'Trạng thái', field: 'status',

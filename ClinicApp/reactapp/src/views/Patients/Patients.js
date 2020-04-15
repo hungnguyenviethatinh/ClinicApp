@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 
 const patientColumns = [
     {
-        title: 'Mã BN', field: 'id', defaultSort: 'asc',
+        title: 'Mã BN', field: 'id',
         // render: rowData =>
         //     <Link
         //         to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
@@ -75,7 +75,7 @@ const patientColumns = [
     },
     {
         title: 'Địa chỉ', field: 'address',
-        render: rowData => _.last(rowData.address.split(AddressSeperator)),
+        // render: rowData => _.last(rowData.address.split(AddressSeperator)),
     },
 ];
 

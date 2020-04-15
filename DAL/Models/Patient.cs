@@ -15,12 +15,13 @@ namespace DAL.Models
         public int Age { get; set; }
         public Gender Gender { get; set; }
         public string Address { get; set; }
-        public string Job { get; set; }
+        //public string Job { get; set; }
         public string PhoneNumber { get; set; }
         public string RelativePhoneNumber { get; set; }
-        public string Email { get; set; }
+        //public string Email { get; set; }
 
         public DateTime? AppointmentDate { get; set; }
+        public DateTime CheckedDate { get; set; }
         public PatientStatus Status { get; set; }
         public bool IsDeleted { get; set; }
 

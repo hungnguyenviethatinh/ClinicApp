@@ -60,14 +60,19 @@ const prescriptionColumns = [
     },
     {
         title: 'Bác sĩ kê đơn', field: 'doctorId',
-        render: rowData => rowData.doctor.fullName,
+        render: rowData => `BS. ${rowData.doctor.fullName}`,
     },
     {
         title: 'Bệnh nhân', field: 'patientId',
-        render: rowData => rowData.patient.fullName,
+        // render: rowData => rowData.patient.fullName,
+        render: rowData =>
+            <Link
+                to={`${RouteConstants.PatientDetailView.replace(':id', rowData.patientId)}`}
+                children={`${rowData.patient.fullName}`}
+            />,
     },
     {
-        title: 'Ngày tạo', field: 'updatedDate',
+        title: 'Ngày kê đơn', field: 'updatedDate',
         render: rowData => moment(rowData.updatedDate).format(DisplayDateFormat),
     },
     {

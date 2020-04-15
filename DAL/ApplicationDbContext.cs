@@ -78,10 +78,10 @@ namespace DAL
                 .Property(p => p.IdCode).HasMaxLength(30);
             builder.Entity<Patient>()
                 .Property(p => p.Address).HasMaxLength(200);
-            builder.Entity<Patient>()
-                .Property(p => p.Email).HasMaxLength(100);
-            builder.Entity<Patient>()
-                .Property(p => p.Job).HasMaxLength(100);
+            //builder.Entity<Patient>()
+            //    .Property(p => p.Email).HasMaxLength(100);
+            //builder.Entity<Patient>()
+            //    .Property(p => p.Job).HasMaxLength(100);
             builder.Entity<Patient>()
                 .Property(p => p.PhoneNumber).IsUnicode(false).HasMaxLength(100);
             builder.Entity<Patient>()

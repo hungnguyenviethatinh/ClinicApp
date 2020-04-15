@@ -308,7 +308,7 @@ const getDetailPanel = (rowData) => {
     );
 };
 
-const tabNames = ['Thông tin bệnh nhân', 'Lịch sử khám bệnh', 'Tra cứu lịch hẹn'];
+const tabNames = ['Thông tin bệnh nhân', 'Lịch sử khám bệnh']; // , 'Tra cứu lịch hẹn'];
 
 const getPatientByIdError = '[Get Patient By Id Error]';
 const getPatientHistoryError = '[Get Patient History Error]';
@@ -820,7 +820,7 @@ const Patient = () => {
                                     </Grid>
                                 </Grid>
                             </TabContent>
-                            <TabContent value={tabValue} index={2}>
+                            {/* <TabContent value={tabValue} index={2}>
                                 <Grid
                                     container
                                     spacing={3}
@@ -854,7 +854,7 @@ const Patient = () => {
                                             </Grid>
                                     }
                                 </Grid>
-                            </TabContent>
+                            </TabContent> */}
                         </Tab>
                     </CardContent>
                 </Card>

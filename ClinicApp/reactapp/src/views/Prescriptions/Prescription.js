@@ -319,14 +319,14 @@ const Prescription = () => {
         });
     };
 
-    const [canPrint, setCanPrint] = React.useState(false);
-    const checkCanPrint = () => {
-        const token = localStorage.getItem(AccessTokenKey);
-        verifyJWT(token, RoleConstants.ReceptionistRoleName) && setCanPrint(true);
-    };
+    // const [canPrint, setCanPrint] = React.useState(false);
+    // const checkCanPrint = () => {
+    //     const token = localStorage.getItem(AccessTokenKey);
+    //     verifyJWT(token, RoleConstants.ReceptionistRoleName) && setCanPrint(true);
+    // };
 
     React.useEffect(() => {
-        checkCanPrint();
+        // checkCanPrint();
         getPrescription();
         getOpenTimes();
     }, []);
@@ -348,9 +348,9 @@ const Prescription = () => {
                 >
                     <CardHeader
                         action={
-                            <React.Fragment>
-                                {
-                                    canPrint &&
+                            // <React.Fragment>
+                            //     {
+                            //         canPrint &&
                                     <Button
                                         color="warning"
                                         disabled={disabled}
@@ -359,8 +359,8 @@ const Prescription = () => {
                                         iconName="print"
                                         onClick={handlePrint}
                                     />
-                                }
-                            </React.Fragment>
+                            //     }
+                            // </React.Fragment>
                         }
                         title="ĐƠN THUỐC"
                         subheader="Xem chi tiết thuốc và in"
@@ -705,7 +705,7 @@ const Prescription = () => {
                                                                 style={{ fontStyle: 'italic' }}
                                                             />
                                                         </Grid>
-                                                        {
+                                                        {/* {
                                                             canPrint &&
                                                             <React.Fragment>
                                                                 <Grid item xs={12} sm={12} md={1} lg={1} xl={1}></Grid>
@@ -718,11 +718,11 @@ const Prescription = () => {
                                                                     />
                                                                 </Grid>
                                                             </React.Fragment>
-                                                        }
+                                                        } */}
                                                     </React.Fragment>
                                                 ))
                                             }
-                                            <Divider />
+                                            {/* <Divider />
                                             {
                                                 canPrint &&
                                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -733,7 +733,7 @@ const Prescription = () => {
                                                         style={{ fontStyle: 'italic' }}
                                                     />
                                                 </Grid>
-                                            }
+                                            } */}
                                         </Grid>
                                     </div>
                                 </Grid>

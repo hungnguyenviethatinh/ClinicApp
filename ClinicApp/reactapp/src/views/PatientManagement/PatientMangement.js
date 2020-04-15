@@ -17,7 +17,7 @@ import { Select } from '../../components/Select';
 import { Snackbar } from '../../components/Snackbar';
 import { DropZone } from '../../components/DropZone';
 import { Button } from '../../components/Button';
-// import { DatePicker } from '../../components/DatePicker';
+import { DatePicker } from '../../components/DatePicker';
 import { DateTimePicker } from '../../components/DateTimePicker';
 import { CheckBox } from '../../components/CheckBox';
 import { Label } from '../../components/Label';
@@ -109,7 +109,7 @@ const patientColumns = [
     },
     {
         title: 'Địa chỉ', field: 'address',
-        render: rowData => _.last(rowData.address.split(AddressSeperator)),
+        // render: rowData => _.last(rowData.address.split(AddressSeperator)),
     },
 ];
 
@@ -186,16 +186,18 @@ const PatientManagement = () => {
         // DateOfBirth: null,
         Age: '',
         Gender: '',
-        HouseNo: '',
-        Street: '',
-        Ward: '',
-        District: '',
-        City: '',
-        Job: '',
+        // HouseNo: '',
+        // Street: '',
+        // Ward: '',
+        // District: '',
+        // City: '',
+        // Job: '',
+        Address: '',
         PhoneNumber: '',
         RelativePhoneNumber: '',
-        Email: '',
+        // Email: '',
         AppointmentDate: null,
+        CheckedDate: moment(),
         Status: PatientStatus.IsNew,
         XRayImages: [],
         Height: '',
@@ -214,10 +216,18 @@ const PatientManagement = () => {
         })
     };
     const handleSelectDoctorChange = (event, newValue) => {
-        setValues({
-            ...values,
-            Doctors: newValue,
-        });
+        if (!_.isEmpty(newValue) && newValue.findIndex(value => value.id === 0) > -1) {
+            const doctors = doctorOptions.filter(d => d.id !== 0);
+            setValues({
+                ...values,
+                Doctors: doctors,
+            });
+        } else {
+            setValues({
+                ...values,
+                Doctors: newValue,
+            });
+        }
     };
     // const handleDateoBirthChange = date => {
     //     setValues({
@@ -231,6 +241,13 @@ const PatientManagement = () => {
             AppointmentDate: date,
         });
     };
+    const handleCheckedDateChange = date => {
+        setValues({
+            ...values,
+            CheckedDate: date,
+        })
+    };
+
     const handleUploadXRayImage = images => {
         setValues({
             ...values,
@@ -285,19 +302,23 @@ const PatientManagement = () => {
             return;
         }
         if (values.AppointmentDate && !moment(values.AppointmentDate).isValid()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập ngày giờ hẹn hợp lệ (không hẹn để trống)!');
+            handleSnackbarOption('error', 'Yêu cầu nhập ngày hẹn hợp lệ (không hẹn để trống)!');
             return;
         }
         if (values.AppointmentDate && moment(values.AppointmentDate) <= moment()) {
-            handleSnackbarOption('error', 'Ngày giờ hẹn phải sau thời gian hiện tại (không hẹn để trống)!');
+            handleSnackbarOption('error', 'Ngày hẹn phải sau thời gian hiện tại (không hẹn để trống)!');
+            return;
+        }
+        if (values.CheckedDate && !moment(values.CheckedDate).isValid()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập ngày khám hợp lệ!');
             return;
         }
         if (!_.isFinite(values.Gender)) {
             handleSnackbarOption('error', 'Yêu cầu nhập giới tính!');
             return;
         }
-        if (!values.City.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập thành phố (tỉnh)!');
+        if (!values.Address.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập địa chỉ!');
             return;
         }
         if (!_.isFinite(_.toNumber(values.PhoneNumber))) {
@@ -388,8 +409,9 @@ const PatientManagement = () => {
         setLoadingDone(true);
 
         // const DateOfBirth = values.DateOfBirth.format(DataDateTimeFormat);
-        const Address = [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(AddressSeperator);
+        // const Address = [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(AddressSeperator);
         const AppointmentDate = moment(values.AppointmentDate).isValid() ? values.AppointmentDate.format() : null;
+        const CheckedDate = moment(values.CheckedDate).isValid() ? values.CheckedDate.format() : moment().format();
         // const Status = values.Status === PatientStatus.IsNew ?
         //     PatientStatusEnum[PatientStatus.IsNew] : PatientStatusEnum[PatientStatus.IsRechecking];
         let Status = PatientStatusEnum[values.Status];
@@ -402,19 +424,20 @@ const PatientManagement = () => {
             }
         }
 
-        const IdCode = `${IdPrefix.Patient}: ${moment().format('YYYY/MM')}`;
+        // const IdCode = `${IdPrefix.Patient}: ${moment().format('YYYY/MM')}`;
         const patientModel = {
-            IdCode,
+            IdCode: values.IdCode,
             FullName: values.FullName,
             // DateOfBirth,
             Age: values.Age,
             Gender: values.Gender,
-            Address,
-            Job: values.Job,
+            Address: values.Address,
+            // Job: values.Job,
             PhoneNumber: values.PhoneNumber,
             RelativePhoneNumber: values.RelativePhoneNumber,
-            Email: values.Email,
+            // Email: values.Email,
             AppointmentDate,
+            CheckedDate,
             Status,
             // DoctorId: values.DoctorId,
         };
@@ -447,16 +470,18 @@ const PatientManagement = () => {
             // DateOfBirth: null,
             Age: '',
             Gender: '',
-            HouseNo: '',
-            Street: '',
-            Ward: '',
-            District: '',
-            City: '',
-            Job: '',
+            // HouseNo: '',
+            // Street: '',
+            // Ward: '',
+            // District: '',
+            // City: '',
+            // Job: '',
+            Address: '',
             PhoneNumber: '',
             RelativePhoneNumber: '',
-            Email: '',
+            // Email: '',
             AppointmentDate: null,
+            CheckedDate: moment(),
             Status: PatientStatus.IsNew,
             XRayImages: [],
             Height: '',
@@ -775,13 +800,16 @@ const PatientManagement = () => {
         Axios.get(GetDoctorsUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                // const options = [];
-                // data.map(({ fullName, id }) => options.push({
-                //     label: fullName,
-                //     value: id,
-                // }));
-                // setDoctorOptions(options);
-                setDoctorOptions(data.map(({ id, fullName }) => ({ id, fullName })));
+                const options = [{
+                    id: 0,
+                    fullName: 'Tất cả bác sĩ',
+                }];
+                data.map(({ id, fullName }) => options.push({
+                    id,
+                    fullName,
+                }));
+                setDoctorOptions(options);
+                // setDoctorOptions(data.map(({ id, fullName }) => ({ id, fullName })));
             }
             setDisabled(false);
         }).catch((reason) => {
@@ -802,11 +830,12 @@ const PatientManagement = () => {
                     age,
                     gender,
                     address,
-                    job,
+                    // job,
                     phoneNumber,
                     relativePhoneNumber,
-                    email,
+                    // email,
                     appointmentDate,
+                    checkedDate,
                     status,
                     // doctorId
                 } = data[0];
@@ -820,12 +849,16 @@ const PatientManagement = () => {
                     PatientStatus.IsChecked,
                     PatientStatus.IsRechecking,
                     PatientStatus.IsToAddDocs,][status];
-                const Address = address.split(AddressSeperator);
+                // const Address = address.split(AddressSeperator);
                 let AppointmentDate = null;
                 if (moment(appointmentDate).isValid()) {
                     if (Status !== PatientStatus.IsChecked || moment(appointmentDate) > moment()) {
                         AppointmentDate = moment(appointmentDate);
                     }
+                }
+                let CheckedDate = null;
+                if (moment(checkedDate).isValid()) {
+                    CheckedDate = moment(checkedDate);
                 }
 
                 setValues({
@@ -833,16 +866,18 @@ const PatientManagement = () => {
                     // DateOfBirth,
                     Age: age,
                     Gender: gender,
-                    HouseNo: Address[0],
-                    Street: Address[1],
-                    Ward: Address[2],
-                    District: Address[3],
-                    City: Address[4],
-                    Job: job,
+                    // HouseNo: Address[0],
+                    // Street: Address[1],
+                    // Ward: Address[2],
+                    // District: Address[3],
+                    // City: Address[4],
+                    // Job: job,
+                    Address: address,
                     PhoneNumber: phoneNumber,
                     RelativePhoneNumber: relativePhoneNumber,
-                    Email: email,
+                    // Email: email,
                     AppointmentDate,
+                    CheckedDate,
                     Status,
                     // DoctorId: doctorId,
                     XRayImages: [],
@@ -922,11 +957,12 @@ const PatientManagement = () => {
             // DateOfBirth: null,
             Age,
             // Gender,
-            HouseNo,
-            Street,
-            Ward,
-            District,
-            City,
+            // HouseNo,
+            // Street,
+            // Ward,
+            // District,
+            // City,
+            Address,
             PhoneNumber,
             RelativePhoneNumber,
             Status,
@@ -939,7 +975,7 @@ const PatientManagement = () => {
             // Doctors,
         } = patientPrintModel;
 
-        const Address = [HouseNo, Street, Ward, District, City].join(`${AddressSeperator} `);
+        // const Address = [HouseNo, Street, Ward, District, City].join(`${AddressSeperator} `);
         const AppointmentDate = moment(patient.AppointmentDate).isValid() ? patient.AppointmentDate.format(DisplayDateTimeFormat) : null;
         const Doctors = [];
         if (!_.isEmpty(patient.Doctors)) {
@@ -1031,7 +1067,7 @@ const PatientManagement = () => {
                                         onChange={handleValueChange('FullName')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
+                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                                     {/* <DatePicker
                                         fullWidth
                                         id="DateOfBirth"
@@ -1047,7 +1083,7 @@ const PatientManagement = () => {
                                         onChange={handleValueChange('Age')}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                     <Select
                                         fullWidth
                                         style={{ marginTop: 0, marginBottom: 0 }}
@@ -1058,6 +1094,25 @@ const PatientManagement = () => {
                                         options={genderOptions}
                                     />
                                 </Grid>
+                                <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                    <TextField
+                                        fullWidth
+                                        id="IdCode"
+                                        label="Mã BN"
+                                        value={values.IdCode}
+                                        onChange={handleValueChange('IdCode')}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
+                                    {/* <DateTimePicker */}
+                                    <DatePicker
+                                        fullWidth
+                                        id="CheckedDate"
+                                        label="Ngày khám"
+                                        value={values.CheckedDate}
+                                        onChange={(date) => handleCheckedDateChange(date)}
+                                    />
+                                </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <Typography
                                         variant="caption"
@@ -1065,7 +1120,7 @@ const PatientManagement = () => {
                                         children="Địa chỉ: (Ghi theo hộ khẩu thường trú)"
                                     />
                                     <Grid container spacing={2}>
-                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                        {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                             <TextField
                                                 fullWidth
                                                 id="HouseNo"
@@ -1109,10 +1164,19 @@ const PatientManagement = () => {
                                                 value={values.City}
                                                 onChange={handleValueChange('City')}
                                             />
+                                        </Grid> */}
+                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                            <TextField
+                                                fullWidth
+                                                id="Address"
+                                                label="Địa chỉ"
+                                                value={values.Address}
+                                                onChange={handleValueChange('Address')}
+                                            />
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                     <TextField
                                         fullWidth
                                         id="Job"
@@ -1120,7 +1184,7 @@ const PatientManagement = () => {
                                         value={values.Job}
                                         onChange={handleValueChange('Job')}
                                     />
-                                </Grid>
+                                </Grid> */}
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <TextField
                                         fullWidth
@@ -1131,7 +1195,7 @@ const PatientManagement = () => {
                                         maxLength={10}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                {/* <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <TextField
                                         fullWidth
                                         id="Email"
@@ -1139,8 +1203,8 @@ const PatientManagement = () => {
                                         value={values.Email}
                                         onChange={handleValueChange('Email')}
                                     />
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                </Grid> */}
+                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <TextField
                                         fullWidth
                                         id="RelativePhoneNumber"
@@ -1157,10 +1221,11 @@ const PatientManagement = () => {
                             />
                             <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                                    <DateTimePicker
+                                    {/* <DateTimePicker */}
+                                    <DatePicker
                                         fullWidth
                                         id="AppointmentDate"
-                                        label="Ngày giờ hẹn (nếu có)"
+                                        label="Ngày hẹn (nếu có)"
                                         value={values.AppointmentDate}
                                         onChange={(date) => handleAppointmentDateChange(date)}
                                     />
@@ -1275,7 +1340,7 @@ const PatientManagement = () => {
                                     <TextField
                                         fullWidth
                                         id="Other"
-                                        label="Thông tin lâm sàng khác"
+                                        label="Thông tin khác"
                                         value={values.Other}
                                         onChange={handleValueChange('Other')}
                                     />
