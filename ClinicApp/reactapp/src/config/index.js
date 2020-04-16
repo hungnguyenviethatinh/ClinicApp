@@ -25,6 +25,7 @@ export const AddDoctorsUrl = '/api/receptionist/doctors';
 export const UpdateDoctorsUrl = '/api/receptionist/doctors';
 // Doctor Api:
 export const GetPatientsByDoctorUrl = '/api/doctor/patients';
+export const GetPatientOptionsUrl = '/api/doctor/patients/options';
 export const GetPatientInQueueByDoctorUrl = '/api/doctor/patients/queue';
 export const UpdatePatientStatusUrl = '/api/doctor/patients/update';
 export const GetPrescriptionsInQueueByDoctorUrl = '/api/doctor/prescriptions/queue';
@@ -33,6 +34,7 @@ export const GetDiagnosisNameOptionsUrl = '/api/doctor/diagnoses';
 export const GetUnitNameOptionsUrl = '/api/doctor/units';
 export const GetCurrentPatientUrl = '/api/doctor/patients/current';
 export const AddPrescriptionsUrl = 'api/doctor/prescriptions';
+export const UpdatePrescriptionsUrl = 'api/doctor/prescriptions';
 export const AddMedicinesUrl = 'api/doctor/medicines';
 export const UpdatePatientHistoryUrl = 'api/doctor/patients';
 export const UpdateMedicinesQuantityUrl = 'api/doctor/medicines/quantity';

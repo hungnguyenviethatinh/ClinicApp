@@ -23,6 +23,7 @@ const AutocompleteComponent = props => {
         options, 
         onChange,
         getOptionLabel,
+        margin,
         ...rest
     } = props;
 
@@ -30,6 +31,7 @@ const AutocompleteComponent = props => {
         <FormControl
             className={clsx(classes.root, className)}
             fullWidth={fullWidth}
+            margin={margin}
         >
             <Autocomplete
                 multiple={multiple}
@@ -65,6 +67,7 @@ AutocompleteComponent.propTypes = {
     multiple: PropTypes.bool,
     freeSolo: PropTypes.bool,
     options: PropTypes.arrayOf(PropTypes.object),
+    margin: PropTypes.oneOf(['none', 'dense', 'normal']),
     onChange: PropTypes.func,
     getOptionLabel: PropTypes.func,
 };
@@ -78,6 +81,7 @@ AutocompleteComponent.defaultProps = {
     multiple: false,
     freeSolo: false,
     options: [{ }],
+    margin: 'none',
     onChange: () => { },
     getOptionLabel: () => { },
 };

@@ -18,7 +18,7 @@ const TextFieldComponent = props => {
     const { 
         classes, className, autoFocus, error, fullWidth, helperText, style,
         id, label, name, onChange, required, readOnly, value, maxLength,
-        placeholder, multiline, rowsMax, onBlur, onKeyPress,
+        placeholder, multiline, rowsMax, onBlur, onKeyPress, margin,
     } = props;
 
     const [showPassword, setShowPassword] = React.useState(false);
@@ -38,12 +38,12 @@ const TextFieldComponent = props => {
         <FormControl
             className={clsx(classes.root, className)}
             fullWidth={fullWidth}
-            margin="dense"
+            margin={margin}
             style={style}
         >
             <TextField
                 variant="outlined"
-                margin="dense"
+                margin={margin}
                 required={required}
                 name={name}
                 label={label}
@@ -105,6 +105,7 @@ TextFieldComponent.propTypes = {
     placeholder: PropTypes.string,
     multiline: PropTypes.bool,
     rowsMax: PropTypes.string,
+    margin: PropTypes.oneOf(['none', 'dense', 'normal']),
 };
 
 TextFieldComponent.defaultProps = {
@@ -128,6 +129,7 @@ TextFieldComponent.defaultProps = {
     placeholder: '',
     multiline: false,
     rowsMax: '0',
+    margin: 'dense',
 };
 
 export default withStyles(styles)(TextFieldComponent);

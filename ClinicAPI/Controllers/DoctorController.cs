@@ -89,6 +89,17 @@ namespace ClinicAPI.Controllers
         //    return Ok(ingredients);
         //}
 
+        [HttpGet("patients/options")]
+        [Authorize(Policies.ViewAllPatientsPolicy)]
+        public IActionResult GetPatientOptions()
+        {
+            var patients = _unitOfWork.Patients
+                .Where(p => !p.IsDeleted)
+                .Select(p => new { p.IdCode, p.Id, p.FullName });
+
+            return Ok(patients);
+        }
+
         [HttpGet("patients")]
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatients([FromQuery] int page, [FromQuery] int pageSize, [FromQuery] string query = null)

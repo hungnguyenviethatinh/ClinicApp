@@ -15,6 +15,7 @@ namespace DAL.Models
         public string Note { get; set; }
         public PrescriptionStatus Status { get; set; }
         public bool IsDeleted { get; set; }
+        public DateTime? DateCreated { get; set; }
 
         public int PatientId { get; set; }
         public virtual Patient Patient { get; set; }

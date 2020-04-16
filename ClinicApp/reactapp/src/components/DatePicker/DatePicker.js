@@ -22,6 +22,7 @@ const DatePickerComponent = props => {
         style,
         variant,
         fullWidth,
+        margin,
         // minDate, 
         // maxDate, 
         // minDateMessage, 
@@ -33,6 +34,7 @@ const DatePickerComponent = props => {
         <FormControl
             fullWidth={fullWidth}
             style={style}
+            margin={margin}
         >
             <KeyboardDatePicker
                 className={classes.picker}
@@ -76,6 +78,7 @@ DatePickerComponent.protoTypes = {
     // minDateMessage: PropTypes.string,
     // maxDate: PropTypes.instanceOf(Date),
     // maxDateMessage: PropTypes.string,
+    margin: PropTypes.oneOf(['none', 'dense', 'normal']),
 };
 
 DatePickerComponent.defaultProps = {
@@ -93,6 +96,7 @@ DatePickerComponent.defaultProps = {
     // minDateMessage: '',
     // maxDate: moment(),
     // maxDateMessage: '',
+    margin: 'none',
 };
 
 export default withStyles(styles)(DatePickerComponent);
