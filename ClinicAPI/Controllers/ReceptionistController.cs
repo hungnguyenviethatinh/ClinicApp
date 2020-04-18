@@ -95,7 +95,7 @@ namespace ClinicAPI.Controllers
                 .GetPatients()
                 .Where(p =>
                 p.Status != PatientStatus.IsChecked &&
-                ((p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate == today)) ||
+                ((p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate.Date == today)) ||
                 (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today)))
                 //.OrderBy(p => p.UpdatedDate);
                 .OrderBy(p => p.OrderNumber);

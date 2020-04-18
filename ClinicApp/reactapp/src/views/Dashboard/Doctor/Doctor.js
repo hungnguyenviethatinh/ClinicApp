@@ -307,6 +307,7 @@ const DoctorView = () => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Xóa đơn thuốc thành công!');
+                refreshPrescriptionData();
             } else {
                 handleSnackbarOption('error', 'Có lỗi khi xóa đơn thuốc. Vui lòng thử lại sau!');
                 handleError(response, deletePrescriptionLogMsgHeader);
@@ -427,8 +428,8 @@ const DoctorView = () => {
                                     getPatientsInQueue(resolve, reject, query);
                                 })
                             }
-                            onRowClick={handleSelectRow}
-                            selectedRow={selectedRow}
+                            // onRowClick={handleSelectRow}
+                            // selectedRow={selectedRow}
                         />
                     </CardContent>
                 </Card>

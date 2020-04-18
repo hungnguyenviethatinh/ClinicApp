@@ -86,14 +86,15 @@ const PrescriptionList = (props) => {
     };
 
     const handleDone = () => {
-        const { id, diagnosis, otherDiagnosis, note } = selectedRow;
-        const prescription = {
-            id,
-            diagnosis,
-            otherDiagnosis,
-            note,
-        }
-        handleCopy(prescription);
+        // const { id, diagnosis, otherDiagnosis, note } = selectedRow;
+        // const prescription = {
+        //     id,
+        //     diagnosis,
+        //     otherDiagnosis,
+        //     note,
+        // }
+        // handleCopy(prescription);
+        handleCopy(selectedRow);
     };
 
     return (

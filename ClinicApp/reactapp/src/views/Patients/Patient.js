@@ -382,27 +382,27 @@ const Patient = () => {
                     age,
                     gender,
                     address,
-                    job,
+                    // job,
                     phoneNumber,
                     relativePhoneNumber,
-                    email,
+                    // email,
                     appointmentDate,
                 } = data[0];
 
                 const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
                 // const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(DisplayDateFormat) : null;
-                const Address = address.split(AddressSeperator).filter(value => value.trim() !== '').join(`${AddressSeperator} `);
+                // const Address = address.split(AddressSeperator).filter(value => value.trim() !== '').join(`${AddressSeperator} `);
 
                 setPatient({
                     FullName: fullName,
                     // DateOfBirth,
                     Age: age,
                     Gender: [Gender.None, Gender.Male, Gender.Female][gender],
-                    Address,
-                    Job: job,
+                    Address: address,
+                    // Job: job,
                     PhoneNumber: phoneNumber,
                     RelativePhoneNumber: relativePhoneNumber,
-                    Email: email,
+                    // Email: email,
                     AppointmentDate,
                 });
             }
@@ -579,7 +579,7 @@ const Patient = () => {
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
-                                            <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                            {/* <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                                 <Typography
                                                     variant="body1"
                                                     component="p"
@@ -593,7 +593,7 @@ const Patient = () => {
                                                     children={`${patient.Job}`}
                                                     style={{ fontWeight: 600 }}
                                                 />
-                                            </Grid>
+                                            </Grid> */}
                                             <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                                 <Typography
                                                     variant="body1"
@@ -601,7 +601,7 @@ const Patient = () => {
                                                     children="Điện thoại:"
                                                 />
                                             </Grid>
-                                            <Grid item xs={6} sm={6} md={3} lg={3} xl={3}>
+                                            <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
                                                 <Typography
                                                     variant="h6"
                                                     component="h6"
@@ -609,7 +609,7 @@ const Patient = () => {
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
-                                            <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                            {/* <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
                                                 <Typography
                                                     variant="body1"
                                                     component="p"
@@ -623,7 +623,7 @@ const Patient = () => {
                                                     children={`${patient.Email}`}
                                                     style={{ fontWeight: 600 }}
                                                 />
-                                            </Grid>
+                                            </Grid> */}
                                             <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                                 <Typography
                                                     variant="body1"

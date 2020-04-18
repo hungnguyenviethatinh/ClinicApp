@@ -53,10 +53,14 @@ const prescriptionColumns = [
         //     children={
         //         encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
         //     } />,
+        // render: rowData =>
+        //     <Link
+        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
+        //         children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-                children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
+                children={`${rowData.idCode}${rowData.id}`} />,
     },
     {
         title: 'Bác sĩ kê đơn', field: 'doctorId',

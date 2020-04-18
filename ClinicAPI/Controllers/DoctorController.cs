@@ -96,9 +96,9 @@ namespace ClinicAPI.Controllers
             DateTime today = DateTime.Today;
             var patients = GetCurrentDoctorPatients()
                 .Where(p =>
-                p.Status != PatientStatus.IsChecked &&
-                ((p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate == today)) ||
-                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today)))
+                //p.Status != PatientStatus.IsChecked &&
+                (p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate.Date == today)) ||
+                (p.AppointmentDate != null && p.AppointmentDate.Value.Date >= today))
                 .Select(p => new { p.IdCode, p.Id, p.FullName });
 
             return Ok(patients);
@@ -149,7 +149,7 @@ namespace ClinicAPI.Controllers
             var patients = GetCurrentDoctorPatients()
                 .Where(p =>
                 p.Status != PatientStatus.IsChecked &&
-                ((p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate == today)) ||
+                ((p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate.Date == today)) ||
                 (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today)))
                 //.OrderBy(p => p.UpdatedDate);
                 .OrderBy(p => p.OrderNumber);
@@ -389,19 +389,20 @@ namespace ClinicAPI.Controllers
                 var medicineIds = medicineUpdateModels.Select(m => m.Id);
                 var medicines = _unitOfWork.Medicines.Where(m => !m.IsDeleted && medicineIds.Contains(m.Id));
 
-                //foreach (var medicine in medicines)
-                //{
-                //    foreach (var model in medicineUpdateModels)
-                //    {
-                //        if (medicine.Id == model.Id)
-                //        {
-                //            medicine.Quantity -= model.Quantity;
-                //            break;
-                //        }
-                //    }
-                //}
+                foreach (var medicine in medicines)
+                {
+                    foreach (var model in medicineUpdateModels)
+                    {
+                        if (medicine.Id == model.Id)
+                        {
+                            int quantity = medicine.Quantity.GetValueOrDefault(0) - model.Quantity;
+                            medicine.Quantity = quantity > 0 ? quantity : 0;
+                            break;
+                        }
+                    }
+                }
 
-                _mapper.Map(medicineUpdateModels, medicines);
+                //_mapper.Map(medicineUpdateModels, medicines);
                 _unitOfWork.Medicines.UpdateRange(medicines);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
@@ -409,7 +410,7 @@ namespace ClinicAPI.Controllers
                     return NoContent();
                 }
 
-                return Ok(medicines);
+                return Ok();
             }
 
             return BadRequest(ModelState);
@@ -429,19 +430,19 @@ namespace ClinicAPI.Controllers
                 var medicineIds = medicineRestoreModels.Select(m => m.Id);
                 var medicines = _unitOfWork.Medicines.Where(m => !m.IsDeleted && medicineIds.Contains(m.Id));
 
-                //foreach (var medicine in medicines)
-                //{
-                //    foreach (var model in medicineUpdateModels)
-                //    {
-                //        if (medicine.Id == model.Id)
-                //        {
-                //            medicine.Quantity += model.Quantity;
-                //            break;
-                //        }
-                //    }
-                //}
+                foreach (var medicine in medicines)
+                {
+                    foreach (var model in medicineRestoreModels)
+                    {
+                        if (medicine.Id == model.Id)
+                        {
+                            medicine.Quantity = medicine.Quantity != null ? medicine.Quantity.Value + model.Quantity : 0;
+                            break;
+                        }
+                    }
+                }
 
-                _mapper.Map(medicineRestoreModels, medicines);
+                //_mapper.Map(medicineRestoreModels, medicines);
                 _unitOfWork.Medicines.UpdateRange(medicines);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
@@ -449,7 +450,7 @@ namespace ClinicAPI.Controllers
                     return NoContent();
                 }
 
-                return Ok(medicines);
+                return Ok();
             }
 
             return BadRequest(ModelState);

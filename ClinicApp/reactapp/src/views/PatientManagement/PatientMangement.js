@@ -182,6 +182,7 @@ const PatientManagement = () => {
     };
 
     const [values, setValues] = React.useState({
+        IdCode: '',
         FullName: '',
         // DateOfBirth: null,
         Age: '',

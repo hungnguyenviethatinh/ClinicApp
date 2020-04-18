@@ -150,6 +150,11 @@ const PrescriptionManagement = () => {
     };
 
     // [End] Common.
+    const [stopLoadingPatientName, setStopLoadingPatientName] = React.useState(false);
+    const [stopLoadingMedicineName, setStopLoadingMedicineName] = React.useState(false);
+    const [stopLoadingDiagnosisName, setStopLoadingDiagnosisName] = React.useState(false);
+    const [stopLoadingUnitName, setStopLoadingUnitName] = React.useState(false);
+    const [stopLoadingIngredientName, setStopLoadingIngredientName] = React.useState(false);
 
     const [disabled, setDisabled] = React.useState(false);
     const [loadingDone, setLoadingDone] = React.useState(false);
@@ -167,8 +172,6 @@ const PrescriptionManagement = () => {
             setPrescriptionId(uId);
             setPatientId(uPId)
             setHistoryId(uHId);
-            getPatient(uPId);
-            getPrescription(uId);
         }
     };
 
@@ -753,6 +756,7 @@ const PrescriptionManagement = () => {
                     gender,
                     address,
                     phoneNumber,
+                    appointmentDate,
                 } = data[0].patient;
 
                 // const Address = address
@@ -772,13 +776,16 @@ const PrescriptionManagement = () => {
                     Gender: [Gender.None, Gender.Male, Gender.Female][gender],
                     Address: address,
                     PhoneNumber: phoneNumber,
+                    AppointmentDate: moment(appointmentDate).isValid() ? moment(appointmentDate) : null,
                 });
-                setPrescription({
-                    ...prescription,
-                    PatientId: id,
-                    // DoctorId: doctorId,
-                    HistoryId: data[0].history? data[0].history.id : historyId,
-                });
+                if (!updateMode) {
+                    setPrescription({
+                        ...prescription,
+                        PatientId: id,
+                        // DoctorId: doctorId,
+                        HistoryId: data[0].history.id,
+                    });
+                }
             }
             setDisabled(false);
         }).catch((reason) => {
@@ -824,6 +831,7 @@ const PrescriptionManagement = () => {
             if (status === 200) {
                 if (!_.isEmpty(data)) {
                     setPatientNameOptions(data);
+                    setStopLoadingPatientName(true);
                 }
             }
         }).catch((reason) => {
@@ -845,6 +853,7 @@ const PrescriptionManagement = () => {
             const { status, data } = response;
             if (status === 200) {
                 setMedicineNameOptions(data);
+                setStopLoadingMedicineName(true);
             }
         }).catch((reason) => {
             handleError(reason, getMedicineErrorMsg);
@@ -873,6 +882,7 @@ const PrescriptionManagement = () => {
                     name,
                 }));
                 setDiagnosisOptions(options);
+                setStopLoadingDiagnosisName(true);
             }
         }).catch((reason) => {
             handleError(reason, getDiagnosesErrMsg);
@@ -893,6 +903,7 @@ const PrescriptionManagement = () => {
                     value: name,
                 }));
                 setUnitOptions(options);
+                setStopLoadingUnitName(true);
             }
         }).catch((reason) => {
             handleError(reason, getUnitsErrorMsg);
@@ -911,10 +922,17 @@ const PrescriptionManagement = () => {
 
         const data = ingredients.filter(i => i.medicineId === medicineId);
         const options = [];
-        data.map(({ name }) => options.push({
-            label: name,
-            value: name,
-        }));
+        if (_.isEmpty(data)) {
+            options.push({
+                label: '',
+                value: '',
+            })
+        } else {
+            data.map(({ name }) => options.push({
+                label: name,
+                value: name,
+            }));
+        }
         ingredientOptions[index] = options;
         setIngredientOptions([...ingredientOptions]);
 
@@ -943,15 +961,30 @@ const PrescriptionManagement = () => {
         setOpenPrescriptionList(false);
     };
     const onCopyPrescription = (selectedPrescription) => {
-        const { id, idCode, diagnosis, otherDiagnosis, note } = selectedPrescription;
+        const { id, idCode, dateCreated, diagnosis, otherDiagnosis, note } = selectedPrescription;
+        const value = diagnosisOptions.find(d => d.name = diagnosis);
+
         getMedicineList(id);
-        setPrescription({
-            ...prescription,
-            IdCode: idCode,
-            Diagnosis: diagnosis,
-            OtherDiagnosis: otherDiagnosis,
-            Note: note,
-        });
+        setDiagnosisValue(value);
+        if (!updateMode) {
+            setPrescription({
+                ...prescription,
+                Diagnosis: diagnosis,
+                OtherDiagnosis: otherDiagnosis,
+                Note: note,
+            });
+        } else {
+            setPrescription({
+                ...prescription,
+                IdCode: idCode,
+                DateCreated: moment(dateCreated).isValid() ? moment(dateCreated) : moment(),
+                Diagnosis: diagnosis,
+                OtherDiagnosis: otherDiagnosis,
+                Note: note,
+                PatientId: patientId,
+                HistoryId: historyId,
+            });
+        }
         setOpenPrescriptionList(false);
     };
 
@@ -1012,10 +1045,17 @@ const PrescriptionManagement = () => {
 
                     let data = ingredients.filter(i => i.medicineId === medicineId);
                     let options = [];
-                    data.map(({ name }) => options.push({
-                        label: name,
-                        value: name,
-                    }));
+                    if (_.isEmpty(data)) {
+                        options.push({
+                            label: '',
+                            name: '',
+                        });
+                    } else {
+                        data.map(({ name }) => options.push({
+                            label: name,
+                            value: name,
+                        }));
+                    }
                     ios.push(options);
 
                     rms.push({
@@ -1046,6 +1086,7 @@ const PrescriptionManagement = () => {
             const { status, data } = response;
             if (status === 200) {
                 setIngredients(data);
+                setStopLoadingIngredientName(true);
             }
         }).catch((reason) => {
             handleError(reason, getIngredientsErrorMsg);
@@ -1053,7 +1094,6 @@ const PrescriptionManagement = () => {
     };
 
     React.useEffect(() => {
-        // getPatient();
         getPatientNameOptions();
         getIngredients();
         getMedicineNameOptions();
@@ -1061,6 +1101,22 @@ const PrescriptionManagement = () => {
         getUnitOptions();
         handleUpdate();
     }, []);
+
+    React.useEffect(() => {
+        if (stopLoadingPatientName &&
+            stopLoadingMedicineName &&
+            stopLoadingDiagnosisName &&
+            stopLoadingUnitName &&
+            stopLoadingIngredientName &&
+            updateMode) {
+            getPatient(patientId);
+            getPrescription(prescriptionId);
+        }
+    }, [stopLoadingPatientName,
+        stopLoadingMedicineName,
+        stopLoadingDiagnosisName,
+        stopLoadingUnitName,
+        stopLoadingIngredientName, updateMode]);
 
     return (
         <Grid
@@ -1083,6 +1139,7 @@ const PrescriptionManagement = () => {
                                 color="warning"
                                 children="Sao chép"
                                 iconName="copy"
+                                disabled={disabled}
                                 onClick={onOpenPrescriptionList}
                             />
                         }
