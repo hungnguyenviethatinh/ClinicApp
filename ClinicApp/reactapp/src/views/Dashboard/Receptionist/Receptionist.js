@@ -15,6 +15,7 @@ import moment from 'moment';
 import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';
 import { Snackbar } from '../../../components/Snackbar';
+import { RefreshButton } from '../../../components/Button';
 
 import {
     GetPatientInQueueUrl,
@@ -42,6 +43,9 @@ const useStyles = makeStyles(theme => ({
     card: {},
     content: {
         padding: theme.spacing(0),
+    },
+    action: {
+        marginRight: 0,
     },
     actions: {
         justifyContent: 'flex-end',
@@ -141,10 +145,15 @@ const prescriptionColumns = [
         //         children={
         //             encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
         //         } />,
+        // render: rowData =>
+        //     <Link
+        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
+        //         children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`}
+        //     />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-                children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`}
+                children={`${rowData.idCode}${rowData.id}`}
             />,
     },
     {
@@ -187,20 +196,20 @@ const ReceptionistView = () => {
         prescriptionTableRef.current && prescriptionTableRef.current.onQueryChange();
     };
 
-    const [countPatientTable, setCountPatientTable] = React.useState(0);
-    const [countPrescriptionTable, setCountPrescriptionTable] = React.useState(0);
-    useInterval(() => {
-        if (countPatientTable > 0 && countPatientTable < RefreshDataTimer) {
-            setCountPatientTable(countPatientTable + 1);
-        } else {
-            refreshPatientData();
-        }
-        if (countPrescriptionTable > 0 && countPrescriptionTable < RefreshDataTimer) {
-            setCountPrescriptionTable(countPrescriptionTable + 1);
-        } else {
-            refreshPrescriptionData();
-        }
-    }, 1000);
+    // const [countPatientTable, setCountPatientTable] = React.useState(0);
+    // const [countPrescriptionTable, setCountPrescriptionTable] = React.useState(0);
+    // useInterval(() => {
+    //     if (countPatientTable > 0 && countPatientTable < RefreshDataTimer) {
+    //         setCountPatientTable(countPatientTable + 1);
+    //     } else {
+    //         refreshPatientData();
+    //     }
+    //     if (countPrescriptionTable > 0 && countPrescriptionTable < RefreshDataTimer) {
+    //         setCountPrescriptionTable(countPrescriptionTable + 1);
+    //     } else {
+    //         refreshPrescriptionData();
+    //     }
+    // }, 1000);
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -247,10 +256,10 @@ const ReceptionistView = () => {
                     totalCount,
                 });
             }
-            setCountPatientTable(1);
+            // setCountPatientTable(1);
         }).catch((reason) => {
             handleError(reason, getPatientLogMsgHeader);
-            setCountPatientTable(1);
+            // setCountPatientTable(1);
         });
     };
 
@@ -266,10 +275,10 @@ const ReceptionistView = () => {
                     totalCount,
                 });
             }
-            setCountPrescriptionTable(1);
+            // setCountPrescriptionTable(1);
         }).catch((reason) => {
             handleError(reason, getPrescriptionLogMsgHeader);
-            setCountPrescriptionTable(1);
+            // setCountPrescriptionTable(1);
         });
     };
 
@@ -305,11 +314,18 @@ const ReceptionistView = () => {
             <Grid
                 item
                 xs={12} sm={12} md={12} lg={12} xl={12}
-                className={classes.fullHeight}>
+            // className={classes.fullHeight}
+            >
                 <Card
                     className={clsx(classes.card, classes.fullHeight)}
                 >
                     <CardHeader
+                        classes={{
+                            action: classes.action,
+                        }}
+                        action={
+                            <RefreshButton onClick={refreshPatientData} />
+                        }
                         title="HÀNG CHỜ BỆNH NHÂN"
                     />
                     <Divider />
@@ -333,11 +349,18 @@ const ReceptionistView = () => {
             <Grid
                 item
                 xs={12} sm={12} md={12} lg={12} xl={12}
-                className={classes.fullHeight} >
+            // className={classes.fullHeight} 
+            >
                 <Card
                     className={clsx(classes.card, classes.fullHeight)}
                 >
                     <CardHeader
+                        classes={{
+                            action: classes.action,
+                        }}
+                        action={
+                            <RefreshButton onClick={refreshPrescriptionData} />
+                        }
                         title="DANH SÁCH ĐƠN THUỐC MỚI"
                     />
                     <Divider />

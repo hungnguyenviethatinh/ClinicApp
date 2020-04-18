@@ -106,7 +106,7 @@ const patientQueueColumns = [
                 PatientStatus.IsChecking,
                 PatientStatus.IsChecked,
                 PatientStatus.IsRechecking,
-                PatientStatus.IsToAddDocs, ][rowData.status];
+                PatientStatus.IsToAddDocs,][rowData.status];
             if (moment(rowData.appointmentDate).isValid()) {
                 if (status !== PatientStatus.IsChecked && status !== PatientStatus.IsChecking) {
                     status = PatientStatus.IsAppointed;
@@ -126,10 +126,14 @@ const prescriptionColumns = [
         //         children={
         //             encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
         //         } />,
+        // render: rowData =>
+        //     <Link
+        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
+        //         children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-                children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
+                children={`${rowData.idCode}${rowData.id}`} />,
     },
     {
         title: 'Bác sĩ kê đơn', field: 'doctorId',
@@ -593,7 +597,7 @@ const AdminView = () => {
                     />
                     <Divider />
                     <CardContent className={classes.content}>
-                    <Paper
+                        <Paper
                             elevation={0}
                             className={classes.paper}
                             style={{ paddingBottom: 10 }}

@@ -119,7 +119,12 @@ const PrescriptionList = (props) => {
                     selectedRow={selectedRow}
                 />
             </DialogContent>
-            <DialogActions>
+            <DialogActions
+                style={{
+                    paddingLeft: 24,
+                    paddingRight: 24,
+                }}
+            >
                 <Button
                     autoFocus
                     color="danger"

@@ -33,6 +33,11 @@ const DeleteConfirmDialog = (props) => {
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const classes = useStyles();
 
+    const handleUpdateClick = () => {
+        handleUpdate();
+        window.scrollTo(0, 0);
+    };
+
     return (
         <div>
             <Dialog
@@ -76,7 +81,7 @@ const DeleteConfirmDialog = (props) => {
                                 color="info"
                                 children="Sửa"
                                 iconName="edit"
-                                onClick={handleUpdate}
+                                onClick={handleUpdateClick}
                             />
                         </Grid>
                     </Grid>

@@ -61,6 +61,19 @@ namespace ClinicAPI.ViewModels
                     return 0;
                 }));
 
+            CreateMap<MedicineRestoreModel, Medicine>()
+                .ForMember(m => m.Quantity,
+                map => map.MapFrom((medicineModel, medicine) =>
+                {
+                    int quantity = medicine.Quantity.GetValueOrDefault(0) + medicineModel.Quantity;
+                    if (quantity > 0)
+                    {
+                        return quantity;
+                    }
+
+                    return 0;
+                }));
+
             CreateMap<Medicine, MedicineViewModel>()
                 .ForMember(m => m.Ingredient, map => map.Ignore())
                 .ForMember(m => m.Quantity,

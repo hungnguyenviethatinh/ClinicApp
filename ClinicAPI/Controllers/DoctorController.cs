@@ -93,8 +93,12 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatientOptions()
         {
-            var patients = _unitOfWork.Patients
-                .Where(p => !p.IsDeleted)
+            DateTime today = DateTime.Today;
+            var patients = GetCurrentDoctorPatients()
+                .Where(p =>
+                p.Status != PatientStatus.IsChecked &&
+                ((p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate == today)) ||
+                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today)))
                 .Select(p => new { p.IdCode, p.Id, p.FullName });
 
             return Ok(patients);
@@ -141,11 +145,14 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatientsInQueue()
         {
+            DateTime today = DateTime.Today;
             var patients = GetCurrentDoctorPatients()
                 .Where(p =>
-                (p.Status != PatientStatus.IsChecked &&
-                (p.AppointmentDate == null || p.AppointmentDate <= DateTime.Now)))
-                .OrderBy(p => p.UpdatedDate);
+                p.Status != PatientStatus.IsChecked &&
+                ((p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate == today)) ||
+                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today)))
+                //.OrderBy(p => p.UpdatedDate);
+                .OrderBy(p => p.OrderNumber);
 
             return Ok(patients);
         }
@@ -269,8 +276,9 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public IActionResult GetPrescriptionsInQueue()
         {
+            DateTime today = DateTime.Today;
             var prescriptions = GetCurrentDoctorPrescriptions()
-                .Where(p => (p.Status == PrescriptionStatus.IsNew))
+                .Where(p => p.CreatedDate.Date == today || p.UpdatedDate.Date == today)
                 .OrderBy(p => p.UpdatedDate);
 
             return Ok(prescriptions);
@@ -381,18 +389,59 @@ namespace ClinicAPI.Controllers
                 var medicineIds = medicineUpdateModels.Select(m => m.Id);
                 var medicines = _unitOfWork.Medicines.Where(m => !m.IsDeleted && medicineIds.Contains(m.Id));
 
-                foreach (var medicine in medicines)
+                //foreach (var medicine in medicines)
+                //{
+                //    foreach (var model in medicineUpdateModels)
+                //    {
+                //        if (medicine.Id == model.Id)
+                //        {
+                //            medicine.Quantity -= model.Quantity;
+                //            break;
+                //        }
+                //    }
+                //}
+
+                _mapper.Map(medicineUpdateModels, medicines);
+                _unitOfWork.Medicines.UpdateRange(medicines);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
                 {
-                    foreach (var model in medicineUpdateModels)
-                    {
-                        if (medicine.Id == model.Id)
-                        {
-                            medicine.Quantity -= model.Quantity;
-                            break;
-                        }
-                    }
+                    return NoContent();
                 }
 
+                return Ok(medicines);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPatch("medicines/restore")]
+        [Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        public async Task<IActionResult> RestoreMedicinesQuantity([FromBody] IEnumerable<MedicineRestoreModel> medicineRestoreModels)
+        {
+            if (ModelState.IsValid)
+            {
+                if (medicineRestoreModels == null)
+                {
+                    return BadRequest($"{nameof(medicineRestoreModels)} can not be null.");
+                }
+
+                var medicineIds = medicineRestoreModels.Select(m => m.Id);
+                var medicines = _unitOfWork.Medicines.Where(m => !m.IsDeleted && medicineIds.Contains(m.Id));
+
+                //foreach (var medicine in medicines)
+                //{
+                //    foreach (var model in medicineUpdateModels)
+                //    {
+                //        if (medicine.Id == model.Id)
+                //        {
+                //            medicine.Quantity += model.Quantity;
+                //            break;
+                //        }
+                //    }
+                //}
+
+                _mapper.Map(medicineRestoreModels, medicines);
                 _unitOfWork.Medicines.UpdateRange(medicines);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
@@ -427,17 +476,74 @@ namespace ClinicAPI.Controllers
                 _unitOfWork.Prescriptions.Update(prescription);
 
                 int result = await _unitOfWork.SaveChangesAsync();
-                if (result < 0)
+                if (result < 1)
                 {
-                    throw new Exception($"Error(s) occurred while updating {id}.");
+                    return NoContent();
                 }
 
-                return Ok(prescription);
+                return Ok();
             }
 
             return BadRequest(ModelState);
         }
 
+        [HttpPut("medicines/{prescriptionId}")]
+        [Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        public async Task<IActionResult> UpdateMedicines(int prescriptionId, [FromBody] IEnumerable<PrescriptionMedicineModel> medicineModels)
+        {
+            if (ModelState.IsValid)
+            {
+                if (medicineModels == null)
+                {
+                    return BadRequest($"{nameof(medicineModels)} can not be null.");
+                }
+
+                var medicines = _unitOfWork.PrescriptionMedicines.Where(pm => pm.PrescriptionId == prescriptionId);
+                int result;
+                if (medicines.Any())
+                {
+                    _unitOfWork.PrescriptionMedicines.RemoveRange(medicines);
+                    result = await _unitOfWork.SaveChangesAsync();
+                    if (result < 1)
+                    {
+                        return NoContent();
+                    }
+                }
+
+                var newMedicines = _mapper.Map<IEnumerable<PrescriptionMedicine>>(medicineModels);
+                _unitOfWork.PrescriptionMedicines.AddRange(newMedicines);
+                result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok();
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpDelete("prescriptions/{id}")]
+        [Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        public async Task<IActionResult> DeletePrescription(int id)
+        {
+            var prescription = await _unitOfWork.Prescriptions.FindAsync(id);
+            if (prescription == null)
+            {
+                return NotFound();
+            }
+
+            prescription.IsDeleted = true;
+            _unitOfWork.Prescriptions.Update(prescription);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
+        }
         private string GetCurrentUserId()
         {
             return Utilities.GetUserId(User);

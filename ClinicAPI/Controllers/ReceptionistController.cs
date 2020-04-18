@@ -63,7 +63,7 @@ namespace ClinicAPI.Controllers
                         p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
                     //.OrderByDescending(p => p.UpdatedDate)
-                    //.OrderByDescending(p => p.Id)
+                    .OrderByDescending(p => p.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
@@ -71,6 +71,7 @@ namespace ClinicAPI.Controllers
             {
                 patients = patients
                     //.OrderByDescending(p => p.UpdatedDate)
+                    .OrderByDescending(p => p.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
@@ -89,11 +90,13 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatientsInQueue()
         {
+            DateTime today = DateTime.Today;
             IEnumerable<Patient> patients = _unitOfWork.Patients
                 .GetPatients()
                 .Where(p =>
-                (p.Status != PatientStatus.IsChecked &&
-                (p.AppointmentDate == null || p.AppointmentDate <= DateTime.Now)))
+                p.Status != PatientStatus.IsChecked &&
+                ((p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate == today)) ||
+                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today)))
                 //.OrderBy(p => p.UpdatedDate);
                 .OrderBy(p => p.OrderNumber);
 
@@ -436,9 +439,10 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPrescriptionsPolicy)]
         public IActionResult GetPrescriptionsInQueue()
         {
+            DateTime today = DateTime.Today;
             var prescriptions = _unitOfWork.Prescriptions
                 .GetRcptPrescriptions()
-                .Where(p => p.Status == PrescriptionStatus.IsNew)
+                .Where(p => p.CreatedDate.Date == today || p.UpdatedDate.Date == today)
                 .OrderBy(p => p.UpdatedDate);
 
             return Ok(prescriptions);
@@ -460,14 +464,14 @@ namespace ClinicAPI.Controllers
         private int CalculateOrderNumber(Patient patient)
         {
             int orderNumber = 1;
-            DateTime currentDate = DateTime.Now.Date;
+            DateTime today = DateTime.Today;
 
             var patients = _unitOfWork.Patients
                 .Where(p =>
                 (!p.IsDeleted &&
                 p.Status != PatientStatus.IsChecked &&
-                (((p.CreatedDate.Date == currentDate || p.UpdatedDate.Date == currentDate) && p.AppointmentDate == null) ||
-                p.AppointmentDate.Value.Date == currentDate)))
+                (((p.CreatedDate.Date == today || p.UpdatedDate.Date == today) && p.AppointmentDate == null) ||
+                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today))))
                 .OrderBy(p => p.OrderNumber);
 
             if (patients.Any())
@@ -478,13 +482,13 @@ namespace ClinicAPI.Controllers
             if (patient.AppointmentDate != null)
             {
                 DateTime appointmentDate = patient.AppointmentDate.Value.Date;
-                if (appointmentDate > currentDate)
+                if (appointmentDate > today)
                 {
                     var appointedPatients = _unitOfWork.Patients
                         .Where(p =>
                         (!p.IsDeleted &&
                         p.Status != PatientStatus.IsChecked &&
-                        p.AppointmentDate.Value.Date == appointmentDate))
+                        p.AppointmentDate != null && p.AppointmentDate.Value.Date == appointmentDate))
                         .OrderBy(p => p.OrderNumber);
 
                     if (patients.Any())

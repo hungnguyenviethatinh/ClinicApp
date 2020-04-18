@@ -84,7 +84,7 @@ const genderOptions = [
 
 const patientColumns = [
     {
-        title: 'Mã BN', field: 'id', defaultSort: 'asc',
+        title: 'Mã BN', field: 'id', // defaultSort: 'asc',
         // render: rowData => encodeId(rowData.id, IdPrefix.Patient),
         render: rowData =>
             <Link
@@ -285,6 +285,18 @@ const PatientManagement = () => {
     const [patient, setPatient] = React.useState(null);
     const [openPatientPreview, setOpenPatientPreview] = React.useState(false);
     const handleOpenPatientPreview = () => {
+        if (!values.IdCode.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập mã bệnh nhân!');
+            return;
+        }
+        if (!values.CheckedDate) {
+            handleSnackbarOption('error', 'Yêu cầu nhập ngày khám!');
+            return;
+        }
+        if (values.CheckedDate && !moment(values.CheckedDate).isValid()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập ngày khám hợp lệ!');
+            return;
+        }
         if (!values.FullName.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
             return;
@@ -825,6 +837,7 @@ const PatientManagement = () => {
             const { status, data } = response;
             if (status === 200) {
                 const {
+                    idCode,
                     fullName,
                     // dateOfBirth,
                     age,
@@ -862,6 +875,7 @@ const PatientManagement = () => {
                 }
 
                 setValues({
+                    IdCode: idCode,
                     FullName: fullName,
                     // DateOfBirth,
                     Age: age,

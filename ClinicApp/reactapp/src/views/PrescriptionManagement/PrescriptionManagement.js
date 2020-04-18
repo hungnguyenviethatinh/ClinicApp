@@ -30,15 +30,15 @@ import {
     PrescriptionStatus,
     ExpiredSessionMsg,
     NotFoundMsg,
-    AddressSeperator,
+    // AddressSeperator,
     Gender,
     PatientStatusEnum,
     PatientStatus,
     RouteConstants,
     SnackbarMessage,
-    IdPrefix,
+    // IdPrefix,
     takePeriodValue,
-    CurrentCheckingPatientId,
+    // CurrentCheckingPatientId,
 } from '../../constants';
 
 import {
@@ -48,11 +48,14 @@ import {
     GetUnitNameOptionsUrl,
     GetCurrentPatientUrl,
     AddPrescriptionsUrl,
+    GetPrescriptionUrl,
     UpdatePrescriptionsUrl,
     AddMedicinesUrl,
     UpdatePatientHistoryUrl,
     // UpdatePatientStatusUrl,
+    UpdateMedicinesUrl,
     UpdateMedicinesQuantityUrl,
+    RestoreMedicinesQuantityUrl,
     GetMedicineListUrl,
     GetPatientOptionsUrl,
 } from '../../config';
@@ -79,11 +82,14 @@ const useStyles = makeStyles(theme => ({
 const getPatientErrorMsg = '[Get Patient Error] ';
 const updatePatientHistoryErrorMsg = '[Update Patient Error] ';
 const updateMedicinesQuantityErrorMsg = '[Update Medicines Error] ';
+const restoreMedicinesQuantityErrorMsg = '[Restore Medicines Error] ';
 const getMedicineErrorMsg = '[Get Medicines Error] ';
 const getPatientsErrorMsg = '[Get Patients Error] ';
+const getPrescriptionErrorMsg = '[Get Prescription Error] ';
 const addPrescriptionErrorMsg = '[Add Prescription Error] ';
 const updatePrescriptionErrorMsg = '[Update Prescription Error] ';
 const addMedicineErrorMsg = '[Add Medicines Error] ';
+const updateMedicineErrorMsg = '[Update Medicines Error] ';
 const getDiagnosesErrMsg = '[Get Diagnoses Error] ';
 const getUnitsErrorMsg = '[Get Units Error] ';
 const getIngredientsErrorMsg = '[Get Ingredients Error] ';
@@ -147,11 +153,29 @@ const PrescriptionManagement = () => {
 
     const [disabled, setDisabled] = React.useState(false);
     const [loadingDone, setLoadingDone] = React.useState(false);
+    const [updateMode, setUpdateMode] = React.useState(false);
+    const [patientId, setPatientId] = React.useState(null);
+    const [prescriptionId, setPrescriptionId] = React.useState(null);
+    const [historyId, setHistoryId] = React.useState(null);
+    const handleUpdate = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('uId') && urlParams.has('uPId') && urlParams.has('uHId')) {
+            const uId = urlParams.get('uId');
+            const uPId = urlParams.get('uPId');
+            const uHId = urlParams.get('uHId');
+            setUpdateMode(true);
+            setPrescriptionId(uId);
+            setPatientId(uPId)
+            setHistoryId(uHId);
+            getPatient(uPId);
+            getPrescription(uId);
+        }
+    };
 
     // const [appointmentDate, setAppointmentDate] = React.useState('');
     const [patient, setPatient] = React.useState({
-        Id: '',
-        FullName: '',
+        Id: 0,
+        // FullName: '',
         // DateOfBirth: '',
         Age: '',
         Gender: '',
@@ -287,11 +311,11 @@ const PrescriptionManagement = () => {
         const maxQuantity = medicineNameOptions.find(m => m.id === medicine.MedicineId).quantity;
 
         if (quantity > _.toNumber(maxQuantity)) {
-            handleSnackbarOption('error', `Không đủ thuốc! Số lượng thuốc còn lại trong kho: ${maxQuantity}.`)
-        } else {
-            medicines[index].Quantity = _.toString(quantity);
-            setMedicines([...medicines]);
-        }
+            handleSnackbarOption('warning', `Lưu ý số lượng thuốc này còn lại: ${maxQuantity}.`)
+        } // else {
+        medicines[index].Quantity = _.toString(quantity);
+        setMedicines([...medicines]);
+        // }
     };
 
     const [medicineNames, setMedicineNames] = React.useState([{
@@ -396,8 +420,12 @@ const PrescriptionManagement = () => {
     };
 
     const handleDone = () => {
-        if (!patient.FullName.trim()) {
-            handleSnackbarOption('error', 'Chưa chọn bệnh nhân để kê đơn!');
+        // if (!patient.FullName.trim()) {
+        //     handleSnackbarOption('error', 'Chưa chọn bệnh nhân để kê đơn!');
+        //     return;
+        // }
+        if (!patientNameValue) {
+            handleSnackbarOption('error', 'Yêu cầu nhập tên bệnh nhân!');
             return;
         }
         if (patient.AppointmentDate && !moment(patient.AppointmentDate).isValid()) {
@@ -406,6 +434,10 @@ const PrescriptionManagement = () => {
         }
         if (!prescription.Diagnosis.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập chẩn đoán!');
+            return;
+        }
+        if (!prescription.IdCode.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập mã đơn thuốc!');
             return;
         }
         if (prescription.DateCreated && !moment(prescription.DateCreated).isValid()) {
@@ -482,7 +514,11 @@ const PrescriptionManagement = () => {
             DateCreated,
             // IdCode,
         };
-        addPrescription(prescriptionModel);
+        if (!updateMode) {
+            addPrescription(prescriptionModel);
+        } else {
+            updatePrescription(prescriptionModel);
+        }
     };
 
     const addPrescription = (prescriptionModel) => {
@@ -505,6 +541,8 @@ const PrescriptionManagement = () => {
                 }
             } else {
                 handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
+                setDisabled(false);
+                setLoadingDone(false);
             }
         }).catch((reason) => {
             handleError(reason, addPrescriptionErrorMsg);
@@ -521,6 +559,8 @@ const PrescriptionManagement = () => {
                 updatePatientHistory();
             } else {
                 handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
+                setDisabled(false);
+                setLoadingDone(false);
             }
         }).catch((reason) => {
             handleError(reason, addMedicineErrorMsg);
@@ -532,12 +572,13 @@ const PrescriptionManagement = () => {
 
     const updatePatientHistory = () => {
         const id = patient.Id;
-        const medicineUpdateModels = [];
-        medicines.map(({ MedicineId, Quantity }) => medicineUpdateModels.push({
-            Id: MedicineId,
-            Quantity,
-        }));
         const url = `${UpdatePatientHistoryUrl}/${id}`;
+
+        // const medicineUpdateModels = [];
+        // medicines.map(({ MedicineId, Quantity }) => medicineUpdateModels.push({
+        //     Id: MedicineId,
+        //     Quantity,
+        // }));
         const updatePatientHistoryModel = {
             AppointmentDate: patient.AppointmentDate,
             Status: PatientStatusEnum[PatientStatus.IsChecked],
@@ -556,7 +597,8 @@ const PrescriptionManagement = () => {
             if (status === 200) {
                 handleSnackbarOption('success', SnackbarMessage.CreatePrescriptionSuccess);
                 handleReset();
-                updateMedicinesQuantity(medicineUpdateModels);
+                // updateMedicinesQuantity(medicineUpdateModels);
+                updateMedicinesQuantity();
             } else {
                 handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
                 setDisabled(false);
@@ -590,17 +632,23 @@ const PrescriptionManagement = () => {
         // }
     };
 
-    const updateMedicinesQuantity = (medicineUpdateModels) => {
+    const updateMedicinesQuantity = () => {
+        const medicineUpdateModels = [];
+        medicines.map(({ MedicineId, Quantity }) => medicineUpdateModels.push({
+            Id: MedicineId,
+            Quantity,
+        }));
+
         Axios.patch(UpdateMedicinesQuantityUrl, medicineUpdateModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                console.log('[Update Medicines Quantity; - OK!');
+                console.log('[Update Medicines Quantity: - OK!');
             } else {
-                console.log('[Update Medicines Quantity; - Error!');
+                console.log('[Update Medicines Quantity: - Error!');
+                handleError(response, updateMedicinesQuantityErrorMsg);
             }
             setDisabled(false);
             setLoadingDone(false);
-            localStorage.removeItem(CurrentCheckingPatientId);
             setTimeout(() => {
                 history.push(RouteConstants.DashboardView);
             }, 1000);
@@ -608,10 +656,82 @@ const PrescriptionManagement = () => {
             handleError(reason, updateMedicinesQuantityErrorMsg);
             setDisabled(false);
             setLoadingDone(false);
-            localStorage.removeItem(CurrentCheckingPatientId);
             setTimeout(() => {
                 history.push(RouteConstants.DashboardView);
             }, 1000);
+        });
+    };
+
+    const [medicineRestoreModels, setMedicineRestoreModels] = React.useState([{
+        Id: '',
+        Quantity: '',
+    }]);
+    const restoreMedicinesQuantity = () => {
+        Axios.patch(RestoreMedicinesQuantityUrl, medicineRestoreModels, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                console.log('[Restore Medicines Quantity: - OK!');
+            } else {
+                console.log('[Restore Medicines Quantity: - Error!');
+                handleError(response, restoreMedicinesQuantityErrorMsg);
+            }
+            updateMedicinesQuantity();
+        }).catch((reason) => {
+            handleError(reason, restoreMedicinesQuantityErrorMsg);
+            updateMedicinesQuantity();
+        });
+    };
+
+    const updatePrescription = (prescriptionModel) => {
+        const url = `${UpdatePrescriptionsUrl}/${prescriptionId}`;
+        Axios.put(url, prescriptionModel, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                if (!_.isEmpty(medicines)) {
+                    const medicineModels = [];
+                    medicines.map((medicine) => {
+                        // const price = medicineNameOptions
+                        //     .find(value => value.id === medicine.MedicineId).price * _.toNumber(medicine.Quantity);
+                        medicineModels.push({
+                            ...medicine,
+                            PrescriptionId: prescriptionId,
+                            // Price: price,
+                        })
+                    });
+                    updateMedicines(medicineModels);
+                }
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật đơn thuốc. Vui lòng thử lại sau!');
+                handleError(response, updatePrescriptionErrorMsg);
+                setDisabled(false);
+                setLoadingDone(false);
+            }
+        }).catch((reason) => {
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật đơn thuốc. Vui lòng thử lại sau!');
+            handleError(reason, updatePrescriptionErrorMsg);
+            setDisabled(false);
+            setLoadingDone(false);
+        });
+    };
+
+    const updateMedicines = (medicineModels) => {
+        const url = `${UpdateMedicinesUrl}/${prescriptionId}`;
+        Axios.put(url, medicineModels, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Cập nhật đơn thuốc thành công!');
+                restoreMedicinesQuantity();
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật đơn thuốc. Vui lòng thử lại sau!');
+                handleError(response, updateMedicineErrorMsg);
+                setDisabled(false);
+                setLoadingDone(false);
+            }
+        }).catch((reason) => {
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật đơn thuốc. Vui lòng thử lại sau!');
+            handleError(reason, updateMedicineErrorMsg);
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
@@ -627,7 +747,7 @@ const PrescriptionManagement = () => {
                 const {
                     id,
                     // doctorId,
-                    fullName,
+                    // fullName,
                     // dateOfBirth,
                     age,
                     gender,
@@ -640,10 +760,13 @@ const PrescriptionManagement = () => {
                 //     .filter(value => (value.trim() && true))
                 //     .join(`${AddressSeperator} `);
 
+                const value = patientNameOptions.find(p => p.id === id);
+                setPatientNameValue(value);
+
                 setPatient({
                     ...patient,
                     Id: id,
-                    FullName: fullName,
+                    // FullName: fullName,
                     // DateOfBirth: moment(dateOfBirth).year(),
                     Age: age,
                     Gender: [Gender.None, Gender.Male, Gender.Female][gender],
@@ -654,7 +777,7 @@ const PrescriptionManagement = () => {
                     ...prescription,
                     PatientId: id,
                     // DoctorId: doctorId,
-                    HistoryId: data[0].history.id,
+                    HistoryId: data[0].history? data[0].history.id : historyId,
                 });
             }
             setDisabled(false);
@@ -664,13 +787,29 @@ const PrescriptionManagement = () => {
         });
     };
 
+    const getPrescription = (id) => {
+        setDisabled(true);
+        const url = `${GetPrescriptionUrl}/${id}`;
+        Axios.get(url, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { 0: selectedPrescription } = data;
+                onCopyPrescription(selectedPrescription);
+            }
+            setDisabled(false);
+        }).catch((reason) => {
+            handleError(reason, getPrescriptionErrorMsg);
+            setDisabled(false);
+        });
+    };
+
     const [patientNameValue, setPatientNameValue] = React.useState(null);
     const handlePatientNameChange = (event, value) => {
-        const id = value?.id;
+        const id = value ? value.id : undefined;
         if (id !== undefined) {
             getPatient(id);
         }
-        setPatientNameValue(value);
+        // setPatientNameValue(value);
     };
 
     const [patientNameOptions, setPatientNameOptions] = React.useState([{
@@ -804,14 +943,19 @@ const PrescriptionManagement = () => {
         setOpenPrescriptionList(false);
     };
     const onCopyPrescription = (selectedPrescription) => {
-        const { id, diagnosis, otherDiagnosis, note } = selectedPrescription;
+        const { id, idCode, diagnosis, otherDiagnosis, note } = selectedPrescription;
+        getMedicineList(id);
         setPrescription({
             ...prescription,
+            IdCode: idCode,
             Diagnosis: diagnosis,
             OtherDiagnosis: otherDiagnosis,
             Note: note,
         });
+        setOpenPrescriptionList(false);
+    };
 
+    const getMedicineList = (id) => {
         const url = `${GetMedicineListUrl}/${id}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
@@ -819,6 +963,7 @@ const PrescriptionManagement = () => {
                 const ms = [];
                 const mns = [];
                 const ios = [];
+                const rms = [];
                 data.map((m) => {
                     const {
                         medicineId,
@@ -872,19 +1017,24 @@ const PrescriptionManagement = () => {
                         value: name,
                     }));
                     ios.push(options);
+
+                    rms.push({
+                        Id: medicineId,
+                        Quantity: quantity,
+                    });
                 });
                 setMedicineNames(mns);
                 setIngredientOptions(ios);
                 setMedicines(ms);
+                setMedicineRestoreModels(rms);
             } else {
                 handleSnackbarOption('error', SnackbarMessage.GetMedicineListError);
+                handleError(response, getMedicineListErrorMsg);
             }
         }).catch((reason) => {
             handleSnackbarOption('error', SnackbarMessage.GetMedicineListError);
             handleError(reason, getMedicineListErrorMsg);
         });
-
-        setOpenPrescriptionList(false);
     };
 
     const [ingredients, setIngredients] = React.useState([{
@@ -909,6 +1059,7 @@ const PrescriptionManagement = () => {
         getMedicineNameOptions();
         getDiagnosisOptions();
         getUnitOptions();
+        handleUpdate();
     }, []);
 
     return (
@@ -1122,7 +1273,7 @@ const PrescriptionManagement = () => {
                                                         value={medicine.Quantity}
                                                         onChange={handleMedicinesChange(index, 'Quantity')}
                                                         fullWidth
-                                                        readOnly
+                                                    // readOnly
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>

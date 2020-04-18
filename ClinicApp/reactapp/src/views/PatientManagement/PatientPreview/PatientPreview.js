@@ -138,11 +138,11 @@ const PatientPreview = (props) => {
                                         <Typography
                                             variant="h6"
                                             component="h6"
-                                            children={`${patient.Street}, ${patient.Ward}, ${patient.District}, ${patient.City}`}
+                                            children={`${patient.Address}`}
                                             style={{ fontWeight: 600 }}
                                         />
                                     </Grid>
-                                    <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                    {/* <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                         <Typography
                                             variant="body1"
                                             component="p"
@@ -156,7 +156,7 @@ const PatientPreview = (props) => {
                                             children={`${patient.Job}`}
                                             style={{ fontWeight: 600 }}
                                         />
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                         <Typography
                                             variant="body1"
@@ -164,7 +164,7 @@ const PatientPreview = (props) => {
                                             children="Điện thoại:"
                                         />
                                     </Grid>
-                                    <Grid item xs={6} sm={6} md={3} lg={3} xl={3}>
+                                    <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
                                         <Typography
                                             variant="h6"
                                             component="h6"
@@ -172,7 +172,7 @@ const PatientPreview = (props) => {
                                             style={{ fontWeight: 600 }}
                                         />
                                     </Grid>
-                                    <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
+                                    {/* <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
                                         <Typography
                                             variant="body1"
                                             component="p"
@@ -186,7 +186,7 @@ const PatientPreview = (props) => {
                                             children={`${patient.Email}`}
                                             style={{ fontWeight: 600 }}
                                         />
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                         <Typography
                                             variant="body1"
@@ -411,7 +411,12 @@ const PatientPreview = (props) => {
                         </Grid>
                 }
             </DialogContent>
-            <DialogActions>
+            <DialogActions
+                style={{
+                    paddingLeft: 24,
+                    paddingRight: 24,
+                }}
+            >
                 <Button
                     autoFocus
                     disabled={disabled}
