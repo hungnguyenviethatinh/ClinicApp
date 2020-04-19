@@ -9,7 +9,10 @@ import {
     Grid,
     Paper,
     Typography,
+    IconButton,
 } from '@material-ui/core';
+import { red } from '@material-ui/core/colors';
+import { Close } from '@material-ui/icons';
 
 import { Table } from '../../components/Table';
 import { TextField } from '../../components/TextField';
@@ -18,7 +21,7 @@ import { Snackbar } from '../../components/Snackbar';
 import { DropZone } from '../../components/DropZone';
 import { Button } from '../../components/Button';
 import { DatePicker } from '../../components/DatePicker';
-import { DateTimePicker } from '../../components/DateTimePicker';
+// import { DateTimePicker } from '../../components/DateTimePicker';
 import { CheckBox } from '../../components/CheckBox';
 import { Label } from '../../components/Label';
 import { SearchInput } from '../../components/SearchInput';
@@ -37,10 +40,10 @@ import {
     GenderEnum,
     Gender,
     PatientStatusEnum,
-    IdPrefix,
+    // IdPrefix,
     ExpiredSessionMsg,
     // DataDateTimeFormat,
-    AddressSeperator,
+    // AddressSeperator,
     RouteConstants,
     DisplayDateTimeFormat,
 } from '../../constants';
@@ -52,11 +55,13 @@ import {
     GetPatientUrl,
     UpdatePatientUrl,
     UpdateHistoryUrl,
+    UpdateHistoryByPatientIdUrl,
     DeletePatientUrl,
     UpdateXRayUrl,
     AddDoctorsUrl,
     UpdateDoctorsUrl,
     PatientPrintUrl,
+    GetHistoryUrl,
 } from '../../config';
 // import { encodeId, decodeId } from '../../utils';
 
@@ -73,6 +78,21 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
+    },
+    thumbContainer: {
+        width: '100%',
+        margin: 0,
+    },
+    thumb: {
+        border: '1px solid rgba(63,63,68,0.05)',
+    },
+    img: {
+        width: '100%',
+        height: 150,
+        objectFit: 'contain',
+    },
+    clearButton: {
+        padding: 0,
     },
 }));
 
@@ -149,6 +169,20 @@ const PatientManagement = () => {
     const tableRef = React.useRef(null);
     const refreshData = () => {
         tableRef.current && tableRef.current.onQueryChange();
+    };
+
+    const [updatePatientHistoryMode, setUpdatePatientHistoryMode] = React.useState(false);
+    const [_patientId, _setPatientId] = React.useState(null);
+    const [_historyId, _setHistoryId] = React.useState(null);
+    const handleUpdatePatientHistory = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('pId') && urlParams.has('hId')) {
+            const pId = urlParams.get('pId');
+            const hId = urlParams.get('hId');
+            setUpdatePatientHistoryMode(true);
+            _setPatientId(pId);
+            _setHistoryId(hId);
+        }
     };
 
     const [updateMode, setUpdateMode] = React.useState(false);
@@ -253,6 +287,14 @@ const PatientManagement = () => {
         setValues({
             ...values,
             XRayImages: [...images],
+        });
+    };
+
+    const clearXRayImage = (xRayImage) => {
+        const restOfFiles = _.remove(values.XRayImages, (image) => image.name !== xRayImage.name);
+        setValues({
+            ...values,
+            XRayImages: [...restOfFiles],
         });
     };
 
@@ -454,19 +496,30 @@ const PatientManagement = () => {
             Status,
             // DoctorId: values.DoctorId,
         };
-        if (!updateMode) {
+        if (!updateMode && !updatePatientHistoryMode) {
             addPatient(patientModel);
-        } else {
+            return;
+        }
+        if (updateMode) {
             const { id } = selectedRow;
             updatePatient(id, patientModel);
+            return;
+        }
+        if (updatePatientHistoryMode) {
+            updatePatient(_patientId, patientModel);
+            return;
         }
     };
 
     const handleUpdate = () => {
-        const { id } = selectedRow;
-        getPatient(id);
+        // const { id } = selectedRow;
         setUpdateMode(true);
+        if (updatePatientHistoryMode) {
+            handleReset();
+            setUpdatePatientHistoryMode(false);
+        }
         setOpenActionOption(false);
+        // getPatient(id);
     };
 
     const handleDelete = () => {
@@ -658,20 +711,35 @@ const PatientManagement = () => {
                     OrderNumber: orderNumber,
                 };
                 refreshData();
-                const historyModel = {
-                    Height: values.Height,
-                    Weight: values.Weight,
-                    BloodPresure: values.BloodPresure,
-                    Pulse: values.Pulse,
-                    Other: values.Other,
-                    Note: values.Note,
-                    IsChecked: false,
-                    // DoctorId: values.DoctorId,
-                    PatientId: id,
-                };
-                updateHistory(id, historyModel, patientPrintModel);
+
+                if (!updatePatientHistoryMode || (updatePatientHistoryMode && _.toNumber(_historyId) === 0)) {
+                    const historyModel = {
+                        Height: values.Height,
+                        Weight: values.Weight,
+                        BloodPresure: values.BloodPresure,
+                        Pulse: values.Pulse,
+                        Other: values.Other,
+                        Note: values.Note,
+                        IsChecked: false,
+                        // DoctorId: values.DoctorId,
+                        PatientId: id,
+                    };
+                    const url = `${UpdateHistoryByPatientIdUrl}/${id}`;
+                    updateHistory(url, historyModel, patientPrintModel);
+                } else {
+                    const historyModel = {
+                        Height: values.Height,
+                        Weight: values.Weight,
+                        BloodPresure: values.BloodPresure,
+                        Pulse: values.Pulse,
+                        Other: values.Other,
+                        Note: values.Note,
+                    };
+                    const url = `${UpdateHistoryUrl}/${_historyId}`;
+                    updateHistory(url, historyModel, patientPrintModel);
+                }
             } else {
-                console.log('[Update Patient Reponse] ', reason);
+                console.log('[Update Patient Reponse] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
                 setDisabled(false);
                 setLoadingDone(false);
@@ -688,31 +756,51 @@ const PatientManagement = () => {
         });
     };
 
-    const updateHistory = (patientId, historyModel, patientPrintModel) => {
-        Axios.put(`${UpdateHistoryUrl}/${patientId}`, historyModel, config).then((response) => {
+    const updateHistory = (url, historyModel, patientPrintModel) => {
+        Axios.put(url, historyModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { id, patientId } = data;
                 handleSnackbarOption('success', 'Cập nhật hồ sơ bệnh nhân thành công.');
                 if (!_.isEmpty(values.Doctors)) {
                     const doctorModels = [];
-                    values.Doctors.map((doctor) => doctorModels.push({
-                        HistoryId: id,
-                        PatientId: patientId,
-                        DoctorId: doctor.id,
-                    }));
-                    updateDoctors(id, doctorModels, patientPrintModel);
+                    if (!updatePatientHistoryMode || (updatePatientHistoryMode && _.toNumber(_historyId) === 0)) {
+                        values.Doctors.map((doctor) => doctorModels.push({
+                            HistoryId: id,
+                            PatientId: patientId,
+                            DoctorId: doctor.id,
+                        }));
+                        updateDoctors(id, doctorModels, patientPrintModel);
+                    } else {
+                        values.Doctors.map((doctor) => doctorModels.push({
+                            HistoryId: _historyId,
+                            PatientId: _patientId,
+                            DoctorId: doctor.id,
+                        }));
+                        updateDoctors(_historyId, doctorModels, patientPrintModel);
+                    }
                 }
                 if (!_.isEmpty(values.XRayImages)) {
                     const xRayModels = [];
-                    values.XRayImages.map((xRayImage) => xRayModels.push({
-                        Name: xRayImage.name,
-                        Data: xRayImage.data,
-                        LastModifiedDate: xRayImage.lastModifiedDate,
-                        HistoryId: id,
-                        PatientId: patientId,
-                    }));
-                    updateXRays(id, xRayModels);
+                    if (!updatePatientHistoryMode || (updatePatientHistoryMode && _.toNumber(_historyId) === 0)) {
+                        values.XRayImages.map((xRayImage) => xRayModels.push({
+                            Name: xRayImage.name,
+                            Data: xRayImage.data,
+                            LastModifiedDate: xRayImage.lastModifiedDate,
+                            HistoryId: id,
+                            PatientId: patientId,
+                        }));
+                        updateXRays(id, xRayModels);
+                    } else {
+                        values.XRayImages.map((xRayImage) => xRayModels.push({
+                            Name: xRayImage.name,
+                            Data: xRayImage.data,
+                            LastModifiedDate: xRayImage.lastModifiedDate,
+                            HistoryId: _historyId,
+                            PatientId: _patientId,
+                        }));
+                        updateXRays(_historyId, xRayModels);
+                    }
                 }
             } else {
                 console.log('[Update History Response] ', response);
@@ -739,7 +827,7 @@ const PatientManagement = () => {
                 console.log('[Update Doctors Success] - Ok.');
                 handlePrint(patientPrintModel);
             } else {
-                console.log('[Update Doctors Error] ', reason);
+                console.log('[Update Doctors Error] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
                 setDisabled(false);
                 setLoadingDone(false);
@@ -787,6 +875,7 @@ const PatientManagement = () => {
                 setUpdateMode(false);
                 refreshData();
             } else {
+                console.log('[Delete Patient Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
             }
             setDisabled(false);
@@ -862,20 +951,16 @@ const PatientManagement = () => {
                     PatientStatus.IsChecking,
                     PatientStatus.IsChecked,
                     PatientStatus.IsRechecking,
-                    PatientStatus.IsToAddDocs,][status];
+                    PatientStatus.IsToAddDocs][status];
                 // const Address = address.split(AddressSeperator);
-                let AppointmentDate = null;
-                if (moment(appointmentDate).isValid()) {
-                    if (Status !== PatientStatus.IsChecked || moment(appointmentDate) > moment()) {
-                        AppointmentDate = moment(appointmentDate);
-                    }
-                }
-                let CheckedDate = null;
-                if (moment(checkedDate).isValid()) {
-                    CheckedDate = moment(checkedDate);
-                }
+                const AppointmentDate =
+                    moment(appointmentDate).isValid() &&
+                        (Status !== PatientStatus.IsChecked || moment(appointmentDate) > moment())
+                        ? moment(appointmentDate) : null;
+                const CheckedDate = moment(checkedDate).isValid() ? moment(checkedDate) : null;
 
                 setValues({
+                    ...values,
                     IdCode: idCode,
                     FullName: fullName,
                     // DateOfBirth,
@@ -895,15 +980,23 @@ const PatientManagement = () => {
                     CheckedDate,
                     Status,
                     // DoctorId: doctorId,
-                    XRayImages: [],
-                    Height: '',
-                    Weight: '',
-                    BloodPresure: '',
-                    Pulse: '',
-                    Other: '',
-                    Note: '',
-                    Doctors: [],
                 });
+
+                if (updatePatientHistoryMode) {
+                    const patientValues = {
+                        IdCode: idCode,
+                        FullName: fullName,
+                        Age: age,
+                        Gender: gender,
+                        Address: address,
+                        PhoneNumber: phoneNumber,
+                        RelativePhoneNumber: relativePhoneNumber,
+                        AppointmentDate,
+                        CheckedDate,
+                        Status,
+                    }
+                    getHistory(_historyId, patientValues);
+                }
             }
             setDisabled(false);
         }).catch((reason) => {
@@ -917,6 +1010,55 @@ const PatientManagement = () => {
             }
             console.log('[Get Patient By Id Error] ', reason);
             setDisabled(false);
+        });
+    };
+
+    const getHistory = (historyId, patientValues) => {
+        const url = `${GetHistoryUrl}/${historyId}`;
+        Axios.get(url, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const { 0: history } = data;
+                const {
+                    height,
+                    weight,
+                    bloodPresure,
+                    pulse,
+                    other,
+                    note,
+                    doctors,
+                    xRayImages,
+                } = history;
+                const Doctors = [];
+                if (!_.isEmpty(doctors)) {
+                    doctors.map(({ doctor }) => Doctors.push({
+                        id: doctor.id,
+                        fullName: doctor.fullName,
+                    }));
+                }
+                const XRayImages = [];
+                if (!_.isEmpty(xRayImages)) {
+                    xRayImages.map(({ name, data, lastModifiedDate }) => XRayImages.push({
+                        name,
+                        data,
+                        lastModifiedDate,
+                    }));
+                    setHasXRay(true);
+                }
+                setValues({
+                    ...patientValues,
+                    Height: height,
+                    Weight: weight,
+                    BloodPresure: bloodPresure,
+                    Pulse: pulse,
+                    Other: other,
+                    Note: note,
+                    XRayImages,
+                    Doctors,
+                });
+            }
+        }).catch((reason) => {
+            console.log('[Get History Error] ', reason);
         });
     };
 
@@ -1044,7 +1186,22 @@ const PatientManagement = () => {
 
     React.useEffect(() => {
         getDoctorOptions();
+        handleUpdatePatientHistory();
     }, []);
+
+    React.useEffect(() => {
+        if (updatePatientHistoryMode) {
+            getPatient(_patientId);
+            // getHistory(_historyId);
+        }
+    }, [updatePatientHistoryMode]);
+
+    React.useEffect(() => {
+        if (updateMode) {
+            const { id } = selectedRow;
+            getPatient(id);
+        }
+    }, [updateMode, selectedRow]);
 
     return (
         <Grid container spacing={3} >
@@ -1302,6 +1459,44 @@ const PatientManagement = () => {
                                     hasXRay &&
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                                         <DropZone onDropFile={handleUploadXRayImage} />
+                                        {
+                                            !_.isEmpty(values.XRayImages) &&
+                                            <Paper elevation={0}>
+                                                <Typography
+                                                    style={{ marginBottom: 16 }}
+                                                    component="p"
+                                                    variant="caption"
+                                                    children="Hình ảnh đã tải lên"
+                                                />
+                                                <Grid
+                                                    className={classes.thumbContainer}
+                                                    container
+                                                    spacing={2}
+                                                >
+                                                    {values.XRayImages.map((xRayImage, index) => (
+                                                        <Grid
+                                                            className={classes.thumb}
+                                                            key={index}
+                                                            item
+                                                            xs={12} sm={12} md={4} lg={4} xl={4}
+                                                        >
+                                                            <div style={{ textAlign: 'right' }}>
+                                                                <IconButton
+                                                                    className={classes.clearButton}
+                                                                    onClick={() => clearXRayImage(xRayImage)}
+                                                                >
+                                                                    <Close style={{ color: red[800] }} />
+                                                                </IconButton>
+                                                            </div>
+                                                            <img
+                                                                className={classes.img}
+                                                                src={xRayImage.data}
+                                                            />
+                                                        </Grid>
+                                                    ))}
+                                                </Grid>
+                                            </Paper>
+                                        }
                                     </Grid>
                                 }
                             </Grid>

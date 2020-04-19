@@ -37,4 +37,14 @@ namespace ClinicAPI.ViewModels
         //public List<Prescription> Prescriptions { get; }
         //public List<XRayImage> XRayImages { get; }
     }
+
+    public class HistoryPatchModel
+    {
+        public string Height { get; set; }
+        public string Weight { get; set; }
+        public string BloodPresure { get; set; }
+        public string Pulse { get; set; }
+        public string Other { get; set; }
+        public string Note { get; set; }
+    }
 }

@@ -93,6 +93,7 @@ const getPatientHistoriesError = '[Get Patient Histories Error]';
 
 const Patient = () => {
     const classes = useStyles();
+    const config = axiosRequestConfig();
 
     const { id } = useParams();
     const browserHistory = useHistory();
@@ -150,8 +151,6 @@ const Patient = () => {
         // Status: PatientStatus.IsNew,
         Status: '',
     });
-
-    const config = axiosRequestConfig();
 
     const getPatient = () => {
         const url = `${PatientUrl}/${id}`;
@@ -392,7 +391,7 @@ const Patient = () => {
                         alignItems="center"
                         spacing={2}
                     >
-                        <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
+                        <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
                             <Button
                                 fullWidth
                                 color="info"

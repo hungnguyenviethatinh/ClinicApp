@@ -3,12 +3,14 @@ using DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DAL.Repositories
 {
     public interface IHistoryRepository : IRepository<History>
     {
         IEnumerable<History> GetPatientHistories(int patientId);
+        Task<History> GetHistory(int id);
     }
 
     public class HistoryRepository : Repository<History>, IHistoryRepository
@@ -27,7 +29,18 @@ namespace DAL.Repositories
                 .Include(h => h.XRayImages)
                 .Where(h => h.PatientId == patientId)
                 .OrderBy(h => h.Id);
-                
+
+        }
+
+        public async Task<History> GetHistory(int id)
+        {
+            return await _appContext.Histories
+                //.Include(h => h.Doctor)
+                .Include(h => h.Doctors).ThenInclude(d => d.Doctor)
+                //.Include(h => h.Prescriptions).ThenInclude(p => p.Patient)
+                .Include(h => h.XRayImages)
+                .Where(h => h.Id == id)
+                .SingleOrDefaultAsync();
         }
         private ApplicationDbContext _appContext => (ApplicationDbContext)_context;
     }
@@ -71,7 +84,7 @@ namespace DAL.Repositories
         }
     }
 
-    public interface  IUnitRepository : IRepository<Unit>
+    public interface IUnitRepository : IRepository<Unit>
     {
 
     }

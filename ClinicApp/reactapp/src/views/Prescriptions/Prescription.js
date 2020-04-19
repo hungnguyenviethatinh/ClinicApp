@@ -351,14 +351,14 @@ const Prescription = () => {
                             // <React.Fragment>
                             //     {
                             //         canPrint &&
-                                    <Button
-                                        color="warning"
-                                        disabled={disabled}
-                                        loading={loading}
-                                        children="In"
-                                        iconName="print"
-                                        onClick={handlePrint}
-                                    />
+                            <Button
+                                color="warning"
+                                disabled={disabled}
+                                loading={loading}
+                                children="In"
+                                iconName="print"
+                                onClick={handlePrint}
+                            />
                             //     }
                             // </React.Fragment>
                         }

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using ClinicAPI.Authorization;
 using DAL;
@@ -43,6 +44,19 @@ namespace ClinicAPI.Controllers
                 .Where(h => !h.IsChecked)
                 .SingleOrDefault();
 
+            if (history == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new[] { history, });
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Policies.ViewAllPatientsPolicy)]
+        public async Task<IActionResult> GetHistory(int id)
+        {
+            var history = await _unitOfWork.Histories.GetHistory(id);
             if (history == null)
             {
                 return NotFound();

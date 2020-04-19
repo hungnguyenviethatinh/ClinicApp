@@ -109,7 +109,7 @@ const DropZoneComponent = props => {
                         <input {...getInputProps()} />
                         <p>Kéo và thả ảnh vào đây, hoặc click để chọn ảnh</p>
                     </div>
-                    {uploadedFiles.length > 0 && thumbs(uploadedFiles)}
+                    {/* {uploadedFiles.length > 0 && thumbs(uploadedFiles)} */}
                 </section>
             )}
         </DropZone>

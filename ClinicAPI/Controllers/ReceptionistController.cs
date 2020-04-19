@@ -253,9 +253,40 @@ namespace ClinicAPI.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpPut("histories/{patientId}")]
+        [HttpPut("histories/{historyId}")]
         [Authorize(Policies.ManageAllPatientsPolicy)]
-        public async Task<IActionResult> UpdateHistory(int patientId, [FromBody] HistoryModel historyModel)
+        public async Task<IActionResult> UpdateHistory(int historyId, [FromBody] HistoryPatchModel historyModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (historyModel == null)
+                {
+                    return BadRequest($"{nameof(historyModel)} can not be null.");
+                }
+
+                var history = await _unitOfWork.Histories.FindAsync(historyId);
+                if (history == null)
+                {
+                    return NotFound();
+                }
+
+                _mapper.Map(historyModel, history);
+                _unitOfWork.Histories.Update(history);
+                int result = await _unitOfWork.SaveChangesAsync();
+                if (result < 1)
+                {
+                    return NoContent();
+                }
+
+                return Ok(history);
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPut("histories/patient/{patientId}")]
+        [Authorize(Policies.ManageAllPatientsPolicy)]
+        public async Task<IActionResult> UpdateHistoryByPatientId(int patientId, [FromBody] HistoryModel historyModel)
         {
             if (ModelState.IsValid)
             {
