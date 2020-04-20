@@ -23,19 +23,10 @@ import _ from 'lodash';
 import moment from 'moment';
 
 const PatientPreview = (props) => {
-    const { disabled, loading, open, patient, handleCancel, handleSave } = props;
+    const { disabled, loading, open, patient, handleCancel, handlePrint, handleSave } = props;
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
-    const handleSaveAndPrint = () => {
-        handleSave();
-        // handlePrint();
-    };
-
-    // const handlePrint = () => {
-    //     // Chromely here
-    // };
 
     return (
         <Dialog
@@ -142,21 +133,6 @@ const PatientPreview = (props) => {
                                             style={{ fontWeight: 600 }}
                                         />
                                     </Grid>
-                                    {/* <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
-                                        <Typography
-                                            variant="body1"
-                                            component="p"
-                                            children="Nghề nghiệp:"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
-                                        <Typography
-                                            variant="h6"
-                                            component="h6"
-                                            children={`${patient.Job}`}
-                                            style={{ fontWeight: 600 }}
-                                        />
-                                    </Grid> */}
                                     <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                         <Typography
                                             variant="body1"
@@ -172,21 +148,6 @@ const PatientPreview = (props) => {
                                             style={{ fontWeight: 600 }}
                                         />
                                     </Grid>
-                                    {/* <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
-                                        <Typography
-                                            variant="body1"
-                                            component="p"
-                                            children="Email:"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6} sm={6} md={3} lg={3} xl={3}>
-                                        <Typography
-                                            variant="h6"
-                                            component="h6"
-                                            children={`${patient.Email}`}
-                                            style={{ fontWeight: 600 }}
-                                        />
-                                    </Grid> */}
                                     <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                         <Typography
                                             variant="body1"
@@ -289,7 +250,7 @@ const PatientPreview = (props) => {
                                         <Typography
                                             variant="h6"
                                             component="h6"
-                                            children={`${patient.BloodPresure} lần/phút`}
+                                            children={`${patient.BloodPressure} lần/phút`}
                                             style={{ fontWeight: 600 }}
                                         />
                                     </Grid>
@@ -429,10 +390,18 @@ const PatientPreview = (props) => {
                 <Button
                     disabled={disabled}
                     loading={loading}
+                    color="warning"
+                    children="In"
+                    iconName="print"
+                    onClick={handlePrint}
+                />
+                <Button
+                    disabled={disabled}
+                    loading={loading}
                     color="success"
-                    children="Lưu và In"
+                    children="Lưu"
                     iconName="done"
-                    onClick={handleSaveAndPrint}
+                    onClick={handleSave}
                 />
             </DialogActions>
         </Dialog>
@@ -445,6 +414,7 @@ PatientPreview.propTypes = {
     loading: PropTypes.bool,
     patientData: PropTypes.object,
     handleCancel: PropTypes.func,
+    handlePrint: PropTypes.func,
     handleSave: PropTypes.func,
 };
 
@@ -454,6 +424,7 @@ PatientPreview.defaultProps = {
     loading: false,
     patientData: null,
     handleCancel: () => { },
+    handlePrint: () => { },
     handleSave: () => { },
 };
 

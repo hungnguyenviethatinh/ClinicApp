@@ -54,15 +54,11 @@ namespace ClinicAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                //int.TryParse(query, out int id);
-
                 patients = patients
-                    .Where(p => (
-                        //p.Id == id ||
-                        ($"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase)) ||
+                    .Where(p =>
+                        $"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase) ||
                         p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                        p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
-                    //.OrderByDescending(p => p.UpdatedDate)
+                        p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase))
                     .OrderByDescending(p => p.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
@@ -70,10 +66,23 @@ namespace ClinicAPI.Controllers
             else
             {
                 patients = patients
-                    //.OrderByDescending(p => p.UpdatedDate)
                     .OrderByDescending(p => p.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
+            }
+
+            var patientVMs = _mapper.Map<IEnumerable<PatientViewModel>>(patients);
+            foreach (var patient in patients)
+            {
+                foreach (var patientVM in patientVMs)
+                {
+                    if (patient.Id == patientVM.Id)
+                    {
+                        var dphVMs = _mapper.Map<IEnumerable<DoctorPatientHistoryViewModel>>(patient.Doctors);
+                        patientVM.Doctors = dphVMs;
+                        break;
+                    }
+                }
             }
 
             return Ok(new[]
@@ -81,7 +90,7 @@ namespace ClinicAPI.Controllers
                new
                {
                     totalCount,
-                    patients,
+                    patients = patientVMs,
                },
             });
         }
@@ -253,7 +262,7 @@ namespace ClinicAPI.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpPut("histories/{historyId}")]
+        [HttpPatch("histories/{historyId}")]
         [Authorize(Policies.ManageAllPatientsPolicy)]
         public async Task<IActionResult> UpdateHistory(int historyId, [FromBody] HistoryPatchModel historyModel)
         {
@@ -284,9 +293,9 @@ namespace ClinicAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPut("histories/patient/{patientId}")]
+        [HttpPut("histories/{patientId}")]
         [Authorize(Policies.ManageAllPatientsPolicy)]
-        public async Task<IActionResult> UpdateHistoryByPatientId(int patientId, [FromBody] HistoryModel historyModel)
+        public async Task<IActionResult> UpdateHistory(int patientId, [FromBody] HistoryModel historyModel)
         {
             if (ModelState.IsValid)
             {
@@ -299,7 +308,8 @@ namespace ClinicAPI.Controllers
 
                 var history = _unitOfWork.Histories
                     .Where(h => h.PatientId == patientId && !h.IsChecked)
-                    .FirstOrDefault();
+                    .OrderBy(h => h.CreatedDate)
+                    .LastOrDefault();
 
                 if (history == null)
                 {
@@ -418,6 +428,11 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
+            if (patient.IsDeleted)
+            {
+                return Ok();
+            }
+
             patient.IsDeleted = true;
             _unitOfWork.Patients.Update(patient);
             int result = await _unitOfWork.SaveChangesAsync();
@@ -426,7 +441,7 @@ namespace ClinicAPI.Controllers
                 return NoContent();
             }
 
-            return Ok(patient);
+            return Ok();
         }
 
         [HttpGet("prescriptions")]
@@ -438,11 +453,8 @@ namespace ClinicAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                //int.TryParse(query, out int id);
-
                 prescriptions = prescriptions
                     .Where(p =>
-                        //p.PatientId == id ||
                         (query.Contains($"{p.IdCode}{p.Id}", StringComparison.OrdinalIgnoreCase)) ||
                         p.Patient.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.Doctor.FullName.Contains(query, StringComparison.OrdinalIgnoreCase))
@@ -456,12 +468,14 @@ namespace ClinicAPI.Controllers
                     .Take(pageSize);
             }
 
+            var prescriptionVMs = _mapper.Map<IEnumerable<PrescriptionViewModel>>(prescriptions);
+
             return Ok(new[]
             {
                 new
                 {
                     totalCount,
-                    prescriptions,
+                    prescriptions = prescriptionVMs,
                 },
             });
         }
@@ -476,7 +490,9 @@ namespace ClinicAPI.Controllers
                 .Where(p => p.CreatedDate.Date == today || p.UpdatedDate.Date == today)
                 .OrderBy(p => p.UpdatedDate);
 
-            return Ok(prescriptions);
+            var prescriptionVMs = _mapper.Map<IEnumerable<PrescriptionViewModel>>(prescriptions);
+
+            return Ok(prescriptionVMs);
         }
 
         [HttpGet("prescriptions/{id}")]
@@ -489,7 +505,9 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(new[] { prescription, });
+            var prescriptionVM = _mapper.Map<PrescriptionViewModel>(prescription);
+
+            return Ok(new[] { prescriptionVM, });
         }
 
         private int CalculateOrderNumber(Patient patient)
@@ -499,10 +517,10 @@ namespace ClinicAPI.Controllers
 
             var patients = _unitOfWork.Patients
                 .Where(p =>
-                (!p.IsDeleted &&
+                !p.IsDeleted &&
                 p.Status != PatientStatus.IsChecked &&
                 (((p.CreatedDate.Date == today || p.UpdatedDate.Date == today) && p.AppointmentDate == null) ||
-                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today))))
+                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today)))
                 .OrderBy(p => p.OrderNumber);
 
             if (patients.Any())
@@ -517,9 +535,10 @@ namespace ClinicAPI.Controllers
                 {
                     var appointedPatients = _unitOfWork.Patients
                         .Where(p =>
-                        (!p.IsDeleted &&
+                        !p.IsDeleted &&
                         p.Status != PatientStatus.IsChecked &&
-                        p.AppointmentDate != null && p.AppointmentDate.Value.Date == appointmentDate))
+                        p.AppointmentDate != null &&
+                        p.AppointmentDate.Value.Date == appointmentDate)
                         .OrderBy(p => p.OrderNumber);
 
                     if (patients.Any())

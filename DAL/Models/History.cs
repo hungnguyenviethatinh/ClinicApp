@@ -9,15 +9,13 @@ namespace DAL.Models
         public int Id { get; set; }
         public string Height { get; set; }
         public string Weight { get; set; }
-        public string BloodPresure { get; set; }
+        public string BloodPressure { get; set; }
         public string Pulse { get; set; }
         public string Other { get; set; }
         public string Note { get; set; }
+        public DateTime CheckedDate { get; set; }
         public bool IsChecked { get; set; }
-        
-        //public string DoctorId { get; set; }
-        //public virtual User Doctor { get; set; }
-        
+
         public int PatientId { get; set; }
         public virtual Patient Patient { get; set; }
 

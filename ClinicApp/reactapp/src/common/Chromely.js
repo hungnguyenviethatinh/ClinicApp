@@ -1,4 +1,4 @@
-const chromely = {
+const ChromeLyService = {
     get: (url, parameters, response) => {
         boundControllerAsync.getJson(url, parameters, response);
     },
@@ -7,4 +7,4 @@ const chromely = {
     },
 };
 
-export default chromely;
+export default ChromeLyService;

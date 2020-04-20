@@ -78,17 +78,6 @@ namespace ClinicAPI.Controllers
             return Ok(ingredients);
         }
 
-        //[HttpGet("ingredients/{medicineId}")]
-        //[Authorize(Policies.ManageAllPrescriptionsPolicy)]
-        //public IActionResult GetIngredients(int medicineId)
-        //{
-        //    var ingredients = _unitOfWork.Ingredients
-        //        .Where(i => i.MedicineId == medicineId)
-        //        .Select(i => new { i.Name });
-
-        //    return Ok(ingredients);
-        //}
-
         [HttpGet("patients/options")]
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatientOptions()
@@ -96,9 +85,8 @@ namespace ClinicAPI.Controllers
             DateTime today = DateTime.Today;
             var patients = GetCurrentDoctorPatients()
                 .Where(p =>
-                //p.Status != PatientStatus.IsChecked &&
                 (p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate.Date == today)) ||
-                (p.AppointmentDate != null && p.AppointmentDate.Value.Date >= today))
+                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today))
                 .Select(p => new { p.IdCode, p.Id, p.FullName });
 
             return Ok(patients);
@@ -113,14 +101,11 @@ namespace ClinicAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                //int.TryParse(query, out int id);
-
                 patients = patients
-                    .Where(p => (
-                        //p.Id == id ||
-                        ($"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase)) ||
+                    .Where(p =>
+                        $"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase) ||
                         p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                        p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
+                        p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase))
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
@@ -131,12 +116,14 @@ namespace ClinicAPI.Controllers
                     .Take(pageSize);
             }
 
+            var patientVMs = GetPatientViewModels(patients);
+
             return Ok(new[]
             {
                 new
                 {
                     totalCount,
-                    patients,
+                    patients = patientVMs,
                 },
             });
         }
@@ -151,10 +138,11 @@ namespace ClinicAPI.Controllers
                 p.Status != PatientStatus.IsChecked &&
                 ((p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate.Date == today)) ||
                 (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today)))
-                //.OrderBy(p => p.UpdatedDate);
                 .OrderBy(p => p.OrderNumber);
 
-            return Ok(patients);
+            var patientVMs = GetPatientViewModels(patients);
+
+            return Ok(patientVMs);
         }
 
         [HttpGet("patients/current/{id}")]
@@ -269,7 +257,9 @@ namespace ClinicAPI.Controllers
         {
             var prescriptions = GetCurrentDoctorPrescriptions();
 
-            return Ok(prescriptions);
+            var prescriptionVMs = _mapper.Map<IEnumerable<PrescriptionViewModel>>(prescriptions);
+
+            return Ok(prescriptionVMs);
         }
 
         [HttpGet("prescriptions/queue")]
@@ -281,7 +271,9 @@ namespace ClinicAPI.Controllers
                 .Where(p => p.CreatedDate.Date == today || p.UpdatedDate.Date == today)
                 .OrderBy(p => p.UpdatedDate);
 
-            return Ok(prescriptions);
+            var prescriptionVMs = _mapper.Map<IEnumerable<PrescriptionViewModel>>(prescriptions);
+
+            return Ok(prescriptionVMs);
         }
 
         [HttpGet("prescriptions/{id}")]
@@ -294,7 +286,12 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(new[] { prescription, });
+            var prescriptionVM = _mapper.Map<PrescriptionViewModel>(prescription);
+            var patient = _mapper.Map<PatientBasicViewModel>(prescription.Patient);
+
+            prescriptionVM.Patient = patient;
+
+            return Ok(new[] { prescriptionVM, });
         }
 
         [HttpGet("prescriptionlist/{patientId}")]
@@ -306,11 +303,13 @@ namespace ClinicAPI.Controllers
 
             prescriptions = prescriptions.Skip((page - 1) * pageSize).Take(pageSize);
 
+            var prescriptionVMs = _mapper.Map<IEnumerable<PrescriptionViewModel>>(prescriptions);
+
             return Ok(new[] {
                 new
                 {
                     totalCount,
-                    prescriptions,
+                    prescriptions = prescriptionVMs,
                 }
             });
         }
@@ -568,6 +567,25 @@ namespace ClinicAPI.Controllers
             var prescriptions = _unitOfWork.Prescriptions.GetDoctorPrescriptions(currentDoctorId);
 
             return prescriptions;
+        }
+
+        private IEnumerable<PatientViewModel> GetPatientViewModels(IEnumerable<Patient> patients)
+        {
+            var patientVMs = _mapper.Map<IEnumerable<PatientViewModel>>(patients);
+            foreach (var patient in patients)
+            {
+                foreach (var patientVM in patientVMs)
+                {
+                    if (patient.Id == patientVM.Id)
+                    {
+                        var dphVMs = _mapper.Map<IEnumerable<DoctorPatientHistoryViewModel>>(patient.Doctors);
+                        patientVM.Doctors = dphVMs;
+                        break;
+                    }
+                }
+            }
+
+            return patientVMs;
         }
     }
 }

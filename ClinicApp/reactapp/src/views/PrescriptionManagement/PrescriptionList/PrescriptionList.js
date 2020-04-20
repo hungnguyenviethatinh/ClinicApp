@@ -17,8 +17,7 @@ import { Table } from '../../../components/Table';
 
 import Axios, { axiosRequestConfig } from '../../../common';
 import { GetPrescriptionListUrl } from '../../../config';
-import { RouteConstants, IdPrefix, DisplayDateTimeFormat } from '../../../constants';
-import { encodeId } from '../../../utils';
+import { RouteConstants, DisplayDateTimeFormat } from '../../../constants';
 
 import moment from 'moment';
 
@@ -28,9 +27,7 @@ const columns = [
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-                children={
-                    encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-                }
+                children={`${rowData.idCode}${rowData.id}`}
             />,
     },
     {
@@ -38,13 +35,14 @@ const columns = [
         render: rowData => rowData.doctor.fullName,
     },
     {
-        title: 'Ngày kê', field: 'createdDate', type: 'date',
-        render: rowData => moment(rowData.createdDate).format(DisplayDateTimeFormat),
+        title: 'Ngày kê đơn', field: 'dateCreated', type: 'date',
+        render: rowData => moment(rowData.dateCreated).format(DisplayDateTimeFormat),
     },
 ];
 
 const PrescriptionList = (props) => {
     const { open, patientId, handleClose, handleCopy } = props;
+    const config = axiosRequestConfig();
 
     const tableRef = React.createRef(null);
     const theme = useTheme();
@@ -58,8 +56,6 @@ const PrescriptionList = (props) => {
             setSelectedRow(null);
         }
     };
-
-    const config = axiosRequestConfig();
 
     const getPrescriptionList = (resolve, reject, query) => {
         const url = `${GetPrescriptionListUrl}/${patientId}`;
@@ -86,14 +82,6 @@ const PrescriptionList = (props) => {
     };
 
     const handleDone = () => {
-        // const { id, diagnosis, otherDiagnosis, note } = selectedRow;
-        // const prescription = {
-        //     id,
-        //     diagnosis,
-        //     otherDiagnosis,
-        //     note,
-        // }
-        // handleCopy(prescription);
         handleCopy(selectedRow);
     };
 
@@ -136,7 +124,7 @@ const PrescriptionList = (props) => {
                 />
                 <Button
                     disabled={!selectedRow}
-                    color="warning"
+                    color="info"
                     children="Sao chép"
                     iconName="copy"
                     onClick={handleDone}

@@ -104,7 +104,7 @@ const receptionistMenus = [
     },
     {
         title: 'Quản lý và Tiếp nhận bệnh nhân',
-        href: RouteConstants.PatientMangementView,
+        href: RouteConstants.PatientManagementView,
         icon: <ViewListIcon />
     },
     {

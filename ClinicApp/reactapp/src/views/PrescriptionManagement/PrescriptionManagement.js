@@ -30,15 +30,12 @@ import {
     PrescriptionStatus,
     ExpiredSessionMsg,
     NotFoundMsg,
-    // AddressSeperator,
     Gender,
     PatientStatusEnum,
     PatientStatus,
     RouteConstants,
     SnackbarMessage,
-    // IdPrefix,
     takePeriodValue,
-    // CurrentCheckingPatientId,
 } from '../../constants';
 
 import {
@@ -52,7 +49,6 @@ import {
     UpdatePrescriptionsUrl,
     AddMedicinesUrl,
     UpdatePatientHistoryUrl,
-    // UpdatePatientStatusUrl,
     UpdateMedicinesUrl,
     UpdateMedicinesQuantityUrl,
     RestoreMedicinesQuantityUrl,
@@ -94,13 +90,6 @@ const getDiagnosesErrMsg = '[Get Diagnoses Error] ';
 const getUnitsErrorMsg = '[Get Units Error] ';
 const getIngredientsErrorMsg = '[Get Ingredients Error] ';
 const getMedicineListErrorMsg = '[Get Medicine List Error] ';
-
-// const appointmentDateOptions = [
-//     { label: 'Vui lòng chọn...', value: '' },
-//     { label: '1 tuần', value: 7 },
-//     { label: '2 tuần', value: 14 },
-//     { label: '1 tháng', value: 30 },
-// ];
 
 const takePeriodOptions = [
     { label: takePeriodValue.Day, value: takePeriodValue.Day },
@@ -175,11 +164,8 @@ const PrescriptionManagement = () => {
         }
     };
 
-    // const [appointmentDate, setAppointmentDate] = React.useState('');
     const [patient, setPatient] = React.useState({
         Id: 0,
-        // FullName: '',
-        // DateOfBirth: '',
         Age: '',
         Gender: '',
         Address: '',
@@ -241,7 +227,6 @@ const PrescriptionManagement = () => {
         Note: '',
         Status: PrescriptionStatusEnum[PrescriptionStatus.IsNew],
         PatientId: '',
-        // DoctorId: '',
         HistoryId: '',
     });
     const handlePrescriptionChange = prop => event => {
@@ -264,7 +249,6 @@ const PrescriptionManagement = () => {
         NetWeight: '',
         Quantity: '',
         Unit: '',
-        // Price: '',
         TakePeriod: takePeriodValue.Day,
         TakeMethod: '',
         TakeTimes: '',
@@ -315,10 +299,10 @@ const PrescriptionManagement = () => {
 
         if (quantity > _.toNumber(maxQuantity)) {
             handleSnackbarOption('warning', `Lưu ý số lượng thuốc này còn lại: ${maxQuantity}.`)
-        } // else {
+        }
+
         medicines[index].Quantity = _.toString(quantity);
         setMedicines([...medicines]);
-        // }
     };
 
     const [medicineNames, setMedicineNames] = React.useState([{
@@ -363,7 +347,6 @@ const PrescriptionManagement = () => {
             NetWeight: '',
             Quantity: '',
             Unit: '',
-            // Price: '',
             TakePeriod: takePeriodValue.Day,
             TakeMethod: '',
             TakeTimes: '',
@@ -384,7 +367,6 @@ const PrescriptionManagement = () => {
     };
 
     const handleReset = () => {
-        // setAppointmentDate('');
         setMedicineNames([{
             value: null,
         }]);
@@ -409,7 +391,6 @@ const PrescriptionManagement = () => {
             NetWeight: '',
             Quantity: '',
             Unit: '',
-            // Price: '',
             TakePeriod: takePeriodValue.Day,
             TakeMethod: '',
             TakeTimes: '',
@@ -423,10 +404,6 @@ const PrescriptionManagement = () => {
     };
 
     const handleDone = () => {
-        // if (!patient.FullName.trim()) {
-        //     handleSnackbarOption('error', 'Chưa chọn bệnh nhân để kê đơn!');
-        //     return;
-        // }
         if (!patientNameValue) {
             handleSnackbarOption('error', 'Yêu cầu nhập tên bệnh nhân!');
             return;
@@ -503,19 +480,13 @@ const PrescriptionManagement = () => {
             }
         }
 
-        // console.log('patient:', patient);
-        // console.log('prescription: ', prescription);
-        // console.log('medicines: ', medicines);
-
         setDisabled(true);
         setLoadingDone(true);
 
-        // const IdCode = IdPrefix.Prescription;
         const DateCreated = moment(prescription.DateCreated).isValid() ? prescription.DateCreated.format() : null;
         const prescriptionModel = {
             ...prescription,
             DateCreated,
-            // IdCode,
         };
         if (!updateMode) {
             addPrescription(prescriptionModel);
@@ -532,12 +503,9 @@ const PrescriptionManagement = () => {
                 if (!_.isEmpty(medicines)) {
                     const medicineModels = [];
                     medicines.map((medicine) => {
-                        // const price = medicineNameOptions
-                        //     .find(value => value.id === medicine.MedicineId).price * _.toNumber(medicine.Quantity);
                         medicineModels.push({
                             ...medicine,
                             PrescriptionId: id,
-                            // Price: price,
                         })
                     });
                     addMedicines(medicineModels);
@@ -577,30 +545,16 @@ const PrescriptionManagement = () => {
         const id = patient.Id;
         const url = `${UpdatePatientHistoryUrl}/${id}`;
 
-        // const medicineUpdateModels = [];
-        // medicines.map(({ MedicineId, Quantity }) => medicineUpdateModels.push({
-        //     Id: MedicineId,
-        //     Quantity,
-        // }));
         const updatePatientHistoryModel = {
             AppointmentDate: patient.AppointmentDate,
             Status: PatientStatusEnum[PatientStatus.IsChecked],
         };
-        // if (patient.AppointmentDate) {
-        // Axios.get(`${UpdatePatientHistoryUrl}/${id}`, {
-        //     ...config,
-        //     params: {
-        //         appointmentDate: patient.AppointmentDate,
-        //         status: PatientStatusEnum[PatientStatus.IsChecked],
-        //     }
-        // })
 
         Axios.patch(url, updatePatientHistoryModel, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', SnackbarMessage.CreatePrescriptionSuccess);
                 handleReset();
-                // updateMedicinesQuantity(medicineUpdateModels);
                 updateMedicinesQuantity();
             } else {
                 handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
@@ -613,26 +567,6 @@ const PrescriptionManagement = () => {
             setDisabled(false);
             setLoadingDone(false);
         });
-        // } else {
-        //     const url = `${UpdatePatientStatusUrl}/${id}/${PatientStatusEnum[PatientStatus.IsChecked]}`;
-        //     Axios.get(url, config).then((response) => {
-        //         const { status } = response;
-        //         if (status === 200) {
-        //             handleSnackbarOption('success', SnackbarMessage.CreatePrescriptionSuccess);
-        //             handleReset();
-        //             updateMedicinesQuantity(medicineUpdateModels);
-        //         } else {
-        //             handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-        //             setDisabled(false);
-        //             setLoadingDone(false);
-        //         }
-        //     }).catch((reason) => {
-        //         handleError(reason, updatePatientHistoryErrorMsg);
-        //         handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-        //         setDisabled(false);
-        //         setLoadingDone(false);
-        //     });
-        // }
     };
 
     const updateMedicinesQuantity = () => {
@@ -693,12 +627,9 @@ const PrescriptionManagement = () => {
                 if (!_.isEmpty(medicines)) {
                     const medicineModels = [];
                     medicines.map((medicine) => {
-                        // const price = medicineNameOptions
-                        //     .find(value => value.id === medicine.MedicineId).price * _.toNumber(medicine.Quantity);
                         medicineModels.push({
                             ...medicine,
                             PrescriptionId: prescriptionId,
-                            // Price: price,
                         })
                     });
                     updateMedicines(medicineModels);
@@ -741,17 +672,12 @@ const PrescriptionManagement = () => {
     const getPatient = (selectedPatientId) => {
         setDisabled(true);
 
-        // const currentPatientId = localStorage.getItem(CurrentCheckingPatientId) || 0;
-        // const url = `${GetCurrentPatientUrl}/${currentPatientId}`;
         const url = `${GetCurrentPatientUrl}/${selectedPatientId}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const {
                     id,
-                    // doctorId,
-                    // fullName,
-                    // dateOfBirth,
                     age,
                     gender,
                     address,
@@ -759,19 +685,12 @@ const PrescriptionManagement = () => {
                     appointmentDate,
                 } = data[0].patient;
 
-                // const Address = address
-                //     .split(AddressSeperator)
-                //     .filter(value => (value.trim() && true))
-                //     .join(`${AddressSeperator} `);
-
                 const value = patientNameOptions.find(p => p.id === id);
                 setPatientNameValue(value);
 
                 setPatient({
                     ...patient,
                     Id: id,
-                    // FullName: fullName,
-                    // DateOfBirth: moment(dateOfBirth).year(),
                     Age: age,
                     Gender: [Gender.None, Gender.Male, Gender.Female][gender],
                     Address: address,
@@ -782,7 +701,6 @@ const PrescriptionManagement = () => {
                     setPrescription({
                         ...prescription,
                         PatientId: id,
-                        // DoctorId: doctorId,
                         HistoryId: data[0].history.id,
                     });
                 }
@@ -816,13 +734,12 @@ const PrescriptionManagement = () => {
         if (id !== undefined) {
             getPatient(id);
         }
-        // setPatientNameValue(value);
     };
 
     const [patientNameOptions, setPatientNameOptions] = React.useState([{
         id: 0,
         idCode: '',
-        fullName: '',
+        fullName: 'Không có bệnh nhân',
     }]);
     const getPatientOptionLabel = (option) => `${option.idCode}${option.id} - ${option.fullName}`;
     const getPatientNameOptions = () => {
@@ -845,7 +762,6 @@ const PrescriptionManagement = () => {
         netWeight: '',
         quantity: '',
         unit: '',
-        // price: '',
     }]);
     const getOptionLabel = (option) => option.name;
     const getMedicineNameOptions = () => {
@@ -860,10 +776,6 @@ const PrescriptionManagement = () => {
         });
     };
 
-    // const [diagnosisOptions, setDiagnosisOptions] = React.useState([{
-    //     label: '',
-    //     value: '',
-    // }]);
     const [diagnosisOptions, setDiagnosisOptions] = React.useState([{
         id: '',
         name: '',
@@ -873,10 +785,6 @@ const PrescriptionManagement = () => {
             const { status, data } = response;
             if (status === 200) {
                 const options = [];
-                // data.map(({ name }) => options.push({
-                //     label: name,
-                //     value: name,
-                // }));
                 data.map(({ id, name }) => options.push({
                     id,
                     name,
@@ -935,22 +843,6 @@ const PrescriptionManagement = () => {
         }
         ingredientOptions[index] = options;
         setIngredientOptions([...ingredientOptions]);
-
-        // const url = `${GetIngredientOptionsUrl}/${medicineId}`;
-        // Axios.get(url, config).then((response) => {
-        //     const { status, data } = response;
-        //     if (status === 200 && !_.isEmpty(data)) {
-        //         const options = [];
-        //         data.map(({ name }) => options.push({
-        //             label: name,
-        //             value: name,
-        //         }));
-        //         ingredientOptions[index] = options;
-        //         setIngredientOptions([...ingredientOptions]);
-        //     }
-        // }).catch((reason) => {
-        //     handleError(reason, getIngredientsErrorMsg);
-        // });
     };
 
     const [openPrescriptionList, setOpenPrescriptionList] = React.useState(false);
@@ -1003,7 +895,6 @@ const PrescriptionManagement = () => {
                         ingredient,
                         netWeight,
                         unit,
-                        // price,
                         takePeriod,
                         takeMethod,
                         takeTimes,
@@ -1026,7 +917,6 @@ const PrescriptionManagement = () => {
                         NetWeight: netWeight,
                         Quantity: quantity,
                         Unit: unit,
-                        // Price: price,
                         TakePeriod: takePeriod,
                         TakeMethod: takeMethod,
                         TakeTimes: takeTimes,
@@ -1136,7 +1026,7 @@ const PrescriptionManagement = () => {
                         }}
                         action={
                             <Button
-                                color="warning"
+                                color="info"
                                 children="Sao chép"
                                 iconName="copy"
                                 disabled={disabled}
@@ -1157,14 +1047,6 @@ const PrescriptionManagement = () => {
                             >
                                 <Grid container item xs={12} sm={12} md={6} lg={6} xl={6} spacing={1}>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                                        {/* <TextField
-                                        id="FullName"
-                                        label="Họ tên BN"
-                                        value={patient.FullName}
-                                        readOnly
-                                        fullWidth
-                                        autoFocus
-                                    /> */}
                                         <Autocomplete
                                             fullWidth
                                             id="FullName"
@@ -1185,13 +1067,6 @@ const PrescriptionManagement = () => {
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
-                                        {/* <TextField
-                                        id="DateOfBirth"
-                                        label="Năm sinh"
-                                        value={patient.DateOfBirth}
-                                        readOnly
-                                        fullWidth
-                                    /> */}
                                         <TextField
                                             id="Age"
                                             label="Tuổi"
@@ -1238,14 +1113,6 @@ const PrescriptionManagement = () => {
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                                        {/* <Select
-                                        fullWidth
-                                        id="Diagnosis"
-                                        label="Chẩn đoán"
-                                        value={prescription.Diagnosis}
-                                        options={diagnosisOptions}
-                                        onChange={handlePrescriptionChange('Diagnosis')}
-                                    /> */}
                                         <Autocomplete
                                             fullWidth
                                             margin="dense"
@@ -1278,15 +1145,6 @@ const PrescriptionManagement = () => {
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                        {/* <Select
-                                        fullWidth
-                                        id="AppointmentDate"
-                                        label="Hẹn tái khám (nếu có)"
-                                        value={appointmentDate}
-                                        options={appointmentDateOptions}
-                                        onChange={handleAppointmentDateChange}
-                                    /> */}
-                                        {/* <DateTimePicker */}
                                         <DatePicker
                                             fullWidth
                                             disablePast
@@ -1330,7 +1188,6 @@ const PrescriptionManagement = () => {
                                                         value={medicine.Quantity}
                                                         onChange={handleMedicinesChange(index, 'Quantity')}
                                                         fullWidth
-                                                    // readOnly
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>

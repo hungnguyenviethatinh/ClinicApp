@@ -15,7 +15,6 @@ import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';
 import { Snackbar } from '../../../components/Snackbar';
 import {
-    Button,
     RefreshButton
 } from '../../../components/Button';
 import { ActionOption } from '../../../components/ActionOption';
@@ -24,25 +23,18 @@ import { DeleteConfirm } from '../../../components/DeleteConfirm';
 import {
     GetPatientInQueueByDoctorUrl,
     GetPrescriptionsInQueueByDoctorUrl,
-    UpdatePatientStatusUrl,
     DeletePrescriptionsUrl,
 } from '../../../config';
 import Axios, {
     axiosRequestConfig,
-    useInterval,
 } from '../../../common';
 import {
     ExpiredSessionMsg,
     Gender,
     PatientStatus,
     PrescriptionStatus,
-    RefreshDataTimer,
-    PatientStatusEnum,
     RouteConstants,
-    // IdPrefix,
-    CurrentCheckingPatientId,
 } from '../../../constants';
-// import { encodeId } from '../../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -69,12 +61,6 @@ const useStyles = makeStyles(theme => ({
 const patientQueueColumns = [
     {
         title: 'Mã BN', field: 'id',
-        // render: rowData =>
-        //     <Link
-        //         to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
-        //         children={
-        //             encodeId(rowData.id, IdPrefix.Patient)
-        //         } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
@@ -85,8 +71,6 @@ const patientQueueColumns = [
         title: 'Họ & Tên', field: 'fullName',
     },
     {
-        // title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
-        // render: rowData => moment(rowData.dateOfBirth).year(),
         title: 'Tuổi', field: 'age', type: 'numeric',
     },
     {
@@ -116,16 +100,6 @@ const patientQueueColumns = [
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
-        // render: rowData =>
-        //     <Link
-        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-        //         children={
-        //             encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-        //         } />,
-        // render: rowData =>
-        //     <Link
-        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-        //         children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
@@ -156,21 +130,6 @@ const DoctorView = () => {
     const classes = useStyles();
     const history = useHistory();
     const config = axiosRequestConfig();
-
-    // const [countPatientTable, setCountPatientTable] = React.useState(0);
-    // const [countPrescriptionTable, setCountPrescriptionTable] = React.useState(0);
-    // useInterval(() => {
-    //     if (countPatientTable > 0 && countPatientTable < RefreshDataTimer) {
-    //         setCountPatientTable(countPatientTable + 1);
-    //     } else {
-    //         refreshPatientData();
-    //     }
-    //     if (countPrescriptionTable > 0 && countPrescriptionTable < RefreshDataTimer) {
-    //         setCountPrescriptionTable(countPrescriptionTable + 1);
-    //     } else {
-    //         refreshPrescriptionData();
-    //     }
-    // }, 1000);
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -274,11 +233,9 @@ const DoctorView = () => {
                     totalCount,
                 });
             }
-            // setCountPatientTable(1);
             setSelectedRow(null);
         }).catch((reason) => {
             handleError(reason, getPatientLogMsgHeader);
-            // setCountPatientTable(1);
         });
     };
 
@@ -294,10 +251,8 @@ const DoctorView = () => {
                     totalCount,
                 });
             }
-            // setCountPrescriptionTable(1);
         }).catch((reason) => {
             handleError(reason, getPrescriptionLogMsgHeader);
-            // setCountPrescriptionTable(1);
         });
     };
 
@@ -318,47 +273,6 @@ const DoctorView = () => {
         });
     };
 
-    // const patientPreviousStatus = 'patientPreviousStatus';
-
-    // const handleCancel = () => {
-    //     const { id } = selectedRow;
-    //     const status = localStorage.getItem(patientPreviousStatus) || PatientStatusEnum[PatientStatus.IsNew];
-    //     const url = `${UpdatePatientStatusUrl}/${id}/${status}`;
-    //     Axios.get(url, config).then((response) => {
-    //         const { status } = response;
-    //         if (status === 200) {
-    //             localStorage.removeItem(CurrentCheckingPatientId);
-    //             handleSnackbarOption('success', 'Hủy kê đơn thành công!');
-    //             setSelectedRow(null);
-    //         } else {
-    //             handleSnackbarOption('error', 'Có lỗi khi xử lý. Vui lòng thử lại sau!');
-    //         }
-    //     }).catch((reason) => {
-    //         handleError(reason, updatePatientLogMsgHeader);
-    //         handleSnackbarOption('error', 'Có lỗi khi xử lý. Vui lòng thử lại sau!');
-    //     });
-    // };
-
-    // const handleUpdate = () => {
-    //     const { id, status } = selectedRow;
-    //     localStorage.setItem(patientPreviousStatus, `${status}`);
-    //     const url = `${UpdatePatientStatusUrl}/${id}/${PatientStatusEnum[PatientStatus.IsChecking]}`;
-    //     Axios.get(url, config).then((response) => {
-    //         const { status } = response;
-    //         if (status === 200) {
-    //             localStorage.setItem(CurrentCheckingPatientId, id);
-    //             setTimeout(() => {
-    //                 history.push(RouteConstants.PrescriptionManagementView);
-    //             }, 1000);
-    //         } else {
-    //             handleSnackbarOption('error', 'Đang kê đơn cho bệnh nhân khác!');
-    //         }
-    //     }).catch((reason) => {
-    //         handleError(reason, updatePatientLogMsgHeader);
-    //         handleSnackbarOption('error', 'Có lỗi khi xử lý. Vui lòng thử lại sau!');
-    //     });
-    // };
-
     return (
         <Grid
             container
@@ -367,7 +281,6 @@ const DoctorView = () => {
             <Grid
                 item
                 xs={12} sm={12} md={6} lg={6} xl={6}
-            // className={classes.fullHeight}
             >
                 <Card
                     className={clsx(classes.card, classes.fullHeight)}
@@ -377,40 +290,6 @@ const DoctorView = () => {
                             action: classes.action,
                         }}
                         action={
-                            // <React.Fragment>
-                            //     {
-                            //         selectedRow &&
-                            //         <Grid
-                            //             container
-                            //             spacing={3}
-                            //             justify="flex-end"
-                            //             alignItems="center"
-                            //         >
-                            //             {
-                            //                 (selectedRow.status === PatientStatusEnum[PatientStatus.IsChecking]) ?
-                            //                     <Grid item>
-                            //                         <Button
-                            //                             fullWidth
-                            //                             color="danger"
-                            //                             children="Hủy kê đơn"
-                            //                             iconName="cancel"
-                            //                             onClick={handleCancel}
-                            //                         />
-                            //                     </Grid>
-                            //                     :
-                            //                     <Grid item>
-                            //                         <Button
-                            //                             fullWidth
-                            //                             color="success"
-                            //                             children="Kê đơn"
-                            //                             iconName="pen"
-                            //                             onClick={handleUpdate}
-                            //                         />
-                            //                     </Grid>
-                            //             }
-                            //         </Grid>
-                            //     }
-                            // </React.Fragment>
                             <RefreshButton onClick={refreshPatientData} />
                         }
                         title="HÀNG CHỜ BỆNH NHÂN"
@@ -428,8 +307,8 @@ const DoctorView = () => {
                                     getPatientsInQueue(resolve, reject, query);
                                 })
                             }
-                            // onRowClick={handleSelectRow}
-                            // selectedRow={selectedRow}
+                        // onRowClick={handleSelectRow}
+                        // selectedRow={selectedRow}
                         />
                     </CardContent>
                 </Card>
@@ -437,7 +316,6 @@ const DoctorView = () => {
             <Grid
                 item
                 xs={12} sm={12} md={6} lg={6} xl={6}
-            // className={classes.fullHeight} 
             >
                 <Card
                     className={clsx(classes.card, classes.fullHeight)}

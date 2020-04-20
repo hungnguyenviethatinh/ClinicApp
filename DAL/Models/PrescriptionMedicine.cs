@@ -11,7 +11,6 @@
         public string NetWeight { get; set; }
         public int? Quantity { get; set; }
         public string Unit { get; set; }
-        //public decimal Price { get; set; }
 
         public string TakePeriod { get; set; }
         public string TakeMethod { get; set; }

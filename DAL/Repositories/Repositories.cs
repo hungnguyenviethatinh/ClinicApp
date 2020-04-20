@@ -23,7 +23,6 @@ namespace DAL.Repositories
         public IEnumerable<History> GetPatientHistories(int patientId)
         {
             return _appContext.Histories
-                //.Include(h => h.Doctor)
                 .Include(h => h.Doctors).ThenInclude(d => d.Doctor)
                 .Include(h => h.Prescriptions).ThenInclude(p => p.Patient)
                 .Include(h => h.XRayImages)
@@ -35,9 +34,7 @@ namespace DAL.Repositories
         public async Task<History> GetHistory(int id)
         {
             return await _appContext.Histories
-                //.Include(h => h.Doctor)
                 .Include(h => h.Doctors).ThenInclude(d => d.Doctor)
-                //.Include(h => h.Prescriptions).ThenInclude(p => p.Patient)
                 .Include(h => h.XRayImages)
                 .Where(h => h.Id == id)
                 .SingleOrDefaultAsync();

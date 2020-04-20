@@ -2,7 +2,7 @@ export const RouteConstants = {
     DashboardView: '/dashboard',
     PatientsView: '/patients',
     PatientDetailView: '/patient/:id',
-    PatientMangementView: '/patient-management',
+    PatientManagementView: '/patient-management',
     PrescriptionsView: '/prescriptions',
     PrescriptionDetailView: '/prescription/:id',
     PrescriptionManagementView: '/prescription-management',

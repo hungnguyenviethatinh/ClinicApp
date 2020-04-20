@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import { Dashboard as DashboardView } from './views/Dashboard';
 import { Login as LoginView } from './views/Login';
 import { PatientsView, PatientDetailView } from './views/Patients';
-import { PatientMangementView } from './views/PatientManagement';
+import { PatientManagementView } from './views/PatientManagement';
 import { PrescriptionsView, PrescriptionDetailView } from './views/Prescriptions';
 import { PrescriptionManagementView } from './views/PrescriptionManagement';
 import { UserManagementView } from './views/UserManagement';
@@ -25,7 +25,7 @@ const App = () => {
                 <PrivateRoute exact path={RouteConstants.DashboardView} component={DashboardView} />
                 <PrivateRoute exact path={RouteConstants.PatientsView} component={PatientsView} />
                 <PrivateRoute exact path={RouteConstants.PatientDetailView} component={PatientDetailView} />
-                <PrivateRoute exact path={RouteConstants.PatientMangementView} component={PatientMangementView} />
+                <PrivateRoute exact path={RouteConstants.PatientManagementView} component={PatientManagementView} />
                 <PrivateRoute exact path={RouteConstants.PrescriptionsView} component={PrescriptionsView} />
                 <PrivateRoute exact path={RouteConstants.PrescriptionDetailView} component={PrescriptionDetailView} />
                 <PrivateRoute exact path={RouteConstants.PrescriptionManagementView} component={PrescriptionManagementView} />

@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ClinicAPI.Authorization;
+using ClinicAPI.ViewModels;
 using DAL;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -32,7 +34,25 @@ namespace ClinicAPI.Controllers
         {
             var histories = _unitOfWork.Histories.GetPatientHistories(patientId);
 
-            return Ok(histories);
+            var historyVMs = _mapper.Map<IEnumerable<HistoryFullViewModel>>(histories);
+            foreach (var history in histories)
+            {
+                foreach (var historyVM in historyVMs)
+                {
+                    if (history.Id == historyVM.Id)
+                    {
+                        var prescriptions = _mapper.Map<IEnumerable<PrescriptionViewModel>>(history.Prescriptions);
+                        var doctors = _mapper.Map<IEnumerable<DoctorPatientHistoryViewModel>>(history.Doctors);
+                        var xRayImages = _mapper.Map<IEnumerable<XRayViewModel>>(history.XRayImages);
+
+                        historyVM.Prescriptions = prescriptions;
+                        historyVM.Doctors = doctors;
+                        historyVM.XRayImages = xRayImages;
+                    }
+                }
+            }
+
+            return Ok(historyVMs);
         }
 
         [HttpGet("patient/current/{patientId}")]
@@ -49,7 +69,16 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(new[] { history, });
+            var historyVM = _mapper.Map<HistoryFullViewModel>(history);
+            var prescriptions = _mapper.Map<IEnumerable<PrescriptionViewModel>>(history.Prescriptions);
+            var doctors = _mapper.Map<IEnumerable<DoctorPatientHistoryViewModel>>(history.Doctors);
+            var xRayImages = _mapper.Map<IEnumerable<XRayViewModel>>(history.XRayImages);
+
+            historyVM.Prescriptions = prescriptions;
+            historyVM.Doctors = doctors;
+            historyVM.XRayImages = xRayImages;
+
+            return Ok(new[] { historyVM, });
         }
 
         [HttpGet("{id}")]
@@ -62,7 +91,15 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(new[] { history, });
+            var historyVM = _mapper.Map<HistoryFullViewModel>(history);
+            var doctors = _mapper.Map<IEnumerable<DoctorPatientHistoryViewModel>>(history.Doctors);
+            var xRayImages = _mapper.Map<IEnumerable<XRayViewModel>>(history.XRayImages);
+
+            historyVM.Doctors = doctors;
+            historyVM.XRayImages = xRayImages;
+
+
+            return Ok(new[] { historyVM, });
         }
     }
 }

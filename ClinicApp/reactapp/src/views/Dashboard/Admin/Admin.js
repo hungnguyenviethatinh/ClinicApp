@@ -20,7 +20,6 @@ import { SearchInput } from '../../../components/SearchInput';
 
 import Axios, {
     axiosRequestConfig,
-    // useInterval,
 } from '../../../common';
 import {
     GetAllPatientsUrl,
@@ -29,17 +28,14 @@ import {
     GetAllMedicinesUrl,
 } from '../../../config';
 import {
-    IdPrefix,
     Gender,
     PatientStatus,
     PrescriptionStatus,
     UserStatus,
     DrugStatus,
-    // RefreshDataTimer,
-    AddressSeperator,
     RouteConstants,
+    DisplayDateFormat,
 } from '../../../constants';
-import { encodeId, decodeId } from '../../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -60,12 +56,6 @@ const useStyles = makeStyles(theme => ({
 const patientQueueColumns = [
     {
         title: 'Mã BN', field: 'id',
-        // render: rowData =>
-        //     <Link
-        //         to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
-        //         children={
-        //             encodeId(rowData.id, IdPrefix.Patient)
-        //         } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
@@ -76,8 +66,6 @@ const patientQueueColumns = [
         title: 'Họ & Tên', field: 'fullName',
     },
     {
-        // title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
-        // render: rowData => moment(rowData.dateOfBirth).year(),
         title: 'Tuổi', field: 'age', type: 'numeric',
     },
     {
@@ -88,14 +76,7 @@ const patientQueueColumns = [
         title: 'Số ĐT', field: 'phoneNumber',
     },
     {
-        title: 'Email', field: 'email',
-    },
-    {
         title: 'Địa chỉ', field: 'address',
-        render: rowData => _.last(rowData.address.split(AddressSeperator)),
-    },
-    {
-        title: 'Nghề nghiệp', field: 'job',
     },
     {
         title: 'Trạng thái', field: 'status',
@@ -120,16 +101,6 @@ const patientQueueColumns = [
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
-        // render: rowData =>
-        //     <Link
-        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-        //         children={
-        //             encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-        //         } />,
-        // render: rowData =>
-        //     <Link
-        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-        //         children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
@@ -142,6 +113,10 @@ const prescriptionColumns = [
     {
         title: 'Bệnh nhân', field: 'patientId',
         render: rowData => rowData.patient.fullName,
+    },
+    {
+        title: 'Ngày kê đơn', field: 'dateCreated', type: 'date',
+        render: rowData => moment(rowData.dateCreated).format(DisplayDateFormat),
     },
     {
         title: 'Trạng thái', field: 'status',
@@ -165,9 +140,6 @@ const employeeColumns = [
     {
         title: 'Số ĐT', field: 'phoneNumber',
     },
-    // {
-    //     title: 'Email', field: 'email',
-    // },
     {
         title: 'Thông tin khác', field: 'additionalInfo',
     },
@@ -262,33 +234,6 @@ const AdminView = () => {
         medicineTableRef.current && medicineTableRef.current.onQueryChange();
     };
 
-    // const [countPatientTable, setCountPatientTable] = React.useState(0);
-    // const [countPrescriptionTable, setCountPrescriptionTable] = React.useState(0);
-    // const [countEmployeeTable, setCountEmployeeTable] = React.useState(0);
-    // const [countMedicineTable, setCountMedicineTable] = React.useState(0);
-    // useInterval(() => {
-    //     if (countPatientTable > 0 && countPatientTable < RefreshDataTimer) {
-    //         setCountPatientTable(countPatientTable + 1);
-    //     } else {
-    //         refreshPatientData();
-    //     }
-    //     if (countPrescriptionTable > 0 && countPrescriptionTable < RefreshDataTimer) {
-    //         setCountPrescriptionTable(countPrescriptionTable + 1);
-    //     } else {
-    //         refreshPrescriptionData();
-    //     }
-    //     if (countEmployeeTable > 0 && countEmployeeTable < RefreshDataTimer) {
-    //         setCountEmployeeTable(countEmployeeTable + 1);
-    //     } else {
-    //         refreshEmployeeData();
-    //     }
-    //     if (countMedicineTable > 0 && countMedicineTable < RefreshDataTimer) {
-    //         setCountMedicineTable(countMedicineTable + 1);
-    //     } else {
-    //         refreshMedicineData();
-    //     }
-    // }, 1000);
-
     const [patientSearchValue, setPatientSearchValue] = React.useState('');
     const [prescriptionSearchValue, setPrescriptionSearchValue] = React.useState('');
     const [employeeSearchValue, setEmployeeSearchValue] = React.useState('');
@@ -332,11 +277,6 @@ const AdminView = () => {
     };
 
     const getPatients = (resolve, reject, query) => {
-        // let value = patientSearchValue.toLowerCase();
-        // const prefix = IdPrefix.Patient.toLowerCase();
-        // if (value.startsWith(prefix)) {
-        //     value = decodeId(value, prefix);
-        // }
         Axios.get(GetAllPatientsUrl, {
             ...config,
             params: {
@@ -356,19 +296,12 @@ const AdminView = () => {
                     totalCount,
                 });
             }
-            // setCountPatientTable(1);
         }).catch((reason) => {
             handleError(reason, getPatientLogMsgHeader);
-            // setCountPatientTable(1);
         });
     };
 
     const getPrescriptions = (resolve, reject, query) => {
-        // let value = prescriptionSearchValue.toLowerCase();
-        // const prefix = `${IdPrefix.Prescription}${IdPrefix.Patient}`.toLowerCase();
-        // if (value.startsWith(prefix)) {
-        //     value = decodeId(value, prefix);
-        // }
         Axios.get(GetAllPrescriptionsUrl, {
             ...config,
             params: {
@@ -388,15 +321,12 @@ const AdminView = () => {
                     totalCount,
                 });
             }
-            // setCountPrescriptionTable(1);
         }).catch((reason) => {
             handleError(reason, getPrescriptionLogMsgHeader);
-            // setCountPrescriptionTable(1);
         });
     };
 
     const getEmployees = (resolve, reject, query) => {
-        // let value = employeeSearchValue;
         Axios.get(GetAllEmployeesUrl, {
             ...config,
             params: {
@@ -416,10 +346,8 @@ const AdminView = () => {
                     totalCount,
                 });
             }
-            // setCountEmployeeTable(1);
         }).catch((reason) => {
             handleError(reason, getEmployeeLogMsfHeader);
-            // setCountEmployeeTable(1);
         });
     };
 
@@ -446,10 +374,8 @@ const AdminView = () => {
                     totalCount,
                 });
             }
-            // setCountMedicineTable(1);
         }).catch((reason) => {
             handleError(reason, getMedicineLogMsfHeader);
-            // setCountMedicineTable(1);
         });
     };
 

@@ -8,10 +8,8 @@ import {
     Grid,
     Paper,
     Typography,
-    // FormControl
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-// import { DateTimePicker } from '@material-ui/pickers';
 import moment from 'moment';
 
 import { Table } from '../../components/Table';
@@ -23,19 +21,16 @@ import { HistoryButton as Back, Button } from '../../components/Button';
 import {
     PatientStatus,
     ExpiredSessionMsg,
-    // NotFoundMsg,
-    DisplayDateTimeFormat,
-    // DisplayDateFormat,
-    // AddressSeperator,
+    NotFoundMsg,
+    DisplayDateFormat,
     Gender,
     RouteConstants,
     RoleConstants,
     AccessTokenKey,
-    // IdPrefix,
 } from '../../constants';
 import Axios, {
     axiosRequestConfig,
-    chromely,
+    ChromeLyService,
     verifyJWT,
 } from '../../common';
 import {
@@ -44,7 +39,6 @@ import {
     PatientCurrentHistoryUrl,
     PatientPrintUrl,
 } from '../../config';
-// import { encodeId } from '../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -67,15 +61,9 @@ const useStyles = makeStyles(theme => ({
 
 const historyColumns = [
     {
-        // title: 'Ngày khám', field: 'createdDate', type: 'date',
-        // render: rowData => moment(rowData.createdDate).format(DisplayDateTimeFormat),
-        title: 'Ngày khám', field: 'updatedDate', type: 'datetime',
-        render: rowData => moment(rowData.updatedDate).format(DisplayDateTimeFormat),
+        title: 'Ngày khám', field: 'checkedDate', type: 'date',
+        render: rowData => moment(rowData.checkedDate).format(DisplayDateFormat),
     },
-    // {
-    //     title: 'Bác sĩ khám', field: 'doctorId',
-    //     render: rowData => rowData.doctor.fullName,
-    // },
     {
         title: 'Trạng thái', field: 'isChecked',
         render: rowData => {
@@ -85,7 +73,7 @@ const historyColumns = [
     },
 ];
 
-const tabNames = ['Thông tin bệnh nhân', 'Lịch sử khám bệnh']; // , 'Tra cứu lịch hẹn'];
+const tabNames = ['Thông tin bệnh nhân', 'Lịch sử khám bệnh'];
 
 const getPatientByIdError = '[Get Patient By Id Error]';
 const getPatientHistoryError = '[Get Patient History Error]';
@@ -126,9 +114,9 @@ const Patient = () => {
             if (status === 401) {
                 handleSnackbarOption('error', ExpiredSessionMsg);
             } else {
-                // if (status === 404) {
-                //     handleSnackbarOption('error', NotFoundMsg);
-                // }
+                if (status === 404) {
+                    handleSnackbarOption('error', NotFoundMsg);
+                }
             }
         }
         console.log(`${logMsgHeader}`, reason);
@@ -139,7 +127,6 @@ const Patient = () => {
         IdCode: '',
         OrderNumber: '',
         FullName: '',
-        // DateOfBirth: null,
         Age: '',
         Gender: '',
         Address: '',
@@ -148,7 +135,6 @@ const Patient = () => {
         RelativePhoneNumber: '',
         Email: '',
         AppointmentDate: null,
-        // Status: PatientStatus.IsNew,
         Status: '',
     });
 
@@ -161,35 +147,27 @@ const Patient = () => {
                     idCode,
                     orderNumber,
                     fullName,
-                    // dateOfBirth,
                     age,
                     gender,
                     address,
-                    // job,
                     phoneNumber,
                     relativePhoneNumber,
-                    // email,
                     appointmentDate,
                     status,
                 } = data[0];
 
-                const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
-                // const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).format(DisplayDateFormat) : null;
-                // const Address = address.split(AddressSeperator).filter(value => value.trim() !== '').join(`${AddressSeperator} `);
+                const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate).format(DisplayDateFormat) : null;
 
                 setPatient({
                     Id: data[0].id,
                     IdCode: idCode,
                     OrderNumber: orderNumber,
                     FullName: fullName,
-                    // DateOfBirth,
                     Age: age,
                     Gender: [Gender.None, Gender.Male, Gender.Female][gender],
                     Address: address,
-                    // Job: job,
                     PhoneNumber: phoneNumber,
                     RelativePhoneNumber: relativePhoneNumber,
-                    // Email: email,
                     AppointmentDate,
                     Status: [
                         PatientStatus.IsNew,
@@ -209,7 +187,7 @@ const Patient = () => {
         Id: 0,
         Height: '',
         Weight: '',
-        BloodPresure: '',
+        BloodPressure: '',
         Pulse: '',
         Other: '',
         Note: '',
@@ -224,7 +202,7 @@ const Patient = () => {
                 const {
                     height,
                     weight,
-                    bloodPresure,
+                    bloodPressure,
                     pulse,
                     other,
                     note,
@@ -236,7 +214,7 @@ const Patient = () => {
                     Id: data[0].id,
                     Height: height,
                     Weight: weight,
-                    BloodPresure: bloodPresure,
+                    BloodPressure: bloodPressure,
                     Pulse: pulse,
                     Other: other,
                     Note: note,
@@ -276,7 +254,7 @@ const Patient = () => {
     const [loading, setLoading] = React.useState(false);
     const handleUpdate = () => {
         const queryParams = `?pId=${patient.Id}&hId=${history.Id}`;
-        const redirectUrl = RouteConstants.PatientMangementView + queryParams;
+        const redirectUrl = RouteConstants.PatientManagementView + queryParams;
         browserHistory.push(redirectUrl);
     };
     const handlePrint = () => {
@@ -299,13 +277,13 @@ const Patient = () => {
         const {
             Height,
             Weight,
-            BloodPresure,
+            BloodPressure,
             Pulse,
             Other,
             Note,
         } = history;
 
-        const AppointmentDate = moment(patient.AppointmentDate).isValid() ? patient.AppointmentDate.format(DisplayDateTimeFormat) : null;
+        const AppointmentDate = moment(patient.AppointmentDate).isValid() ? patient.AppointmentDate.format(DisplayDateFormat) : null;
         const Doctors = [];
         if (!_.isEmpty(history.Doctors)) {
             history.Doctors.map(({ doctor }) => Doctors.push({
@@ -326,7 +304,7 @@ const Patient = () => {
             Status,
             Height,
             Weight,
-            BloodPresure,
+            BloodPressure,
             Pulse,
             Other,
             Note,
@@ -335,7 +313,7 @@ const Patient = () => {
 
         console.log(JSON.parse(data));
 
-        chromely.post(PatientPrintUrl, null, data, response => {
+        ChromeLyService.post(PatientPrintUrl, null, data, response => {
             const { ResponseText } = response;
             const { ReadyState, Status, Data } = JSON.parse(ResponseText);
             if (ReadyState === 4 && Status === 200) {
@@ -359,14 +337,13 @@ const Patient = () => {
         verifyJWT(token, RoleConstants.ReceptionistRoleName) && setCanEditOrPrint(true);
     };
 
-
     const getDetailPanel = (rowData) => {
         const {
             id,
             patientId,
             height,
             weight,
-            bloodPresure,
+            bloodPressure,
             pulse,
             other,
             note,
@@ -375,9 +352,9 @@ const Patient = () => {
             xRayImages,
         } = rowData;
 
-        const handleUpdateHistory = () => {
+        const handleHistoryCopy = () => {
             const queryParams = `?pId=${patientId}&hId=${id}`;
-            const redirectUrl = RouteConstants.PatientMangementView + queryParams;
+            const redirectUrl = RouteConstants.PatientManagementView + queryParams;
             browserHistory.push(redirectUrl);
         };
 
@@ -395,9 +372,9 @@ const Patient = () => {
                             <Button
                                 fullWidth
                                 color="info"
-                                children="Sửa"
+                                children="Sao chép"
                                 iconName="edit"
-                                onClick={handleUpdateHistory}
+                                onClick={handleHistoryCopy}
                             />
                         </Grid>
                     </Grid>
@@ -455,7 +432,7 @@ const Patient = () => {
                         <Typography
                             variant="h6"
                             component="h6"
-                            children={`${bloodPresure} lần/phút`}
+                            children={`${bloodPressure} lần/phút`}
                             style={{ fontWeight: 600 }}
                         />
                     </Grid>
@@ -591,14 +568,6 @@ const Patient = () => {
                                 {
                                     prescriptions.map((prescription, index) => (
                                         <Grid key={index} item>
-                                            {/* <Link
-                                            to={`${RouteConstants.PrescriptionDetailView.replace(':id', prescription.id)}`}
-                                            children={
-                                                encodeId(prescription.id, `${IdPrefix.Prescription}`)
-                                            } /> */}
-                                            {/* <Link
-                                            to={`${RouteConstants.PrescriptionDetailView.replace(':id', prescription.id)}`}
-                                            children={`${prescription.patient.idCode}${prescription.patient.id}${prescription.idCode}${prescription.id}`} />, */}
                                             <Link
                                                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', prescription.id)}`}
                                                 children={`${prescription.idCode}${prescription.id}`} />,
@@ -776,21 +745,6 @@ const Patient = () => {
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
-                                            {/* <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
-                                                <Typography
-                                                    variant="body1"
-                                                    component="p"
-                                                    children="Nghề nghiệp:"
-                                                />
-                                            </Grid>
-                                            <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
-                                                <Typography
-                                                    variant="h6"
-                                                    component="h6"
-                                                    children={`${patient.Job}`}
-                                                    style={{ fontWeight: 600 }}
-                                                />
-                                            </Grid> */}
                                             <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                                 <Typography
                                                     variant="body1"
@@ -806,21 +760,6 @@ const Patient = () => {
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
-                                            {/* <Grid item xs={6} sm={6} md={2} lg={2} xl={2}>
-                                                <Typography
-                                                    variant="body1"
-                                                    component="p"
-                                                    children="Email:"
-                                                />
-                                            </Grid>
-                                            <Grid item xs={6} sm={6} md={3} lg={3} xl={3}>
-                                                <Typography
-                                                    variant="h6"
-                                                    component="h6"
-                                                    children={`${patient.Email}`}
-                                                    style={{ fontWeight: 600 }}
-                                                />
-                                            </Grid> */}
                                             <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
                                                 <Typography
                                                     variant="body1"
@@ -833,6 +772,21 @@ const Patient = () => {
                                                     variant="h6"
                                                     component="h6"
                                                     children={`${patient.RelativePhoneNumber}`}
+                                                    style={{ fontWeight: 600 }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={4} lg={4} xl={4}>
+                                                <Typography
+                                                    variant="body1"
+                                                    component="p"
+                                                    children="Ngày hẹn khám (nếu có):"
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
+                                                <Typography
+                                                    variant="h6"
+                                                    component="h6"
+                                                    children={`${_.toString(patient.AppointmentDate)}`}
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
@@ -893,7 +847,7 @@ const Patient = () => {
                                                             <Typography
                                                                 variant="h6"
                                                                 component="h6"
-                                                                children={`${history.BloodPresure} lần/phút`}
+                                                                children={`${history.BloodPressure} lần/phút`}
                                                                 style={{ fontWeight: 600 }}
                                                             />
                                                         </Grid>
@@ -1017,41 +971,6 @@ const Patient = () => {
                                     </Grid>
                                 </Grid>
                             </TabContent>
-                            {/* <TabContent value={tabValue} index={2}>
-                                <Grid
-                                    container
-                                    spacing={3}
-                                    justify="center"
-                                    alignItems="center"
-                                >
-                                    {
-                                        patient.AppointmentDate ?
-                                            <Grid item>
-                                                <FormControl
-                                                    fullWidth
-                                                >
-                                                    <DateTimePicker
-                                                        variant="static"
-                                                        label="Lịch hẹn"
-                                                        value={patient.AppointmentDate}
-                                                    />
-                                                </FormControl>
-                                            </Grid>
-                                            :
-                                            <Grid
-                                                item
-                                                xs={12} sm={12} md={12} lg={12} xl={12}
-                                                style={{ paddingLeft: 0, paddingRight: 0 }}
-                                            >
-                                                <Typography
-                                                    variant="body1"
-                                                    component="p"
-                                                    children="KHÔNG CÓ LỊCH HẸN NÀO"
-                                                />
-                                            </Grid>
-                                    }
-                                </Grid>
-                            </TabContent> */}
                         </Tab>
                     </CardContent>
                 </Card>

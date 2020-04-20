@@ -20,8 +20,7 @@ import { HistoryButton as Back } from '../../components/Button';
 
 import Axios, {
     axiosRequestConfig,
-    chromely,
-    verifyJWT,
+    ChromeLyService,
 } from '../../common';
 import {
     PrescriptionUrl,
@@ -34,10 +33,8 @@ import {
     NotFoundMsg,
     Gender,
     DisplayDateFormat,
-    DisplayDateTimeFormat,
+    DisplayDateFormat,
     PrescriptionStatus,
-    AccessTokenKey,
-    RoleConstants,
     takePeriodValue,
 } from '../../constants';
 
@@ -69,20 +66,14 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-// const encodeId = (id) => {
-//     return `${_.padStart(_.toString(id), 4, '0')}`;
-// };
-
-const numberCommaSplit = (number) => {
-    return _.toString(number).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
-
 const getPrescriptionError = '[Get Prescription Error]';
 const getOpenTimesError = '[Get Open Times Error]';
 const updatePrescriptionError = '[Update Prescription Error]';
 
 const Prescription = () => {
     const classes = useStyles();
+    const config = axiosRequestConfig();
+
     const { id } = useParams();
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
@@ -127,7 +118,6 @@ const Prescription = () => {
         IdCode: '',
         Id: '',
         FullName: '',
-        // DateOfBirth: '',
         Age: '',
         Gender: '',
         Address: '',
@@ -173,7 +163,7 @@ const Prescription = () => {
         setDisabled(true);
         setLoading(true);
 
-        chromely.post(PrescriptionPrintUrl, null, data, response => {
+        ChromeLyService.post(PrescriptionPrintUrl, null, data, response => {
             const { ResponseText } = response;
             const { ReadyState, Status, Data } = JSON.parse(ResponseText);
             if (ReadyState === 4 && Status === 200) {
@@ -192,9 +182,6 @@ const Prescription = () => {
         });
     };
 
-    const config = axiosRequestConfig();
-
-    const [totalPayment, setTotalPayment] = React.useState(0);
     const getPrescription = () => {
         setDisabled(true);
         const url = `${PrescriptionUrl}/${id}`;
@@ -214,7 +201,6 @@ const Prescription = () => {
 
                 const {
                     fullName,
-                    // dateOfBirth,
                     age,
                     gender,
                     address,
@@ -224,13 +210,11 @@ const Prescription = () => {
 
                 const AppointmentDate =
                     (moment(appointmentDate).isValid() && moment(appointmentDate) >= moment()) ?
-                        moment(appointmentDate).format(DisplayDateTimeFormat) : null;
-                // const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth).year() : null;
+                        moment(appointmentDate).format(DisplayDateFormat) : null;
                 setPatient({
                     IdCode: data[0].patient.idCode,
                     Id: data[0].patient.id,
                     FullName: fullName,
-                    // DateOfBirth,
                     Age: age,
                     Gender: [Gender.None, Gender.Male, Gender.Female][gender],
                     Address: address,
@@ -238,7 +222,6 @@ const Prescription = () => {
                     AppointmentDate,
                 });
 
-                let total = 0;
                 const ms = [];
                 data[0].medicines.map((m) => {
                     const {
@@ -258,7 +241,6 @@ const Prescription = () => {
                         afterDinner,
                         note,
                     } = m;
-                    total += m.price;
                     ms.push({
                         MedicineName: medicine.name,
                         Ingredient: ingredient,
@@ -277,7 +259,6 @@ const Prescription = () => {
                         Note: note,
                     });
                 });
-                setTotalPayment(total);
                 setMedicines(ms);
             }
             setDisabled(false);
@@ -305,7 +286,6 @@ const Prescription = () => {
         Axios.get(url, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                // handleSnackbarOption('success', `Đã cập nhật trạng thái đơn thuốc thành ${PrescriptionStatus.IsPrinted}!`);
                 console.log(`Đã cập nhật trạng thái đơn thuốc thành ${PrescriptionStatus.IsPrinted}!`);
             } else {
                 console.log(response);
@@ -319,14 +299,7 @@ const Prescription = () => {
         });
     };
 
-    // const [canPrint, setCanPrint] = React.useState(false);
-    // const checkCanPrint = () => {
-    //     const token = localStorage.getItem(AccessTokenKey);
-    //     verifyJWT(token, RoleConstants.ReceptionistRoleName) && setCanPrint(true);
-    // };
-
     React.useEffect(() => {
-        // checkCanPrint();
         getPrescription();
         getOpenTimes();
     }, []);
@@ -348,9 +321,6 @@ const Prescription = () => {
                 >
                     <CardHeader
                         action={
-                            // <React.Fragment>
-                            //     {
-                            //         canPrint &&
                             <Button
                                 color="warning"
                                 disabled={disabled}
@@ -359,8 +329,6 @@ const Prescription = () => {
                                 iconName="print"
                                 onClick={handlePrint}
                             />
-                            //     }
-                            // </React.Fragment>
                         }
                         title="ĐƠN THUỐC"
                         subheader="Xem chi tiết thuốc và in"
@@ -504,7 +472,6 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="body1"
-                                        // children="Năm sinh:"
                                         children="Tuổi:"
                                     />
                                 </Grid>
@@ -512,7 +479,6 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="h5"
-                                        // children={`${patient.DateOfBirth}`}
                                         children={`${patient.Age}`}
                                     />
                                 </Grid>
@@ -705,35 +671,9 @@ const Prescription = () => {
                                                                 style={{ fontStyle: 'italic' }}
                                                             />
                                                         </Grid>
-                                                        {/* {
-                                                            canPrint &&
-                                                            <React.Fragment>
-                                                                <Grid item xs={12} sm={12} md={1} lg={1} xl={1}></Grid>
-                                                                <Grid item xs={12} sm={12} md={11} lg={11} xl={11}>
-                                                                    <Typography
-                                                                        component="p"
-                                                                        variant="subtitle1"
-                                                                        children={`Giá: ${numberCommaSplit(m.Price)} đồng`}
-                                                                        style={{ fontStyle: 'italic' }}
-                                                                    />
-                                                                </Grid>
-                                                            </React.Fragment>
-                                                        } */}
                                                     </React.Fragment>
                                                 ))
                                             }
-                                            {/* <Divider />
-                                            {
-                                                canPrint &&
-                                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                    <Typography
-                                                        component="p"
-                                                        variant="subtitle1"
-                                                        children={`Tổng tiền thanh toán: ${numberCommaSplit(totalPayment)} đồng.`}
-                                                        style={{ fontStyle: 'italic' }}
-                                                    />
-                                                </Grid>
-                                            } */}
                                         </Grid>
                                     </div>
                                 </Grid>

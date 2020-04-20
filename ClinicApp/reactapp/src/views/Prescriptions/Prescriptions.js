@@ -17,7 +17,6 @@ import { SearchInput } from '../../components/SearchInput';
 
 import {
     PrescriptionStatus,
-    IdPrefix,
     DisplayDateFormat,
     RouteConstants,
 } from '../../constants';
@@ -25,7 +24,6 @@ import { GetPrescriptionsUrl } from '../../config';
 import Axios, {
     axiosRequestConfig,
 } from '../../common';
-import { encodeId, decodeId } from '../../utils';
 import moment from 'moment';
 
 const useStyles = makeStyles(theme => ({
@@ -47,16 +45,6 @@ const useStyles = makeStyles(theme => ({
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
-        // render: rowData =>
-        // <Link
-        //     to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-        //     children={
-        //         encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-        //     } />,
-        // render: rowData =>
-        //     <Link
-        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-        //         children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`} />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
@@ -68,7 +56,6 @@ const prescriptionColumns = [
     },
     {
         title: 'Bệnh nhân', field: 'patientId',
-        // render: rowData => rowData.patient.fullName,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PatientDetailView.replace(':id', rowData.patientId)}`}
@@ -76,8 +63,8 @@ const prescriptionColumns = [
             />,
     },
     {
-        title: 'Ngày kê đơn', field: 'updatedDate',
-        render: rowData => moment(rowData.updatedDate).format(DisplayDateFormat),
+        title: 'Ngày kê đơn', field: 'dateCreated', type: 'date',
+        render: rowData => moment(rowData.dateCreated).format(DisplayDateFormat),
     },
     {
         title: 'Trạng thái', field: 'status',
@@ -112,12 +99,6 @@ const Prescriptions = () => {
     const config = axiosRequestConfig();
 
     const getPrescriptions = (resolve, reject, query) => {
-        // let value = searchValue.toLowerCase();
-        // const prefix = `${IdPrefix.Prescription}${IdPrefix.Patient}`.toLowerCase();
-        // if (value.startsWith(prefix)) {
-        //     value = decodeId(value, prefix);
-        // }
-
         Axios.get(GetPrescriptionsUrl, {
             ...config,
             params: {

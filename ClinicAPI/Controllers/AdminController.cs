@@ -46,14 +46,11 @@ namespace ClinicAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                //int.TryParse(query, out int id);
-
                 patients = patients
-                    .Where(p => (
-                        //p.Id == id ||
-                        ($"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase)) ||
+                    .Where(p =>
+                        $"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase) ||
                         p.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                        p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase)))
+                        p.PhoneNumber.Contains(query, StringComparison.OrdinalIgnoreCase))
                     .OrderByDescending(p => p.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
@@ -66,12 +63,26 @@ namespace ClinicAPI.Controllers
                     .Take(pageSize);
             }
 
+            var patientVMs = _mapper.Map<IEnumerable<PatientViewModel>>(patients);
+            foreach (var patient in patients)
+            {
+                foreach (var patientVM in patientVMs)
+                {
+                    if (patient.Id == patientVM.Id)
+                    {
+                        var dphVMs = _mapper.Map<IEnumerable<DoctorPatientHistoryViewModel>>(patient.Doctors);
+                        patientVM.Doctors = dphVMs;
+                        break;
+                    }
+                }
+            }
+
             return Ok(new[]
             {
                 new
                 {
                     totalCount,
-                    patients,
+                    patients = patientVMs,
                 },
             });
         }
@@ -85,12 +96,9 @@ namespace ClinicAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(query))
             {
-                //int.TryParse(query, out int id);
-
                 prescriptions = prescriptions
                     .Where(p =>
-                        //p.PatientId == id ||
-                        (query.Contains($"{p.IdCode}{p.Id}", StringComparison.OrdinalIgnoreCase)) ||
+                        query.Contains($"{p.IdCode}{p.Id}", StringComparison.OrdinalIgnoreCase) ||
                         p.Patient.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.Doctor.FullName.Contains(query, StringComparison.OrdinalIgnoreCase))
                     .OrderByDescending(p => p.Id)
@@ -105,12 +113,14 @@ namespace ClinicAPI.Controllers
                     .Take(pageSize);
             }
 
+            var prescriptionVMs = _mapper.Map<IEnumerable<PrescriptionViewModel>>(prescriptions);
+
             return Ok(new[]
             {
                 new
                 {
                     totalCount,
-                    prescriptions,
+                    prescriptions = prescriptionVMs,
                 },
             });
         }

@@ -12,4 +12,9 @@ namespace ClinicAPI.ViewModels
 
         public int PatientId { get; set; }
     }
+
+    public class XRayViewModel : XRayModel
+    {
+
+    }
 }

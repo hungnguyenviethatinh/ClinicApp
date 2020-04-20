@@ -1,4 +1,6 @@
 ﻿using DAL.Core;
+using System;
+using System.Collections.Generic;
 
 namespace ClinicAPI.ViewModels
 {
@@ -9,10 +11,32 @@ namespace ClinicAPI.ViewModels
         public string OtherDiagnosis { get; set; }
         public string Note { get; set; }
         public PrescriptionStatus Status { get; set; }
+        public DateTime? DateCreated { get; set; }
 
         public int PatientId { get; set; }
-        //public string DoctorId { get; set; }
         public int HistoryId { get; set; }
+    }
+
+    public class PrescriptionViewModel : PrescriptionModel
+    {
+        public int Id { get; set; }
+        public PatientBasicViewModel Patient { get; set; }
+        public DoctorViewModel Doctor { get; set; }
+    }
+
+    public class PrescriptionPartialViewModel : PrescriptionFullViewModel
+    {
+        public new PatientPartialViewModel Patient { get; set; }
+    }
+
+    public class PrescriptionFullViewModel : PrescriptionViewModel
+    {
+        public IEnumerable<PrescriptionMedicineViewModel> Medicines { get; set; }
+    }
+
+    public class PrescriptionMedicineViewModel : PrescriptionMedicineModel
+    {
+        public MedicinePartialViewModel Medicine { get; set; }
     }
 
     public class PrescriptionMedicineModel
@@ -24,7 +48,6 @@ namespace ClinicAPI.ViewModels
         public string NetWeight { get; set; }
         public int? Quantity { get; set; }
         public string Unit { get; set; }
-        //public decimal Price { get; set; }
 
         public string TakePeriod { get; set; }
         public string TakeMethod { get; set; }

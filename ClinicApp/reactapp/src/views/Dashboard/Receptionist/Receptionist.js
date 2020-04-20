@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import {
     Card,
@@ -9,6 +9,7 @@ import {
     Grid,
     Typography,
 } from '@material-ui/core';
+
 import clsx from 'clsx';
 import moment from 'moment';
 
@@ -16,28 +17,25 @@ import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';
 import { Snackbar } from '../../../components/Snackbar';
 import { RefreshButton } from '../../../components/Button';
+import { ActionOption } from '../../../components/ActionOption';
+import { DeleteConfirm } from '../../../components/DeleteConfirm';
 
 import {
     GetPatientInQueueUrl,
     GetPrescriptionsInQueueUrl,
+    DeletePatientUrl,
 } from '../../../config';
 import Axios, {
     axiosRequestConfig,
-    useInterval,
 } from '../../../common';
 import {
     ExpiredSessionMsg,
     Gender,
     PatientStatus,
     PrescriptionStatus,
-    // IdPrefix,
-    RefreshDataTimer,
     RouteConstants,
-    AddressSeperator,
-    DisplayDateTimeFormat,
     DisplayDateFormat,
 } from '../../../constants';
-// import { encodeId } from '../../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -57,7 +55,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
     },
     fullHeight: {
-        // height: '100%',
+        height: 'auto',
     }
 }));
 
@@ -81,12 +79,6 @@ const patientQueueColumns = [
     },
     {
         title: 'Mã BN', field: 'id',
-        // render: rowData =>
-        //     <Link
-        //         to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
-        //         children={
-        //             encodeId(rowData.id, IdPrefix.Patient)
-        //         } />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
@@ -97,24 +89,17 @@ const patientQueueColumns = [
         title: 'Họ & Tên', field: 'fullName',
     },
     {
-        // title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
-        // render: rowData => moment(rowData.dateOfBirth).year(),
         title: 'Tuổi', field: 'age', type: 'numeric',
     },
     {
         title: 'Giới tính', field: 'gender', type: 'numeric',
         render: rowData => [Gender.None, Gender.Male, Gender.Female][rowData.gender],
     },
-    // {
-    //     title: 'Bác sĩ khám', field: 'doctorId',
-    //     render: rowData => rowData.doctor.fullName,
-    // },
     {
         title: 'Số ĐT', field: 'phoneNumber',
     },
     {
         title: 'Địa chỉ', field: 'address',
-        // render: rowData => _.last(rowData.address.split(AddressSeperator)),
     },
     {
         title: 'Trạng thái', field: 'status',
@@ -139,17 +124,6 @@ const patientQueueColumns = [
 const prescriptionColumns = [
     {
         title: 'Mã ĐT', field: 'id',
-        // render: rowData =>
-        //     <Link
-        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-        //         children={
-        //             encodeId(rowData.patientId, `${IdPrefix.Prescription}${IdPrefix.Patient}`)
-        //         } />,
-        // render: rowData =>
-        //     <Link
-        //         to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
-        //         children={`${rowData.patient.idCode}${rowData.patient.id}${rowData.idCode}${rowData.id}`}
-        //     />,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PrescriptionDetailView.replace(':id', rowData.id)}`}
@@ -162,7 +136,6 @@ const prescriptionColumns = [
     },
     {
         title: 'Bệnh nhân', field: 'patientId',
-        // render: rowData => rowData.patient.fullName,
         render: rowData =>
             <Link
                 to={`${RouteConstants.PatientDetailView.replace(':id', rowData.patientId)}`}
@@ -183,9 +156,13 @@ const prescriptionColumns = [
 
 const getPatientLogMsgHeader = '[Get Patients Error]';
 const getPrescriptionLogMsgHeader = '[Get Prescriptions Error]';
+const deletePatientLogMsgHeader = '[Delete Patient Response] ';
 
 const ReceptionistView = () => {
     const classes = useStyles();
+    const config = axiosRequestConfig();
+    const browserHistory = useHistory();
+
     let patientTableRef = React.createRef();
     let prescriptionTableRef = React.createRef();
 
@@ -195,21 +172,6 @@ const ReceptionistView = () => {
     const refreshPrescriptionData = () => {
         prescriptionTableRef.current && prescriptionTableRef.current.onQueryChange();
     };
-
-    // const [countPatientTable, setCountPatientTable] = React.useState(0);
-    // const [countPrescriptionTable, setCountPrescriptionTable] = React.useState(0);
-    // useInterval(() => {
-    //     if (countPatientTable > 0 && countPatientTable < RefreshDataTimer) {
-    //         setCountPatientTable(countPatientTable + 1);
-    //     } else {
-    //         refreshPatientData();
-    //     }
-    //     if (countPrescriptionTable > 0 && countPrescriptionTable < RefreshDataTimer) {
-    //         setCountPrescriptionTable(countPrescriptionTable + 1);
-    //     } else {
-    //         refreshPrescriptionData();
-    //     }
-    // }, 1000);
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
     const handleSnackbarClose = (event, reason) => {
@@ -242,7 +204,61 @@ const ReceptionistView = () => {
         console.log(`${logMsgHeader}`, reason);
     };
 
-    const config = axiosRequestConfig();
+    const [openDeleteConfirm, setOpenDeleteConfirm] = React.useState(false);
+    const [openActionOption, setOpenActionOption] = React.useState(false);
+    const onOpenDeleteConfirm = () => {
+        setOpenActionOption(false);
+        setOpenDeleteConfirm(true);
+    };
+    const handleCloseDeleteConfirm = () => {
+        setSelectedRow(null);
+        setOpenDeleteConfirm(false);
+    };
+    const handleCloseActionOption = () => {
+        setSelectedRow(null);
+        setOpenActionOption(false);
+    };
+
+    const [selectedRow, setSelectedRow] = React.useState(null);
+    const handleSelectRow = (event, rowData) => {
+        if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
+            setSelectedRow(rowData);
+        } else {
+            setSelectedRow(null);
+        }
+    };
+
+    const handleUpdate = () => {
+        const { id } = selectedRow;
+        const queryParams = `?pId=${id}&hId=0`;
+        const redirectUrl = RouteConstants.PatientManagementView + queryParams;
+        browserHistory.push(redirectUrl);
+    };
+
+    const handleDelete = () => {
+        const { id } = selectedRow;
+        deletePatient(id);
+
+        setOpenDeleteConfirm(false);
+    };
+
+    const deletePatient = (id) => {
+        const url = `${DeletePatientUrl}/${id}`;
+        Axios.delete(url, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Xóa bệnh nhân thành công.');
+                refreshPatientData();
+                setSelectedRow(null);
+            } else {
+                handleError(deletePatientLogMsgHeader, response);
+                handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
+            }
+        }).catch((reason) => {
+            handleError(deletePatientLogMsgHeader, reason);
+            handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
+        });
+    };
 
     const getPatientsInQueue = (resolve, reject, query) => {
         Axios.get(GetPatientInQueueUrl, config).then((response) => {
@@ -256,10 +272,8 @@ const ReceptionistView = () => {
                     totalCount,
                 });
             }
-            // setCountPatientTable(1);
         }).catch((reason) => {
             handleError(reason, getPatientLogMsgHeader);
-            // setCountPatientTable(1);
         });
     };
 
@@ -275,10 +289,8 @@ const ReceptionistView = () => {
                     totalCount,
                 });
             }
-            // setCountPrescriptionTable(1);
         }).catch((reason) => {
             handleError(reason, getPrescriptionLogMsgHeader);
-            // setCountPrescriptionTable(1);
         });
     };
 
@@ -314,7 +326,6 @@ const ReceptionistView = () => {
             <Grid
                 item
                 xs={12} sm={12} md={12} lg={12} xl={12}
-            // className={classes.fullHeight}
             >
                 <Card
                     className={clsx(classes.card, classes.fullHeight)}
@@ -342,6 +353,8 @@ const ReceptionistView = () => {
                                     getPatientsInQueue(resolve, reject, query);
                                 })
                             }
+                            onRowClick={handleSelectRow}
+                            selectedRow={selectedRow}
                         />
                     </CardContent>
                 </Card>
@@ -349,7 +362,6 @@ const ReceptionistView = () => {
             <Grid
                 item
                 xs={12} sm={12} md={12} lg={12} xl={12}
-            // className={classes.fullHeight} 
             >
                 <Card
                     className={clsx(classes.card, classes.fullHeight)}
@@ -380,6 +392,17 @@ const ReceptionistView = () => {
                     </CardContent>
                 </Card>
             </Grid>
+            <DeleteConfirm
+                open={openDeleteConfirm}
+                handleClose={handleCloseDeleteConfirm}
+                handleDelete={handleDelete}
+            />
+            <ActionOption
+                open={openActionOption}
+                handleUpdate={handleUpdate}
+                handleDelete={onOpenDeleteConfirm}
+                handleClose={handleCloseActionOption}
+            />
             <Snackbar
                 vertical="bottom"
                 horizontal="right"

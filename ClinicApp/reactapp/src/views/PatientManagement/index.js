@@ -1,1 +1,1 @@
-export { default as PatientMangementView } from './PatientMangement';
+export { default as PatientManagementView } from './PatientManagement';

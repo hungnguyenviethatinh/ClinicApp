@@ -1,4 +1,4 @@
-import { chromely } from '../common';
+import { ChromeLyService } from '../common';
 import { GetAppConfigurationUrl } from '.';
 
 const getAppConfiguration = () => {
@@ -7,7 +7,7 @@ const getAppConfiguration = () => {
         Secret: '',
     };
 
-    chromely.get(GetAppConfigurationUrl, null, response => {
+    ChromeLyService.get(GetAppConfigurationUrl, null, response => {
         const { ResponseText } = response;
         const { ReadyState, Status, Data } = JSON.parse(ResponseText);
         if (ReadyState === 4 && Status === 200) {

@@ -55,11 +55,6 @@ namespace DAL
                 .WithOne(p => p.Doctor)
                 .HasForeignKey(p => p.DoctorId)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
-            //builder.Entity<User>()
-            //    .HasMany(u => u.Histories)
-            //    .WithOne(h => h.Doctor)
-            //    .HasForeignKey(h => h.DoctorId)
-            //    .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Role>()
                 .HasMany(r => r.Claims)
@@ -78,19 +73,10 @@ namespace DAL
                 .Property(p => p.IdCode).HasMaxLength(30);
             builder.Entity<Patient>()
                 .Property(p => p.Address).HasMaxLength(200);
-            //builder.Entity<Patient>()
-            //    .Property(p => p.Email).HasMaxLength(100);
-            //builder.Entity<Patient>()
-            //    .Property(p => p.Job).HasMaxLength(100);
             builder.Entity<Patient>()
                 .Property(p => p.PhoneNumber).IsUnicode(false).HasMaxLength(100);
             builder.Entity<Patient>()
                 .Property(p => p.RelativePhoneNumber).IsUnicode(false).HasMaxLength(100);
-            //builder.Entity<Patient>()
-            //    .HasOne(p => p.Doctor)
-            //    .WithMany(d => d.Patients)
-            //    .HasForeignKey(p => p.DoctorId)
-            //    .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Patient>()
                 .HasMany(p => p.Doctors)
                 .WithOne(d => d.Patient)
@@ -139,16 +125,12 @@ namespace DAL
                 .Property(m => m.Name).IsRequired().HasMaxLength(100);
             builder.Entity<Medicine>()
                .Property(m => m.IdCode).HasMaxLength(30);
-            //builder.Entity<Medicine>()
-            //   .Property(m => m.ShortName).HasMaxLength(30);
             builder.Entity<Medicine>()
                .Property(m => m.ExpiredDate).HasMaxLength(30);
             builder.Entity<Medicine>()
                 .Property(m => m.NetWeight).HasMaxLength(30);
             builder.Entity<Medicine>()
                 .Property(m => m.Unit).HasMaxLength(100);
-            //builder.Entity<Medicine>()
-            //    .Property(m => m.Price).HasColumnType(decimalType);
             builder.Entity<Medicine>()
                 .HasMany(m => m.Prescriptions)
                 .WithOne(pm => pm.Medicine)
@@ -165,18 +147,13 @@ namespace DAL
             builder.Entity<History>()
                 .Property(h => h.Weight).HasMaxLength(10);
             builder.Entity<History>()
-                .Property(h => h.BloodPresure).HasMaxLength(10);
+                .Property(h => h.BloodPressure).HasMaxLength(10);
             builder.Entity<History>()
                 .Property(h => h.Pulse).HasMaxLength(10);
             builder.Entity<History>()
                 .Property(h => h.Other).HasMaxLength(100);
             builder.Entity<History>()
                 .Property(h => h.Note).HasMaxLength(100);
-            //builder.Entity<History>()
-            //    .HasOne(h => h.Doctor)
-            //    .WithMany(d => d.Histories)
-            //    .HasForeignKey(h => h.DoctorId)
-            //    .IsRequired().OnDelete(DeleteBehavior.Restrict);
             builder.Entity<History>()
                 .HasOne(h => h.Patient)
                 .WithMany(p => p.Histories)
@@ -210,8 +187,6 @@ namespace DAL
                 .Property(pm => pm.TakeMethod).HasMaxLength(50);
             builder.Entity<PrescriptionMedicine>()
                 .Property(pm => pm.Unit).HasMaxLength(100);
-            //builder.Entity<PrescriptionMedicine>()
-            //    .Property(pm => pm.Price).HasColumnType(decimalType);
             builder.Entity<PrescriptionMedicine>()
                 .HasOne(pm => pm.Prescription)
                 .WithMany(p => p.Medicines)

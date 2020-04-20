@@ -21,7 +21,6 @@ import { Snackbar } from '../../components/Snackbar';
 import { DropZone } from '../../components/DropZone';
 import { Button } from '../../components/Button';
 import { DatePicker } from '../../components/DatePicker';
-// import { DateTimePicker } from '../../components/DateTimePicker';
 import { CheckBox } from '../../components/CheckBox';
 import { Label } from '../../components/Label';
 import { SearchInput } from '../../components/SearchInput';
@@ -29,21 +28,18 @@ import { DeleteConfirm } from '../../components/DeleteConfirm';
 import { Autocomplete } from '../../components/Autocomplete';
 import { ActionOption } from '../../components/ActionOption';
 
-import PatientPreview from './PatientPreview';
+import { PatientPreview } from './PatientPreview';
 
 import _ from 'lodash';
 import moment from 'moment';
 
-import Axios, { axiosRequestConfig, chromely } from '../../common';
+import Axios, { axiosRequestConfig, ChromeLyService } from '../../common';
 import {
     PatientStatus,
     GenderEnum,
     Gender,
     PatientStatusEnum,
-    // IdPrefix,
     ExpiredSessionMsg,
-    // DataDateTimeFormat,
-    // AddressSeperator,
     RouteConstants,
     DisplayDateTimeFormat,
 } from '../../constants';
@@ -55,15 +51,14 @@ import {
     GetPatientUrl,
     UpdatePatientUrl,
     UpdateHistoryUrl,
-    UpdateHistoryByPatientIdUrl,
     DeletePatientUrl,
     UpdateXRayUrl,
     AddDoctorsUrl,
     UpdateDoctorsUrl,
     PatientPrintUrl,
     GetHistoryUrl,
+    PatientCurrentHistoryUrl,
 } from '../../config';
-// import { encodeId, decodeId } from '../../utils';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -104,8 +99,7 @@ const genderOptions = [
 
 const patientColumns = [
     {
-        title: 'Mã BN', field: 'id', // defaultSort: 'asc',
-        // render: rowData => encodeId(rowData.id, IdPrefix.Patient),
+        title: 'Mã BN', field: 'id',
         render: rowData =>
             <Link
                 to={`${RouteConstants.PatientDetailView.replace(':id', rowData.id)}`}
@@ -116,8 +110,6 @@ const patientColumns = [
         title: 'Họ & Tên', field: 'fullName',
     },
     {
-        // title: 'Năm sinh', field: 'dateOfBirth', type: 'date',
-        // render: rowData => moment(rowData.dateOfBirth).year(),
         title: 'Tuổi', field: 'age', type: 'numeric',
     },
     {
@@ -129,7 +121,6 @@ const patientColumns = [
     },
     {
         title: 'Địa chỉ', field: 'address',
-        // render: rowData => _.last(rowData.address.split(AddressSeperator)),
     },
 ];
 
@@ -163,7 +154,6 @@ const PatientManagement = () => {
 
     // [Start] State declaration and event handlers
     const [disabled, setDisabled] = React.useState(false);
-    // const [loadingDelete, setLoadingDelete] = React.useState(false);
     const [loadingDone, setLoadingDone] = React.useState(false);
 
     const tableRef = React.useRef(null);
@@ -171,17 +161,17 @@ const PatientManagement = () => {
         tableRef.current && tableRef.current.onQueryChange();
     };
 
-    const [updatePatientHistoryMode, setUpdatePatientHistoryMode] = React.useState(false);
-    const [_patientId, _setPatientId] = React.useState(null);
-    const [_historyId, _setHistoryId] = React.useState(null);
+    const [externalUpdateMode, setExternalUpdateMode] = React.useState(false);
+    const [_patientId, setPatientId] = React.useState(null);
+    const [_historyId, setHistoryId] = React.useState(null);
     const handleUpdatePatientHistory = () => {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('pId') && urlParams.has('hId')) {
             const pId = urlParams.get('pId');
             const hId = urlParams.get('hId');
-            setUpdatePatientHistoryMode(true);
-            _setPatientId(pId);
-            _setHistoryId(hId);
+            setExternalUpdateMode(true);
+            setPatientId(pId);
+            setHistoryId(hId);
         }
     };
 
@@ -191,11 +181,10 @@ const PatientManagement = () => {
         if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
             setSelectedRow(rowData);
             setOpenActionOption(true);
-            // setUpdateMode(true);
-            // getPatient(rowData.id);
         } else {
             setSelectedRow(null);
             setUpdateMode(false);
+            
             handleReset();
         }
     };
@@ -215,92 +204,76 @@ const PatientManagement = () => {
         setOpenActionOption(false);
     };
 
-    const [values, setValues] = React.useState({
+    const [patient, setPatient] = React.useState({
         IdCode: '',
         FullName: '',
-        // DateOfBirth: null,
         Age: '',
-        Gender: '',
-        // HouseNo: '',
-        // Street: '',
-        // Ward: '',
-        // District: '',
-        // City: '',
-        // Job: '',
         Address: '',
+        Gender: '',
         PhoneNumber: '',
         RelativePhoneNumber: '',
-        // Email: '',
         AppointmentDate: null,
         CheckedDate: moment(),
         Status: PatientStatus.IsNew,
-        XRayImages: [],
+    });
+    const [history, setHistory] = React.useState({
         Height: '',
         Weight: '',
-        BloodPresure: '',
+        BloodPressure: '',
         Pulse: '',
-        // DoctorId: '',
         Other: '',
         Note: '',
-        Doctors: [],
+        CheckedDate: moment(),
+        IsChecked: false,
+        PatientId: '',
     });
-    const handleValueChange = prop => event => {
-        setValues({
-            ...values,
+    const [_xRayImages, setXRayImages] = React.useState([]);
+    const [_doctors, setDoctors] = React.useState([]);
+    const handlePatientChange = prop => event => {
+        setPatient({
+            ...patient,
             [prop]: event.target.value,
-        })
+        });
+    };
+    const handleHistoryChange = prop => event => {
+        setHistory({
+            ...history,
+            [prop]: event.target.value,
+        });
     };
     const handleSelectDoctorChange = (event, newValue) => {
         if (!_.isEmpty(newValue) && newValue.findIndex(value => value.id === 0) > -1) {
             const doctors = doctorOptions.filter(d => d.id !== 0);
-            setValues({
-                ...values,
-                Doctors: doctors,
-            });
+            setDoctors(doctors);
         } else {
-            setValues({
-                ...values,
-                Doctors: newValue,
-            });
+            setDoctors(newValue);
         }
     };
-    // const handleDateoBirthChange = date => {
-    //     setValues({
-    //         ...values,
-    //         DateOfBirth: date,
-    //     });
-    // };
     const handleAppointmentDateChange = date => {
-        setValues({
-            ...values,
+        setPatient({
+            ...patient,
             AppointmentDate: date,
         });
     };
     const handleCheckedDateChange = date => {
-        setValues({
-            ...values,
+        setPatient({
+            ...patient,
             CheckedDate: date,
         })
     };
 
     const handleUploadXRayImage = images => {
-        setValues({
-            ...values,
-            XRayImages: [...images],
-        });
+        setXRayImages(images);
     };
 
     const clearXRayImage = (xRayImage) => {
-        const restOfFiles = _.remove(values.XRayImages, (image) => image.name !== xRayImage.name);
-        setValues({
-            ...values,
-            XRayImages: [...restOfFiles],
-        });
+        const restOfFiles = _.remove(_xRayImages, (image) => image.name !== xRayImage.name);
+        setXRayImages([...restOfFiles]);
     };
 
     const handleStatusChange = event => {
-        setValues({
-            ...values,
+        setPatient({
+            ...patient,
             Status: event.target.value,
         });
     };
@@ -309,10 +282,7 @@ const PatientManagement = () => {
     const handleHasXRayChange = event => {
         setHasXRay(!hasXRay);
         if (event.target.value === 'No') {
-            setValues({
-                ...values,
-                XRayImages: [],
-            });
+            setXRayImages([]);
         }
     };
 
@@ -325,81 +295,69 @@ const PatientManagement = () => {
         refreshData();
     };
 
-    const [patient, setPatient] = React.useState(null);
     const [openPatientPreview, setOpenPatientPreview] = React.useState(false);
     const handleOpenPatientPreview = () => {
-        if (!values.IdCode.trim()) {
+        if (!patient.IdCode.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập mã bệnh nhân!');
             return;
         }
-        if (!values.CheckedDate) {
+        if (!patient.CheckedDate) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày khám!');
             return;
         }
-        if (values.CheckedDate && !moment(values.CheckedDate).isValid()) {
+        if (patient.CheckedDate && !moment(patient.CheckedDate).isValid()) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày khám hợp lệ!');
             return;
         }
-        if (!values.FullName.trim()) {
+        if (!patient.FullName.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
             return;
         }
-        // if (!moment(values.DateOfBirth).isValid()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập ngày tháng năm sinh!');
-        //     return;
-        // }
-        if (!_.toString(values.Age).trim()) {
+        if (!_.toString(patient.Age).trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập tuổi!');
             return;
         }
-        if (_.toString(values.Age).trim() && !_.isFinite(_.toNumber(values.Age))) {
+        if (_.toString(patient.Age).trim() && !_.isFinite(_.toNumber(patient.Age))) {
             handleSnackbarOption('error', 'Yêu cầu nhập số tuổi!');
             return;
         }
-        if (values.AppointmentDate && !moment(values.AppointmentDate).isValid()) {
+        if (patient.AppointmentDate && !moment(patient.AppointmentDate).isValid()) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày hẹn hợp lệ (không hẹn để trống)!');
             return;
         }
-        if (values.AppointmentDate && moment(values.AppointmentDate) <= moment()) {
+        if (patient.AppointmentDate && moment(patient.AppointmentDate) <= moment()) {
             handleSnackbarOption('error', 'Ngày hẹn phải sau thời gian hiện tại (không hẹn để trống)!');
             return;
         }
-        if (values.CheckedDate && !moment(values.CheckedDate).isValid()) {
+        if (patient.CheckedDate && !moment(patient.CheckedDate).isValid()) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày khám hợp lệ!');
             return;
         }
-        if (!_.isFinite(values.Gender)) {
+        if (!_.isFinite(patient.Gender)) {
             handleSnackbarOption('error', 'Yêu cầu nhập giới tính!');
             return;
         }
-        if (!values.Address.trim()) {
+        if (!patient.Address.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập địa chỉ!');
             return;
         }
-        if (!_.isFinite(_.toNumber(values.PhoneNumber))) {
+        if (!_.isFinite(_.toNumber(patient.PhoneNumber))) {
             handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại (hợp lệ)!');
             return;
         }
-        if (!updateMode && !values.Status.trim()) {
+        if (!updateMode && !patient.Status.trim()) {
             handleSnackbarOption('error', 'Yêu cầu chọn trạng thái cho bệnh nhân!');
             return;
         }
-        if (hasXRay && _.isEmpty(values.XRayImages)) {
+        if (hasXRay && _.isEmpty(_xRayImages)) {
             handleSnackbarOption('error', 'Yêu cầu nhập cung cấp XQ!');
             return;
         }
-        // if (!values.DoctorId.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu chọn bác sĩ phụ trách khám!');
-        //     return;
-        // }
-        if (_.isEmpty(values.Doctors)) {
+        if (_.isEmpty(_doctors)) {
             handleSnackbarOption('error', 'Yêu cầu chọn bác sĩ phụ trách khám!');
             return;
         }
 
-        setPatient({
-            ...values,
-        });
         setOpenPatientPreview(true);
     };
     const handleClosePatientPreview = () => {
@@ -407,96 +365,35 @@ const PatientManagement = () => {
     };
 
     const handleDone = () => {
-        // if (!values.FullName.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
-        //     return;
-        // }
-        // // if (!moment(values.DateOfBirth).isValid()) {
-        // //     handleSnackbarOption('error', 'Yêu cầu nhập ngày tháng năm sinh!');
-        // //     return;
-        // // }
-        // if (!_.toString(values.Age).trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập tuổi!');
-        //     return;
-        // }
-        // if (_.toString(values.Age).trim() && !_.isFinite(_.toNumber(values.Age))) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập số tuổi!');
-        //     return;
-        // }
-        // if (values.AppointmentDate && !moment(values.AppointmentDate).isValid()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập ngày giờ hẹn hợp lệ (không hẹn để trống)!');
-        //     return;
-        // }
-        // if (values.AppointmentDate && moment(values.AppointmentDate) <= moment()) {
-        //     handleSnackbarOption('error', 'Ngày giờ hẹn phải sau thời gian hiện tại (không hẹn để trống)!');
-        //     return;
-        // }
-        // if (!_.isFinite(values.Gender)) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập giới tính!');
-        //     return;
-        // }
-        // if (!values.City.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập thành phố (tỉnh)!');
-        //     return;
-        // }
-        // if (!_.isFinite(_.toNumber(values.PhoneNumber))) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại (hợp lệ)!');
-        //     return;
-        // }
-        // if (!updateMode && !values.Status.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu chọn trạng thái cho bệnh nhân!');
-        //     return;
-        // }
-        // if (hasXRay && _.isEmpty(values.XRayImages)) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập cung cấp XQ!');
-        //     return;
-        // }
-        // // if (!values.DoctorId.trim()) {
-        // //     handleSnackbarOption('error', 'Yêu cầu chọn bác sĩ phụ trách khám!');
-        // //     return;
-        // // }
-        // if (_.isEmpty(values.Doctors)) {
-        //     handleSnackbarOption('error', 'Yêu cầu chọn bác sĩ phụ trách khám!');
-        //     return;
-        // }
-
         setDisabled(true);
         setLoadingDone(true);
 
-        // const DateOfBirth = values.DateOfBirth.format(DataDateTimeFormat);
-        // const Address = [values.HouseNo, values.Street, values.Ward, values.District, values.City].join(AddressSeperator);
-        const AppointmentDate = moment(values.AppointmentDate).isValid() ? values.AppointmentDate.format() : null;
-        const CheckedDate = moment(values.CheckedDate).isValid() ? values.CheckedDate.format() : moment().format();
-        // const Status = values.Status === PatientStatus.IsNew ?
-        //     PatientStatusEnum[PatientStatus.IsNew] : PatientStatusEnum[PatientStatus.IsRechecking];
-        let Status = PatientStatusEnum[values.Status];
+        const AppointmentDate = moment(patient.AppointmentDate).isValid() ? patient.AppointmentDate.format() : null;
+        const CheckedDate = moment(patient.CheckedDate).isValid() ? patient.CheckedDate.format() : moment().format();
+
+        let Status = PatientStatusEnum[patient.Status];
         if (updateMode) {
-            if (values.Status !== PatientStatus.IsNew &&
-                values.Status !== PatientStatus.IsRechecking &&
-                values.Status !== PatientStatus.IsToAddDocs &&
-                values.Status !== PatientStatus.IsChecking) {
+            if (patient.Status !== PatientStatus.IsNew &&
+                patient.Status !== PatientStatus.IsRechecking &&
+                patient.Status !== PatientStatus.IsToAddDocs &&
+                patient.Status !== PatientStatus.IsChecking) {
                 Status = PatientStatusEnum[PatientStatus.IsChecked];
             }
         }
 
-        // const IdCode = `${IdPrefix.Patient}: ${moment().format('YYYY/MM')}`;
         const patientModel = {
-            IdCode: values.IdCode,
-            FullName: values.FullName,
-            // DateOfBirth,
-            Age: values.Age,
-            Gender: values.Gender,
-            Address: values.Address,
-            // Job: values.Job,
-            PhoneNumber: values.PhoneNumber,
-            RelativePhoneNumber: values.RelativePhoneNumber,
-            // Email: values.Email,
+            IdCode: patient.IdCode,
+            FullName: patient.FullName,
+            Age: patient.Age,
+            Gender: patient.Gender,
+            Address: patient.Address,
+            PhoneNumber: patient.PhoneNumber,
+            RelativePhoneNumber: patient.RelativePhoneNumber,
             AppointmentDate,
             CheckedDate,
             Status,
-            // DoctorId: values.DoctorId,
         };
-        if (!updateMode && !updatePatientHistoryMode) {
+        if (!updateMode && !externalUpdateMode) {
             addPatient(patientModel);
             return;
         }
@@ -505,60 +402,56 @@ const PatientManagement = () => {
             updatePatient(id, patientModel);
             return;
         }
-        if (updatePatientHistoryMode) {
+        if (externalUpdateMode) {
             updatePatient(_patientId, patientModel);
             return;
         }
     };
 
     const handleUpdate = () => {
-        // const { id } = selectedRow;
         setUpdateMode(true);
-        if (updatePatientHistoryMode) {
-            handleReset();
-            setUpdatePatientHistoryMode(false);
-        }
         setOpenActionOption(false);
-        // getPatient(id);
+
+        if (externalUpdateMode) {
+            handleReset();
+            setExternalUpdateMode(false);
+        }
     };
 
     const handleDelete = () => {
         const { id } = selectedRow;
-        setDisabled(true);
-        // setLoadingDelete(true);
         deletePatient(id);
+
+        setDisabled(true);
         setOpenDeleteConfirm(false);
     };
 
     const handleReset = () => {
-        setValues({
+        setPatient({
+            IdCode: '',
             FullName: '',
-            // DateOfBirth: null,
             Age: '',
-            Gender: '',
-            // HouseNo: '',
-            // Street: '',
-            // Ward: '',
-            // District: '',
-            // City: '',
-            // Job: '',
             Address: '',
+            Gender: '',
             PhoneNumber: '',
             RelativePhoneNumber: '',
-            // Email: '',
             AppointmentDate: null,
             CheckedDate: moment(),
             Status: PatientStatus.IsNew,
-            XRayImages: [],
+        });
+        setHistory({
             Height: '',
             Weight: '',
-            BloodPresure: '',
+            BloodPressure: '',
             Pulse: '',
-            // DoctorId: '',
             Other: '',
             Note: '',
-            Doctors: [],
+            CheckedDate: moment(),
+            IsChecked: false,
+            PatientId: '',
         });
+        setXRayImages([]);
+        setDoctors([]);
         setHasXRay(false);
     };
 
@@ -569,67 +462,67 @@ const PatientManagement = () => {
         Axios.post(AddPatientUrl, patientModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { id, idCode, orderNumber } = data;
+                const { id, orderNumber } = data;
                 handleSnackbarOption('success', 'Bệnh nhân được tạo thành công.');
-                const patientPrintModel = {
-                    ...patient,
-                    Id: id,
-                    IdCode: idCode,
-                    OrderNumber: orderNumber,
-                };
                 handleReset();
                 refreshData();
+                setPrintData({
+                    ...patient,
+                    ...history,
+                    Id: id,
+                    OrderNumber: orderNumber,
+                });
+
+                const CheckedDate = moment(patient.CheckedDate).isValid() ? patient.CheckedDate.format() : moment().format();
                 const historyModel = {
-                    Height: values.Height,
-                    Weight: values.Weight,
-                    BloodPresure: values.BloodPresure,
-                    Pulse: values.Pulse,
-                    Other: values.Other,
-                    Note: values.Note,
-                    IsChecked: false,
-                    // DoctorId: values.DoctorId,
+                    Height: history.Height,
+                    Weight: history.Weight,
+                    BloodPressure: history.BloodPressure,
+                    Pulse: history.Pulse,
+                    Other: history.Other,
+                    Note: history.Note,
+                    CheckedDate,
+                    IsChecked: history.IsChecked,
                     PatientId: id,
                 };
-                addHistory(historyModel, patientPrintModel);
+                addHistory(historyModel);
             } else {
                 console.log('[Add Patient Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân.');
+
                 setDisabled(false);
                 setLoadingDone(false);
-                setOpenPatientPreview(false);
             }
-            // setDisabled(false);
-            // setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Add Patient Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi thêm bệnh nhân.');
+
             setDisabled(false);
             setLoadingDone(false);
-            setOpenPatientPreview(false);
         });
     };
 
-    const addHistory = (historyModel, patientPrintModel) => {
+    const addHistory = (historyModel) => {
         Axios.post(AddHistoryUrl, historyModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { id, patientId } = data;
                 handleSnackbarOption('success', 'Hồ sơ bệnh nhân được tạo thành công.');
-                if (!_.isEmpty(values.Doctors)) {
+                if (!_.isEmpty(_doctors)) {
                     const doctorModels = [];
-                    values.Doctors.map((doctor) => doctorModels.push({
+                    _doctors.map((doctor) => doctorModels.push({
                         HistoryId: id,
                         PatientId: patientId,
                         DoctorId: doctor.id,
                     }));
-                    addDoctors(doctorModels, patientPrintModel);
+                    addDoctors(doctorModels);
                 }
-                if (!_.isEmpty(values.XRayImages)) {
+                if (!_.isEmpty(_xRayImages)) {
                     const xRayModels = [];
-                    values.XRayImages.map((xRayImage) => xRayModels.push({
-                        Name: xRayImage.name,
-                        Data: xRayImage.data,
-                        LastModifiedDate: xRayImage.lastModifiedDate,
+                    _xRayImages.map(({ name, data, lastModifiedDate }) => xRayModels.push({
+                        Name: name,
+                        Data: data,
+                        LastModifiedDate: lastModifiedDate,
                         HistoryId: id,
                         PatientId: patientId,
                     }));
@@ -638,43 +531,34 @@ const PatientManagement = () => {
             } else {
                 console.log('[Add History Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi tạo hồ sơ cho bệnh nhân.');
+
                 setDisabled(false);
                 setLoadingDone(false);
-                setOpenPatientPreview(false);
             }
-            // setDisabled(false);
-            // setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Add History Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi tạo hồ sơ cho bệnh nhân.');
             setDisabled(false);
             setLoadingDone(false);
-            setOpenPatientPreview(false);
         });
     };
 
-    const addDoctors = (doctorModels, patientPrintModel) => {
+    const addDoctors = (doctorModels) => {
         Axios.post(AddDoctorsUrl, doctorModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 console.log('[Add Doctors Success] - Ok.');
-                handlePrint(patientPrintModel);
             } else {
                 console.log('[Add Doctors Error] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
-                setDisabled(false);
-                setLoadingDone(false);
-                setOpenPatientPreview(false);
             }
-            // setDisabled(false);
-            // setLoadingDone(false);
-            // setOpenPatientPreview(false);
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Add Doctors Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
             setDisabled(false);
             setLoadingDone(false);
-            setOpenPatientPreview(false);
         });
     };
 
@@ -682,216 +566,176 @@ const PatientManagement = () => {
         Axios.post(AddXRayUrl, xRayModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                // handleSnackbarOption('success', 'Lưu trữ XQ của bệnh nhân thành công.');
-                console.log('[Add XRays Success] - OK.');
+                handleSnackbarOption('success', 'Lưu trữ hình ảnh X Quang thành công.');
             } else {
                 console.log('[Add XRays Response] ', response);
-                handleSnackbarOption('error', 'Có lỗi khi lưu trữ XQ của bệnh nhân.');
+                handleSnackbarOption('error', 'Có lỗi khi lưu trữ hình ảnh X Quang.');
             }
-            // setDisabled(false);
-            // setLoadingDone(false);
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Add XRays Error] ', reason);
-            handleSnackbarOption('error', 'Có lỗi khi lưu trữ XQ của bệnh nhân.');
-            // setDisabled(false);
-            // setLoadingDone(false);
+            handleSnackbarOption('error', 'Có lỗi khi lưu trữ hình ảnh XQuang.');
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
     const updatePatient = (id, patientModel) => {
-        Axios.put(`${UpdatePatientUrl}/${id}`, patientModel, config).then((response) => {
+        const url = `${UpdatePatientUrl}/${id}`;
+        Axios.put(url, patientModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { idCode, orderNumber } = data;
+                const { orderNumber } = data;
                 handleSnackbarOption('success', 'Cập nhật thông tin của bệnh nhân thành công.');
-                const patientPrintModel = {
-                    ...patient,
-                    Id: data.id,
-                    IdCode: idCode,
-                    OrderNumber: orderNumber,
-                };
                 refreshData();
+                setPrintDate({
+                    ...patient,
+                    ...history,
+                    Id: data.id,
+                    OrderNumber: orderNumber,
+                });
 
-                if (!updatePatientHistoryMode || (updatePatientHistoryMode && _.toNumber(_historyId) === 0)) {
-                    const historyModel = {
-                        Height: values.Height,
-                        Weight: values.Weight,
-                        BloodPresure: values.BloodPresure,
-                        Pulse: values.Pulse,
-                        Other: values.Other,
-                        Note: values.Note,
-                        IsChecked: false,
-                        // DoctorId: values.DoctorId,
-                        PatientId: id,
-                    };
-                    const url = `${UpdateHistoryByPatientIdUrl}/${id}`;
-                    updateHistory(url, historyModel, patientPrintModel);
-                } else {
-                    const historyModel = {
-                        Height: values.Height,
-                        Weight: values.Weight,
-                        BloodPresure: values.BloodPresure,
-                        Pulse: values.Pulse,
-                        Other: values.Other,
-                        Note: values.Note,
-                    };
-                    const url = `${UpdateHistoryUrl}/${_historyId}`;
-                    updateHistory(url, historyModel, patientPrintModel);
-                }
+                const CheckedDate = moment(patient.CheckedDate).isValid() ? patient.CheckedDate.format() : moment().format();
+                const historyModel = {
+                    Height: history.Height,
+                    Weight: history.Weight,
+                    BloodPressure: history.BloodPressure,
+                    Pulse: history.Pulse,
+                    Other: history.Other,
+                    Note: history.Note,
+                    CheckedDate,
+                    IsChecked: history.IsChecked,
+                    PatientId: id,
+                };
+                updateHistory(id, historyModel);
             } else {
                 console.log('[Update Patient Reponse] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
+
                 setDisabled(false);
                 setLoadingDone(false);
-                setOpenPatientPreview(false);
             }
-            // setDisabled(false);
-            // setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Update Patient Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin của bệnh nhân.');
+
             setDisabled(false);
             setLoadingDone(false);
-            setOpenPatientPreview(false);
         });
     };
 
-    const updateHistory = (url, historyModel, patientPrintModel) => {
+    const updateHistory = (id, historyModel) => {
+        const url = `${UpdateHistoryUrl}/${id}`;
         Axios.put(url, historyModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
                 const { id, patientId } = data;
                 handleSnackbarOption('success', 'Cập nhật hồ sơ bệnh nhân thành công.');
-                if (!_.isEmpty(values.Doctors)) {
+                if (!_.isEmpty(_doctors)) {
                     const doctorModels = [];
-                    if (!updatePatientHistoryMode || (updatePatientHistoryMode && _.toNumber(_historyId) === 0)) {
-                        values.Doctors.map((doctor) => doctorModels.push({
-                            HistoryId: id,
-                            PatientId: patientId,
-                            DoctorId: doctor.id,
-                        }));
-                        updateDoctors(id, doctorModels, patientPrintModel);
-                    } else {
-                        values.Doctors.map((doctor) => doctorModels.push({
-                            HistoryId: _historyId,
-                            PatientId: _patientId,
-                            DoctorId: doctor.id,
-                        }));
-                        updateDoctors(_historyId, doctorModels, patientPrintModel);
-                    }
+                    _doctors.map((doctor) => doctorModels.push({
+                        HistoryId: id,
+                        PatientId: patientId,
+                        DoctorId: doctor.id,
+                    }));
+                    updateDoctors(id, doctorModels);
                 }
-                if (!_.isEmpty(values.XRayImages)) {
+                if (!_.isEmpty(_xRayImages)) {
                     const xRayModels = [];
-                    if (!updatePatientHistoryMode || (updatePatientHistoryMode && _.toNumber(_historyId) === 0)) {
-                        values.XRayImages.map((xRayImage) => xRayModels.push({
-                            Name: xRayImage.name,
-                            Data: xRayImage.data,
-                            LastModifiedDate: xRayImage.lastModifiedDate,
-                            HistoryId: id,
-                            PatientId: patientId,
-                        }));
-                        updateXRays(id, xRayModels);
-                    } else {
-                        values.XRayImages.map((xRayImage) => xRayModels.push({
-                            Name: xRayImage.name,
-                            Data: xRayImage.data,
-                            LastModifiedDate: xRayImage.lastModifiedDate,
-                            HistoryId: _historyId,
-                            PatientId: _patientId,
-                        }));
-                        updateXRays(_historyId, xRayModels);
-                    }
+                    _xRayImages.map(({ name, data, lastModifiedDate }) => xRayModels.push({
+                        Name: name,
+                        Data: data,
+                        LastModifiedDate: lastModifiedDate,
+                        HistoryId: id,
+                        PatientId: patientId,
+                    }));
+                    updateXRays(id, xRayModels);
                 }
             } else {
                 console.log('[Update History Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật hồ sơ của bệnh nhân.');
                 setDisabled(false);
                 setLoadingDone(false);
-                setOpenPatientPreview(false);
             }
-            // setDisabled(false);
-            // setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Update History Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật hồ sơ của bệnh nhân.');
             setDisabled(false);
             setLoadingDone(false);
-            setOpenPatientPreview(false);
         });
     };
 
-    const updateDoctors = (historyId, doctorModels, patientPrintModel) => {
-        Axios.put(`${UpdateDoctorsUrl}/${historyId}`, doctorModels, config).then((response) => {
+    const updateDoctors = (historyId, doctorModels) => {
+        const url = `${UpdateDoctorsUrl}/${historyId}`;
+        Axios.put(url, doctorModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 console.log('[Update Doctors Success] - Ok.');
-                handlePrint(patientPrintModel);
             } else {
                 console.log('[Update Doctors Error] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
-                setDisabled(false);
-                setLoadingDone(false);
-                setOpenPatientPreview(false);
             }
-            // setDisabled(false);
-            // setLoadingDone(false);
-            // setOpenPatientPreview(false);
+
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Update Doctors Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
+
             setDisabled(false);
             setLoadingDone(false);
-            setOpenPatientPreview(false);
         });
     };
 
     const updateXRays = (historyId, xRayModels) => {
-        Axios.put(`${UpdateXRayUrl}/${historyId}`, xRayModels, config).then((response) => {
+        const url = `${UpdateXRayUrl}/${historyId}`;
+        Axios.put(url, xRayModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                // handleSnackbarOption('success', 'Cập nhật XQ của bệnh nhân thành công.');
+                handleSnackbarOption('success', 'Cập nhật hình ảnh X Quang thành công.');
                 console.log('[Update XRays Success] - OK.');
             } else {
                 console.log('[Update XRays Response] ', response);
-                handleSnackbarOption('error', 'Có lỗi khi cập nhật XQ của bệnh nhân.');
+                handleSnackbarOption('error', 'Có lỗi khi cập nhật hình ảnh X Quang.');
             }
-            // setDisabled(false);
-            // setLoadingDone(false);
+
+            setDisabled(false);
+            setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Update XRays Error] ', reason);
-            handleSnackbarOption('error', 'Có lỗi khi cập nhật XQ của bệnh nhân.');
-            // setDisabled(false);
-            // setLoadingDone(false);
+            handleSnackbarOption('error', 'Có lỗi khi cập nhật hình ảnh X Quang.');
+
+            setDisabled(false);
+            setLoadingDone(false);
         });
     };
 
     const deletePatient = (id) => {
-        Axios.delete(`${DeletePatientUrl}/${id}`, config).then((response) => {
+        const url = `${DeletePatientUrl}/${id}`;
+        Axios.delete(url, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Xóa bệnh nhân thành công.');
                 handleReset();
+                refreshData();
+
                 setSelectedRow(null);
                 setUpdateMode(false);
-                refreshData();
             } else {
                 console.log('[Delete Patient Response] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
             }
+
             setDisabled(false);
-            // setLoadingDelete(false);
         }).catch((reason) => {
             console.log('[Delete Patient Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
+
             setDisabled(false);
-            // setLoadingDelete(false);
         });
     };
 
-    // const [doctorOptions, setDoctorOptions] = React.useState([{
-    //     label: '',
-    //     value: '',
-    // }]);
     const [doctorOptions, setDoctorOptions] = React.useState([{
         id: '',
         fullName: '',
@@ -911,7 +755,6 @@ const PatientManagement = () => {
                     fullName,
                 }));
                 setDoctorOptions(options);
-                // setDoctorOptions(data.map(({ id, fullName }) => ({ id, fullName })));
             }
             setDisabled(false);
         }).catch((reason) => {
@@ -922,6 +765,7 @@ const PatientManagement = () => {
 
     const getPatient = (id) => {
         setDisabled(true);
+
         const url = `${GetPatientUrl}/${id}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
@@ -929,22 +773,16 @@ const PatientManagement = () => {
                 const {
                     idCode,
                     fullName,
-                    // dateOfBirth,
                     age,
                     gender,
                     address,
-                    // job,
                     phoneNumber,
                     relativePhoneNumber,
-                    // email,
                     appointmentDate,
                     checkedDate,
                     status,
-                    // doctorId
                 } = data[0];
 
-                // const AppointmentDate = moment(appointmentDate).isValid() ? moment(appointmentDate) : null;
-                // const DateOfBirth = moment(dateOfBirth).isValid() ? moment(dateOfBirth) : null;
                 const Status = [
                     PatientStatus.IsNew,
                     PatientStatus.IsAppointed,
@@ -952,51 +790,25 @@ const PatientManagement = () => {
                     PatientStatus.IsChecked,
                     PatientStatus.IsRechecking,
                     PatientStatus.IsToAddDocs][status];
-                // const Address = address.split(AddressSeperator);
                 const AppointmentDate =
                     moment(appointmentDate).isValid() &&
                         (Status !== PatientStatus.IsChecked || moment(appointmentDate) > moment())
                         ? moment(appointmentDate) : null;
                 const CheckedDate = moment(checkedDate).isValid() ? moment(checkedDate) : null;
 
-                setValues({
-                    ...values,
+                setPatient({
+                    ...patient,
                     IdCode: idCode,
                     FullName: fullName,
-                    // DateOfBirth,
                     Age: age,
                     Gender: gender,
-                    // HouseNo: Address[0],
-                    // Street: Address[1],
-                    // Ward: Address[2],
-                    // District: Address[3],
-                    // City: Address[4],
-                    // Job: job,
                     Address: address,
                     PhoneNumber: phoneNumber,
                     RelativePhoneNumber: relativePhoneNumber,
-                    // Email: email,
                     AppointmentDate,
                     CheckedDate,
                     Status,
-                    // DoctorId: doctorId,
                 });
-
-                if (updatePatientHistoryMode) {
-                    const patientValues = {
-                        IdCode: idCode,
-                        FullName: fullName,
-                        Age: age,
-                        Gender: gender,
-                        Address: address,
-                        PhoneNumber: phoneNumber,
-                        RelativePhoneNumber: relativePhoneNumber,
-                        AppointmentDate,
-                        CheckedDate,
-                        Status,
-                    }
-                    getHistory(_historyId, patientValues);
-                }
             }
             setDisabled(false);
         }).catch((reason) => {
@@ -1013,22 +825,21 @@ const PatientManagement = () => {
         });
     };
 
-    const getHistory = (historyId, patientValues) => {
+    const getHistory = (historyId) => {
         const url = `${GetHistoryUrl}/${historyId}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { 0: history } = data;
                 const {
                     height,
                     weight,
-                    bloodPresure,
+                    bloodPressure,
                     pulse,
                     other,
                     note,
                     doctors,
                     xRayImages,
-                } = history;
+                } = data[0];
                 const Doctors = [];
                 if (!_.isEmpty(doctors)) {
                     doctors.map(({ doctor }) => Doctors.push({
@@ -1036,6 +847,7 @@ const PatientManagement = () => {
                         fullName: doctor.fullName,
                     }));
                 }
+                setDoctors(Doctors);
                 const XRayImages = [];
                 if (!_.isEmpty(xRayImages)) {
                     xRayImages.map(({ name, data, lastModifiedDate }) => XRayImages.push({
@@ -1045,16 +857,14 @@ const PatientManagement = () => {
                     }));
                     setHasXRay(true);
                 }
-                setValues({
-                    ...patientValues,
+                setXRayImages(XRayImages);
+                setHistory({
                     Height: height,
                     Weight: weight,
-                    BloodPresure: bloodPresure,
+                    BloodPressure: bloodPressure,
                     Pulse: pulse,
                     Other: other,
                     Note: note,
-                    XRayImages,
-                    Doctors,
                 });
             }
         }).catch((reason) => {
@@ -1062,20 +872,60 @@ const PatientManagement = () => {
         });
     };
 
-    const getPatients = (resolve, reject, query) => {
-        // setDisabled(true);
-        // let value = searchValue.toLowerCase();
-        // const prefix = IdPrefix.Patient.toLowerCase();
-        // if (value.startsWith(prefix)) {
-        //     value = decodeId(value, prefix);
-        // }
+    const getCurrentHistory = (id) => {
+        const url = `${PatientCurrentHistoryUrl}/${id}`;
+        Axios.get(url, config).then((response) => {
+            const { status, data } = response;
+            if (status === 200) {
+                const {
+                    height,
+                    weight,
+                    bloodPressure,
+                    pulse,
+                    other,
+                    note,
+                    doctors,
+                    xRayImages,
+                } = data[0];
+                const Doctors = [];
+                if (!_.isEmpty(doctors)) {
+                    doctors.map(({ doctor }) => Doctors.push({
+                        id: doctor.id,
+                        fullName: doctor.fullName,
+                    }));
+                }
+                setDoctors(Doctors);
+                const XRayImages = [];
+                if (!_.isEmpty(xRayImages)) {
+                    xRayImages.map(({ name, data, lastModifiedDate }) => XRayImages.push({
+                        name,
+                        data,
+                        lastModifiedDate,
+                    }));
+                    setHasXRay(true);
+                }
+                setXRayImages(XRayImages);
+                setHistory({
+                    Id: data[0].id,
+                    Height: height,
+                    Weight: weight,
+                    BloodPressure: bloodPressure,
+                    Pulse: pulse,
+                    Other: other,
+                    Note: note,
+                });
+            }
+        }).catch((reason) => {
+            console.log('[Get Current History Error] ', reason);
+        });
+    };
 
+    const getPatients = (resolve, reject, query) => {
         Axios.get(GetPatientUrl, {
             ...config,
             params: {
                 page: query.page + 1,
                 pageSize: query.pageSize,
-                // query: value,
                 query: searchValue,
             }
         }).then((response) => {
@@ -1089,7 +939,6 @@ const PatientManagement = () => {
                     totalCount,
                 });
             }
-            // setDisabled(false);
         }).catch((reason) => {
             if (reason.response) {
                 const { status } = reason.response;
@@ -1098,45 +947,36 @@ const PatientManagement = () => {
                 }
             }
             console.log('[Get Patients Error] ', reason);
-            // setDisabled(false);
         });
     };
 
     // [End] Api handlers.
 
     // [Start] Print handler
-    const handlePrint = (patientPrintModel) => {
+    const [printData, setPrintData] = React.useState(null);
+    const handlePrint = () => {
         const {
             Id,
             IdCode,
             OrderNumber,
             FullName,
-            // DateOfBirth: null,
             Age,
-            // Gender,
-            // HouseNo,
-            // Street,
-            // Ward,
-            // District,
-            // City,
             Address,
             PhoneNumber,
             RelativePhoneNumber,
             Status,
             Height,
             Weight,
-            BloodPresure,
+            BloodPressure,
             Pulse,
             Other,
             Note,
-            // Doctors,
-        } = patientPrintModel;
+        } = printData;
 
-        // const Address = [HouseNo, Street, Ward, District, City].join(`${AddressSeperator} `);
         const AppointmentDate = moment(patient.AppointmentDate).isValid() ? patient.AppointmentDate.format(DisplayDateTimeFormat) : null;
         const Doctors = [];
-        if (!_.isEmpty(patient.Doctors)) {
-            patient.Doctors.map(({ fullName }) => Doctors.push({
+        if (!_.isEmpty(_doctors)) {
+            _doctors.map(({ fullName }) => Doctors.push({
                 FullName: fullName,
             }));
         }
@@ -1145,7 +985,6 @@ const PatientManagement = () => {
             IdCode,
             OrderNumber,
             FullName,
-            // DateOfBirth: null,
             Age: _.toNumber(Age),
             Gender: [Gender.None, Gender.Male, Gender.Female][patient.Gender],
             Address,
@@ -1155,16 +994,18 @@ const PatientManagement = () => {
             Status,
             Height,
             Weight,
-            BloodPresure,
+            BloodPressure,
             Pulse,
             Other,
             Note,
             Doctors,
         });
 
-        console.log(JSON.parse(data));
+        console.log('Print Data: ', JSON.parse(data));
 
-        chromely.post(PatientPrintUrl, null, data, response => {
+        setDisabled(true);
+        setLoadingDone(true);
+        ChromeLyService.post(PatientPrintUrl, null, data, response => {
             const { ResponseText } = response;
             const { ReadyState, Status, Data } = JSON.parse(ResponseText);
             if (ReadyState === 4 && Status === 200) {
@@ -1184,22 +1025,25 @@ const PatientManagement = () => {
 
     // [End] Print handler
 
+    // React Lifecycle Handlers
+
     React.useEffect(() => {
         getDoctorOptions();
         handleUpdatePatientHistory();
     }, []);
 
     React.useEffect(() => {
-        if (updatePatientHistoryMode) {
+        if (externalUpdateMode) {
             getPatient(_patientId);
-            // getHistory(_historyId);
+            getHistory(_historyId);
         }
-    }, [updatePatientHistoryMode]);
+    }, [externalUpdateMode]);
 
     React.useEffect(() => {
         if (updateMode) {
             const { id } = selectedRow;
             getPatient(id);
+            getCurrentHistory(id);
         }
     }, [updateMode, selectedRow]);
 
@@ -1235,8 +1079,8 @@ const PatientManagement = () => {
                                         autoFocus
                                         id="FullName"
                                         label="Họ tên BN"
-                                        value={values.FullName}
-                                        onChange={handleValueChange('FullName')}
+                                        value={patient.FullName}
+                                        onChange={handlePatientChange('FullName')}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
@@ -1244,15 +1088,15 @@ const PatientManagement = () => {
                                         fullWidth
                                         id="DateOfBirth"
                                         label="Ngày, tháng, năm sinh"
-                                        value={values.DateOfBirth}
+                                        value={patient.DateOfBirth}
                                         onChange={(date) => handleDateoBirthChange(date)}
                                     /> */}
                                     <TextField
                                         fullWidth
                                         id="Age"
                                         label="Tuổi"
-                                        value={values.Age}
-                                        onChange={handleValueChange('Age')}
+                                        value={patient.Age}
+                                        onChange={handlePatientChange('Age')}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
@@ -1261,8 +1105,8 @@ const PatientManagement = () => {
                                         style={{ marginTop: 0, marginBottom: 0 }}
                                         id="Gender"
                                         label="Giới tính"
-                                        value={values.Gender}
-                                        onChange={handleValueChange('Gender')}
+                                        value={patient.Gender}
+                                        onChange={handlePatientChange('Gender')}
                                         options={genderOptions}
                                     />
                                 </Grid>
@@ -1271,8 +1115,8 @@ const PatientManagement = () => {
                                         fullWidth
                                         id="IdCode"
                                         label="Mã BN"
-                                        value={values.IdCode}
-                                        onChange={handleValueChange('IdCode')}
+                                        value={patient.IdCode}
+                                        onChange={handlePatientChange('IdCode')}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
@@ -1281,7 +1125,7 @@ const PatientManagement = () => {
                                         fullWidth
                                         id="CheckedDate"
                                         label="Ngày khám"
-                                        value={values.CheckedDate}
+                                        value={patient.CheckedDate}
                                         onChange={(date) => handleCheckedDateChange(date)}
                                     />
                                 </Grid>
@@ -1292,97 +1136,34 @@ const PatientManagement = () => {
                                         children="Địa chỉ: (Ghi theo hộ khẩu thường trú)"
                                     />
                                     <Grid container spacing={2}>
-                                        {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                            <TextField
-                                                fullWidth
-                                                id="HouseNo"
-                                                label="Số nhà"
-                                                value={values.HouseNo}
-                                                onChange={handleValueChange('HouseNo')}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
-                                            <TextField
-                                                fullWidth
-                                                id="Street"
-                                                label="Đường/ Ấp (Thôn)"
-                                                value={values.Street}
-                                                onChange={handleValueChange('Street')}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                            <TextField
-                                                fullWidth
-                                                id="Ward"
-                                                label="Phường (Xã)"
-                                                value={values.Ward}
-                                                onChange={handleValueChange('Ward')}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                            <TextField
-                                                fullWidth
-                                                id="District"
-                                                label="Quận (Huyện)"
-                                                value={values.District}
-                                                onChange={handleValueChange('District')}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                            <TextField
-                                                fullWidth
-                                                id="City"
-                                                label="Thành phố (Tỉnh)"
-                                                value={values.City}
-                                                onChange={handleValueChange('City')}
-                                            />
-                                        </Grid> */}
                                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                             <TextField
                                                 fullWidth
                                                 id="Address"
                                                 label="Địa chỉ"
-                                                value={values.Address}
-                                                onChange={handleValueChange('Address')}
+                                                value={patient.Address}
+                                                onChange={handlePatientChange('Address')}
                                             />
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    <TextField
-                                        fullWidth
-                                        id="Job"
-                                        label="Nghề nghiệp"
-                                        value={values.Job}
-                                        onChange={handleValueChange('Job')}
-                                    />
-                                </Grid> */}
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <TextField
                                         fullWidth
                                         id="PhoneNumber"
                                         label="Điện thoại"
-                                        value={values.PhoneNumber}
-                                        onChange={handleValueChange('PhoneNumber')}
+                                        value={patient.PhoneNumber}
+                                        onChange={handlePatientChange('PhoneNumber')}
                                         maxLength={10}
                                     />
                                 </Grid>
-                                {/* <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                    <TextField
-                                        fullWidth
-                                        id="Email"
-                                        label="Email"
-                                        value={values.Email}
-                                        onChange={handleValueChange('Email')}
-                                    />
-                                </Grid> */}
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <TextField
                                         fullWidth
                                         id="RelativePhoneNumber"
                                         label="Số điện thoại người thân"
-                                        value={values.RelativePhoneNumber}
-                                        onChange={handleValueChange('RelativePhoneNumber')}
+                                        value={patient.RelativePhoneNumber}
+                                        onChange={handlePatientChange('RelativePhoneNumber')}
                                     />
                                 </Grid>
                             </Grid>
@@ -1393,21 +1174,19 @@ const PatientManagement = () => {
                             />
                             <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                                    {/* <DateTimePicker */}
                                     <DatePicker
                                         fullWidth
                                         id="AppointmentDate"
                                         label="Ngày hẹn (nếu có)"
-                                        value={values.AppointmentDate}
+                                        value={patient.AppointmentDate}
                                         onChange={(date) => handleAppointmentDateChange(date)}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
                                     <CheckBox
                                         label="Khám lần đầu"
-                                        checked={values.Status === PatientStatus.IsNew}
-                                        // disabled={values.Status !== PatientStatus.IsNew}
-                                        disabled={values.Status === PatientStatus.IsChecking}
+                                        checked={patient.Status === PatientStatus.IsNew}
+                                        disabled={patient.Status === PatientStatus.IsChecking}
                                         value={PatientStatus.IsNew}
                                         onChange={handleStatusChange}
                                     />
@@ -1415,10 +1194,8 @@ const PatientManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
                                     <CheckBox
                                         label="Tái khám"
-                                        // checked={values.Status !== PatientStatus.IsNew}
-                                        checked={values.Status === PatientStatus.IsRechecking}
-                                        // disabled={values.Status === PatientStatus.IsNew}
-                                        disabled={values.Status === PatientStatus.IsChecking}
+                                        checked={patient.Status === PatientStatus.IsRechecking}
+                                        disabled={patient.Status === PatientStatus.IsChecking}
                                         value={PatientStatus.IsRechecking}
                                         onChange={handleStatusChange}
                                     />
@@ -1426,8 +1203,8 @@ const PatientManagement = () => {
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
                                     <CheckBox
                                         label="BS Hồ sơ"
-                                        checked={values.Status === PatientStatus.IsToAddDocs}
-                                        disabled={values.Status === PatientStatus.IsChecking}
+                                        checked={patient.Status === PatientStatus.IsToAddDocs}
+                                        disabled={patient.Status === PatientStatus.IsChecking}
                                         value={PatientStatus.IsToAddDocs}
                                         onChange={handleStatusChange}
                                     />
@@ -1460,7 +1237,7 @@ const PatientManagement = () => {
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                                         <DropZone onDropFile={handleUploadXRayImage} />
                                         {
-                                            !_.isEmpty(values.XRayImages) &&
+                                            !_.isEmpty(_xRayImages) &&
                                             <Paper elevation={0}>
                                                 <Typography
                                                     style={{ marginBottom: 16 }}
@@ -1473,7 +1250,7 @@ const PatientManagement = () => {
                                                     container
                                                     spacing={2}
                                                 >
-                                                    {values.XRayImages.map((xRayImage, index) => (
+                                                    {_xRayImages.map((xRayImage, index) => (
                                                         <Grid
                                                             className={classes.thumb}
                                                             key={index}
@@ -1511,8 +1288,8 @@ const PatientManagement = () => {
                                         fullWidth
                                         id="Height"
                                         label="Chiều cao"
-                                        value={values.Height}
-                                        onChange={handleValueChange('Height')}
+                                        value={history.Height}
+                                        onChange={handleHistoryChange('Height')}
                                         placeholder=".......cm"
                                     />
                                 </Grid>
@@ -1521,18 +1298,18 @@ const PatientManagement = () => {
                                         fullWidth
                                         id="Weight"
                                         label="Cân nặng"
-                                        value={values.Weight}
-                                        onChange={handleValueChange('Weight')}
+                                        value={history.Weight}
+                                        onChange={handleHistoryChange('Weight')}
                                         placeholder=".......kg"
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
                                     <TextField
                                         fullWidth
-                                        id="BloodPresure"
+                                        id="BloodPressure"
                                         label="Huyết áp"
-                                        value={values.BloodPresure}
-                                        onChange={handleValueChange('BloodPresure')}
+                                        value={history.BloodPressure}
+                                        onChange={handleHistoryChange('BloodPressure')}
                                         placeholder=".../...mmHg"
                                     />
                                 </Grid>
@@ -1541,8 +1318,8 @@ const PatientManagement = () => {
                                         fullWidth
                                         id="Pulse"
                                         label="Mạch"
-                                        value={values.Pulse}
-                                        onChange={handleValueChange('Pulse')}
+                                        value={history.Pulse}
+                                        onChange={handleHistoryChange('Pulse')}
                                         placeholder=".......lần/phút"
                                     />
                                 </Grid>
@@ -1551,8 +1328,8 @@ const PatientManagement = () => {
                                         fullWidth
                                         id="Other"
                                         label="Thông tin khác"
-                                        value={values.Other}
-                                        onChange={handleValueChange('Other')}
+                                        value={history.Other}
+                                        onChange={handleHistoryChange('Other')}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
@@ -1560,8 +1337,8 @@ const PatientManagement = () => {
                                         fullWidth
                                         id="Note"
                                         label="Ghi chú"
-                                        value={values.Note}
-                                        onChange={handleValueChange('Note')}
+                                        value={history.Note}
+                                        onChange={handleHistoryChange('Note')}
                                     />
                                 </Grid>
                             </Grid>
@@ -1572,14 +1349,6 @@ const PatientManagement = () => {
                             />
                             <Grid container spacing={2} style={{ marginTop: 8, marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                                    {/* <Select
-                                        fullWidth
-                                        id="DoctorId"
-                                        label="Bác sĩ phụ trách khám"
-                                        value={values.DoctorId}
-                                        options={doctorOptions}
-                                        onChange={handleValueChange('DoctorId')}
-                                    /> */}
                                     <Autocomplete
                                         fullWidth
                                         multiple
@@ -1587,7 +1356,7 @@ const PatientManagement = () => {
                                         label="Các bác sĩ hội chuẩn khám"
                                         options={doctorOptions}
                                         getOptionLabel={getOptionLabel}
-                                        value={values.Doctors}
+                                        value={_doctors}
                                         onChange={handleSelectDoctorChange}
                                     />
                                 </Grid>
@@ -1614,9 +1383,8 @@ const PatientManagement = () => {
                                         disabled={disabled}
                                         loading={loadingDone}
                                         color="success"
-                                        children={selectedRow ? 'Lưu' : 'Hoàn tất'}
-                                        iconName={selectedRow ? 'save' : 'done'}
-                                        // onClick={handleDone}
+                                        children={(updateMode || externalUpdateMode) ? 'Lưu' : 'Hoàn tất'}
+                                        iconName={(updateMode || externalUpdateMode) ? 'save' : 'done'}
                                         onClick={handleOpenPatientPreview}
                                     />
                                 </Grid>
@@ -1631,21 +1399,6 @@ const PatientManagement = () => {
                     style={{ height: '100%' }}
                 >
                     <CardHeader
-                        // action={
-                        //     <React.Fragment>
-                        //         {
-                        //             selectedRow &&
-                        //             <Button
-                        //                 color="danger"
-                        //                 children="Xóa"
-                        //                 iconName="delete"
-                        //                 onClick={onOpenDeleteConfirm}
-                        //                 disabled={disabled}
-                        //                 loading={loadingDelete}
-                        //             />
-                        //         }
-                        //     </React.Fragment>
-                        // }
                         title="DANH SÁCH BỆNH NHÂN"
                         subheader="Danh sách bệnh nhân đã có dữ liệu trên hệ thống"
                     />
@@ -1692,6 +1445,7 @@ const PatientManagement = () => {
                 open={openPatientPreview}
                 patient={patient}
                 handleCancel={handleClosePatientPreview}
+                handlePrint={handlePrint}
                 handleSave={handleDone}
             />
             <DeleteConfirm

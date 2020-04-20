@@ -5,7 +5,6 @@ using ClinicAPI.Authorization;
 using ClinicAPI.ViewModels;
 using DAL;
 using DAL.Core;
-using DAL.Models;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +38,12 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(new[] { prescription, });
+            var prescriptionVM = _mapper.Map<PrescriptionPartialViewModel>(prescription);
+            var medicines = _mapper.Map <IEnumerable<PrescriptionMedicineViewModel>>(prescription.Medicines);
+
+            prescriptionVM.Medicines = medicines;
+
+            return Ok(new[] { prescriptionVM, });
         }
 
         [HttpGet("opentimes")]

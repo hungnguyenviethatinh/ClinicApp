@@ -68,6 +68,6 @@ export const encodeFileToBase64 = (file) => new Promise((resolve) => {
     reader.readAsDataURL(file);
 });
 
-export { default as chromely } from './Chromely';
+export { default as ChromeLyService } from './Chromely';
 export { default as useInterval } from './UseInterval';
 export { default } from './AxiosInstance';

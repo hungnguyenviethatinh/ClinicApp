@@ -30,7 +30,6 @@ namespace DAL.Repositories
             return _appContext.Prescriptions
                 .Include(p => p.Doctor)
                 .Include(p => p.Patient)
-                .Include(p => p.Medicines).ThenInclude(m => m.Medicine)
                 .Where(p => !p.IsDeleted);
         }
         public async Task<Prescription> GetPrescription(int id)

@@ -1,3 +1,4 @@
+// App configuration:
 export const ApiUrl = process.env.DRKHOACLINICAPP_APIURL;
 export const ClientSecret = process.env.DRKHOACLINICAPP_SECRET;
 
@@ -16,7 +17,6 @@ export const AddHistoryUrl = '/api/receptionist/histories';
 export const AddXRayUrl = '/api/receptionist/xrays';
 export const UpdatePatientUrl = '/api/receptionist/patients';
 export const UpdateHistoryUrl = '/api/receptionist/histories';
-export const UpdateHistoryByPatientIdUrl = '/api/receptionist/histories/patient';
 export const UpdateXRayUrl = '/api/receptionist/xrays';
 export const DeletePatientUrl = '/api/receptionist/patients';
 export const GetPatientInQueueUrl = '/api/receptionist/patients/queue';
@@ -24,6 +24,7 @@ export const GetPrescriptionsUrl = '/api/receptionist/prescriptions';
 export const GetPrescriptionsInQueueUrl = '/api/receptionist/prescriptions/queue';
 export const AddDoctorsUrl = '/api/receptionist/doctors';
 export const UpdateDoctorsUrl = '/api/receptionist/doctors';
+
 // Doctor Api:
 export const GetPatientsByDoctorUrl = '/api/doctor/patients';
 export const GetPatientOptionsUrl = '/api/doctor/patients/options';
@@ -46,6 +47,7 @@ export const RestoreMedicinesQuantityUrl = 'api/doctor/medicines/restore';
 export const GetIngredientOptionsUrl = 'api/doctor/ingredients';
 export const GetPrescriptionListUrl = 'api/doctor/prescriptionlist';
 export const GetMedicineListUrl = 'api/doctor/medicinelist';
+
 // Addmin Api:
 export const GetAllPatientsUrl = '/api/admin/patients';
 export const GetAllPrescriptionsUrl = '/api/admin/prescriptions';
@@ -81,6 +83,7 @@ export const GetOpenTimeUrl = '/api/admin/opentimes';
 export const AddOpenTimeUrl = '/api/admin/opentimes';
 export const UpdateOpenTimeUrl = '/api/admin/opentimes';
 export const DeleteOpenTimeUrl = '/api/admin/opentimes';
+
 // Shared:
 export const PatientUrl = '/api/patient';
 export const PrescriptionUrl = '/api/prescription';
@@ -92,6 +95,7 @@ export const PatientCurrentHistoryUrl = 'api/history/patient/current';
 export const SetUserStatusUrl = '/api/account/status';
 export const GetCurrentUserUrl = '/api/account';
 export const UpdateCurrentUserUrl = '/api/account/update';
+
 // Chromely controller:
 export const PrescriptionPrintUrl = '/prescription/print';
 export const GetAppConfigurationUrl = '/app/configuration';
