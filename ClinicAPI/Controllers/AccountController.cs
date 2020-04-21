@@ -90,7 +90,9 @@ namespace ClinicAPI.Controllers
 
                 if (!string.IsNullOrWhiteSpace(userUpdateModel.CurrentPassword))
                 {
-                    result = await _accountManager.UpdatePasswordAsync(currentUser, userUpdateModel.CurrentPassword, userUpdateModel.NewPassword);
+                    result = await _accountManager.UpdatePasswordAsync(currentUser,
+                        userUpdateModel.CurrentPassword,
+                        userUpdateModel.NewPassword);
                     if (!result.Succeeded)
                     {
                         return NoContent();

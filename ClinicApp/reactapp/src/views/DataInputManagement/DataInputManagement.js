@@ -124,7 +124,6 @@ const DataInputManagement = () => {
     const [disabled, setDisabled] = React.useState(false);
 
     // [Start] Diagnosis handle
-    // const [loadingDiagnosisDelete, setLoadingDiagnosisDelete] = React.useState(false);
     const [loadingDiagnosisDone, setLoadingDiagnosisDone] = React.useState(false);
 
     const diagnosisTableRef = React.useRef(null);
@@ -138,8 +137,6 @@ const DataInputManagement = () => {
         if (!selectedDiagnosisRow || selectedDiagnosisRow.tableData.id !== rowData.tableData.id) {
             setSelectedDiagnosisRow(rowData);
             setOpenDiagnosisActionOption(true);
-            // setUpdateDiagnosisMode(true);
-            // getDiagnosis(rowData.id);
         } else {
             setSelectedDiagnosisRow(null);
             setUpdateDiagnosisMode(false);
@@ -195,7 +192,6 @@ const DataInputManagement = () => {
     const handleDiagnosisDelete = () => {
         const { id } = selectedDiagnosisRow;
         setDisabled(true);
-        // setLoadingDiagnosisDelete(true);
         deleteDiagnosis(id);
         setOpenDiagnosis(false);
     };
@@ -325,8 +321,6 @@ const DataInputManagement = () => {
         if (!selectedUnitRow || selectedUnitRow.tableData.id !== rowData.tableData.id) {
             setSelectedUnitRow(rowData);
             setOpenUnitActionOption(true);
-            // setUpdateUnitMode(true);
-            // getUnit(rowData.id);
         } else {
             setSelectedUnitRow(null);
             setUpdateUnitMode(false);
@@ -382,7 +376,6 @@ const DataInputManagement = () => {
     const handleUnitDelete = () => {
         const { id } = selectedUnitRow;
         setDisabled(true);
-        // setLoadingUnitDelete(true);
         deleteUnit(id);
         setOpenUnit(false);
     };
@@ -486,12 +479,10 @@ const DataInputManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi xóa tên đơn vị của thuốc!');
             }
             setDisabled(false);
-            // setLoadingUnitDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteUnitLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa tên đơn vị của thuốc!');
             setDisabled(false);
-            // setLoadingUnitDelete(false);
         });
     };
 
@@ -545,20 +536,6 @@ const DataInputManagement = () => {
                                         onClick={handleDiagnosisReset}
                                     />
                                 </Grid>
-                                {/* {
-                                    selectedDiagnosisRow &&
-                                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                        <Button
-                                            fullWidth
-                                            disabled={disabled}
-                                            loading={loadingDiagnosisDelete}
-                                            color="danger"
-                                            children="Xóa"
-                                            iconName="delete"
-                                            onClick={onOpenDiagnosis}
-                                        />
-                                    </Grid>
-                                } */}
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
@@ -648,20 +625,6 @@ const DataInputManagement = () => {
                                         onClick={handleUnitReset}
                                     />
                                 </Grid>
-                                {/* {
-                                    selectedUnitRow &&
-                                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                        <Button
-                                            fullWidth
-                                            disabled={disabled}
-                                            loading={loadingUnitDelete}
-                                            color="danger"
-                                            children="Xóa"
-                                            iconName="delete"
-                                            onClick={onOpenUnit}
-                                        />
-                                    </Grid>
-                                } */}
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth

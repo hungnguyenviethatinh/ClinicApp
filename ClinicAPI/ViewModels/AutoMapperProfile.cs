@@ -102,72 +102,72 @@ namespace ClinicAPI.ViewModels
             CreateMap<Patient, PatientBasicViewModel>();
             CreateMap<Patient, PatientPartialViewModel>();
             CreateMap<Prescription, PrescriptionViewModel>()
-                .ForMember(p => p.Patient, map => map.MapFrom((viewModel) => new PatientBasicViewModel()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientBasicViewModel()
                 {
-                    Id = viewModel.Patient.Id,
-                    FullName = viewModel.Patient.FullName,
+                    Id = model.Patient.Id,
+                    FullName = model.Patient.FullName,
                 }))
-                .ForMember(p => p.Doctor, map => map.MapFrom((viewModel) => new DoctorViewModel()
+                .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
                 {
-                    Id = viewModel.Doctor.Id,
-                    FullName = viewModel.Doctor.FullName,
+                    Id = model.Doctor.Id,
+                    FullName = model.Doctor.FullName,
                 }));
             CreateMap<Prescription, PrescriptionFullViewModel>()
-                .ForMember(p => p.Patient, map => map.MapFrom((viewModel) => new PatientBasicViewModel()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientBasicViewModel()
                 {
-                    Id = viewModel.Patient.Id,
-                    FullName = viewModel.Patient.FullName,
+                    Id = model.Patient.Id,
+                    FullName = model.Patient.FullName,
                 }))
-                .ForMember(p => p.Doctor, map => map.MapFrom((viewModel) => new DoctorViewModel()
+                .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
                 {
-                    Id = viewModel.Doctor.Id,
-                    FullName = viewModel.Doctor.FullName,
+                    Id = model.Doctor.Id,
+                    FullName = model.Doctor.FullName,
                 }))
-                .ForMember(p => p.Medicines, map => map.Ignore());
+                .ForMember(viewModel => viewModel.Medicines, map => map.Ignore());
             CreateMap<Prescription, PrescriptionPartialViewModel>()
-                .ForMember(p => p.Patient, map => map.MapFrom((viewModel) => new PatientPartialViewModel()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientPartialViewModel()
                 {
-                    Id = viewModel.Patient.Id,
-                    IdCode = viewModel.Patient.IdCode,
-                    FullName = viewModel.Patient.FullName,
-                    Age = viewModel.Patient.Age,
-                    Gender = viewModel.Patient.Gender,
-                    Address = viewModel.Patient.Address,
-                    PhoneNumber = viewModel.Patient.PhoneNumber,
-                    RelativePhoneNumber = viewModel.Patient.RelativePhoneNumber,
-                    AppointmentDate = viewModel.Patient.AppointmentDate,
-                    CheckedDate = viewModel.Patient.CheckedDate,
-                    Status = viewModel.Patient.Status,
+                    Id = model.Patient.Id,
+                    IdCode = model.Patient.IdCode,
+                    FullName = model.Patient.FullName,
+                    Age = model.Patient.Age,
+                    Gender = model.Patient.Gender,
+                    Address = model.Patient.Address,
+                    PhoneNumber = model.Patient.PhoneNumber,
+                    RelativePhoneNumber = model.Patient.RelativePhoneNumber,
+                    AppointmentDate = model.Patient.AppointmentDate,
+                    CheckedDate = model.Patient.CheckedDate,
+                    Status = model.Patient.Status,
                 }))
-                .ForMember(p => p.Doctor, map => map.MapFrom((viewModel) => new DoctorViewModel()
+                .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
                 {
-                    Id = viewModel.Doctor.Id,
-                    FullName = viewModel.Doctor.FullName,
+                    Id = model.Doctor.Id,
+                    FullName = model.Doctor.FullName,
                 }))
-                .ForMember(p => p.Medicines, map => map.Ignore());
+                .ForMember(viewModel => viewModel.Medicines, map => map.Ignore());
 
             CreateMap<Medicine, MedicinePartialViewModel>()
-                .ForMember(m => m.Quantity,
-                map => map.MapFrom((medicine) => medicine.Quantity.GetValueOrDefault(0)))
-                .ForMember(m => m.Status,
-                map => map.MapFrom((medicine) => medicine.Quantity > 0 ? MedicineStatus.Yes : MedicineStatus.No));
+                .ForMember(viewModel => viewModel.Quantity,
+                map => map.MapFrom((model) => model.Quantity.GetValueOrDefault(0)))
+                .ForMember(viewModel => viewModel.Status,
+                map => map.MapFrom((model) => model.Quantity > 0 ? MedicineStatus.Yes : MedicineStatus.No));
             CreateMap<PrescriptionMedicine, PrescriptionMedicineViewModel>()
-                .ForMember(pm => pm.Medicine, map => map.MapFrom((viewModel) => new MedicinePartialViewModel()
+                .ForMember(viewModel => viewModel.Medicine, map => map.MapFrom((model) => new MedicinePartialViewModel()
                 {
-                    Id = viewModel.Medicine.Id,
-                    IdCode = viewModel.Medicine.IdCode,
-                    Name = viewModel.Medicine.Name,
-                    ExpiredDate = viewModel.Medicine.ExpiredDate,
-                    NetWeight = viewModel.Medicine.NetWeight,
-                    Quantity = viewModel.Medicine.Quantity,
-                    Unit = viewModel.Medicine.Unit,
-                    Status = viewModel.Medicine.Quantity > 0 ? MedicineStatus.Yes : MedicineStatus.No,
+                    Id = model.Medicine.Id,
+                    IdCode = model.Medicine.IdCode,
+                    Name = model.Medicine.Name,
+                    ExpiredDate = model.Medicine.ExpiredDate,
+                    NetWeight = model.Medicine.NetWeight,
+                    Quantity = model.Medicine.Quantity,
+                    Unit = model.Medicine.Unit,
+                    Status = model.Medicine.Quantity > 0 ? MedicineStatus.Yes : MedicineStatus.No,
                 }));
 
             CreateMap<History, HistoryFullViewModel>()
-                .ForMember(h => h.Prescriptions, map => map.Ignore())
-                .ForMember(h => h.Doctors, map => map.Ignore())
-                .ForMember(h => h.XRayImages, map => map.Ignore());
+                .ForMember(viewModel => viewModel.Prescriptions, map => map.Ignore())
+                .ForMember(viewModel => viewModel.Doctors, map => map.Ignore())
+                .ForMember(viewModel => viewModel.XRayImages, map => map.Ignore());
             CreateMap<XRayImage, XRayViewModel>();
         }
     }

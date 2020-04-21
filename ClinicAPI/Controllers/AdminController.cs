@@ -98,7 +98,7 @@ namespace ClinicAPI.Controllers
             {
                 prescriptions = prescriptions
                     .Where(p =>
-                        query.Contains($"{p.IdCode}{p.Id}", StringComparison.OrdinalIgnoreCase) ||
+                        $"{p.IdCode}{p.Id}".Equals(query, StringComparison.OrdinalIgnoreCase) ||
                         p.Patient.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.Doctor.FullName.Contains(query, StringComparison.OrdinalIgnoreCase))
                     .OrderByDescending(p => p.Id)
@@ -146,11 +146,6 @@ namespace ClinicAPI.Controllers
                     medicines = medicines
                     .Where(m => m.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
                 }
-                //else if (findBy == FindMedicineByConstants.ShortName)
-                //{
-                //    medicines = medicines
-                //    .Where(m => m.ShortName.Contains(query, StringComparison.OrdinalIgnoreCase));
-                //}
                 else if (findBy == FindMedicineByConstants.ExpiredDate)
                 {
                     medicines = medicines
@@ -167,7 +162,8 @@ namespace ClinicAPI.Controllers
                 else
                 {
                     medicines = medicines.Where(
-                        m => (m.IdCode.Equals(query, StringComparison.OrdinalIgnoreCase) || m.Name.Contains(query, StringComparison.OrdinalIgnoreCase)));
+                        m => m.IdCode.Equals(query, StringComparison.OrdinalIgnoreCase) ||
+                        m.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
                 }
 
                 medicines = medicines.Skip((page - 1) * pageSize).Take(pageSize);
@@ -182,41 +178,29 @@ namespace ClinicAPI.Controllers
             if (startDate != null && endDate != null)
             {
                 medicines = medicines
-                .Where(m => (m.CreatedDate >= startDate && m.CreatedDate <= endDate))
+                .Where(m => (m.CreatedDate.Date >= startDate.Value.Date && m.CreatedDate.Date <= endDate.Value.Date))
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize);
             }
 
             medicines = medicines.OrderByDescending(m => m.Name);
 
-            if (medicines.Any())
+            var medicineVMs = _mapper.Map<IEnumerable<MedicineViewModel>>(medicines);
+            foreach (var medicineVM in medicineVMs)
             {
-                var medicineVMs = _mapper.Map<IEnumerable<MedicineViewModel>>(medicines);
-                foreach (var medicineVM in medicineVMs)
-                {
-                    var ingredientNames = _unitOfWork.Ingredients
-                        .Where(i => i.MedicineId == medicineVM.Id)
-                        .Select(i => i.Name);
-                    medicineVM.Ingredient = string.Join(", ", ingredientNames);
-                }
-
-                return Ok(new[]
-                {
-                    new
-                    {
-                        totalCount,
-                        medicines = medicineVMs,
-                    },
-                });
+                var ingredientNames = _unitOfWork.Ingredients
+                    .Where(i => i.MedicineId == medicineVM.Id)
+                    .Select(i => i.Name);
+                medicineVM.Ingredient = string.Join(", ", ingredientNames);
             }
 
             return Ok(new[]
             {
-                new
-                {
-                    totalCount,
-                    medicines,
-                },
+                 new
+                 {
+                     totalCount,
+                     medicines = medicineVMs,
+                 },
             });
         }
 
@@ -230,7 +214,9 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(new[] { medicine, });
+            var medicineVM = _mapper.Map<MedicineViewModel>(medicine);
+
+            return Ok(new[] { medicineVM, });
         }
 
         [HttpPost("medicines")]
@@ -343,7 +329,7 @@ namespace ClinicAPI.Controllers
                 return Ok();
             }
 
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpPut("ingredients/{medicineId}")]
@@ -380,7 +366,7 @@ namespace ClinicAPI.Controllers
                 return Ok();
             }
 
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpDelete("ingredients/{medicineId}")]
@@ -456,10 +442,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllUsersPolicy)]
         public async Task<IActionResult> GetEmployee(string id)
         {
-            var employee = _unitOfWork.Users
-                .Where(e => e.Id == id)
-                .FirstOrDefault();
-
+            var employee = await _unitOfWork.Users.FindAsync(id);
             if (employee == null)
             {
                 return NotFound();
@@ -749,7 +732,7 @@ namespace ClinicAPI.Controllers
                 return Ok(openTime);
             }
 
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpPut("units/{id}")]
@@ -809,7 +792,7 @@ namespace ClinicAPI.Controllers
                 return Ok(openTime);
             }
 
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpDelete("units/{id}")]
@@ -855,18 +838,7 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetPatientStat([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] string period = PeriodConstants.Day)
         {
-            var patients = _unitOfWork.Patients.Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate);
-
-            //var allPatients = patients
-            //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate);
-            //var newPatients = patients
-            //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate && p.Status == PatientStatus.IsNew);
-            //var checkedPatients = patients
-            //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate && p.Status == PatientStatus.IsChecked);
-            //var recheckPatients = patients
-            //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate && p.Status == PatientStatus.IsRechecking);
-            //var appointedPatients = patients
-            //    .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate && p.AppointmentDate != null && p.Status != PatientStatus.IsChecked);
+            var patients = _unitOfWork.Patients.Where(p => p.CreatedDate.Date >= startDate.Date && p.CreatedDate.Date <= endDate.Date);
 
             if (period == PeriodConstants.Week)
             {
@@ -874,29 +846,9 @@ namespace ClinicAPI.Controllers
                 .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
                 .Select(p => new { x = p.Key, y = p.Count() });
 
-                //var isNewByWeek = newPatients
-                //    .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
-                //    .Select(p => new { x = p.Key, y = p.Count() });
-
-                //var isCheckedByWeek = checkedPatients
-                //    .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
-                //    .Select(p => new { x = p.Key, y = p.Count() });
-
-                //var recheckByWeek = recheckPatients
-                //    .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
-                //    .Select(p => new { x = p.Key, y = p.Count() });
-
-                //var appointedByWeek = appointedPatients
-                //     .GroupBy(p => new { p.CreatedDate.Year, Week = 1 + (p.CreatedDate.DayOfYear - 1) / 7 })
-                //     .Select(p => new { x = p.Key, y = p.Count() });
-
                 return Ok(new[]
                 {
                     new { all = allByWeek, },
-                    //isNew = isNewByWeek,
-                    //isChecked = isCheckedByWeek,
-                    //recheck = recheckByWeek,
-                    //appointed = appointedByWeek,
                 });
             }
 
@@ -906,28 +858,9 @@ namespace ClinicAPI.Controllers
                 .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
                 .Select(p => new { x = p.Key, y = p.Count() });
 
-                //var isNewByMonth = newPatients
-                //    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
-                //    .Select(p => new { x = p.Key, y = p.Count() });
-
-                //var isCheckedByMonth = checkedPatients
-                //    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
-                //    .Select(p => new { x = p.Key, y = p.Count() });
-
-                //var recheckByMonth = recheckPatients
-                //    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
-                //    .Select(p => new { x = p.Key, y = p.Count() });
-
-                //var appointedByMonth = appointedPatients
-                //    .GroupBy(p => new { p.CreatedDate.Year, p.CreatedDate.Month })
-                //    .Select(p => new { x = p.Key, y = p.Count() });
                 return Ok(new[]
                 {
                     new { all = allByMonth, },
-                    //isNew = isNewByMonth,
-                    //isChecked = isCheckedByMonth,
-                    //recheck = recheckByMonth,
-                    //appointed = appointedByMonth,
                 });
             }
 
@@ -935,29 +868,9 @@ namespace ClinicAPI.Controllers
                 .GroupBy(p => p.CreatedDate.Date)
                 .Select(p => new { x = p.Key, y = p.Count() });
 
-            //var isNewByDay = newPatients
-            //    .GroupBy(p => p.CreatedDate.Date)
-            //    .Select(p => new { x = p.Key, y = p.Count() });
-
-            //var isCheckedByDay = checkedPatients
-            //    .GroupBy(p => p.CreatedDate.Date)
-            //    .Select(p => new { x = p.Key, y = p.Count() });
-
-            //var recheckByDay = recheckPatients
-            //    .GroupBy(p => p.CreatedDate.Date)
-            //    .Select(p => new { x = p.Key, y = p.Count() });
-
-            //var appointedByDay = appointedPatients
-            //    .GroupBy(p => p.CreatedDate.Date)
-            //    .Select(p => new { x = p.Key, y = p.Count() });
-
             return Ok(new[]
             {
                 new { all = allByDay, },
-                //isNew = isNewByDay,
-                //isChecked = isCheckedByDay,
-                //recheck = recheckByDay,
-                //appointed = appointedByDay,
             });
         }
 
@@ -966,7 +879,7 @@ namespace ClinicAPI.Controllers
         public IActionResult GetPrescriptionStat([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] string period = PeriodConstants.Day)
         {
             var prescriptions = _unitOfWork.Prescriptions
-                .Where(p => p.CreatedDate >= startDate && p.CreatedDate <= endDate);
+                .Where(p => p.CreatedDate.Date >= startDate.Date && p.CreatedDate.Date <= endDate.Date);
 
             if (period == PeriodConstants.Week)
             {

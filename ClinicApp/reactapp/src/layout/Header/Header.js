@@ -7,13 +7,11 @@ import {
     AppBar,
     Button,
     Toolbar,
-    // Badge, 
     Hidden,
     IconButton,
     Typography
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-// import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import axios from 'axios';
@@ -92,8 +90,6 @@ const Header = (props) => {
 
     const classes = useStyles();
 
-    // const [notifications, setNotifications] = React.useState([]);
-
     return (
         <AppBar
             {...rest}
@@ -113,15 +109,6 @@ const Header = (props) => {
                 </Hidden>
                 <div className={classes.flexGrow} />
                 <Hidden mdDown>
-                    {/* <IconButton color="inherit">
-                        <Badge
-                            badgeContent={notifications.length}
-                            color="primary"
-                            variant="dot"
-                        >
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton> */}
                     <LogoutButton classes={classes} />
                 </Hidden>
                 <Hidden lgUp>

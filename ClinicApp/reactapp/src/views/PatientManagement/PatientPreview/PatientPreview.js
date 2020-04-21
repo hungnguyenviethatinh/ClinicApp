@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import { Button } from '../../../components/Button';
 
 import {
-    DisplayDateTimeFormat,
+    DisplayDateFormat,
     Gender,
 } from '../../../constants';
 
@@ -23,7 +23,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 const PatientPreview = (props) => {
-    const { disabled, loading, open, patient, handleCancel, handlePrint, handleSave } = props;
+    const { disabled, disabledPrint, loading, loadingPrint, open, patient, handleCancel, handlePrint, handleSave } = props;
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -182,7 +182,7 @@ const PatientPreview = (props) => {
                                         <Typography
                                             variant="body1"
                                             component="p"
-                                            children="Ngày giờ hẹn khám:"
+                                            children="Ngày hẹn khám:"
                                         />
                                     </Grid>
                                     <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
@@ -191,7 +191,7 @@ const PatientPreview = (props) => {
                                             component="h6"
                                             children={
                                                 `${moment(patient.AppointmentDate).isValid() ?
-                                                    moment(patient.AppointmentDate).format(DisplayDateTimeFormat) : ''}`
+                                                    moment(patient.AppointmentDate).format(DisplayDateFormat) : ''}`
                                             }
                                             style={{ fontWeight: 600 }}
                                         />
@@ -388,12 +388,13 @@ const PatientPreview = (props) => {
                     style={{ marginRight: 16 }}
                 />
                 <Button
-                    disabled={disabled}
-                    loading={loading}
+                    disabled={disabledPrint}
+                    loading={loadingPrint}
                     color="warning"
                     children="In"
                     iconName="print"
                     onClick={handlePrint}
+                    style={{ marginRight: 16 }}
                 />
                 <Button
                     disabled={disabled}

@@ -106,7 +106,6 @@ const OpenTimeManagement = () => {
 
     // [Start] State declaration and event handlers
     const [disabled, setDisabled] = React.useState(false);
-    // const [loadingOpenTimeDelete, setLoadingOpenTimeDelete] = React.useState(false);
     const [loadingOpenTimeDone, setLoadingOpenTimeDone] = React.useState(false);
 
     const openTimeTableRef = React.useRef(null);
@@ -120,8 +119,6 @@ const OpenTimeManagement = () => {
         if (!selectedOpenTimeRow || selectedOpenTimeRow.tableData.id !== rowData.tableData.id) {
             setSelectedOpenTimeRow(rowData);
             setOpenActionOption(true);
-            // setUpdateOpenTimeMode(true);
-            // getOpenTime(rowData.id);
         } else {
             setSelectedOpenTimeRow(null);
             setUpdateOpenTimeMode(false);
@@ -184,7 +181,6 @@ const OpenTimeManagement = () => {
     const handleOpenTimeDelete = () => {
         const { id } = selectedOpenTimeRow;
         setDisabled(true);
-        // setLoadingOpenTimeDelete(true);
         deleteOpenTime(id);
         setOpenOpenTime(false);
     };
@@ -284,12 +280,10 @@ const OpenTimeManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi xóa dữ liệu!');
             }
             setDisabled(false);
-            // setLoadingOpenTimeDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteOpenTimeLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa dữ liệu!');
             setDisabled(false);
-            // setLoadingOpenTimeDelete(false);
         });
     };
 
@@ -343,20 +337,6 @@ const OpenTimeManagement = () => {
                                         onClick={handleOpenTimeReset}
                                     />
                                 </Grid>
-                                {/* {
-                                    selectedOpenTimeRow &&
-                                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                        <Button
-                                            fullWidth
-                                            disabled={disabled}
-                                            loading={loadingOpenTimeDelete}
-                                            color="danger"
-                                            children="Xóa"
-                                            iconName="delete"
-                                            onClick={onOpenOpenTime}
-                                        />
-                                    </Grid>
-                                } */}
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth

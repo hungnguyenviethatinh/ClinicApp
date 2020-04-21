@@ -86,7 +86,8 @@ namespace ClinicAPI.Controllers
             var patients = GetCurrentDoctorPatients()
                 .Where(p =>
                 (p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate.Date == today)) ||
-                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today))
+                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today) ||
+                (p.Status == PatientStatus.IsChecked && p.AppointmentDate != null && p.AppointmentDate.Value.Date >= today))
                 .Select(p => new { p.IdCode, p.Id, p.FullName });
 
             return Ok(patients);
@@ -149,10 +150,6 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetCurrentPatient(int id)
         {
-            //var patient = GetCurrentDoctorPatients()
-            //    .Where(p => (p.Status == PatientStatus.IsChecking))
-            //    .OrderBy(p => p.UpdatedDate)
-            //    .FirstOrDefault();
             var patient = _unitOfWork.Patients.Find(id);
 
             if (patient == null)
@@ -162,15 +159,18 @@ namespace ClinicAPI.Controllers
 
             var history = _unitOfWork.Histories
                 .Where(h => (h.PatientId == id && !h.IsChecked))
-                .OrderByDescending(h => h.UpdatedDate)
-                .FirstOrDefault();
+                .OrderBy(h => h.CreatedDate)
+                .LastOrDefault();
+
+            var historyVM = _mapper.Map<HistoryViewModel>(history);
+            var patientVM = _mapper.Map<PatientViewModel>(patient);
 
             return Ok(new[]
             {
                 new
                 {
-                    history,
-                    patient,
+                    history = historyVM,
+                    patient = patientVM,
                 },
             });
         }
@@ -248,7 +248,7 @@ namespace ClinicAPI.Controllers
                 return Ok();
             }
 
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpGet("prescriptions")]
@@ -401,7 +401,6 @@ namespace ClinicAPI.Controllers
                     }
                 }
 
-                //_mapper.Map(medicineUpdateModels, medicines);
                 _unitOfWork.Medicines.UpdateRange(medicines);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
@@ -441,7 +440,6 @@ namespace ClinicAPI.Controllers
                     }
                 }
 
-                //_mapper.Map(medicineRestoreModels, medicines);
                 _unitOfWork.Medicines.UpdateRange(medicines);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)

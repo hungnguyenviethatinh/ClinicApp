@@ -116,10 +116,6 @@ const StatisticsView = () => {
 
     const [xAxisPatientData, setXAxisPatientData] = React.useState([]);
     const [allPatientData, setAllPatientData] = React.useState([]);
-    // const [isNewPatientData, setIsNewPatientData] = React.useState([]);
-    // const [isCheckedPatientData, setIsCheckedPatientData] = React.useState([]);
-    // const [recheckPatientData, setRecheckPatientData] = React.useState([]);
-    // const [appointedPatientData, setAppointedPatientData] = React.useState([]);
     const getPatientStat = () => {
         const startDate = selectedStartDate.format(DataDateTimeFormat);
         const endDate = selectedEndDate.format(DataDateTimeFormat);
@@ -138,30 +134,14 @@ const StatisticsView = () => {
         }).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { all, /* isNew, isChecked, recheck, appointed */ } = data[0];
+                const { all } = data[0];
                 let xAxis = [];
                 const allY = [];
-                // const isNewY = [];
-                // const isCheckedY = [];
-                // const recheckY = [];
-                // const appointedY = [];
 
                 all.map(({ x, y }) => {
                     xAxis.push(x);
                     allY.push(y);
                 });
-                // isNew.map(({ x, y }) => {
-                //     isNewY.push(y);
-                // });
-                // isChecked.map(({ x, y }) => {
-                //     isCheckedY.push(y);
-                // });
-                // recheck.map(({ x, y }) => {
-                //     recheckY.push(y);
-                // });
-                // appointed.map(({ x, y }) => {
-                //     appointedY.push(y);
-                // });
                 if (selectedTimePeriod === PeriodConstants.Day) {
                     xAxis = xAxis.map(x => moment(x).format(DisplayDateFormat));
                 }
@@ -173,10 +153,6 @@ const StatisticsView = () => {
                 }
                 setXAxisPatientData(xAxis);
                 setAllPatientData(allY);
-                // setIsNewPatientData(isNewY);
-                // setIsCheckedPatientData(isCheckedY);
-                // setRecheckPatientData(recheckY);
-                // setAppointedPatientData(appointedY);
             }
             setDisabled(false);
             setLoadingSearch(false);
@@ -349,54 +325,6 @@ const StatisticsView = () => {
                                                     width: 3,
                                                 },
                                             },
-                                            // {
-                                            //     name: 'Mới',
-                                            //     type: 'line',
-                                            //     data: isNewPatientData,
-                                            //     axisTick: {
-                                            //         alignWithLabel: true,
-                                            //     },
-                                            //     lineStyle: {
-                                            //         color: '#28a745',
-                                            //         width: 3,
-                                            //     },
-                                            // },
-                                            // {
-                                            //     name: 'Đã khám',
-                                            //     type: 'line',
-                                            //     data: isCheckedPatientData,
-                                            //     axisTick: {
-                                            //         alignWithLabel: true,
-                                            //     },
-                                            //     lineStyle: {
-                                            //         color: '#dc3545',
-                                            //         width: 3,
-                                            //     },
-                                            // },
-                                            // {
-                                            //     name: 'Tái khám',
-                                            //     type: 'line',
-                                            //     data: recheckPatientData,
-                                            //     axisTick: {
-                                            //         alignWithLabel: true,
-                                            //     },
-                                            //     lineStyle: {
-                                            //         color: '#6c757d',
-                                            //         width: 3,
-                                            //     },
-                                            // },
-                                            // {
-                                            //     name: 'Đặt lịch hẹn',
-                                            //     type: 'line',
-                                            //     data: appointedPatientData,
-                                            //     axisTick: {
-                                            //         alignWithLabel: true,
-                                            //     },
-                                            //     lineStyle: {
-                                            //         color: '#17a2b8',
-                                            //         width: 3,
-                                            //     },
-                                            // },
                                         ]}
                                     />
                                 </Grid>

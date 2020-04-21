@@ -40,13 +40,10 @@ namespace ClinicApp.Controllers
             var doctors = patient.Doctors;
 
             string dots = "............";
-            //string threeDots = "...";
             string longDots = ".......................................................................................................................................";
 
             string date = DateTime.Now.ToString("dd-MM-yyyy");
             string time = DateTime.Now.ToString("HH:mm");
-            //string dateOfBirth = patient.DateOfBirth != null ? patient.DateOfBirth.ToString() : dots;
-            //string age = !string.IsNullOrWhiteSpace(patient.Age) ? patient.Age : dots;
             string address = !string.IsNullOrWhiteSpace(patient.Address) ? patient.Address : dots;
             string phoneNumber = !string.IsNullOrWhiteSpace(patient.PhoneNumber) ? patient.PhoneNumber : dots;
             string relativePhoneNumber = !string.IsNullOrWhiteSpace(patient.RelativePhoneNumber) ? patient.RelativePhoneNumber : dots;
@@ -198,18 +195,14 @@ namespace ClinicApp.Controllers
             converter.Options.PdfPageSize = PdfPageSize.A5;
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
             converter.Options.WebPageWidth = 1024;
-            //converter.Options.WebPageHeight = 1280;
 
             string patientId = string.Concat("DKC-BN", patient.Id);
             string patientName = patient.FullName;
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
             string saveFile = $"{patientId}_{patientName}_{createdTime}.pdf";
-
-            //string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            //string saveDirectory = $"{desktopPath}\\DonThuoc";
             string saveDirectory = $"{appDirectory}\\BenhNhan";
-
             string savePath = $"{saveDirectory}\\{saveFile}";
+
             PdfDocument pdf = converter.ConvertUrl(url);
             pdf.Save(savePath);
             pdf.Close();

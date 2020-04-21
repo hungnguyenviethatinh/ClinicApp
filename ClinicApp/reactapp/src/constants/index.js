@@ -103,7 +103,7 @@ export const PeriodConstants = {
 export const AccessTokenKey = 'access_token';
 
 export const ExpiredSessionMsg = 'Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại!';
-export const NotFoundMsg = 'Không tìm thấy thông tin!';
+export const NotFoundMsg = 'Không tìm thấy dữ liệu!';
 
 export const DataDateTimeFormat = 'YYYY-MM-DD';
 export const DisplayDateFormat = 'DD-MM-YYYY';

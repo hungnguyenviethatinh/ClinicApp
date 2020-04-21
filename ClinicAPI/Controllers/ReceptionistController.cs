@@ -106,10 +106,23 @@ namespace ClinicAPI.Controllers
                 p.Status != PatientStatus.IsChecked &&
                 ((p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate.Date == today)) ||
                 (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today)))
-                //.OrderBy(p => p.UpdatedDate);
                 .OrderBy(p => p.OrderNumber);
 
-            return Ok(patients);
+            var patientVMs = _mapper.Map<IEnumerable<PatientViewModel>>(patients);
+            foreach (var patient in patients)
+            {
+                foreach (var patientVM in patientVMs)
+                {
+                    if (patient.Id == patientVM.Id)
+                    {
+                        var dphVMs = _mapper.Map<IEnumerable<DoctorPatientHistoryViewModel>>(patient.Doctors);
+                        patientVM.Doctors = dphVMs;
+                        break;
+                    }
+                }
+            }
+
+            return Ok(patientVMs);
         }
 
         [HttpGet("patients/{id}")]
@@ -122,7 +135,11 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(new[] { patient, });
+            var patientVM = _mapper.Map<PatientViewModel>(patient);
+            var dphVMs = _mapper.Map<IEnumerable<DoctorPatientHistoryViewModel>>(patient.Doctors);
+            patientVM.Doctors = dphVMs;
+
+            return Ok(new[] { patientVM, });
         }
 
         [HttpPost("patients")]
@@ -225,7 +242,7 @@ namespace ClinicAPI.Controllers
                 return Ok();
             }
 
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpPut("patients/{id}")]
@@ -290,7 +307,7 @@ namespace ClinicAPI.Controllers
                 return Ok(history);
             }
 
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpPut("histories/{patientId}")]
@@ -415,7 +432,7 @@ namespace ClinicAPI.Controllers
                 return Ok();
             }
 
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpDelete("patients/{id}")]
@@ -541,9 +558,9 @@ namespace ClinicAPI.Controllers
                         p.AppointmentDate.Value.Date == appointmentDate)
                         .OrderBy(p => p.OrderNumber);
 
-                    if (patients.Any())
+                    if (appointedPatients.Any())
                     {
-                        orderNumber = patients.Last().OrderNumber + 1;
+                        orderNumber = appointedPatients.Last().OrderNumber + 1;
                     }
                 }
             }

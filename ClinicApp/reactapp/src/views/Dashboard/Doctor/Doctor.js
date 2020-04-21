@@ -107,7 +107,11 @@ const prescriptionColumns = [
     },
     {
         title: 'Bệnh nhân', field: 'patientId',
-        render: rowData => rowData.patient.fullName,
+        render: rowData =>
+            <Link
+                to={`${RouteConstants.PatientDetailView.replace(':id', rowData.patientId)}`}
+                children={`${rowData.patient.fullName}`}
+            />,
     },
     {
         title: 'Trạng thái', field: 'status',
@@ -163,8 +167,8 @@ const DoctorView = () => {
     };
 
 
-    let patientTableRef = React.createRef();
-    let prescriptionTableRef = React.createRef();
+    const patientTableRef = React.createRef(null);
+    const prescriptionTableRef = React.createRef(null);
 
     const refreshPatientData = () => {
         patientTableRef.current && patientTableRef.current.onQueryChange();

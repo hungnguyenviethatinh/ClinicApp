@@ -19,6 +19,7 @@ namespace ClinicAPI.ViewModels
         public string Note { get; set; }
         public DateTime CheckedDate { get; set; }
         public bool IsChecked { get; set; }
+        public int PatientId { get; set; }
     }
 
     public class HistoryFullViewModel : HistoryViewModel

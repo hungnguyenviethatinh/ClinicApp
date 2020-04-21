@@ -20,6 +20,7 @@ namespace ClinicAPI.ViewModels
     public class PrescriptionViewModel : PrescriptionModel
     {
         public int Id { get; set; }
+        public string DoctorId { get; set; }
         public PatientBasicViewModel Patient { get; set; }
         public DoctorViewModel Doctor { get; set; }
     }

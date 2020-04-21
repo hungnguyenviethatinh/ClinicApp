@@ -68,9 +68,6 @@ const employeeColumns = [
     {
         title: 'Số ĐT', field: 'phoneNumber',
     },
-    // {
-    //     title: 'Email', field: 'email',
-    // },
     {
         title: 'Thông tin khác', field: 'additionalInfo',
     },
@@ -129,7 +126,6 @@ const UserManagement = () => {
 
     // [Start] State declaration and event handlers
     const [disabled, setDisabled] = React.useState(false);
-    // const [loadingDelete, setLoadingDelete] = React.useState(false);
     const [loadingDone, setLoadingDone] = React.useState(false);
 
     const tableRef = React.useRef(null);
@@ -143,9 +139,6 @@ const UserManagement = () => {
         if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
             setSelectedRow(rowData);
             setOpenActionOption(true);
-            // const { id } = rowData;
-            // getEmployee(id);
-            // setUpdateMode(true);
         } else {
             setSelectedRow(null);
             handleReset();
@@ -174,7 +167,6 @@ const UserManagement = () => {
         FullName: '',
         RoleName: '',
         PhoneNumber: '',
-        // Email: '',
         AdditionalInfo: '',
     });
     const handleValueChange = prop => event => {
@@ -227,14 +219,6 @@ const UserManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu chọn chức vụ!');
             return;
         }
-        // if (!values.Email.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập email!');
-        //     return;
-        // }
-        // if (!values.PhoneNumber.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại!');
-        //     return;
-        // }
 
         setDisabled(true);
         setLoadingDone(true);
@@ -257,7 +241,6 @@ const UserManagement = () => {
     const handleDelete = () => {
         const { id } = selectedRow;
         setDisabled(true);
-        // setLoadingDelete(true);
         deleteUser(id);
         setOpenDeleteConfirm(false);
     };
@@ -269,7 +252,6 @@ const UserManagement = () => {
             FullName: '',
             RoleName: '',
             PhoneNumber: '',
-            // Email: '',
             AdditionalInfo: '',
         });
     };
@@ -335,12 +317,10 @@ const UserManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi xóa người dùng!');
             }
             setDisabled(false);
-            // setLoadingDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteEmployeeLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa người dùng!');
             setDisabled(false);
-            // setLoadingDelete(false);
         });
     };
 
@@ -350,7 +330,7 @@ const UserManagement = () => {
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { userName, fullName, roleName, phoneNumber, /* email */ additionalInfo } = data[0];
+                const { userName, fullName, roleName, phoneNumber, additionalInfo } = data[0];
                 setValues({
                     ...values,
                     UserName: userName,
@@ -358,7 +338,6 @@ const UserManagement = () => {
                     FullName: fullName,
                     RoleName: roleName,
                     PhoneNumber: phoneNumber,
-                    // Email: email,
                     AdditionalInfo: additionalInfo,
                 });
             }
@@ -370,8 +349,6 @@ const UserManagement = () => {
     };
 
     const getEmployees = (resolve, reject, query) => {
-        // const value = searchValue;
-
         setDisabled(true);
 
         Axios.get(GetAllEmployeesUrl, {
@@ -428,7 +405,6 @@ const UserManagement = () => {
                                         autoFocus
                                         id="UserName"
                                         label="Tên tài khoản (*)"
-                                        // placeholder={validUserNameMessage}
                                         value={values.UserName}
                                         onChange={handleValueChange('UserName')}
                                         onKeyPress={handleKeyPress}
@@ -455,16 +431,6 @@ const UserManagement = () => {
                                         onChange={handleValueChange('RoleName')}
                                     />
                                 </Grid>
-                                {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    <TextField
-                                        fullWidth
-                                        id="Email"
-                                        label="Email"
-                                        value={values.Email}
-                                        onChange={handleValueChange('Email')}
-                                        onKeyPress={handleKeyPress}
-                                    />
-                                </Grid> */}
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                     <TextField
                                         fullWidth
@@ -492,7 +458,6 @@ const UserManagement = () => {
                                         id="Password"
                                         type="password"
                                         label="Mật khẩu"
-                                        // placeholder={validPasswordMessage}
                                         value={values.Password}
                                         onChange={handleValueChange('Password')}
                                         onKeyPress={handleKeyPress}
@@ -505,7 +470,6 @@ const UserManagement = () => {
                                 justify="flex-end"
                                 style={{ marginTop: 8 }}
                             >
-                                {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}> */}
                                 <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                                     <Button
                                         fullWidth
@@ -516,22 +480,6 @@ const UserManagement = () => {
                                         onClick={handleReset}
                                     />
                                 </Grid>
-                                {/* {
-                                    selectedRow &&
-                                    // <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                    <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                        <Button
-                                            fullWidth
-                                            disabled={disabled}
-                                            loading={loadingDelete}
-                                            color="danger"
-                                            children="Xóa"
-                                            iconName="delete"
-                                            onClick={onOpenDeleteConfirm}
-                                        />
-                                    </Grid>
-                                } */}
-                                {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}> */}
                                 <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                                     <Button
                                         fullWidth

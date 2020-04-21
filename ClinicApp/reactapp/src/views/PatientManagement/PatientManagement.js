@@ -155,6 +155,8 @@ const PatientManagement = () => {
     // [Start] State declaration and event handlers
     const [disabled, setDisabled] = React.useState(false);
     const [loadingDone, setLoadingDone] = React.useState(false);
+    const [disabledPrint, setDisabledPrint] = React.useState(false);
+    const [loadingPrint, setLoadingPrint] = React.useState(false);
 
     const tableRef = React.useRef(null);
     const refreshData = () => {
@@ -184,7 +186,7 @@ const PatientManagement = () => {
         } else {
             setSelectedRow(null);
             setUpdateMode(false);
-            
+
             handleReset();
         }
     };
@@ -229,6 +231,12 @@ const PatientManagement = () => {
     });
     const [_xRayImages, setXRayImages] = React.useState([]);
     const [_doctors, setDoctors] = React.useState([]);
+    const [patientPreview, setPatientPreview] = React.useState({
+        ...patient,
+        ...history,
+        Doctors: _doctors,
+        XRayImages: _xRayImages,
+    });
     const handlePatientChange = prop => event => {
         setPatient({
             ...patient,
@@ -259,7 +267,7 @@ const PatientManagement = () => {
         setPatient({
             ...patient,
             CheckedDate: date,
-        })
+        });
     };
 
     const handleUploadXRayImage = images => {
@@ -268,7 +276,7 @@ const PatientManagement = () => {
 
     const clearXRayImage = (xRayImage) => {
         const restOfFiles = _.remove(_xRayImages, (image) => image.name !== xRayImage.name);
-        setXRayImages([...restOfFiles]);
+        setXRayImages(restOfFiles);
     };
 
     const handleStatusChange = event => {
@@ -358,6 +366,13 @@ const PatientManagement = () => {
             return;
         }
 
+        setPatientPreview({
+            ...patient,
+            ...history,
+            Doctors: _doctors,
+            XRayImages: _xRayImages,
+        });
+        setDisabledPrint(true);
         setOpenPatientPreview(true);
     };
     const handleClosePatientPreview = () => {
@@ -382,17 +397,12 @@ const PatientManagement = () => {
         }
 
         const patientModel = {
-            IdCode: patient.IdCode,
-            FullName: patient.FullName,
-            Age: patient.Age,
-            Gender: patient.Gender,
-            Address: patient.Address,
-            PhoneNumber: patient.PhoneNumber,
-            RelativePhoneNumber: patient.RelativePhoneNumber,
+            ...patient,
             AppointmentDate,
             CheckedDate,
             Status,
         };
+
         if (!updateMode && !externalUpdateMode) {
             addPatient(patientModel);
             return;
@@ -471,16 +481,12 @@ const PatientManagement = () => {
                     ...history,
                     Id: id,
                     OrderNumber: orderNumber,
+                    Doctors: _doctors,
                 });
 
                 const CheckedDate = moment(patient.CheckedDate).isValid() ? patient.CheckedDate.format() : moment().format();
                 const historyModel = {
-                    Height: history.Height,
-                    Weight: history.Weight,
-                    BloodPressure: history.BloodPressure,
-                    Pulse: history.Pulse,
-                    Other: history.Other,
-                    Note: history.Note,
+                    ...history,
                     CheckedDate,
                     IsChecked: history.IsChecked,
                     PatientId: id,
@@ -553,11 +559,13 @@ const PatientManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
             }
             setDisabled(false);
+            setDisabledPrint(false);
             setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Add Doctors Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
             setDisabled(false);
+            setDisabledPrint(false);
             setLoadingDone(false);
         });
     };
@@ -572,11 +580,13 @@ const PatientManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi lưu trữ hình ảnh X Quang.');
             }
             setDisabled(false);
+            setDisabledPrint(false);
             setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Add XRays Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi lưu trữ hình ảnh XQuang.');
             setDisabled(false);
+            setDisabledPrint(false);
             setLoadingDone(false);
         });
     };
@@ -589,21 +599,17 @@ const PatientManagement = () => {
                 const { orderNumber } = data;
                 handleSnackbarOption('success', 'Cập nhật thông tin của bệnh nhân thành công.');
                 refreshData();
-                setPrintDate({
+                setPrintData({
                     ...patient,
                     ...history,
                     Id: data.id,
                     OrderNumber: orderNumber,
+                    Doctors: _doctors,
                 });
 
                 const CheckedDate = moment(patient.CheckedDate).isValid() ? patient.CheckedDate.format() : moment().format();
                 const historyModel = {
-                    Height: history.Height,
-                    Weight: history.Weight,
-                    BloodPressure: history.BloodPressure,
-                    Pulse: history.Pulse,
-                    Other: history.Other,
-                    Note: history.Note,
+                    ...history,
                     CheckedDate,
                     IsChecked: history.IsChecked,
                     PatientId: id,
@@ -678,12 +684,14 @@ const PatientManagement = () => {
             }
 
             setDisabled(false);
+            setDisabledPrint(false);
             setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Update Doctors Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
 
             setDisabled(false);
+            setDisabledPrint(false);
             setLoadingDone(false);
         });
     };
@@ -701,12 +709,14 @@ const PatientManagement = () => {
             }
 
             setDisabled(false);
+            setDisabledPrint(false);
             setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Update XRays Error] ', reason);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật hình ảnh X Quang.');
 
             setDisabled(false);
+            setDisabledPrint(false);
             setLoadingDone(false);
         });
     };
@@ -859,6 +869,7 @@ const PatientManagement = () => {
                 }
                 setXRayImages(XRayImages);
                 setHistory({
+                    ...history,
                     Height: height,
                     Weight: weight,
                     BloodPressure: bloodPressure,
@@ -906,6 +917,7 @@ const PatientManagement = () => {
                 }
                 setXRayImages(XRayImages);
                 setHistory({
+                    ...history,
                     Id: data[0].id,
                     Height: height,
                     Weight: weight,
@@ -955,57 +967,30 @@ const PatientManagement = () => {
     // [Start] Print handler
     const [printData, setPrintData] = React.useState(null);
     const handlePrint = () => {
-        const {
-            Id,
-            IdCode,
-            OrderNumber,
-            FullName,
-            Age,
-            Address,
-            PhoneNumber,
-            RelativePhoneNumber,
-            Status,
-            Height,
-            Weight,
-            BloodPressure,
-            Pulse,
-            Other,
-            Note,
-        } = printData;
-
-        const AppointmentDate = moment(patient.AppointmentDate).isValid() ? patient.AppointmentDate.format(DisplayDateTimeFormat) : null;
+        const Age = _.toNumber(printData.Age);
+        const AppointmentDate =
+            moment(printData.AppointmentDate).isValid() ?
+                printData.AppointmentDate.format(DisplayDateTimeFormat) : null;
         const Doctors = [];
-        if (!_.isEmpty(_doctors)) {
-            _doctors.map(({ fullName }) => Doctors.push({
+        if (!_.isEmpty(printData.Doctors)) {
+            printData.Doctors.map(({ fullName }) => Doctors.push({
                 FullName: fullName,
             }));
         }
-        const data = JSON.stringify({
-            Id,
-            IdCode,
-            OrderNumber,
-            FullName,
-            Age: _.toNumber(Age),
-            Gender: [Gender.None, Gender.Male, Gender.Female][patient.Gender],
-            Address,
-            PhoneNumber,
-            RelativePhoneNumber,
+        const data = {
+            ...printData,
+            Age,
+            Gender: [Gender.None, Gender.Male, Gender.Female][printData.Gender],
             AppointmentDate,
-            Status,
-            Height,
-            Weight,
-            BloodPressure,
-            Pulse,
-            Other,
-            Note,
             Doctors,
-        });
+        };
 
-        console.log('Print Data: ', JSON.parse(data));
+        console.log('Print Data: ', data);
 
         setDisabled(true);
-        setLoadingDone(true);
-        ChromeLyService.post(PatientPrintUrl, null, data, response => {
+        setDisabledPrint(true);
+        setLoadingPrint(true);
+        ChromeLyService.post(PatientPrintUrl, null, JSON.stringify(data), response => {
             const { ResponseText } = response;
             const { ReadyState, Status, Data } = JSON.parse(ResponseText);
             if (ReadyState === 4 && Status === 200) {
@@ -1018,7 +1003,8 @@ const PatientManagement = () => {
                     + '. Response received: ', response);
             }
             setDisabled(false);
-            setLoadingDone(false);
+            setDisabledPrint(false);
+            setLoadingPrint(false);
             setOpenPatientPreview(false);
         });
     };
@@ -1035,7 +1021,11 @@ const PatientManagement = () => {
     React.useEffect(() => {
         if (externalUpdateMode) {
             getPatient(_patientId);
-            getHistory(_historyId);
+            if (_historyId === 'current') {
+                getCurrentHistory(_patientId);
+            } else {
+                getHistory(_historyId);
+            }
         }
     }, [externalUpdateMode]);
 
@@ -1084,13 +1074,6 @@ const PatientManagement = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                                    {/* <DatePicker
-                                        fullWidth
-                                        id="DateOfBirth"
-                                        label="Ngày, tháng, năm sinh"
-                                        value={patient.DateOfBirth}
-                                        onChange={(date) => handleDateoBirthChange(date)}
-                                    /> */}
                                     <TextField
                                         fullWidth
                                         id="Age"
@@ -1120,7 +1103,6 @@ const PatientManagement = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
-                                    {/* <DateTimePicker */}
                                     <DatePicker
                                         fullWidth
                                         id="CheckedDate"
@@ -1442,8 +1424,10 @@ const PatientManagement = () => {
             <PatientPreview
                 disabled={disabled}
                 loading={loadingDone}
+                disabledPrint={disabledPrint}
+                loadingPrint={loadingPrint}
                 open={openPatientPreview}
-                patient={patient}
+                patient={patientPreview}
                 handleCancel={handleClosePatientPreview}
                 handlePrint={handlePrint}
                 handleSave={handleDone}

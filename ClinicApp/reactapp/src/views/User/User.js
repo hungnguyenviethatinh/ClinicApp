@@ -80,7 +80,6 @@ const UserView = () => {
     const [user, setUser] = React.useState({
         FullName: '',
         Role: '',
-        // Email: '',
         PhoneNumber: '',
         AdditionalInfo: '',
         CurrentPassword: '',
@@ -105,14 +104,6 @@ const UserView = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
             return;
         }
-        // if (!user.Email.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập email!');
-        //     return;
-        // }
-        // if (!user.PhoneNumber.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại!');
-        //     return;
-        // }
         if (user.CurrentPassword.trim() && !user.NewPassword.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập mật khẩu mới!');
             return;
@@ -127,7 +118,6 @@ const UserView = () => {
 
         const userModel = {
             FullName: user.FullName,
-            // Email: user.Email,
             PhoneNumber: user.PhoneNumber,
             AdditionalInfo: user.AdditionalInfo,
             CurrentPassword: user.CurrentPassword,
@@ -142,11 +132,10 @@ const UserView = () => {
         Axios.put(UpdateCurrentUserUrl, userModel, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { fullName, /* email, */ phoneNumber, additionalInfo } = data;
+                const { fullName, phoneNumber, additionalInfo } = data;
                 setUser({
                     ...user,
                     FullName: fullName,
-                    // Email: email,
                     PhoneNumber: phoneNumber,
                     AdditionalInfo: additionalInfo,
                     CurrentPassword: '',
@@ -172,14 +161,13 @@ const UserView = () => {
             const { status, data } = response;
             if (status === 200) {
                 const { currentUser, roles } = data[0];
-                const { fullName, /* email, */ phoneNumber, additionalInfo } = currentUser;
+                const { fullName, phoneNumber, additionalInfo } = currentUser;
                 const role = roles[0];
 
                 setUser({
                     ...user,
                     FullName: fullName,
                     Role: role,
-                    // Email: email,
                     PhoneNumber: phoneNumber,
                     AdditionalInfo: additionalInfo,
                     CurrentPassword: '',
@@ -236,15 +224,6 @@ const UserView = () => {
                                             readOnly
                                         />
                                     </Grid>
-                                    {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                        <TextField
-                                            fullWidth
-                                            id="Email"
-                                            label="Email"
-                                            value={user.Email}
-                                            onChange={handleValueChange('Email')}
-                                        />
-                                    </Grid> */}
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                         <TextField
                                             fullWidth

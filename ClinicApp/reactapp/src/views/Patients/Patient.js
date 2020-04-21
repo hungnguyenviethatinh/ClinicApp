@@ -115,7 +115,7 @@ const Patient = () => {
                 handleSnackbarOption('error', ExpiredSessionMsg);
             } else {
                 if (status === 404) {
-                    handleSnackbarOption('error', NotFoundMsg);
+                    handleSnackbarOption('warning', NotFoundMsg);
                 }
             }
         }
@@ -370,7 +370,6 @@ const Patient = () => {
                     >
                         <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
                             <Button
-                                fullWidth
                                 color="info"
                                 children="Sao chép"
                                 iconName="edit"

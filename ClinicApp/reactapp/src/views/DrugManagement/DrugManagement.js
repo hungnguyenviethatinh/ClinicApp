@@ -68,9 +68,6 @@ const medicineColumns = [
     {
         title: 'Tên thuốc', field: 'name',
     },
-    // {
-    //     title: 'Tên tắt', field: 'shortName',
-    // },
     {
         title: 'Biệt dược', field: 'ingredient',
     },
@@ -86,9 +83,6 @@ const medicineColumns = [
     {
         title: 'Đơn vị', field: 'unit',
     },
-    // {
-    //     title: 'Giá', field: 'price',
-    // },
     {
         title: 'Trạng thái', field: 'status',
         render: rowData => {
@@ -103,7 +97,6 @@ const medicineColumns = [
 const findByOptions = [
     { label: 'Mã thuốc', value: 'IdCode' },
     { label: 'Tên thuốc', value: 'Name' },
-    // { label: 'Tên tắt', value: 'ShortName' },
     { label: 'Hạn sử dụng', value: 'ExpiredDate' },
     { label: 'Tên hoạt chất', value: 'Ingredient' },
 ];
@@ -163,9 +156,7 @@ const DrugManagement = () => {
 
     // [Start] State declaration and event handlers
     const [disabled, setDisabled] = React.useState(false);
-    // const [loadingDelete, setLoadingDelete] = React.useState(false);
     const [loadingDone, setLoadingDone] = React.useState(false);
-    // const [loadingSearch, setLoadingSearch] = React.useState(false);
 
     const tableRef = React.useRef(null);
     const refreshData = () => {
@@ -178,9 +169,6 @@ const DrugManagement = () => {
         if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
             setSelectedRow(rowData);
             setOpenActionOption(true);
-            // const { id } = rowData;
-            // getMedicine(id);
-            // setUpdateMode(true);
         } else {
             setSelectedRow(null);
             handleReset();
@@ -220,7 +208,6 @@ const DrugManagement = () => {
     };
     const handleSearch = event => {
         event.preventDefault();
-        // setLoadingSearch(true);
         refreshData();
     };
 
@@ -236,12 +223,10 @@ const DrugManagement = () => {
     const [medicine, setMedicine] = React.useState({
         IdCode: '',
         Name: '',
-        // ShortName: '',
         ExpiredDate: '',
         NetWeight: '',
         Quantity: '',
         Unit: '',
-        // Price: '',
     });
     const handleMedicineChange = prop => event => {
         setMedicine({
@@ -285,18 +270,6 @@ const DrugManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên thuốc!');
             return;
         }
-        // if (!medicine.IdCode.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập mã thuốc!');
-        //     return;
-        // }
-        // if (!medicine.ShortName.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập tên tắt của thuốc!');
-        //     return;
-        // }
-        // if (!medicine.NetWeight.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập hàm lượng thuốc!');
-        //     return;
-        // }
         if (ingredients.length > 1) {
             for (let ingredient of ingredients) {
                 if (!ingredient.Name.trim()) {
@@ -305,26 +278,10 @@ const DrugManagement = () => {
                 }
             }
         }
-        // if (!_.toString(medicine.Quantity).trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập số lượng thuốc!');
-        //     return;
-        // }
         if (_.toString(medicine.Quantity).trim() && !_.isFinite(_.toNumber(medicine.Quantity))) {
             handleSnackbarOption('error', 'Yêu cầu nhập số cho số lượng thuốc!');
             return;
         }
-        // if (!medicine.Unit.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập đơn vị thuốc!');
-        //     return;
-        // }
-        // if (!_.toString(medicine.Price).trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập giá bán thuốc!');
-        //     return;
-        // }
-        // if (_.toString(medicine.Price).trim() && !_.isFinite(_.toNumber(medicine.Price))) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập số cho giá thuốc!');
-        //     return;
-        // }
 
         setDisabled(true);
         setLoadingDone(true);
@@ -332,12 +289,10 @@ const DrugManagement = () => {
         const medicineModel = {
             IdCode: medicine.IdCode.trim(),
             Name: medicine.Name.trim(),
-            // ShortName: medicine.ShortName.trim(),
             ExpiredDate: medicine.ExpiredDate.trim(),
             NetWeight: medicine.NetWeight.trim(),
             Quantity: _.toNumber(medicine.Quantity),
             Unit: medicine.Unit,
-            // Price: _.toNumber(medicine.Price),
         };
 
         if (!updateMode) {
@@ -352,12 +307,10 @@ const DrugManagement = () => {
         setMedicine({
             IdCode: '',
             Name: '',
-            // ShortName: '',
             ExpiredDate: '',
             NetWeight: '',
             Quantity: '',
             Unit: '',
-            // Price: '',
         });
         setIngredients([{
             Name: '',
@@ -375,7 +328,6 @@ const DrugManagement = () => {
     const handleDelete = () => {
         const { id } = selectedRow;
         setDisabled(true);
-        // setLoadingDelete(true);
         deleteMedicine(id);
         setOpenDeleteConfirm(false);
     };
@@ -409,8 +361,6 @@ const DrugManagement = () => {
                 setDisabled(false);
                 setLoadingDone(false);
             }
-            // setDisabled(false);
-            // setLoadingDone(false);
         }).catch((reason) => {
             handleError(reason, addMedicineLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi thêm thuốc vào kho dữ liệu. Vui lòng thử lại!');
@@ -466,8 +416,6 @@ const DrugManagement = () => {
                 setDisabled(false);
                 setLoadingDone(false);
             }
-            // setDisabled(false);
-            // setLoadingDone(false);
         }).catch((reason) => {
             handleError(reason, updateMedicineLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin thuốc. Vui lòng thử lại!');
@@ -510,12 +458,10 @@ const DrugManagement = () => {
                 handleSnackbarOption('error', 'Có lỗi khi xóa loại thuốc này. Vui lòng thử lại!');
             }
             setDisabled(false);
-            // setLoadingDelete(false);
         }).catch((reason) => {
             handleError(reason, deleteMedicineLogMsfHeader);
             handleSnackbarOption('error', 'Có lỗi khi xóa loại thuốc này. Vui lòng thử lại!');
             setDisabled(false);
-            // setLoadingDelete(false);
         });
     };
 
@@ -545,16 +491,14 @@ const DrugManagement = () => {
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { idCode, name, /* shortName */ expiredDate, netWeight, quantity, unit, price } = data[0];
+                const { idCode, name, expiredDate, netWeight, quantity, unit, price } = data[0];
                 setMedicine({
                     IdCode: idCode,
                     Name: name,
-                    // ShortName: shortName,
                     ExpiredDate: expiredDate,
                     NetWeight: netWeight,
                     Quantity: quantity,
                     Unit: unit,
-                    // Price: price,
                 });
                 getIngredients(id);
             }
@@ -695,16 +639,6 @@ const DrugManagement = () => {
                                         onKeyPress={handleMedicineKeyPress}
                                     />
                                 </Grid>
-                                {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                    <TextField
-                                        fullWidth
-                                        id="ShortName"
-                                        label="Tên tắt"
-                                        value={medicine.ShortName}
-                                        onChange={handleMedicineChange('ShortName')}
-                                        onKeyPress={handleMedicineKeyPress}
-                                    />
-                                </Grid> */}
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <TextField
                                         fullWidth
@@ -801,17 +735,6 @@ const DrugManagement = () => {
                                         onChange={handleMedicineChange('Unit')}
                                     />
                                 </Grid>
-                                {/* <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                    <TextField
-                                        fullWidth
-                                        id="Price"
-                                        label="Giá bán"
-                                        placeholder={`...đồng/${medicine.Unit}`}
-                                        value={medicine.Price}
-                                        onChange={handleMedicineChange('Price')}
-                                        onKeyPress={handleMedicineKeyPress}
-                                    />
-                                </Grid> */}
                             </Grid>
                             <Grid
                                 container
@@ -829,20 +752,6 @@ const DrugManagement = () => {
                                         onClick={handleReset}
                                     />
                                 </Grid>
-                                {/* {
-                                    selectedRow &&
-                                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                                        <Button
-                                            fullWidth
-                                            disabled={disabled}
-                                            loading={loadingDelete}
-                                            color="danger"
-                                            children="Xóa"
-                                            iconName="delete"
-                                            onClick={onOpenDeleteConfirm}
-                                        />
-                                    </Grid>
-                                } */}
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                     <Button
                                         fullWidth
@@ -919,7 +828,6 @@ const DrugManagement = () => {
                                     <Button
                                         fullWidth
                                         disabled={disabled}
-                                        // loading={loadingSearch}
                                         color="success"
                                         children="Tìm kiếm"
                                         iconName="search"

@@ -163,8 +163,8 @@ const ReceptionistView = () => {
     const config = axiosRequestConfig();
     const browserHistory = useHistory();
 
-    let patientTableRef = React.createRef();
-    let prescriptionTableRef = React.createRef();
+    const patientTableRef = React.createRef(null);
+    const prescriptionTableRef = React.createRef(null);
 
     const refreshPatientData = () => {
         patientTableRef.current && patientTableRef.current.onQueryChange();
@@ -223,6 +223,7 @@ const ReceptionistView = () => {
     const handleSelectRow = (event, rowData) => {
         if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
             setSelectedRow(rowData);
+            setOpenActionOption(true);
         } else {
             setSelectedRow(null);
         }
@@ -230,7 +231,7 @@ const ReceptionistView = () => {
 
     const handleUpdate = () => {
         const { id } = selectedRow;
-        const queryParams = `?pId=${id}&hId=0`;
+        const queryParams = `?pId=${id}&hId=current`;
         const redirectUrl = RouteConstants.PatientManagementView + queryParams;
         browserHistory.push(redirectUrl);
     };

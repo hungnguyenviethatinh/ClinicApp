@@ -33,7 +33,6 @@ import {
     NotFoundMsg,
     Gender,
     DisplayDateFormat,
-    DisplayDateFormat,
     PrescriptionStatus,
     takePeriodValue,
 } from '../../constants';
