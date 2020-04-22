@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ClinicAPI.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Initialize : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,7 @@ namespace ClinicAPI.Migrations
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     FullName = table.Column<string>(nullable: true),
+                    AdditionalInfo = table.Column<string>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
@@ -83,11 +84,10 @@ namespace ClinicAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IdCode = table.Column<string>(maxLength: 30, nullable: true),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
-                    ShortName = table.Column<string>(maxLength: 30, nullable: true),
+                    ExpiredDate = table.Column<string>(maxLength: 30, nullable: true),
                     NetWeight = table.Column<string>(maxLength: 30, nullable: true),
-                    Quantity = table.Column<int>(nullable: false),
+                    Quantity = table.Column<int>(nullable: true),
                     Unit = table.Column<string>(maxLength: 100, nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
                     UpdatedBy = table.Column<string>(nullable: true),
@@ -128,11 +128,10 @@ namespace ClinicAPI.Migrations
                     Age = table.Column<int>(nullable: false),
                     Gender = table.Column<int>(nullable: false),
                     Address = table.Column<string>(maxLength: 200, nullable: true),
-                    Job = table.Column<string>(maxLength: 100, nullable: true),
                     PhoneNumber = table.Column<string>(unicode: false, maxLength: 100, nullable: true),
                     RelativePhoneNumber = table.Column<string>(unicode: false, maxLength: 100, nullable: true),
-                    Email = table.Column<string>(maxLength: 100, nullable: true),
                     AppointmentDate = table.Column<DateTime>(nullable: true),
+                    CheckedDate = table.Column<DateTime>(nullable: false),
                     Status = table.Column<int>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
@@ -301,10 +300,11 @@ namespace ClinicAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Height = table.Column<string>(maxLength: 10, nullable: true),
                     Weight = table.Column<string>(maxLength: 10, nullable: true),
-                    BloodPresure = table.Column<string>(maxLength: 10, nullable: true),
+                    BloodPressure = table.Column<string>(maxLength: 10, nullable: true),
                     Pulse = table.Column<string>(maxLength: 10, nullable: true),
                     Other = table.Column<string>(maxLength: 100, nullable: true),
                     Note = table.Column<string>(maxLength: 100, nullable: true),
+                    CheckedDate = table.Column<DateTime>(nullable: false),
                     IsChecked = table.Column<bool>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
@@ -324,12 +324,88 @@ namespace ClinicAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CtForms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DiagnosisName = table.Column<string>(nullable: true),
+                    DateCreated = table.Column<DateTime>(nullable: false),
+                    PatientId = table.Column<int>(nullable: false),
+                    DoctorId = table.Column<string>(nullable: false),
+                    HistoryId = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    Type = table.Column<int>(nullable: false),
+                    IsContrastMedicine = table.Column<bool>(nullable: false),
+                    IsSkull = table.Column<bool>(nullable: false),
+                    IsEarNoseThroat = table.Column<bool>(nullable: false),
+                    IsCsNeck = table.Column<bool>(nullable: false),
+                    IsCsChest = table.Column<bool>(nullable: false),
+                    IsCsWaist = table.Column<bool>(nullable: false),
+                    IsShoulder = table.Column<bool>(nullable: false),
+                    IsElbow = table.Column<bool>(nullable: false),
+                    IsWrist = table.Column<bool>(nullable: false),
+                    IsSinus = table.Column<bool>(nullable: false),
+                    IsGroin = table.Column<bool>(nullable: false),
+                    IsKnee = table.Column<bool>(nullable: false),
+                    IsAnkle = table.Column<bool>(nullable: false),
+                    IsNeck = table.Column<bool>(nullable: false),
+                    IsFoot = table.Column<bool>(nullable: false),
+                    IsPelvis = table.Column<bool>(nullable: false),
+                    IsChest = table.Column<bool>(nullable: false),
+                    IsStomach = table.Column<bool>(nullable: false),
+                    IsUrinary = table.Column<bool>(nullable: false),
+                    IsUpperVein = table.Column<bool>(nullable: false),
+                    UpperVein = table.Column<string>(nullable: true),
+                    IsLowerVein = table.Column<bool>(nullable: false),
+                    LowerVein = table.Column<string>(nullable: true),
+                    IsOther = table.Column<bool>(nullable: false),
+                    Other = table.Column<string>(nullable: true),
+                    IsPregnant = table.Column<bool>(nullable: false),
+                    IsAllergy = table.Column<bool>(nullable: false),
+                    IsHeartDisease = table.Column<bool>(nullable: false),
+                    IsBloodDisease = table.Column<bool>(nullable: false),
+                    IsKidneyFailure = table.Column<bool>(nullable: false),
+                    IsDiabetesMellitus = table.Column<bool>(nullable: false),
+                    IsCoagulopathy = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CtForms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CtForms_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CtForms_Histories_HistoryId",
+                        column: x => x.HistoryId,
+                        principalTable: "Histories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CtForms_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DoctorPatientHistories",
                 columns: table => new
                 {
                     DoctorId = table.Column<string>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
-                    HistoryId = table.Column<int>(nullable: false)
+                    HistoryId = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -355,6 +431,57 @@ namespace ClinicAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MriForms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DiagnosisName = table.Column<string>(nullable: true),
+                    DateCreated = table.Column<DateTime>(nullable: false),
+                    PatientId = table.Column<int>(nullable: false),
+                    DoctorId = table.Column<string>(nullable: false),
+                    HistoryId = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    IsSkull = table.Column<bool>(nullable: false),
+                    IsHeadNeck = table.Column<bool>(nullable: false),
+                    IsChest = table.Column<bool>(nullable: false),
+                    IsStomachGroin = table.Column<bool>(nullable: false),
+                    IsLimbs = table.Column<bool>(nullable: false),
+                    IsNeckSpine = table.Column<bool>(nullable: false),
+                    IsChestSpine = table.Column<bool>(nullable: false),
+                    IsPelvisSpine = table.Column<bool>(nullable: false),
+                    IsBloodVessel = table.Column<bool>(nullable: false),
+                    IsOther = table.Column<bool>(nullable: false),
+                    Other = table.Column<string>(nullable: true),
+                    IsContrastAgent = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MriForms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MriForms_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MriForms_Histories_HistoryId",
+                        column: x => x.HistoryId,
+                        principalTable: "Histories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MriForms_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Prescriptions",
                 columns: table => new
                 {
@@ -366,6 +493,7 @@ namespace ClinicAPI.Migrations
                     Note = table.Column<string>(nullable: true),
                     Status = table.Column<int>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
+                    DateCreated = table.Column<DateTime>(nullable: true),
                     PatientId = table.Column<int>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),
                     HistoryId = table.Column<int>(nullable: false),
@@ -398,6 +526,169 @@ namespace ClinicAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TestForms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DiagnosisName = table.Column<string>(nullable: true),
+                    DateCreated = table.Column<DateTime>(nullable: false),
+                    PatientId = table.Column<int>(nullable: false),
+                    DoctorId = table.Column<string>(nullable: false),
+                    HistoryId = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    IsBloodSample = table.Column<bool>(nullable: false),
+                    IsPusSample = table.Column<bool>(nullable: false),
+                    IsSputumSample = table.Column<bool>(nullable: false),
+                    IsShitSample = table.Column<bool>(nullable: false),
+                    HumourSample = table.Column<string>(nullable: true),
+                    IsBloodGroup = table.Column<bool>(nullable: false),
+                    IsBlood = table.Column<bool>(nullable: false),
+                    IsVS = table.Column<bool>(nullable: false),
+                    IsFeverTest = table.Column<bool>(nullable: false),
+                    IsTs = table.Column<bool>(nullable: false),
+                    IsTc = table.Column<bool>(nullable: false),
+                    IsPt = table.Column<bool>(nullable: false),
+                    IsAtpp = table.Column<bool>(nullable: false),
+                    IsFibrinogen = table.Column<bool>(nullable: false),
+                    IsDdimer = table.Column<bool>(nullable: false),
+                    IsAso = table.Column<bool>(nullable: false),
+                    IsCrp = table.Column<bool>(nullable: false),
+                    IsRf = table.Column<bool>(nullable: false),
+                    IsAna = table.Column<bool>(nullable: false),
+                    IsAntiCcp = table.Column<bool>(nullable: false),
+                    IsCortisol = table.Column<bool>(nullable: false),
+                    IsProcal = table.Column<bool>(nullable: false),
+                    IsFt4 = table.Column<bool>(nullable: false),
+                    IsTsh = table.Column<bool>(nullable: false),
+                    IsInterlukin6 = table.Column<bool>(nullable: false),
+                    IsHbsAg = table.Column<bool>(nullable: false),
+                    IsHbsQgE = table.Column<bool>(nullable: false),
+                    IsAntiHiv = table.Column<bool>(nullable: false),
+                    IsAnitHivE = table.Column<bool>(nullable: false),
+                    IsAntiHcv = table.Column<bool>(nullable: false),
+                    IsAntiHcvE = table.Column<bool>(nullable: false),
+                    IsRpr = table.Column<bool>(nullable: false),
+                    IsGlucose = table.Column<bool>(nullable: false),
+                    IsHpA1c = table.Column<bool>(nullable: false),
+                    IsUrea = table.Column<bool>(nullable: false),
+                    IsCreatinine = table.Column<bool>(nullable: false),
+                    IsUricAcid = table.Column<bool>(nullable: false),
+                    IsAst = table.Column<bool>(nullable: false),
+                    IsAlt = table.Column<bool>(nullable: false),
+                    IsFBilirubin = table.Column<bool>(nullable: false),
+                    IsBilirubin = table.Column<bool>(nullable: false),
+                    IsGgt = table.Column<bool>(nullable: false),
+                    IsProtein = table.Column<bool>(nullable: false),
+                    IsAlbumin = table.Column<bool>(nullable: false),
+                    IsTriglycerid = table.Column<bool>(nullable: false),
+                    IsCholes = table.Column<bool>(nullable: false),
+                    IsHdlCholes = table.Column<bool>(nullable: false),
+                    IsLdlCholes = table.Column<bool>(nullable: false),
+                    IsElectrolytes = table.Column<bool>(nullable: false),
+                    IsCa = table.Column<bool>(nullable: false),
+                    IsCpk = table.Column<bool>(nullable: false),
+                    IsCkMb = table.Column<bool>(nullable: false),
+                    IsTroponin = table.Column<bool>(nullable: false),
+                    IsEthanol = table.Column<bool>(nullable: false),
+                    IsEndoscopy = table.Column<bool>(nullable: false),
+                    IsGram = table.Column<bool>(nullable: false),
+                    IsZiehl = table.Column<bool>(nullable: false),
+                    IsAntibiotic = table.Column<bool>(nullable: false),
+                    IsUrine = table.Column<bool>(nullable: false),
+                    IsAddis = table.Column<bool>(nullable: false),
+                    IsProteinBj = table.Column<bool>(nullable: false),
+                    IsProtein24h = table.Column<bool>(nullable: false),
+                    IsUrea24h = table.Column<bool>(nullable: false),
+                    IsUricAcid24h = table.Column<bool>(nullable: false),
+                    IsCreat24h = table.Column<bool>(nullable: false),
+                    IsElec24h = table.Column<bool>(nullable: false),
+                    IsCa24h = table.Column<bool>(nullable: false),
+                    IsKstRuot = table.Column<bool>(nullable: false),
+                    IsKstMau = table.Column<bool>(nullable: false),
+                    IsHcBc = table.Column<bool>(nullable: false),
+                    IsDntProtein = table.Column<bool>(nullable: false),
+                    IsDntGlucose = table.Column<bool>(nullable: false),
+                    IsDntCtbc = table.Column<bool>(nullable: false),
+                    IsDntAnti = table.Column<bool>(nullable: false),
+                    IsDkProtein = table.Column<bool>(nullable: false),
+                    IsDkGlucose = table.Column<bool>(nullable: false),
+                    IsDkCtbc = table.Column<bool>(nullable: false),
+                    IsDkAnti = table.Column<bool>(nullable: false),
+                    IsDpbProtein = table.Column<bool>(nullable: false),
+                    IsDpbRivalta = table.Column<bool>(nullable: false),
+                    IsDpbCell = table.Column<bool>(nullable: false),
+                    IsDpbAnti = table.Column<bool>(nullable: false),
+                    OtherTest = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestForms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TestForms_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TestForms_Histories_HistoryId",
+                        column: x => x.HistoryId,
+                        principalTable: "Histories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TestForms_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "XqForms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DiagnosisName = table.Column<string>(nullable: true),
+                    DateCreated = table.Column<DateTime>(nullable: false),
+                    PatientId = table.Column<int>(nullable: false),
+                    DoctorId = table.Column<string>(nullable: false),
+                    HistoryId = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    Request = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_XqForms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_XqForms_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_XqForms_Histories_HistoryId",
+                        column: x => x.HistoryId,
+                        principalTable: "Histories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_XqForms_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "XRayImages",
                 columns: table => new
                 {
@@ -408,7 +699,11 @@ namespace ClinicAPI.Migrations
                     LastModifiedDate = table.Column<DateTime>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     HistoryId = table.Column<int>(nullable: false),
-                    PatientId = table.Column<int>(nullable: false)
+                    PatientId = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    UpdatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -435,9 +730,8 @@ namespace ClinicAPI.Migrations
                     MedicineId = table.Column<int>(nullable: false),
                     Ingredient = table.Column<string>(maxLength: 100, nullable: true),
                     NetWeight = table.Column<string>(maxLength: 30, nullable: true),
-                    Quantity = table.Column<int>(nullable: false),
+                    Quantity = table.Column<int>(nullable: true),
                     Unit = table.Column<string>(maxLength: 100, nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TakePeriod = table.Column<string>(maxLength: 30, nullable: true),
                     TakeMethod = table.Column<string>(maxLength: 50, nullable: true),
                     TakeTimes = table.Column<int>(nullable: false),
@@ -506,6 +800,21 @@ namespace ClinicAPI.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CtForms_DoctorId",
+                table: "CtForms",
+                column: "DoctorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CtForms_HistoryId",
+                table: "CtForms",
+                column: "HistoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CtForms_PatientId",
+                table: "CtForms",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DoctorPatientHistories_HistoryId",
                 table: "DoctorPatientHistories",
                 column: "HistoryId");
@@ -526,6 +835,21 @@ namespace ClinicAPI.Migrations
                 column: "MedicineId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MriForms_DoctorId",
+                table: "MriForms",
+                column: "DoctorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MriForms_HistoryId",
+                table: "MriForms",
+                column: "HistoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MriForms_PatientId",
+                table: "MriForms",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PrescriptionMedicines_MedicineId",
                 table: "PrescriptionMedicines",
                 column: "MedicineId");
@@ -543,6 +867,36 @@ namespace ClinicAPI.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Prescriptions_PatientId",
                 table: "Prescriptions",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestForms_DoctorId",
+                table: "TestForms",
+                column: "DoctorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestForms_HistoryId",
+                table: "TestForms",
+                column: "HistoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestForms_PatientId",
+                table: "TestForms",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_XqForms_DoctorId",
+                table: "XqForms",
+                column: "DoctorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_XqForms_HistoryId",
+                table: "XqForms",
+                column: "HistoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_XqForms_PatientId",
+                table: "XqForms",
                 column: "PatientId");
 
             migrationBuilder.CreateIndex(
@@ -574,6 +928,9 @@ namespace ClinicAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CtForms");
+
+            migrationBuilder.DropTable(
                 name: "Diagnoses");
 
             migrationBuilder.DropTable(
@@ -583,13 +940,22 @@ namespace ClinicAPI.Migrations
                 name: "Ingredients");
 
             migrationBuilder.DropTable(
+                name: "MriForms");
+
+            migrationBuilder.DropTable(
                 name: "OpenTimes");
 
             migrationBuilder.DropTable(
                 name: "PrescriptionMedicines");
 
             migrationBuilder.DropTable(
+                name: "TestForms");
+
+            migrationBuilder.DropTable(
                 name: "Units");
+
+            migrationBuilder.DropTable(
+                name: "XqForms");
 
             migrationBuilder.DropTable(
                 name: "XRayImages");

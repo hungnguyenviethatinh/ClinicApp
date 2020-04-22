@@ -487,6 +487,580 @@ namespace ClinicAPI.Migrations
                     b.ToTable("AspNetRoles");
                 });
 
+            modelBuilder.Entity("DAL.Models.ServiceForm.CtForm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DiagnosisName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DoctorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("HistoryId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAllergy")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAnkle")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsBloodDisease")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsChest")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCoagulopathy")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsContrastMedicine")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCsChest")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCsNeck")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCsWaist")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDiabetesMellitus")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEarNoseThroat")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsElbow")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFoot")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsGroin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsHeartDisease")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsKidneyFailure")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsKnee")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLowerVein")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsNeck")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOther")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPelvis")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPregnant")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsShoulder")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSinus")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSkull")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsStomach")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUpperVein")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUrinary")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsWrist")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LowerVein")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpperVein")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("HistoryId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("CtForms");
+                });
+
+            modelBuilder.Entity("DAL.Models.ServiceForm.MriForm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DiagnosisName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DoctorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("HistoryId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsBloodVessel")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsChest")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsChestSpine")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsContrastAgent")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsHeadNeck")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLimbs")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsNeckSpine")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOther")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPelvisSpine")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSkull")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsStomachGroin")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("HistoryId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("MriForms");
+                });
+
+            modelBuilder.Entity("DAL.Models.ServiceForm.TestForm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DiagnosisName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DoctorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("HistoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HumourSample")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAddis")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAlbumin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAlt")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAna")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAnitHivE")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAntiCcp")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAntiHcv")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAntiHcvE")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAntiHiv")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAntibiotic")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAso")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAst")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsAtpp")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsBilirubin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsBlood")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsBloodGroup")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsBloodSample")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCa")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCa24h")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCholes")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCkMb")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCortisol")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCpk")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCreat24h")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCreatinine")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCrp")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDdimer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDkAnti")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDkCtbc")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDkGlucose")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDkProtein")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDntAnti")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDntCtbc")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDntGlucose")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDntProtein")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDpbAnti")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDpbCell")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDpbProtein")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDpbRivalta")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsElec24h")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsElectrolytes")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEndoscopy")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEthanol")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFBilirubin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFeverTest")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFibrinogen")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFt4")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsGgt")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsGlucose")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsGram")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsHbsAg")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsHbsQgE")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsHcBc")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsHdlCholes")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsHpA1c")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsInterlukin6")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsKstMau")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsKstRuot")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLdlCholes")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsProcal")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsProtein")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsProtein24h")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsProteinBj")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPt")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPusSample")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRf")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRpr")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsShitSample")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSputumSample")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTc")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTriglycerid")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTroponin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTs")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTsh")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUrea")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUrea24h")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUricAcid")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUricAcid24h")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUrine")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVS")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsZiehl")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OtherTest")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("HistoryId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("TestForms");
+                });
+
+            modelBuilder.Entity("DAL.Models.ServiceForm.XqForm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DiagnosisName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DoctorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("HistoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Request")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("HistoryId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("XqForms");
+                });
+
             modelBuilder.Entity("DAL.Models.Unit", b =>
                 {
                     b.Property<int>("Id")
@@ -833,6 +1407,90 @@ namespace ClinicAPI.Migrations
                     b.HasOne("DAL.Models.Prescription", "Prescription")
                         .WithMany("Medicines")
                         .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DAL.Models.ServiceForm.CtForm", b =>
+                {
+                    b.HasOne("DAL.Models.User", "Doctor")
+                        .WithMany("CtForms")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.History", "History")
+                        .WithMany("CtForms")
+                        .HasForeignKey("HistoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.Patient", "Patient")
+                        .WithMany("CtForms")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DAL.Models.ServiceForm.MriForm", b =>
+                {
+                    b.HasOne("DAL.Models.User", "Doctor")
+                        .WithMany("MriForms")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.History", "History")
+                        .WithMany("MriForms")
+                        .HasForeignKey("HistoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.Patient", "Patient")
+                        .WithMany("MriForms")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DAL.Models.ServiceForm.TestForm", b =>
+                {
+                    b.HasOne("DAL.Models.User", "Doctor")
+                        .WithMany("TestForms")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.History", "History")
+                        .WithMany("TestForms")
+                        .HasForeignKey("HistoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.Patient", "Patient")
+                        .WithMany("TestForms")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DAL.Models.ServiceForm.XqForm", b =>
+                {
+                    b.HasOne("DAL.Models.User", "Doctor")
+                        .WithMany("XqForms")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.History", "History")
+                        .WithMany("XqForms")
+                        .HasForeignKey("HistoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Models.Patient", "Patient")
+                        .WithMany("XqForms")
+                        .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

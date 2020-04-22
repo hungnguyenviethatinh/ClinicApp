@@ -3,7 +3,9 @@ using Chromely.CefSharp.Winapi.BrowserWindow;
 using Chromely.Core;
 using Chromely.Core.Host;
 using Chromely.Core.Infrastructure;
+using ClinicApp.Core;
 using System;
+using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
@@ -19,6 +21,8 @@ namespace ClinicApp
                 HostHelpers.SetupDefaultExceptionHandlers();
 
                 string startUrl = "local://dist/index.html";
+                string debuggingMode = ConfigurationManager.AppSettings.Get(KeyConstants.DebuggingModeKey);
+                bool.TryParse(debuggingMode, out bool isDebuggingMode);
 
                 ChromelyConfiguration config = ChromelyConfiguration
                                               .Create()
@@ -30,7 +34,7 @@ namespace ClinicApp
                                               .WithStartUrl(startUrl)
                                               .WithLogFile("logs\\app.log")
                                               .WithLogSeverity(LogSeverity.Info)
-                                              .WithDebuggingMode(false) // In production mode, set false
+                                              .WithDebuggingMode(isDebuggingMode)
                                               .UseDefaultLogger("logs\\app.log")
                                               .UseDefaultResourceSchemeHandler("local", string.Empty)
                                               .UseDefaultHttpSchemeHandler("http", "clinicapp.com")

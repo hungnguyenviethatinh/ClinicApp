@@ -542,7 +542,7 @@ namespace ClinicAPI.Controllers
                 return Ok(user);
             }
 
-            user.UserName += $"{id}_removed";
+            user.UserName = id;
             user.IsDeleted = true;
             var (Succeeded, Errors) = await _accountManager.UpdateUserAsync(user);
             if (!Succeeded)
@@ -636,8 +636,7 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            diagnosis.IsDeleted = true;
-            _unitOfWork.Diagnoses.Update(diagnosis);
+            _unitOfWork.Diagnoses.Remove(diagnosis);
             int result = await _unitOfWork.SaveChangesAsync();
             if (result < 1)
             {
@@ -804,8 +803,7 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
-            unit.IsDeleted = true;
-            _unitOfWork.Units.Update(unit);
+            _unitOfWork.Units.Remove(unit);
             int result = await _unitOfWork.SaveChangesAsync();
             if (result < 1)
             {

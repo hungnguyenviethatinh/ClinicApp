@@ -5,6 +5,7 @@ using System.Text;
 using Chromely.Core.RestfulService;
 using SelectPdf;
 using System.Text.Json;
+using ClinicApp.Core;
 using ClinicApp.ViewModels;
 
 
@@ -177,7 +178,7 @@ namespace ClinicApp.Controllers
             if (doctors.Count > 1)
             {
                 string doctorHtmls = "";
-                foreach(var doctor in doctors)
+                foreach (var doctor in doctors)
                 {
                     doctorHtmls += $"<div class=\"col-6\"><p>{doctor.FullName}</p></div>";
                 }
@@ -226,18 +227,4 @@ namespace ClinicApp.Controllers
             return response;
         }
     }
-}
-
-public static class GenderConstants
-{
-    public const string None = "Khác";
-    public const string Male = "Nam";
-    public const string Female = "Nữ";
-}
-
-public static class PatientStatusConstants
-{
-    public const string IsNew = "Mới";
-    public const string IsRechecking = "Tái khám";
-    public const string IsToAddDocs = "BS Hồ Sơ";
 }

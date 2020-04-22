@@ -17,5 +17,8 @@
 
         public const string ViewAllMedicinesPolicy = "View All Medicines";
         public const string ManageAllMedicinesPolicy = "Manage All Medicines";
+
+        public const string ViewAllServiceFormsPolicy = "View All Service Forms";
+        public const string ManageAllServiceFormsPolicy = "Manage All Service Forms";
     }
 }

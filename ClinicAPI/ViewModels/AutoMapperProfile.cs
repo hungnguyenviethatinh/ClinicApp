@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using ClinicAPI.ViewModels.ServiceForm;
 using DAL.Core;
 using DAL.Models;
+using DAL.Models.ServiceForm;
 
 namespace ClinicAPI.ViewModels
 {
@@ -11,12 +13,9 @@ namespace ClinicAPI.ViewModels
             CreateMap<Patient, PatientModel>();
             CreateMap<PatientModel, Patient>();
 
-
             CreateMap<History, HistoryModel>();
             CreateMap<HistoryModel, History>();
-
             CreateMap<HistoryPatchModel, History>();
-
             CreateMap<History, HistoryViewModel>();
 
             CreateMap<XRayImage, XRayModel>();
@@ -33,7 +32,6 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<User, UserViewModel>()
                 .ForMember(u => u.RoleName, map => map.Ignore());
-
             CreateMap<User, UserEditModel>()
                 .ForMember(u => u.RoleName, map => map.Ignore())
                 .ForMember(u => u.Password, map => map.Ignore());
@@ -46,7 +44,6 @@ namespace ClinicAPI.ViewModels
                 map => map.MapFrom(
                     (medicineModel, medicine) =>
                     medicine.Quantity.GetValueOrDefault(0) + medicineModel.Quantity.GetValueOrDefault(0)));
-
             CreateMap<MedicineUpdateModel, Medicine>()
                 .ForMember(m => m.Quantity,
                 map => map.MapFrom((medicineModel, medicine) =>
@@ -55,14 +52,12 @@ namespace ClinicAPI.ViewModels
 
                     return quantity > 0 ? quantity : 0;
                 }));
-
             CreateMap<MedicineRestoreModel, Medicine>()
                 .ForMember(m => m.Quantity,
                 map => map.MapFrom((medicineModel, medicine) =>
                 {
                     return medicine.Quantity != null ? medicine.Quantity.Value + medicineModel.Quantity : 0;
                 }));
-
             CreateMap<Medicine, MedicineViewModel>()
                 .ForMember(m => m.Ingredient, map => map.Ignore())
                 .ForMember(m => m.Quantity,
@@ -169,6 +164,62 @@ namespace ClinicAPI.ViewModels
                 .ForMember(viewModel => viewModel.Doctors, map => map.Ignore())
                 .ForMember(viewModel => viewModel.XRayImages, map => map.Ignore());
             CreateMap<XRayImage, XRayViewModel>();
+
+            CreateMap<CtFormAddModel, CtForm>();
+            CreateMap<CtForm, CtFormViewModel>()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientBasicViewModel()
+                {
+                    Id = model.Patient.Id,
+                    FullName = model.Patient.FullName,
+                }))
+                .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
+                {
+                    Id = model.Doctor.Id,
+                    FullName = model.Doctor.FullName,
+                }));
+            CreateMap<CtFormUpdateModel, CtForm>();
+
+            CreateMap<MriFormAddModel, MriForm>();
+            CreateMap<MriForm, MriFormViewModel>()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientBasicViewModel()
+                {
+                    Id = model.Patient.Id,
+                    FullName = model.Patient.FullName,
+                }))
+                .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
+                {
+                    Id = model.Doctor.Id,
+                    FullName = model.Doctor.FullName,
+                }));
+            CreateMap<MriFormUpdateModel, MriForm>();
+
+            CreateMap<TestFormAddModel, TestForm>();
+            CreateMap<TestForm, TestFormViewModel>()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientBasicViewModel()
+                {
+                    Id = model.Patient.Id,
+                    FullName = model.Patient.FullName,
+                }))
+                .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
+                {
+                    Id = model.Doctor.Id,
+                    FullName = model.Doctor.FullName,
+                }));
+            CreateMap<TestFormUpdateModel, TestForm>();
+
+            CreateMap<XqFormAddModel, XqForm>();
+            CreateMap<XqForm, XqFormViewModel>()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientBasicViewModel()
+                {
+                    Id = model.Patient.Id,
+                    FullName = model.Patient.FullName,
+                }))
+                .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
+                {
+                    Id = model.Doctor.Id,
+                    FullName = model.Doctor.FullName,
+                }));
+            CreateMap<XqFormUpdateModel, XqForm>();
         }
     }
 }

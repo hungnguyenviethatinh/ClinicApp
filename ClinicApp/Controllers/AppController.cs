@@ -1,4 +1,5 @@
 ﻿using Chromely.Core.RestfulService;
+using ClinicApp.Core;
 using System.Configuration;
 
 namespace ClinicApp.Controllers
@@ -14,8 +15,8 @@ namespace ClinicApp.Controllers
         private ChromelyResponse GetAppConfiguration(ChromelyRequest request)
         {
 
-            string apiUrl = ConfigurationManager.AppSettings.Get("DRKHOACLINICAPP_APIURL");
-            string clientSecret = ConfigurationManager.AppSettings.Get("DRKHOACLINICAPP_SECRET");
+            string apiUrl = ConfigurationManager.AppSettings.Get(KeyConstants.ApiUrlKey);
+            string clientSecret = ConfigurationManager.AppSettings.Get(KeyConstants.SecretKey);
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {

@@ -19,6 +19,10 @@ namespace DAL
         private IIngredientRepository _ingredients;
         private IOpenTimeRepository _openTimes;
         private IDoctorPatientHistoryRepository _doctorPatients;
+        private ICtFormRepository _ctForms;
+        private IMriFormRepository _mriForms;
+        private ITestFormRepository _testForms;
+        private IXqFormRepository _xqForms;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -172,7 +176,7 @@ namespace DAL
         {
             get
             {
-                if(_openTimes == null)
+                if (_openTimes == null)
                 {
                     _openTimes = new OpenTimeRepository(_context);
                 }
@@ -191,6 +195,58 @@ namespace DAL
                 }
 
                 return _doctorPatients;
+            }
+        }
+
+        public ICtFormRepository CtForms
+        {
+            get
+            {
+                if (_ctForms == null)
+                {
+                    _ctForms = new CtFormRepository(_context);
+                }
+
+                return _ctForms;
+            }
+        }
+
+        public IMriFormRepository MriForms
+        {
+            get
+            {
+                if (_mriForms == null)
+                {
+                    _mriForms = new MriFormRepository(_context);
+                }
+
+                return _mriForms;
+            }
+        }
+
+        public ITestFormRepository TestForms
+        {
+            get
+            {
+                if (_testForms == null)
+                {
+                    _testForms = new TestFormRepository(_context);
+                }
+
+                return _testForms;
+            }
+        }
+
+        public IXqFormRepository XqForms
+        {
+            get
+            {
+                if (_xqForms == null)
+                {
+                    _xqForms = new XqFormRepository(_context);
+                }
+
+                return _xqForms;
             }
         }
 

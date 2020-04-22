@@ -17,7 +17,6 @@ namespace DAL.Repositories
     {
         public PatientRepository(ApplicationDbContext context) : base(context)
         {
-
         }
 
         public IEnumerable<Patient> GetPatients()
@@ -34,6 +33,7 @@ namespace DAL.Repositories
                 .Where(p => !p.IsDeleted && p.Id == id)
                 .SingleOrDefaultAsync();
         }
+
         ApplicationDbContext _appContext => (ApplicationDbContext)_context;
     }
 }

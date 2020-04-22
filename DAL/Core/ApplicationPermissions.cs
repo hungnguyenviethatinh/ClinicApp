@@ -73,6 +73,18 @@ namespace DAL.Core
             MedicinePermissionGroupName,
             "Permission to create, delete and modify medicines details");
 
+        public const string ServiceFormPermissionGroupName = "ServiceForm Permissions";
+        public static ApplicationPermission ViewServiceForms = new ApplicationPermission(
+            "View ServiceForms",
+            "serviceforms.view",
+            ServiceFormPermissionGroupName,
+            "Permission to view service forms details");
+        public static ApplicationPermission ManageServiceForms = new ApplicationPermission(
+            "Manage ServiceForms",
+            "serviceforms.manage",
+            ServiceFormPermissionGroupName,
+            "Permission to create, delete and modify service forms details");
+
         static ApplicationPermissions()
         {
             List<ApplicationPermission> allPermissions = new List<ApplicationPermission>()
@@ -92,6 +104,9 @@ namespace DAL.Core
 
                 ViewMedicines,
                 ManageMedicines,
+
+                ViewServiceForms,
+                ManageServiceForms,
             };
 
             AllPermissions = allPermissions.AsReadOnly();
@@ -128,6 +143,8 @@ namespace DAL.Core
 
                 ViewMedicines,
                 ManageMedicines,
+
+                ViewServiceForms,
             };
         }
 
@@ -138,6 +155,9 @@ namespace DAL.Core
 
                 ViewPrescriptions,
                 ManagePrescriptions,
+
+                ViewServiceForms,
+                ManageServiceForms,
             };
         }
 
@@ -148,6 +168,8 @@ namespace DAL.Core
                 ManagePatients,
 
                 ViewPrescriptions,
+
+                ViewServiceForms,
             };
         }
     }

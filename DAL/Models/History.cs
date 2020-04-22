@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DAL.Models.Interfaces;
+using DAL.Models.ServiceForm;
 
 namespace DAL.Models
 {
@@ -25,6 +26,10 @@ namespace DAL.Models
         public DateTime UpdatedDate { get; set; }
 
         public virtual ICollection<Prescription> Prescriptions { get; set; }
+        public virtual ICollection<CtForm> CtForms { get; set; }
+        public virtual ICollection<MriForm> MriForms { get; set; }
+        public virtual ICollection<TestForm> TestForms { get; set; }
+        public virtual ICollection<XqForm> XqForms { get; set; }
         public virtual ICollection<XRayImage> XRayImages { get; set; }
         public virtual ICollection<DoctorPatientHistory> Doctors { get; set; }
     }

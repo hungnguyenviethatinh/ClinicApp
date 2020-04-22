@@ -5,6 +5,7 @@ using System.Text;
 using Chromely.Core.RestfulService;
 using SelectPdf;
 using System.Text.Json;
+using ClinicApp.Core;
 using ClinicApp.ViewModels;
 
 namespace ClinicApp.Controllers
@@ -117,7 +118,7 @@ namespace ClinicApp.Controllers
                     if (takePeriod.Equals(TakePeriodConstants.Day, StringComparison.OrdinalIgnoreCase))
                     {
                         string medicinePerDayHtml = "Ngày {medicine.TakeMethod}: <u>{medicine.TakeTimes} lần</u>, Sáng: <u>{medicine.AfterBreakfast}</u> {medicine.Unit}, Trưa: <u>{medicine.AfterLunch}</u> {medicine.Unit}, Chiều: <u>{medicine.Afternoon}</u> {medicine.Unit}, Tối: <u>{medicine.AfterDinner}</u> {medicine.Unit}";
-                        
+
                         string afterBreakfast = medicine.AfterBreakfast != null ? medicine.AfterBreakfast.ToString() : threeDots;
                         string afterLunch = medicine.AfterLunch != null ? medicine.AfterLunch.ToString() : threeDots;
                         string afternoon = medicine.Afternoon != null ? medicine.Afternoon.ToString() : threeDots;
@@ -131,7 +132,7 @@ namespace ClinicApp.Controllers
                         medicinePerDayHtml = medicinePerDayHtml.Replace("{medicine.Unit}", medicine.Unit);
 
                         medicineHtml = medicineHtml.Replace("{medicine}", medicinePerDayHtml);
-                    } 
+                    }
                     else
                     {
                         string medicineByPeriodHtml = "{medicine.TakePeriod} {medicine.TakeMethod}: {medicine.TakeTimes} lần, Mỗi lần dùng: {medicine.AmountPerTime} {medicine.Unit}";
@@ -145,7 +146,7 @@ namespace ClinicApp.Controllers
 
                         medicineHtml = medicineHtml.Replace("{medicine}", medicineByPeriodHtml);
                     }
-                    
+
                     string note = !string.IsNullOrWhiteSpace(medicine.Note) ? medicine.Note : dots;
                     medicineHtml = medicineHtml.Replace("{medicine.Note}", note);
 
@@ -162,7 +163,7 @@ namespace ClinicApp.Controllers
             if (openTimes.Count > 0)
             {
                 string openTimeHtmls = "";
-                foreach(var openTime in openTimes)
+                foreach (var openTime in openTimes)
                 {
                     openTimeHtmls += $"<p>{openTime.OpenClosedTime}</p>";
                 }
@@ -220,11 +221,4 @@ namespace ClinicApp.Controllers
             return response;
         }
     }
-}
-
-public static class TakePeriodConstants
-{
-    public const string Day = "Ngày";
-    public const string Week = "Tuần";
-    public const string Month = "Tháng";
 }

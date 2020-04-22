@@ -22,7 +22,6 @@ namespace DAL.Repositories
     {
         public PrescriptionRepository(ApplicationDbContext context) : base(context)
         {
-
         }
 
         public IEnumerable<Prescription> GetPrescriptions()

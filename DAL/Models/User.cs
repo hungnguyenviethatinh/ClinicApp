@@ -1,4 +1,5 @@
 ﻿using DAL.Models.Interfaces;
+using DAL.Models.ServiceForm;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,10 @@ namespace DAL.Models
 
         public virtual ICollection<DoctorPatientHistory> Patients { get; set; }
         public virtual ICollection<Prescription> Prescriptions { get; set; }
+        public virtual ICollection<CtForm> CtForms { get; set; }
+        public virtual ICollection<MriForm> MriForms { get; set; }
+        public virtual ICollection<TestForm> TestForms { get; set; }
+        public virtual ICollection<XqForm> XqForms { get; set; }
 
     }
 }

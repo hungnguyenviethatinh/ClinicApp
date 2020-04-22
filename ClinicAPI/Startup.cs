@@ -112,6 +112,11 @@ namespace ClinicAPI
                     policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ViewMedicines));
                 options.AddPolicy(Policies.ManageAllMedicinesPolicy,
                     policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ManageMedicines));
+
+                options.AddPolicy(Policies.ViewAllServiceFormsPolicy,
+                   policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ViewServiceForms));
+                options.AddPolicy(Policies.ManageAllServiceFormsPolicy,
+                    policy => policy.RequireClaim(ClaimConstants.Permission, AppPermissions.ManageServiceForms));
             });
 
             services.AddSwaggerGen(c =>

@@ -16,8 +16,13 @@ namespace DAL
         IDiagnosisRepository Diagnoses { get; }
         IUnitRepository Units { get; }
         IIngredientRepository Ingredients { get; }
-        IOpenTimeRepository OpenTimes { get;  }
+        IOpenTimeRepository OpenTimes { get; }
         IDoctorPatientHistoryRepository DoctorPatientHistories { get; }
+        ICtFormRepository CtForms { get; }
+        IMriFormRepository MriForms { get; }
+        ITestFormRepository TestForms { get; }
+        IXqFormRepository XqForms { get; }
+
 
         int SaveChanges();
         Task<int> SaveChangesAsync();

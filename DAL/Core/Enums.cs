@@ -28,4 +28,11 @@
         No,
         Yes,
     }
+
+    public enum CtRequestType
+    {
+        Normal,
+        Urgent,
+        Emergency,
+    }
 }

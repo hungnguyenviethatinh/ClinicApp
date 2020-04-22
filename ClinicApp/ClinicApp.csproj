@@ -5,7 +5,7 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
-    <Platforms>x86</Platforms>
+    <Platforms>x64</Platforms>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <AssemblyName>DrKhoaClinicApp</AssemblyName>
     <StartupObject></StartupObject>
@@ -36,6 +36,9 @@
     <None Update="wwwroot\templates\prescription.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="wwwroot\templates\patient.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -44,10 +47,6 @@
     <PackageReference Include="Chromely.Core" Version="4.0.0" />
     <PackageReference Include="Select.HtmlToPdf" Version="19.2.0" />
     <PackageReference Include="System.Text.Json" Version="4.6.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -72,20 +71,20 @@
   </Target>
 
   <Target Name="DebugChromelyApp" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">
-    <Message Importance="High" Text="Building React App.." />
+    <!--<Message Importance="High" Text="Building React App.." />
     <Exec Command="npm run build" WorkingDirectory="reactapp" ContinueOnError="false" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="OutputOfExec" />
-    </Exec>
+    </Exec>-->
 
     <Message Importance="High" Text="Copying React App to debug folder.." />
     <Exec Command="xcopy &quot;$(ProjectDir)reactapp\dist&quot; &quot;$(TargetDir)dist&quot;   /i /s /r /y /c" />
   </Target>
 
   <Target Name="ReleaseChromelyApp" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Release' ">
-    <Message Importance="High" Text="Building React App.." />
+    <!--<Message Importance="High" Text="Building React App.." />
     <Exec Command="npm run build" WorkingDirectory="reactapp" ContinueOnError="true" ConsoleToMSBuild="false">
       <Output TaskParameter="ConsoleOutput" PropertyName="OutputOfExec" />
-    </Exec>
+    </Exec>-->
     
     <Message Importance="High" Text="Copying React App to release folder.." />
     <Exec Command="xcopy &quot;$(ProjectDir)reactapp\dist&quot; &quot;$(TargetDir)dist&quot;   /i /s /r /y /c" />

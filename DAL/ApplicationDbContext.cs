@@ -1,5 +1,6 @@
 ﻿using DAL.Models;
 using DAL.Models.Interfaces;
+using DAL.Models.ServiceForm;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,6 +25,10 @@ namespace DAL
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<OpenTime> OpenTimes { get; set; }
         public DbSet<DoctorPatientHistory> DoctorPatientHistories { get; set; }
+        public DbSet<CtForm> CtForms { get; set; }
+        public DbSet<MriForm> MriForms { get; set; }
+        public DbSet<TestForm> TestForms { get; set; }
+        public DbSet<XqForm> XqForms { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -33,7 +38,6 @@ namespace DAL
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            const string decimalType = "decimal(18,2)";
 
             builder.Entity<User>()
                 .HasMany(u => u.Claims)
@@ -54,6 +58,26 @@ namespace DAL
                 .HasMany(u => u.Prescriptions)
                 .WithOne(p => p.Doctor)
                 .HasForeignKey(p => p.DoctorId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<User>()
+                .HasMany(u => u.CtForms)
+                .WithOne(f => f.Doctor)
+                .HasForeignKey(f => f.DoctorId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<User>()
+                .HasMany(u => u.MriForms)
+                .WithOne(f => f.Doctor)
+                .HasForeignKey(f => f.DoctorId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<User>()
+                .HasMany(u => u.TestForms)
+                .WithOne(f => f.Doctor)
+                .HasForeignKey(f => f.DoctorId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<User>()
+                .HasMany(u => u.XqForms)
+                .WithOne(f => f.Doctor)
+                .HasForeignKey(f => f.DoctorId)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Role>()
@@ -96,6 +120,26 @@ namespace DAL
                 .HasMany(p => p.XRayImages)
                 .WithOne(x => x.Patient)
                 .HasForeignKey(x => x.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Patient>()
+                .HasMany(p => p.CtForms)
+                .WithOne(f => f.Patient)
+                .HasForeignKey(f => f.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Patient>()
+                .HasMany(p => p.MriForms)
+                .WithOne(f => f.Patient)
+                .HasForeignKey(f => f.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Patient>()
+                .HasMany(p => p.TestForms)
+                .WithOne(f => f.Patient)
+                .HasForeignKey(f => f.PatientId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Patient>()
+                .HasMany(p => p.XqForms)
+                .WithOne(f => f.Patient)
+                .HasForeignKey(f => f.PatientId)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Prescription>()
@@ -174,6 +218,26 @@ namespace DAL
                 .WithOne(d => d.History)
                 .HasForeignKey(d => d.HistoryId)
                 .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<History>()
+                .HasMany(h => h.CtForms)
+                .WithOne(f => f.History)
+                .HasForeignKey(f => f.HistoryId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<History>()
+                .HasMany(h => h.MriForms)
+                .WithOne(f => f.History)
+                .HasForeignKey(f => f.HistoryId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<History>()
+                .HasMany(h => h.TestForms)
+                .WithOne(f => f.History)
+                .HasForeignKey(f => f.HistoryId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<History>()
+                .HasMany(h => h.XqForms)
+                .WithOne(f => f.History)
+                .HasForeignKey(f => f.HistoryId)
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<PrescriptionMedicine>()
                 .HasKey(pm => new { pm.PrescriptionId, pm.MedicineId });
@@ -232,6 +296,70 @@ namespace DAL
 
             builder.Entity<DoctorPatientHistory>()
                 .HasKey(dp => new { dp.DoctorId, dp.PatientId, dp.HistoryId });
+
+            builder.Entity<CtForm>()
+                .HasOne(f => f.Doctor)
+                .WithMany(d => d.CtForms)
+                .HasForeignKey(f => f.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<CtForm>()
+                .HasOne(f => f.Patient)
+                .WithMany(p => p.CtForms)
+                .HasForeignKey(f => f.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<CtForm>()
+                .HasOne(f => f.History)
+                .WithMany(h => h.CtForms)
+                .HasForeignKey(f => f.HistoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<MriForm>()
+                .HasOne(f => f.Doctor)
+                .WithMany(d => d.MriForms)
+                .HasForeignKey(f => f.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<MriForm>()
+                .HasOne(f => f.Patient)
+                .WithMany(p => p.MriForms)
+                .HasForeignKey(f => f.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<MriForm>()
+                .HasOne(f => f.History)
+                .WithMany(h => h.MriForms)
+                .HasForeignKey(f => f.HistoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<TestForm>()
+                .HasOne(f => f.Doctor)
+                .WithMany(d => d.TestForms)
+                .HasForeignKey(f => f.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<TestForm>()
+                .HasOne(f => f.Patient)
+                .WithMany(p => p.TestForms)
+                .HasForeignKey(f => f.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<TestForm>()
+                .HasOne(f => f.History)
+                .WithMany(h => h.TestForms)
+                .HasForeignKey(f => f.HistoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<XqForm>()
+                .HasOne(f => f.Doctor)
+                .WithMany(d => d.XqForms)
+                .HasForeignKey(f => f.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<XqForm>()
+                .HasOne(f => f.Patient)
+                .WithMany(p => p.XqForms)
+                .HasForeignKey(f => f.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<XqForm>()
+                .HasOne(f => f.History)
+                .WithMany(h => h.XqForms)
+                .HasForeignKey(f => f.HistoryId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         public override int SaveChanges()
