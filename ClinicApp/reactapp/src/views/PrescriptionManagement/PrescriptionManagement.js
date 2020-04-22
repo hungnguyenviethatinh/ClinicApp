@@ -420,8 +420,12 @@ const PrescriptionManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập mã đơn thuốc!');
             return;
         }
+        if (!prescription.DateCreated) {
+            handleSnackbarOption('error', 'Yêu cầu nhập ngày kê đơn!');
+            return;
+        }
         if (prescription.DateCreated && !moment(prescription.DateCreated).isValid()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập ngày kê đơn hợp lệ (không nhập để trống)!');
+            handleSnackbarOption('error', 'Yêu cầu nhập ngày kê đơn hợp lệ!');
             return;
         }
         for (let medicine of medicines) {
@@ -483,7 +487,7 @@ const PrescriptionManagement = () => {
         setDisabled(true);
         setLoadingDone(true);
 
-        const DateCreated = moment(prescription.DateCreated).isValid() ? prescription.DateCreated.format() : null;
+        const DateCreated = moment(prescription.DateCreated).isValid() ? prescription.DateCreated.format() : moment().format();
         const prescriptionModel = {
             ...prescription,
             DateCreated,
@@ -866,10 +870,11 @@ const PrescriptionManagement = () => {
                 Note: note,
             });
         } else {
+            const DateCreated = moment(dateCreated).isValid() ? moment(dateCreated) : moment();
             setPrescription({
                 ...prescription,
                 IdCode: idCode,
-                DateCreated: moment(dateCreated).isValid() ? moment(dateCreated) : moment(),
+                DateCreated,
                 Diagnosis: diagnosis,
                 OtherDiagnosis: otherDiagnosis,
                 Note: note,
@@ -1006,7 +1011,8 @@ const PrescriptionManagement = () => {
         stopLoadingMedicineName,
         stopLoadingDiagnosisName,
         stopLoadingUnitName,
-        stopLoadingIngredientName, updateMode]);
+        stopLoadingIngredientName, 
+        updateMode]);
 
     return (
         <Grid

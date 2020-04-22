@@ -829,7 +829,7 @@ const PatientManagement = () => {
                     moment(appointmentDate).isValid() &&
                         (Status !== PatientStatus.IsChecked || moment(appointmentDate) > moment())
                         ? moment(appointmentDate) : null;
-                const CheckedDate = moment(checkedDate).isValid() ? moment(checkedDate) : null;
+                const CheckedDate = moment(checkedDate).isValid() ? moment(checkedDate) : moment();
 
                 setPatient({
                     ...patient,
