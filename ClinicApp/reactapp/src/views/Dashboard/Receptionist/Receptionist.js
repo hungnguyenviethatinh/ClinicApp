@@ -163,8 +163,8 @@ const ReceptionistView = () => {
     const config = axiosRequestConfig();
     const browserHistory = useHistory();
 
-    const patientTableRef = React.createRef(null);
-    const prescriptionTableRef = React.createRef(null);
+    const patientTableRef = React.useRef(null);
+    const prescriptionTableRef = React.useRef(null);
 
     const refreshPatientData = () => {
         patientTableRef.current && patientTableRef.current.onQueryChange();

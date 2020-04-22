@@ -71,6 +71,21 @@ const getMedicineStatErrorMsg = '[Get Medicine Stat Error]';
 
 const StatisticsView = () => {
     const classes = useStyles();
+    const config = axiosRequestConfig();
+
+    const handleError = (reason, logMsgHeader) => {
+        if (reason.response) {
+            const { status } = reason.response;
+            if (status === 401) {
+                handleSnackbarOption('error', ExpiredSessionMsg);
+            } else {
+                if (status === 404) {
+                    handleSnackbarOption('error', NotFoundMsg);
+                }
+            }
+        }
+        console.log(`${logMsgHeader}`, reason);
+    };
 
     let patientChart = React.createRef();
     let prescriptionChart = React.createRef();
@@ -93,22 +108,6 @@ const StatisticsView = () => {
     const handleSearch = () => {
         getPatientStat();
     };
-
-    const handleError = (reason, logMsgHeader) => {
-        if (reason.response) {
-            const { status } = reason.response;
-            if (status === 401) {
-                handleSnackbarOption('error', ExpiredSessionMsg);
-            } else {
-                if (status === 404) {
-                    handleSnackbarOption('error', NotFoundMsg);
-                }
-            }
-        }
-        console.log(`${logMsgHeader}`, reason);
-    };
-
-    const config = axiosRequestConfig();
 
     const [disabled, setDisabled] = React.useState(false);
     const [loadingSearch, setLoadingSearch] = React.useState(false);

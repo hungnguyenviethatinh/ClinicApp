@@ -216,10 +216,10 @@ const AdminView = () => {
         console.log(`${logMsgHeader}`, reason);
     };
 
-    let patientTableRef = React.createRef();
-    let prescriptionTableRef = React.createRef();
-    let employeeTableRef = React.createRef();
-    let medicineTableRef = React.createRef();
+    const patientTableRef = React.useRef(null);
+    const prescriptionTableRef = React.useRef(null);
+    const employeeTableRef = React.useRef(null);
+    const medicineTableRef = React.useRef(null);
 
     const refreshPatientData = () => {
         patientTableRef.current && patientTableRef.current.onQueryChange();

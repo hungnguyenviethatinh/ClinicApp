@@ -2,7 +2,7 @@
 export const ApiUrl = process.env.DRKHOACLINICAPP_APIURL;
 export const ClientSecret = process.env.DRKHOACLINICAPP_SECRET;
 
-export const Audiance = 'DrKhoaClinicApi';
+export const Audience = 'DrKhoaClinicApi';
 export const ClientId = 'DrKhoaClinicApp';
 
 export const LoginUrl = '/connect/token';
@@ -19,6 +19,7 @@ export const UpdatePatientUrl = '/api/receptionist/patients';
 export const UpdateHistoryUrl = '/api/receptionist/histories';
 export const UpdateXRayUrl = '/api/receptionist/xrays';
 export const DeletePatientUrl = '/api/receptionist/patients';
+export const DeleteXRayUrl = '/api/receptionist/xrays';
 export const GetPatientInQueueUrl = '/api/receptionist/patients/queue';
 export const GetPrescriptionsUrl = '/api/receptionist/prescriptions';
 export const GetPrescriptionsInQueueUrl = '/api/receptionist/prescriptions/queue';

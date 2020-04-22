@@ -16,7 +16,7 @@ import { TextField } from '../../components/TextField';
 
 import {
     ApiUrl,
-    Audiance,
+    Audience,
     ClientId,
     ClientSecret,
     LoginUrl,
@@ -123,7 +123,7 @@ const Login = (props) => {
         const url = ApiUrl + LoginUrl;
         const data = {
             grant_type: 'password',
-            scope: `openid profile phone email roles ${Audiance}`,
+            scope: `openid profile phone email roles ${Audience}`,
             username: user.username,
             password: user.password,
             client_id: ClientId,

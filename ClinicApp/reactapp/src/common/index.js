@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import { ApiUrl, Audiance, ClientId } from '../config';
+import { ApiUrl, Audience, ClientId } from '../config';
 import { AccessTokenKey } from '../constants';
 
 export const axiosRequestConfig = () => {
@@ -36,7 +36,7 @@ export const verifyJWT = (token, role = null) => {
     if (!decoded.hasOwnProperty('aud')) {
         return false;
     } else {
-        if (Audiance !== decoded.aud) {
+        if (Audience !== decoded.aud) {
             return false;
         }
     }

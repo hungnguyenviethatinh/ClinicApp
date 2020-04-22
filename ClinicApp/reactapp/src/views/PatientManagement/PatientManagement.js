@@ -52,6 +52,7 @@ import {
     UpdatePatientUrl,
     UpdateHistoryUrl,
     DeletePatientUrl,
+    DeleteXRayUrl,
     UpdateXRayUrl,
     AddDoctorsUrl,
     UpdateDoctorsUrl,
@@ -289,9 +290,6 @@ const PatientManagement = () => {
     const [hasXRay, setHasXRay] = React.useState(false);
     const handleHasXRayChange = event => {
         setHasXRay(!hasXRay);
-        if (event.target.value === 'No') {
-            setXRayImages([]);
-        }
     };
 
     const [searchValue, setSearchValue] = React.useState('');
@@ -523,7 +521,7 @@ const PatientManagement = () => {
                     }));
                     addDoctors(doctorModels);
                 }
-                if (!_.isEmpty(_xRayImages)) {
+                if (hasXRay && !_.isEmpty(_xRayImages)) {
                     const xRayModels = [];
                     _xRayImages.map(({ name, data, lastModifiedDate }) => xRayModels.push({
                         Name: name,
@@ -647,7 +645,7 @@ const PatientManagement = () => {
                     }));
                     updateDoctors(id, doctorModels);
                 }
-                if (!_.isEmpty(_xRayImages)) {
+                if (hasXRay && !_.isEmpty(_xRayImages)) {
                     const xRayModels = [];
                     _xRayImages.map(({ name, data, lastModifiedDate }) => xRayModels.push({
                         Name: name,
@@ -657,6 +655,8 @@ const PatientManagement = () => {
                         PatientId: patientId,
                     }));
                     updateXRays(id, xRayModels);
+                } else {
+                    deleteXRays(id);
                 }
             } else {
                 console.log('[Update History Response] ', response);
@@ -705,7 +705,7 @@ const PatientManagement = () => {
                 console.log('[Update XRays Success] - OK.');
             } else {
                 console.log('[Update XRays Response] ', response);
-                handleSnackbarOption('error', 'Có lỗi khi cập nhật hình ảnh X Quang.');
+                handleSnackbarOption('warning', 'Cập nhật hình ảnh X Quang không thành công.');
             }
 
             setDisabled(false);
@@ -713,7 +713,7 @@ const PatientManagement = () => {
             setLoadingDone(false);
         }).catch((reason) => {
             console.log('[Update XRays Error] ', reason);
-            handleSnackbarOption('error', 'Có lỗi khi cập nhật hình ảnh X Quang.');
+            handleSnackbarOption('warning', 'Cập nhật hình ảnh X Quang không thành công.');
 
             setDisabled(false);
             setDisabledPrint(false);
@@ -743,6 +743,31 @@ const PatientManagement = () => {
             handleSnackbarOption('error', 'Có lỗi khi xóa bệnh nhân.');
 
             setDisabled(false);
+        });
+    };
+
+    const deleteXRays = (historyId) => {
+        const url = `${DeleteXRayUrl}/${historyId}`;
+        Axios.delete(url, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleSnackbarOption('success', 'Cập nhật hình ảnh X Quang thành công.');
+                console.log('[Delete XRays Success] - OK.');
+            } else {
+                console.log('[Delete XRays Response] ', response);
+                handleSnackbarOption('warning', 'Cập nhật hình ảnh X Quang không thành công.');
+            }
+
+            setDisabled(false);
+            setDisabledPrint(false);
+            setLoadingDone(false);
+        }).catch((reason) => {
+            console.log('[Delete XRays Error] ', reason);
+            handleSnackbarOption('warning', 'Cập nhật hình ảnh X Quang không thành công.');
+
+            setDisabled(false);
+            setDisabledPrint(false);
+            setLoadingDone(false);
         });
     };
 
@@ -996,6 +1021,7 @@ const PatientManagement = () => {
             if (ReadyState === 4 && Status === 200) {
                 const { Message } = Data;
                 console.log(`[Print Patient Success] - ${Message}`);
+                handleSnackbarOption('success', 'In phiếu tiếp nhận thành công!');
             } else {
                 handleSnackbarOption('error', 'Có lỗi khi in phiếu tiếp nhận bệnh nhân!');
                 console.log('[Print Patient Error] - An error occurs during message routing. With url: '

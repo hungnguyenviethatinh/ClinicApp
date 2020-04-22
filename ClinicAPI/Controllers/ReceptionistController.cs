@@ -370,12 +370,7 @@ namespace ClinicAPI.Controllers
                 var xRayImages = _unitOfWork.XRayImages.Where(x => (x.HistoryId == historyId && !x.IsDeleted));
                 if (xRayImages.Any())
                 {
-                    foreach (var xRayImage in xRayImages)
-                    {
-                        xRayImage.IsDeleted = true;
-                    }
-
-                    _unitOfWork.XRayImages.UpdateRange(xRayImages);
+                    _unitOfWork.XRayImages.RemoveRange(xRayImages);
                     result = await _unitOfWork.SaveChangesAsync();
                     if (result < 1)
                     {
@@ -452,6 +447,26 @@ namespace ClinicAPI.Controllers
 
             patient.IsDeleted = true;
             _unitOfWork.Patients.Update(patient);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete("xrays/{historyId}")]
+        [Authorize(Policies.ManageAllPatientsPolicy)]
+        public async Task<IActionResult> DeleteXRays(int historyId)
+        {
+            var xRayImages = _unitOfWork.XRayImages.Where(x => (x.HistoryId == historyId && !x.IsDeleted));
+            if (!xRayImages.Any())
+            {
+                return Ok();
+            }
+
+            _unitOfWork.XRayImages.RemoveRange(xRayImages);
             int result = await _unitOfWork.SaveChangesAsync();
             if (result < 1)
             {
