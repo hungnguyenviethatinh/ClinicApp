@@ -40,6 +40,7 @@ import {
     Gender,
     PatientStatusEnum,
     ExpiredSessionMsg,
+    NotFoundMsg,
     RouteConstants,
     DisplayDateTimeFormat,
 } from '../../constants';

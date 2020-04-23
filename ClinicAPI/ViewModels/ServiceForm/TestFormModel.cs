@@ -1,9 +1,17 @@
-﻿using System;
+﻿using DAL.Core;
+using System;
 
 namespace ClinicAPI.ViewModels.ServiceForm
 {
     public class TestFormModel
     {
+        public string IdCode { get; set; }
+        // Chẩn đoán
+        public string DiagnosisName { get; set; }
+        // Ngày kê đơn
+        public DateTime DateCreated { get; set; }
+        public PrescriptionStatus Status { get; set; }
+
         // Phiếu xét nghiệm
         // Bệnh phẩm
         // Máu
@@ -186,11 +194,6 @@ namespace ClinicAPI.ViewModels.ServiceForm
 
     public class TestFormAddModel : TestFormModel
     {
-        // Chẩn đoán
-        public string DiagnosisName { get; set; }
-        // Ngày kê đơn
-        public DateTime DateCreated { get; set; }
-
         public int PatientId { get; set; }
         public string DoctorId { get; set; }
         public int HistoryId { get; set; }
@@ -199,10 +202,6 @@ namespace ClinicAPI.ViewModels.ServiceForm
     public class TestFormViewModel : TestFormModel
     {
         public int Id { get; set; }
-        // Chẩn đoán
-        public string DiagnosisName { get; set; }
-        // Ngày kê đơn
-        public DateTime DateCreated { get; set; }
 
         public int PatientId { get; set; }
         public PatientBasicViewModel Patient { get; set; }
@@ -212,9 +211,5 @@ namespace ClinicAPI.ViewModels.ServiceForm
 
     public class TestFormUpdateModel : TestFormModel
     {
-        // Chẩn đoán
-        public string DiagnosisName { get; set; }
-        // Ngày kê đơn
-        public DateTime DateCreated { get; set; }
     }
 }

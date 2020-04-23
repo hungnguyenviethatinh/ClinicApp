@@ -412,8 +412,10 @@ const PatientPreview = (props) => {
 PatientPreview.propTypes = {
     open: PropTypes.bool,
     disabled: PropTypes.bool,
+    disabledPrint: PropTypes.bool,
     loading: PropTypes.bool,
-    patientData: PropTypes.object,
+    loadingPrint: PropTypes.bool,
+    patient: PropTypes.object,
     handleCancel: PropTypes.func,
     handlePrint: PropTypes.func,
     handleSave: PropTypes.func,
@@ -422,8 +424,10 @@ PatientPreview.propTypes = {
 PatientPreview.defaultProps = {
     open: false,
     disabled: false,
+    disabledPrint: false,
     loading: false,
-    patientData: null,
+    loadingPrint: false,
+    patient: null,
     handleCancel: () => { },
     handlePrint: () => { },
     handleSave: () => { },

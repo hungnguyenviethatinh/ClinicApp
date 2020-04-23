@@ -95,4 +95,4 @@ TimePickerComponent.defaultProps = {
     // maxDateMessage: '',
 };
 
-export default withStyles(styles)(DateTimePickerComponent);
+export default withStyles(styles)(TimePickerComponent);

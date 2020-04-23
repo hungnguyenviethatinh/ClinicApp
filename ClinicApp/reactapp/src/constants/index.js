@@ -6,6 +6,11 @@ export const RouteConstants = {
     PrescriptionsView: '/prescriptions',
     PrescriptionDetailView: '/prescription/:id',
     PrescriptionManagementView: '/prescription-management',
+    ServiceFormView: '/ServiceForm',
+    CtFormView: '/ServiceForm/CtForm/:mode/:id',
+    MriFormView: '/ServiceForm/MriForm/:mode/:id',
+    TestFormView: '/ServiceForm/TestForm/:mode/:id',
+    XqFormView: '/ServiceForm/XqForm/:mode/:id',
     UserManagementView: '/user-management',
     DrugManagementView: '/drug-management',
     DataInputManagementView: '/datainput-management',
@@ -126,3 +131,9 @@ export const takePeriodValue = {
 };
 
 export const CurrentCheckingPatientId = 'currentCheckingPatientId';
+
+export const FormMode = {
+    Add: 'add',
+    Update: 'update',
+    View: 'view',
+};

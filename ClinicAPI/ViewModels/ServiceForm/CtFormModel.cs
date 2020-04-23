@@ -6,6 +6,13 @@ namespace ClinicAPI.ViewModels.ServiceForm
 
     public class CtFormModel
     {
+        public string IdCode { get; set; }
+        // Chẩn đoán
+        public string DiagnosisName { get; set; }
+        // Ngày kê đơn
+        public DateTime DateCreated { get; set; }
+        public PrescriptionStatus Status { get; set; }
+
         // Phiếu chỉ định chụp CT
         // Loại yêu cầu
         public CtRequestType Type { get; set; }
@@ -74,11 +81,6 @@ namespace ClinicAPI.ViewModels.ServiceForm
 
     public class CtFormAddModel : CtFormModel
     {
-        // Chẩn đoán
-        public string DiagnosisName { get; set; }
-        // Ngày kê đơn
-        public DateTime DateCreated { get; set; }
-
         public int PatientId { get; set; }
         public string DoctorId { get; set; }
         public int HistoryId { get; set; }
@@ -87,10 +89,6 @@ namespace ClinicAPI.ViewModels.ServiceForm
     public class CtFormViewModel : CtFormModel
     {
         public int Id { get; set; }
-        // Chẩn đoán
-        public string DiagnosisName { get; set; }
-        // Ngày kê đơn
-        public DateTime DateCreated { get; set; }
 
         public int PatientId { get; set; }
         public PatientBasicViewModel Patient { get; set; }
@@ -100,9 +98,5 @@ namespace ClinicAPI.ViewModels.ServiceForm
 
     public class CtFormUpdateModel : CtFormModel
     {
-        // Chẩn đoán
-        public string DiagnosisName { get; set; }
-        // Ngày kê đơn
-        public DateTime DateCreated { get; set; }
     }
 }

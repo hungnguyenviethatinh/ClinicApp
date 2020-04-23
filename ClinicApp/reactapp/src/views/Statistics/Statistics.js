@@ -14,6 +14,7 @@ import { BarChart, LineChart } from '../../components/Chart';
 import { DatePicker } from '../../components/DatePicker';
 import { Select } from '../../components/Select';
 import { Button } from '../../components/Button';
+import { Snackbar } from '../../components/Snackbar';
 
 import Axios, {
     axiosRequestConfig,
@@ -26,7 +27,9 @@ import {
 import {
     PeriodConstants,
     DataDateTimeFormat,
-    DisplayDateFormat
+    DisplayDateFormat,
+    ExpiredSessionMsg,
+    NotFoundMsg,
 } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -72,6 +75,27 @@ const getMedicineStatErrorMsg = '[Get Medicine Stat Error]';
 const StatisticsView = () => {
     const classes = useStyles();
     const config = axiosRequestConfig();
+
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
+
+    const [snackbarOption, setSnackbarOption] = React.useState({
+        variant: 'success',
+        message: '',
+    });
+    const handleSnackbarOption = (variant, message) => {
+        setSnackbarOption({
+            variant,
+            message,
+        });
+        setOpenSnackbar(true);
+    };
 
     const handleError = (reason, logMsgHeader) => {
         if (reason.response) {
@@ -446,6 +470,14 @@ const StatisticsView = () => {
                     </CardContent>
                 </Card>
             </Grid>
+            <Snackbar
+                vertical="bottom"
+                horizontal="right"
+                variant={snackbarOption.variant}
+                message={snackbarOption.message}
+                open={openSnackbar}
+                handleClose={handleSnackbarClose}
+            />
         </Grid>
     );
 };

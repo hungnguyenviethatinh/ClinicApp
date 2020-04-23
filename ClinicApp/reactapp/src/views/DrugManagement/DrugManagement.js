@@ -27,7 +27,7 @@ import { ActionOption } from '../../components/ActionOption';
 import {
     DrugStatus,
     ExpiredSessionMsg,
-    DataDateTimeFormat,
+    NotFoundMsg,
 } from '../../constants';
 import Axios, {
     axiosRequestConfig,
@@ -492,7 +492,7 @@ const DrugManagement = () => {
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { idCode, name, expiredDate, netWeight, quantity, unit, price } = data[0];
+                const { idCode, name, expiredDate, netWeight, quantity, unit } = data[0];
                 setMedicine({
                     IdCode: idCode,
                     Name: name,

@@ -4,7 +4,6 @@ using AutoMapper;
 using ClinicAPI.Authorization;
 using ClinicAPI.ViewModels.ServiceForm;
 using DAL;
-using DAL.Core;
 using DAL.Models.ServiceForm;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -13,9 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ClinicAPI.Controllers
 {
-    [Authorize(
-        AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme,
-        Roles = RoleConstants.DoctorRoleName)]
+    [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceFormController : ControllerBase

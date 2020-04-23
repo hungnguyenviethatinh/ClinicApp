@@ -14,12 +14,12 @@ export const GetDoctorsUrl = '/api/receptionist/doctors';
 export const GetPatientUrl = 'api/receptionist/patients';
 export const AddPatientUrl = '/api/receptionist/patients';
 export const AddHistoryUrl = '/api/receptionist/histories';
-export const AddXRayUrl = '/api/receptionist/xrays';
+export const AddXRayUrl = '/api/receptionist/xRays';
 export const UpdatePatientUrl = '/api/receptionist/patients';
 export const UpdateHistoryUrl = '/api/receptionist/histories';
-export const UpdateXRayUrl = '/api/receptionist/xrays';
+export const UpdateXRayUrl = '/api/receptionist/xRays';
 export const DeletePatientUrl = '/api/receptionist/patients';
-export const DeleteXRayUrl = '/api/receptionist/xrays';
+export const DeleteXRayUrl = '/api/receptionist/xRays';
 export const GetPatientInQueueUrl = '/api/receptionist/patients/queue';
 export const GetPrescriptionsUrl = '/api/receptionist/prescriptions';
 export const GetPrescriptionsInQueueUrl = '/api/receptionist/prescriptions/queue';
@@ -46,10 +46,14 @@ export const UpdateMedicinesUrl = 'api/doctor/medicines';
 export const UpdateMedicinesQuantityUrl = 'api/doctor/medicines/quantity';
 export const RestoreMedicinesQuantityUrl = 'api/doctor/medicines/restore';
 export const GetIngredientOptionsUrl = 'api/doctor/ingredients';
-export const GetPrescriptionListUrl = 'api/doctor/prescriptionlist';
-export const GetMedicineListUrl = 'api/doctor/medicinelist';
+export const GetPrescriptionListUrl = 'api/doctor/prescriptionList';
+export const GetMedicineListUrl = 'api/doctor/medicineList';
+export const GetDoctorCtFormsUrl = "/api/doctor/ctForms";
+export const GetDoctorMriFormsUrl = "/api/doctor/mriForms";
+export const GetDoctorTestFormsUrl = "/api/doctor/testForms";
+export const GetDoctorXqFormsUrl = "/api/doctor/xqForms";
 
-// Addmin Api:
+// Admin Api:
 export const GetAllPatientsUrl = '/api/admin/patients';
 export const GetAllPrescriptionsUrl = '/api/admin/prescriptions';
 export const GetAllMedicinesUrl = '/api/admin/medicines';
@@ -79,16 +83,34 @@ export const GetIngredientsUrl = '/api/admin/ingredients';
 export const AddIngredientsUrl = '/api/admin/ingredients';
 export const UpdateIngredientsUrl = '/api/admin/ingredients';
 export const DeleteIngredientsUrl = '/api/admin/ingredients';
-export const GetOpenTimesUrl = '/api/admin/opentimes';
-export const GetOpenTimeUrl = '/api/admin/opentimes';
-export const AddOpenTimeUrl = '/api/admin/opentimes';
-export const UpdateOpenTimeUrl = '/api/admin/opentimes';
-export const DeleteOpenTimeUrl = '/api/admin/opentimes';
+export const GetOpenTimesUrl = '/api/admin/openTimes';
+export const GetOpenTimeUrl = '/api/admin/openTimes';
+export const AddOpenTimeUrl = '/api/admin/openTimes';
+export const UpdateOpenTimeUrl = '/api/admin/openTimes';
+export const DeleteOpenTimeUrl = '/api/admin/openTimes';
+
+// Service Form:
+export const GetCtFormsUrl = "/api/ServiceForm/ctForms";
+export const GetMriFormsUrl = "/api/ServiceForm/mriForms";
+export const GetTestFormsUrl = "/api/ServiceForm/testForms";
+export const GetXqFormsUrl = "/api/ServiceForm/xqForms";
+export const GetCtFormUrl = "/api/ServiceForm/ctForm";
+export const GetMriFormUrl = "/api/ServiceForm/mriForm";
+export const GetTestFormUrl = "/api/ServiceForm/testForm";
+export const GetXqFormUrl = "/api/ServiceForm/xqForm";
+export const UpdateCtFormUrl = "/api/ServiceForm/ctForm";
+export const UpdateMriFormUrl = "/api/ServiceForm/mriForm";
+export const UpdateTestFormUrl = "/api/ServiceForm/testForm";
+export const UpdateXqFormUrl = "/api/ServiceForm/xqForm";
+export const DeleteCtFormUrl = "/api/ServiceForm/ctForm";
+export const DeleteMriFormUrl = "/api/ServiceForm/mriForm";
+export const DeleteTestFormUrl = "/api/ServiceForm/testForm";
+export const DeleteXqFormUrl = "/api/ServiceForm/xqForm";
 
 // Shared:
 export const PatientUrl = '/api/patient';
 export const PrescriptionUrl = '/api/prescription';
-export const OpenTimesUrl = '/api/prescription/opentimes';
+export const OpenTimesUrl = '/api/prescription/openTimes';
 export const UpdatePrescriptionStatusUrl = '/api/prescription/status';
 export const HistoryByPatientIdUrl = '/api/history/patient';
 export const GetHistoryUrl = '/api/history';
@@ -97,7 +119,7 @@ export const SetUserStatusUrl = '/api/account/status';
 export const GetCurrentUserUrl = '/api/account';
 export const UpdateCurrentUserUrl = '/api/account/update';
 
-// Chromely controller:
+// ChromeLy controller:
 export const PrescriptionPrintUrl = '/prescription/print';
 export const GetAppConfigurationUrl = '/app/configuration';
 export const PatientPrintUrl = '/patient/print';

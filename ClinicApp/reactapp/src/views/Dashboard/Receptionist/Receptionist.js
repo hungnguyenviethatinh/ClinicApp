@@ -12,6 +12,7 @@ import {
 
 import clsx from 'clsx';
 import moment from 'moment';
+import _ from 'lodash';
 
 import { Table } from '../../../components/Table';
 import { Status } from '../../../components/Status';

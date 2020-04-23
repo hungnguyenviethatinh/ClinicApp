@@ -287,6 +287,11 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
+            if (medicine.IsDeleted)
+            {
+                return Ok();
+            }
+
             medicine.IsDeleted = true;
             _unitOfWork.Medicines.Update(medicine);
             int result = await _unitOfWork.SaveChangesAsync();
@@ -295,7 +300,7 @@ namespace ClinicAPI.Controllers
                 return NoContent();
             }
 
-            return Ok(medicine);
+            return Ok();
         }
 
         [HttpGet("ingredients/{medicineId}")]
@@ -539,7 +544,7 @@ namespace ClinicAPI.Controllers
             }
             if (user.IsDeleted)
             {
-                return Ok(user);
+                return Ok();
             }
 
             user.UserName = id;
@@ -550,7 +555,7 @@ namespace ClinicAPI.Controllers
                 return NoContent();
             }
 
-            return Ok(user);
+            return Ok();
         }
 
         [HttpGet("diagnoses")]
@@ -643,7 +648,7 @@ namespace ClinicAPI.Controllers
                 return NoContent();
             }
 
-            return Ok(diagnosis);
+            return Ok();
         }
 
         [HttpGet("units")]
@@ -810,7 +815,7 @@ namespace ClinicAPI.Controllers
                 return NoContent();
             }
 
-            return Ok(unit);
+            return Ok();
         }
 
         [HttpDelete("opentimes/{id}")]

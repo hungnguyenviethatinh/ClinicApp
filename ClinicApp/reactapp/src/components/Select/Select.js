@@ -70,7 +70,6 @@ SelectComponent.propTypes = {
         value: PropTypes.any,
     })),
     autoFocus: PropTypes.bool,
-    style: PropTypes.object,
     required: PropTypes.bool,
     placeholder: PropTypes.string,
 }
@@ -85,7 +84,6 @@ SelectComponent.defaultProps = {
     onChange: () => { },
     options: [{}],
     autoFocus: false,
-    style: null,
     required: false,
     placeholder: '',
 }

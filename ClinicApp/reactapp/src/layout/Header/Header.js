@@ -126,7 +126,8 @@ const Header = (props) => {
 
 Header.propTypes = {
     className: PropTypes.string,
-    onSidebarOpen: PropTypes.func
+    onSidebarOpen: PropTypes.func,
+    onToggleSidebar: PropTypes.func,
 };
 
 export default Header;

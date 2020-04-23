@@ -11,6 +11,7 @@ import ReceiptIcon from '@material-ui/icons/Receipt';
 import ViewListIcon from '@material-ui/icons/ViewList';
 import ImportContactsIcon from '@material-ui/icons/ImportContacts';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import ListAltIcon from '@material-ui/icons/ListAlt';
 
 import { Menu } from '../Menu';
 import Profile from '../Profile';
@@ -93,6 +94,11 @@ const doctorMenus = [
         title: 'Kê đơn thuốc',
         href: RouteConstants.PrescriptionManagementView,
         icon: <ReceiptIcon />
+    },
+    {
+        title: 'Kê đơn chỉ định',
+        href: RouteConstants.ServiceFormView,
+        icon: <ListAltIcon />
     },
 ];
 

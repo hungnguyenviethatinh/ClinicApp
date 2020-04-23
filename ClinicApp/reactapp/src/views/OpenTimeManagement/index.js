@@ -1,1 +1,1 @@
-export { default as OpenTimeManagementView }  from './OpenTImeManagement';
+export { default as OpenTimeManagementView }  from './OpenTimeManagement';

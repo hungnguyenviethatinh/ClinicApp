@@ -14,11 +14,13 @@ import {
 import { Table } from '../../components/Table';
 import { Status } from '../../components/Status';
 import { SearchInput } from '../../components/SearchInput';
+import { Snackbar } from '../../components/Snackbar';
 
 import {
     PrescriptionStatus,
     DisplayDateFormat,
     RouteConstants,
+    ExpiredSessionMsg,
 } from '../../constants';
 import { GetPrescriptionsUrl } from '../../config';
 import Axios, {
@@ -80,6 +82,28 @@ const prescriptionColumns = [
 
 const Prescriptions = () => {
     const classes = useStyles();
+    const config = axiosRequestConfig();
+    
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
+
+    const [snackbarOption, setSnackbarOption] = React.useState({
+        variant: 'success',
+        message: '',
+    });
+    const handleSnackbarOption = (variant, message) => {
+        setSnackbarOption({
+            variant,
+            message,
+        });
+        setOpenSnackbar(true);
+    };
 
     let tableRef = React.createRef();
 
@@ -95,8 +119,6 @@ const Prescriptions = () => {
         event.preventDefault();
         refreshData();
     };
-
-    const config = axiosRequestConfig();
 
     const getPrescriptions = (resolve, reject, query) => {
         Axios.get(GetPrescriptionsUrl, {
@@ -177,6 +199,14 @@ const Prescriptions = () => {
                     </CardContent>
                 </Card>
             </Grid>
+            <Snackbar
+                vertical="bottom"
+                horizontal="right"
+                variant={snackbarOption.variant}
+                message={snackbarOption.message}
+                open={openSnackbar}
+                handleClose={handleSnackbarClose}
+            />
         </Grid>
     );
 };

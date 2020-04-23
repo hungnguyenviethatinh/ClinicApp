@@ -6,6 +6,7 @@ using AutoMapper;
 using ClinicAPI.Authorization;
 using ClinicAPI.Helpers;
 using ClinicAPI.ViewModels;
+using ClinicAPI.ViewModels.ServiceForm;
 using DAL;
 using DAL.Core;
 using DAL.Models;
@@ -534,6 +535,11 @@ namespace ClinicAPI.Controllers
                 return NotFound();
             }
 
+            if (prescription.IsDeleted)
+            {
+                return Ok();
+            }
+
             prescription.IsDeleted = true;
             _unitOfWork.Prescriptions.Update(prescription);
             int result = await _unitOfWork.SaveChangesAsync();
@@ -543,6 +549,50 @@ namespace ClinicAPI.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpGet("ctforms")]
+        [Authorize(Policies.ViewAllServiceFormsPolicy)]
+        public IActionResult GetDoctorCtForms()
+        {
+            string id = GetCurrentUserId();
+            var ctForms = _unitOfWork.CtForms.GetDoctorCtForms(id);
+            var ctFormVMs = _mapper.Map<IEnumerable<CtFormViewModel>>(ctForms);
+
+            return Ok(ctFormVMs);
+        }
+
+        [HttpGet("mriforms")]
+        [Authorize(Policies.ViewAllServiceFormsPolicy)]
+        public IActionResult GetDoctorMriForms()
+        {
+            string id = GetCurrentUserId();
+            var mriForms = _unitOfWork.MriForms.GetDoctorMriForms(id);
+            var mriFormVMs = _mapper.Map<IEnumerable<MriFormViewModel>>(mriForms);
+
+            return Ok(mriFormVMs);
+        }
+
+        [HttpGet("testforms")]
+        [Authorize(Policies.ViewAllServiceFormsPolicy)]
+        public IActionResult GetDoctorTestForms()
+        {
+            string id = GetCurrentUserId();
+            var testForms = _unitOfWork.TestForms.GetDoctorTestForms(id);
+            var testFormVMs = _mapper.Map<IEnumerable<TestFormViewModel>>(testForms);
+
+            return Ok(testFormVMs);
+        }
+
+        [HttpGet("xqforms")]
+        [Authorize(Policies.ViewAllServiceFormsPolicy)]
+        public IActionResult GetDoctorXqForms()
+        {
+            string id = GetCurrentUserId();
+            var xqForms = _unitOfWork.XqForms.GetDoctorXqForms(id);
+            var xqFormVMs = _mapper.Map<IEnumerable<XqFormViewModel>>(xqForms);
+
+            return Ok(xqFormVMs);
         }
         private string GetCurrentUserId()
         {

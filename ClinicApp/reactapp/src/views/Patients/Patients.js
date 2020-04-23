@@ -13,19 +13,17 @@ import {
 
 import { Table } from '../../components/Table';
 import { SearchInput } from '../../components/SearchInput';
+import { Snackbar } from '../../components/Snackbar';
 
 import {
-    IdPrefix,
     Gender,
-    AddressSeperator,
     RouteConstants,
+    ExpiredSessionMsg,
 } from '../../constants';
 import { GetPatientsByDoctorUrl } from '../../config';
 import Axios, {
     axiosRequestConfig,
 } from '../../common';
-import { encodeId, decodeId } from '../../utils';
-import moment from 'moment';
 
 const useStyles = makeStyles(theme => ({
     card: {},
@@ -73,6 +71,27 @@ const patientColumns = [
 const Patients = () => {
     const classes = useStyles();
     const config = axiosRequestConfig();
+
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
+
+    const [snackbarOption, setSnackbarOption] = React.useState({
+        variant: 'success',
+        message: '',
+    });
+    const handleSnackbarOption = (variant, message) => {
+        setSnackbarOption({
+            variant,
+            message,
+        });
+        setOpenSnackbar(true);
+    };
 
     let tableRef = React.createRef();
 
@@ -168,6 +187,14 @@ const Patients = () => {
                     </CardContent>
                 </Card>
             </Grid>
+            <Snackbar
+                vertical="bottom"
+                horizontal="right"
+                variant={snackbarOption.variant}
+                message={snackbarOption.message}
+                open={openSnackbar}
+                handleClose={handleSnackbarClose}
+            />
         </Grid>
     );
 };

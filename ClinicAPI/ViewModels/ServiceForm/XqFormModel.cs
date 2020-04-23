@@ -1,8 +1,16 @@
-﻿using System;
+﻿using DAL.Core;
+using System;
 namespace ClinicAPI.ViewModels.ServiceForm
 {
     public class XqFormModel
     {
+        public string IdCode { get; set; }
+        // Chẩn đoán
+        public string DiagnosisName { get; set; }
+        // Ngày kê đơn
+        public DateTime DateCreated { get; set; }
+        public PrescriptionStatus Status { get; set; }
+
         // Phiếu chụp X Quang
         // Yêu cầu
         public string Request { get; set; }
@@ -12,11 +20,6 @@ namespace ClinicAPI.ViewModels.ServiceForm
 
     public class XqFormAddModel : XqFormModel
     {
-        // Chẩn đoán
-        public string DiagnosisName { get; set; }
-        // Ngày kê đơn
-        public DateTime DateCreated { get; set; }
-
         public int PatientId { get; set; }
         public string DoctorId { get; set; }
         public int HistoryId { get; set; }
@@ -25,10 +28,6 @@ namespace ClinicAPI.ViewModels.ServiceForm
     public class XqFormViewModel : XqFormModel
     {
         public int Id { get; set; }
-        // Chẩn đoán
-        public string DiagnosisName { get; set; }
-        // Ngày kê đơn
-        public DateTime DateCreated { get; set; }
 
         public int PatientId { get; set; }
         public PatientBasicViewModel Patient { get; set; }
@@ -38,9 +37,5 @@ namespace ClinicAPI.ViewModels.ServiceForm
 
     public class XqFormUpdateModel : XqFormModel
     {
-        // Chẩn đoán
-        public string DiagnosisName { get; set; }
-        // Ngày kê đơn
-        public DateTime DateCreated { get; set; }
     }
 }

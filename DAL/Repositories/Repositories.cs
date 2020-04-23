@@ -122,6 +122,7 @@ namespace DAL.Repositories
     public interface ICtFormRepository : IRepository<CtForm>
     {
         IEnumerable<CtForm> GetCtForms();
+        IEnumerable<CtForm> GetDoctorCtForms(string doctorId);
         Task<CtForm> GetCtForm(int id);
     }
 
@@ -136,6 +137,14 @@ namespace DAL.Repositories
             return _appContext.CtForms
                 .Include(f => f.Doctor)
                 .Include(f => f.Patient);
+        }
+
+        public IEnumerable<CtForm> GetDoctorCtForms(string doctorId)
+        {
+            return _appContext.CtForms
+                .Include(f => f.Doctor)
+                .Include(f => f.Patient)
+                .Where(f => f.DoctorId == doctorId);
         }
 
         public async Task<CtForm> GetCtForm(int id)
@@ -153,6 +162,7 @@ namespace DAL.Repositories
     public interface IMriFormRepository : IRepository<MriForm>
     {
         IEnumerable<MriForm> GetMriForms();
+        IEnumerable<MriForm> GetDoctorMriForms(string doctorId);
         Task<MriForm> GetMriForm(int id);
     }
 
@@ -167,6 +177,14 @@ namespace DAL.Repositories
             return _appContext.MriForms
                 .Include(f => f.Doctor)
                 .Include(f => f.Patient);
+        }
+
+        public IEnumerable<MriForm> GetDoctorMriForms(string doctorId)
+        {
+            return _appContext.MriForms
+                .Include(f => f.Doctor)
+                .Include(f => f.Patient)
+                .Where(f => f.DoctorId == doctorId);
         }
 
         public async Task<MriForm> GetMriForm(int id)
@@ -184,6 +202,7 @@ namespace DAL.Repositories
     public interface ITestFormRepository : IRepository<TestForm>
     {
         IEnumerable<TestForm> GetTestForms();
+        IEnumerable<TestForm> GetDoctorTestForms(string doctorId);
         Task<TestForm> GetTestForm(int id);
     }
 
@@ -198,6 +217,14 @@ namespace DAL.Repositories
             return _appContext.TestForms
                 .Include(f => f.Doctor)
                 .Include(f => f.Patient);
+        }
+
+        public IEnumerable<TestForm> GetDoctorTestForms(string doctorId)
+        {
+            return _appContext.TestForms
+                .Include(f => f.Doctor)
+                .Include(f => f.Patient)
+                .Where(f => f.DoctorId == doctorId);
         }
 
         public async Task<TestForm> GetTestForm(int id)
@@ -215,6 +242,7 @@ namespace DAL.Repositories
     public interface IXqFormRepository : IRepository<XqForm>
     {
         IEnumerable<XqForm> GetXqForms();
+        IEnumerable<XqForm> GetDoctorXqForms(string doctorId);
         Task<XqForm> GetXqForm(int id);
     }
 
@@ -229,6 +257,14 @@ namespace DAL.Repositories
             return _appContext.XqForms
                 .Include(f => f.Doctor)
                 .Include(f => f.Patient);
+        }
+
+        public IEnumerable<XqForm> GetDoctorXqForms(string doctorId)
+        {
+            return _appContext.XqForms
+                .Include(f => f.Doctor)
+                .Include(f => f.Patient)
+                .Where(f => f.DoctorId == doctorId);
         }
 
         public async Task<XqForm> GetXqForm(int id)

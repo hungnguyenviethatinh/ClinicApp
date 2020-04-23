@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
+import _ from 'lodash';
 
 import { Table } from '../../components/Table';
 import { Tab, TabContent } from '../../components/Tab';

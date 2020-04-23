@@ -298,6 +298,8 @@ namespace DAL
                 .HasKey(dp => new { dp.DoctorId, dp.PatientId, dp.HistoryId });
 
             builder.Entity<CtForm>()
+                .Property(f => f.IdCode).HasMaxLength(30);
+            builder.Entity<CtForm>()
                 .HasOne(f => f.Doctor)
                 .WithMany(d => d.CtForms)
                 .HasForeignKey(f => f.DoctorId)
@@ -313,6 +315,8 @@ namespace DAL
                 .HasForeignKey(f => f.HistoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<MriForm>()
+                .Property(f => f.IdCode).HasMaxLength(30);
             builder.Entity<MriForm>()
                 .HasOne(f => f.Doctor)
                 .WithMany(d => d.MriForms)
@@ -330,6 +334,8 @@ namespace DAL
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<TestForm>()
+                .Property(f => f.IdCode).HasMaxLength(30);
+            builder.Entity<TestForm>()
                 .HasOne(f => f.Doctor)
                 .WithMany(d => d.TestForms)
                 .HasForeignKey(f => f.DoctorId)
@@ -345,6 +351,8 @@ namespace DAL
                 .HasForeignKey(f => f.HistoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<XqForm>()
+                .Property(f => f.IdCode).HasMaxLength(30);
             builder.Entity<XqForm>()
                 .HasOne(f => f.Doctor)
                 .WithMany(d => d.XqForms)
