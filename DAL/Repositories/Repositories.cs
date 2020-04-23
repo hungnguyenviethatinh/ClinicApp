@@ -136,7 +136,8 @@ namespace DAL.Repositories
         {
             return _appContext.CtForms
                 .Include(f => f.Doctor)
-                .Include(f => f.Patient);
+                .Include(f => f.Patient)
+                .ToList();
         }
 
         public IEnumerable<CtForm> GetDoctorCtForms(string doctorId)

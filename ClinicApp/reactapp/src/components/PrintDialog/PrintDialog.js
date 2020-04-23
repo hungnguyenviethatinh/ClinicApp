@@ -26,17 +26,12 @@ const useStyles = makeStyles({
     },
 });
 
-const ActionOptionDialog = (props) => {
-    const { open, handleClose, handleDelete, handleUpdate } = props;
+const PrintDialog = (props) => {
+    const { open, handleClose, handlePrint } = props;
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const classes = useStyles();
-
-    const handleUpdateClick = () => {
-        handleUpdate();
-        window.scrollTo(0, 0);
-    };
 
     return (
         <div>
@@ -53,12 +48,12 @@ const ActionOptionDialog = (props) => {
                     id="action-options"
                     classes={{
                         root: classes.title,
-                    }}>Tùy chọn thao tác</DialogTitle>
+                    }}>Xác nhận in</DialogTitle>
                 <DialogContent classes={{
                     root: classes.content,
                 }}>
                     <DialogContentText>
-                        Chọn thao tác mà bạn muốn thực hiện!
+                        Bạn muốn in phiếu chỉ định này chứ?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions classes={{
@@ -69,19 +64,19 @@ const ActionOptionDialog = (props) => {
                             <Button
                                 fullWidth
                                 color="danger"
-                                children="Xóa"
-                                iconName="delete"
-                                onClick={handleDelete}
+                                children="Hủy"
+                                iconName="cancel"
+                                onClick={handleClose}
                                 style={{ marginRight: 16 }}
                             />
                         </Grid>
                         <Grid item sm={6}>
                             <Button
                                 fullWidth
-                                color="info"
-                                children="Sửa"
-                                iconName="edit"
-                                onClick={handleUpdateClick}
+                                color="warning"
+                                children="In"
+                                iconName="print"
+                                onClick={handlePrint}
                             />
                         </Grid>
                     </Grid>
@@ -91,18 +86,16 @@ const ActionOptionDialog = (props) => {
     );
 };
 
-ActionOptionDialog.propTypes = {
+PrintDialog.propTypes = {
     open: PropTypes.bool,
     handleClose: PropTypes.func,
-    handleDelete: PropTypes.func,
-    handleUpdate: PropTypes.func,
+    handlePrint: PropTypes.func,
 };
 
-ActionOptionDialog.defaultProps = {
+PrintDialog.defaultProps = {
     open: false,
     handleClose: () => { },
-    handleDelete: () => { },
-    handleUpdate: () => { },
+    handlePrint: () => { },
 };
 
-export default ActionOptionDialog;
+export default PrintDialog;

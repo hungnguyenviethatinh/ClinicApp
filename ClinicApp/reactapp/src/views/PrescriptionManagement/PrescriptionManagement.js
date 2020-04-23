@@ -1416,6 +1416,6 @@ const PrescriptionManagement = () => {
             />
         </Grid>
     );
-}
+};
 
 export default PrescriptionManagement;

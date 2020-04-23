@@ -1481,6 +1481,6 @@ const PatientManagement = () => {
             />
         </Grid>
     );
-}
+};
 
 export default PatientManagement;

@@ -374,6 +374,6 @@ const DoctorView = () => {
             />
         </Grid>
     );
-}
+};
 
 export default DoctorView;

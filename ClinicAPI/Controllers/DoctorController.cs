@@ -556,7 +556,10 @@ namespace ClinicAPI.Controllers
         public IActionResult GetDoctorCtForms()
         {
             string id = GetCurrentUserId();
-            var ctForms = _unitOfWork.CtForms.GetDoctorCtForms(id);
+            var ctForms = _unitOfWork.CtForms
+                .GetDoctorCtForms(id)
+                .Where(f => f.DateCreated.Date == DateTime.Today)
+                .OrderByDescending(f => f.Id);
             var ctFormVMs = _mapper.Map<IEnumerable<CtFormViewModel>>(ctForms);
 
             return Ok(ctFormVMs);
@@ -567,7 +570,10 @@ namespace ClinicAPI.Controllers
         public IActionResult GetDoctorMriForms()
         {
             string id = GetCurrentUserId();
-            var mriForms = _unitOfWork.MriForms.GetDoctorMriForms(id);
+            var mriForms = _unitOfWork.MriForms
+                .GetDoctorMriForms(id)
+                .Where(f => f.DateCreated.Date == DateTime.Today)
+                .OrderByDescending(f => f.Id);
             var mriFormVMs = _mapper.Map<IEnumerable<MriFormViewModel>>(mriForms);
 
             return Ok(mriFormVMs);
@@ -578,7 +584,10 @@ namespace ClinicAPI.Controllers
         public IActionResult GetDoctorTestForms()
         {
             string id = GetCurrentUserId();
-            var testForms = _unitOfWork.TestForms.GetDoctorTestForms(id);
+            var testForms = _unitOfWork.TestForms
+                .GetDoctorTestForms(id)
+                .Where(f => f.DateCreated.Date == DateTime.Today)
+                .OrderByDescending(f => f.Id);
             var testFormVMs = _mapper.Map<IEnumerable<TestFormViewModel>>(testForms);
 
             return Ok(testFormVMs);
@@ -589,7 +598,10 @@ namespace ClinicAPI.Controllers
         public IActionResult GetDoctorXqForms()
         {
             string id = GetCurrentUserId();
-            var xqForms = _unitOfWork.XqForms.GetDoctorXqForms(id);
+            var xqForms = _unitOfWork.XqForms
+                .GetDoctorXqForms(id)
+                .Where(f => f.DateCreated.Date == DateTime.Today)
+                .OrderByDescending(f => f.Id);
             var xqFormVMs = _mapper.Map<IEnumerable<XqFormViewModel>>(xqForms);
 
             return Ok(xqFormVMs);

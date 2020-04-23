@@ -742,6 +742,6 @@ const ServiceForm = () => {
             />
         </Grid>
     );
-}
+};
 
 export default ServiceForm;
