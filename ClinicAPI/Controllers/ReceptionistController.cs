@@ -565,6 +565,7 @@ namespace ClinicAPI.Controllers
                 DateTime appointmentDate = patient.AppointmentDate.Value.Date;
                 if (appointmentDate > today)
                 {
+                    orderNumber = 1;
                     var appointedPatients = _unitOfWork.Patients
                         .Where(p =>
                         !p.IsDeleted &&

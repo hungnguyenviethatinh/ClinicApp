@@ -24,6 +24,8 @@ namespace ClinicAPI.ViewModels
             CreateMap<Prescription, PrescriptionModel>();
             CreateMap<PrescriptionModel, Prescription>();
 
+            CreateMap<PrescriptionUpdateModel, Prescription>();
+
             CreateMap<Medicine, MedicineModel>();
             CreateMap<MedicineModel, Medicine>();
 

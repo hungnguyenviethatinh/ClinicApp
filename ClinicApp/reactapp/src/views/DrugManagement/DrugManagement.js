@@ -352,9 +352,6 @@ const DrugManagement = () => {
                     setDisabled(false);
                     setLoadingDone(false);
                 }
-
-                handleReset();
-                refreshData();
             } else {
                 handleError(response, addMedicineLogMsfHeader);
                 handleSnackbarOption('error', 'Có lỗi khi thêm thuốc vào kho dữ liệu. Vui lòng thử lại!');
@@ -378,6 +375,9 @@ const DrugManagement = () => {
                 handleError(response, addIngredientLogHeader);
                 handleSnackbarOption('error', 'Có lỗi khi thêm hoạt chất/biệt dược. Vui lòng thử lại!');
             }
+            handleReset();
+            refreshData();
+
             setDisabled(false);
             setLoadingDone(false);
         }).catch((reason) => {
@@ -409,7 +409,6 @@ const DrugManagement = () => {
                     setDisabled(false);
                     setLoadingDone(false);
                 }
-                refreshData();
             } else {
                 handleError(response, updateMedicineLogMsfHeader);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật thông tin thuốc. Vui lòng thử lại!');
@@ -434,6 +433,8 @@ const DrugManagement = () => {
                 handleError(response, updateIngredientLogHeader);
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật lại hoạt chất/biệt dược. Vui lòng thử lại!');
             }
+            refreshData();
+            
             setDisabled(false);
             setLoadingDone(false);
         }).catch((reason) => {

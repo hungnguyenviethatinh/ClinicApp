@@ -18,7 +18,6 @@ import { Snackbar } from '../../components/Snackbar';
 import { Button, FabButton } from '../../components/Button';
 import { Autocomplete } from '../../components/Autocomplete';
 import { DatePicker } from '../../components/DatePicker';
-import { DateTimePicker } from '../../components/DateTimePicker';
 import { PrescriptionListView } from './PrescriptionList';
 
 import Axios, {
@@ -100,7 +99,7 @@ const takePeriodOptions = [
 const PrescriptionManagement = () => {
     // [Start] Common
     const classes = useStyles();
-    const history = useHistory();
+    const browserHistory = useHistory();
     const config = axiosRequestConfig();
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
@@ -487,7 +486,9 @@ const PrescriptionManagement = () => {
         setDisabled(true);
         setLoadingDone(true);
 
-        const DateCreated = moment(prescription.DateCreated).isValid() ? prescription.DateCreated.format() : moment().format();
+        const DateCreated =
+            moment(prescription.DateCreated).isValid() ?
+                prescription.DateCreated.format() : moment().format();
         const prescriptionModel = {
             ...prescription,
             DateCreated,
@@ -531,6 +532,7 @@ const PrescriptionManagement = () => {
         Axios.post(AddMedicinesUrl, medicineModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
+                handleSnackbarOption('success', SnackbarMessage.CreatePrescriptionSuccess);
                 updatePatientHistory();
             } else {
                 handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
@@ -546,8 +548,7 @@ const PrescriptionManagement = () => {
     };
 
     const updatePatientHistory = () => {
-        const id = patient.Id;
-        const url = `${UpdatePatientHistoryUrl}/${id}`;
+        const url = `${UpdatePatientHistoryUrl}/${patientId}/${historyId}`;
 
         const updatePatientHistoryModel = {
             AppointmentDate: patient.AppointmentDate,
@@ -557,9 +558,11 @@ const PrescriptionManagement = () => {
         Axios.patch(url, updatePatientHistoryModel, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                handleSnackbarOption('success', SnackbarMessage.CreatePrescriptionSuccess);
-                handleReset();
-                updateMedicinesQuantity();
+                if (!updateMode) {
+                    updateMedicinesQuantity();
+                } else {
+                    restoreMedicinesQuantity();
+                }
             } else {
                 handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
                 setDisabled(false);
@@ -588,17 +591,19 @@ const PrescriptionManagement = () => {
                 console.log('[Update Medicines Quantity: - Error!');
                 handleError(response, updateMedicinesQuantityErrorMsg);
             }
+            handleReset();
+
             setDisabled(false);
             setLoadingDone(false);
             setTimeout(() => {
-                history.push(RouteConstants.DashboardView);
+                browserHistory.push(RouteConstants.DashboardView);
             }, 1000);
         }).catch((reason) => {
             handleError(reason, updateMedicinesQuantityErrorMsg);
             setDisabled(false);
             setLoadingDone(false);
             setTimeout(() => {
-                history.push(RouteConstants.DashboardView);
+                browserHistory.push(RouteConstants.DashboardView);
             }, 1000);
         });
     };
@@ -658,7 +663,7 @@ const PrescriptionManagement = () => {
             const { status } = response;
             if (status === 200) {
                 handleSnackbarOption('success', 'Cập nhật đơn thuốc thành công!');
-                restoreMedicinesQuantity();
+                updatePatientHistory();
             } else {
                 handleSnackbarOption('error', 'Có lỗi khi cập nhật đơn thuốc. Vui lòng thử lại sau!');
                 handleError(response, updateMedicineErrorMsg);
@@ -691,7 +696,7 @@ const PrescriptionManagement = () => {
 
                 const value = patientNameOptions.find(p => p.id === id);
                 setPatientNameValue(value);
-
+                setPatientId(id);
                 setPatient({
                     ...patient,
                     Id: id,
@@ -702,10 +707,13 @@ const PrescriptionManagement = () => {
                     AppointmentDate: moment(appointmentDate).isValid() ? moment(appointmentDate) : null,
                 });
                 if (!updateMode) {
+                    const { history } = data[0];
+                    const hId = history ? history.id : null;
+                    setHistoryId(hId);
                     setPrescription({
                         ...prescription,
                         PatientId: id,
-                        HistoryId: data[0].history.id,
+                        HistoryId: hId,
                     });
                 }
             }
@@ -716,9 +724,9 @@ const PrescriptionManagement = () => {
         });
     };
 
-    const getPrescription = (id) => {
+    const getPrescription = (selectedPrescriptionId) => {
         setDisabled(true);
-        const url = `${GetPrescriptionUrl}/${id}`;
+        const url = `${GetPrescriptionUrl}/${selectedPrescriptionId}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
@@ -878,8 +886,6 @@ const PrescriptionManagement = () => {
                 Diagnosis: diagnosis,
                 OtherDiagnosis: otherDiagnosis,
                 Note: note,
-                PatientId: patientId,
-                HistoryId: historyId,
             });
         }
         setOpenPrescriptionList(false);
@@ -1011,7 +1017,7 @@ const PrescriptionManagement = () => {
         stopLoadingMedicineName,
         stopLoadingDiagnosisName,
         stopLoadingUnitName,
-        stopLoadingIngredientName, 
+        stopLoadingIngredientName,
         updateMode]);
 
     return (
@@ -1396,7 +1402,7 @@ const PrescriptionManagement = () => {
             </Grid>
             <PrescriptionListView
                 open={openPrescriptionList}
-                patientId={`${patient.Id}`}
+                patientId={`${patientId}`}
                 handleClose={onClosePrescriptionList}
                 handleCopy={(selectedPrescription) => onCopyPrescription(selectedPrescription)}
             />

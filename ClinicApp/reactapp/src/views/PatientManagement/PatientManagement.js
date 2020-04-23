@@ -331,7 +331,7 @@ const PatientManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày hẹn hợp lệ (không hẹn để trống)!');
             return;
         }
-        if (patient.AppointmentDate && moment(patient.AppointmentDate) <= moment()) {
+        if (patient.AppointmentDate && moment(patient.AppointmentDate) < moment()) {
             handleSnackbarOption('error', 'Ngày hẹn phải sau thời gian hiện tại (không hẹn để trống)!');
             return;
         }
@@ -472,8 +472,6 @@ const PatientManagement = () => {
             if (status === 200) {
                 const { id, orderNumber } = data;
                 handleSnackbarOption('success', 'Bệnh nhân được tạo thành công.');
-                handleReset();
-                refreshData();
                 setPrintData({
                     ...patient,
                     ...history,
@@ -556,6 +554,9 @@ const PatientManagement = () => {
                 console.log('[Add Doctors Error] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
             }
+            handleReset();
+            refreshData();
+
             setDisabled(false);
             setDisabledPrint(false);
             setLoadingDone(false);
@@ -596,7 +597,6 @@ const PatientManagement = () => {
             if (status === 200) {
                 const { orderNumber } = data;
                 handleSnackbarOption('success', 'Cập nhật thông tin của bệnh nhân thành công.');
-                refreshData();
                 setPrintData({
                     ...patient,
                     ...history,
@@ -682,6 +682,7 @@ const PatientManagement = () => {
                 console.log('[Update Doctors Error] ', response);
                 handleSnackbarOption('error', 'Có lỗi khi chỉ định Các bác sĩ hội chuẩn khám.');
             }
+            refreshData();
 
             setDisabled(false);
             setDisabledPrint(false);

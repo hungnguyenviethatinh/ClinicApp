@@ -205,8 +205,8 @@ namespace ClinicAPI.Controllers
             return Ok();
         }
 
-        [HttpPatch("patients/{id}")]
-        public async Task<IActionResult> UpdatePatientHistory(int id, [FromBody] PatientHistoryUpdateModel model)
+        [HttpPatch("patients/{patientId}/{historyId}")]
+        public async Task<IActionResult> UpdatePatientHistory(int patientId, int historyId, [FromBody] PatientHistoryUpdateModel model)
         {
             if (ModelState.IsValid)
             {
@@ -215,7 +215,7 @@ namespace ClinicAPI.Controllers
                     return BadRequest($"{nameof(model)} can not be null.");
                 }
 
-                var patient = _unitOfWork.Patients.Find(id);
+                var patient = _unitOfWork.Patients.Find(patientId);
                 if (patient == null)
                 {
                     return NotFound();
@@ -229,10 +229,12 @@ namespace ClinicAPI.Controllers
                     return NoContent();
                 }
 
-                var history = _unitOfWork.Histories
-                    .Where(h => (h.PatientId == id && !h.IsChecked))
-                    .FirstOrDefault();
+                var history = _unitOfWork.Histories.Find(historyId);
                 if (history == null)
+                {
+                    return NotFound();
+                }
+                if (history.IsChecked)
                 {
                     return Ok();
                 }
@@ -455,7 +457,7 @@ namespace ClinicAPI.Controllers
 
         [HttpPut("prescriptions/{id}")]
         [Authorize(Policies.ManageAllPrescriptionsPolicy)]
-        public async Task<IActionResult> UpdatePrescription(int id, PrescriptionModel prescriptionModel)
+        public async Task<IActionResult> UpdatePrescription(int id, PrescriptionUpdateModel prescriptionModel)
         {
             if (ModelState.IsValid)
             {

@@ -4,7 +4,13 @@ using System.Collections.Generic;
 
 namespace ClinicAPI.ViewModels
 {
-    public class PrescriptionModel
+    public class PrescriptionModel : PrescriptionUpdateModel
+    {
+        public int PatientId { get; set; }
+        public int HistoryId { get; set; }
+    }
+
+    public class PrescriptionUpdateModel
     {
         public string IdCode { get; set; }
         public string Diagnosis { get; set; }
@@ -12,9 +18,6 @@ namespace ClinicAPI.ViewModels
         public string Note { get; set; }
         public PrescriptionStatus Status { get; set; }
         public DateTime? DateCreated { get; set; }
-
-        public int PatientId { get; set; }
-        public int HistoryId { get; set; }
     }
 
     public class PrescriptionViewModel : PrescriptionModel
