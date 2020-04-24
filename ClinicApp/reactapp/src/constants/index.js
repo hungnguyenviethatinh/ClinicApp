@@ -7,10 +7,10 @@ export const RouteConstants = {
     PrescriptionDetailView: '/prescription/:id',
     PrescriptionManagementView: '/prescription-management',
     ServiceFormView: '/ServiceForm',
-    CtFormView: '/ServiceForm/CtForm/:mode/:id',
-    MriFormView: '/ServiceForm/MriForm/:mode/:id',
-    TestFormView: '/ServiceForm/TestForm/:mode/:id',
-    XqFormView: '/ServiceForm/XqForm/:mode/:id',
+    CtFormView: '/ServiceForm/CtForm/:mode/:formId',
+    MriFormView: '/ServiceForm/MriForm/:mode/:formId',
+    TestFormView: '/ServiceForm/TestForm/:mode/:formId',
+    XqFormView: '/ServiceForm/XqForm/:mode/:formId',
     UserManagementView: '/user-management',
     DrugManagementView: '/drug-management',
     DataInputManagementView: '/datainput-management',
@@ -137,3 +137,15 @@ export const FormMode = {
     Update: 'update',
     View: 'view',
 };
+
+export const CtRequestType = {
+    Normal: 'Thường',
+    Urgent: 'Khẩn',
+    Emergency: 'Khẩn cấp',
+}
+
+export const CtRequestTypeEnum = {
+    'Thường': 0,
+    'Khẩn': 1,
+    'Khẩn cấp': 2,
+}

@@ -6,21 +6,21 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 const styles = {
-    root: { },
+    root: {},
 };
 
 const AutocompleteComponent = props => {
 
-    const { 
-        classes, 
-        className, 
-        id, 
-        label, 
-        value, 
-        fullWidth, 
+    const {
+        classes,
+        className,
+        id,
+        label,
+        value,
+        fullWidth,
         multiple,
         freeSolo,
-        options, 
+        options,
         onChange,
         getOptionLabel,
         margin,
@@ -39,6 +39,7 @@ const AutocompleteComponent = props => {
                 id={id}
                 options={options}
                 getOptionLabel={getOptionLabel}
+                noOptionsText={`Không có lựa chọn nào`}
                 value={value}
                 onChange={onChange}
                 renderInput={params => (
@@ -80,7 +81,7 @@ AutocompleteComponent.defaultProps = {
     fullWidth: false,
     multiple: false,
     freeSolo: false,
-    options: [{ }],
+    options: [{}],
     margin: 'none',
     onChange: () => { },
     getOptionLabel: () => { },

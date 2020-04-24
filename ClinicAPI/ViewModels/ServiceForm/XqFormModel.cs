@@ -21,7 +21,6 @@ namespace ClinicAPI.ViewModels.ServiceForm
     public class XqFormAddModel : XqFormModel
     {
         public int PatientId { get; set; }
-        public string DoctorId { get; set; }
         public int HistoryId { get; set; }
     }
 
@@ -30,7 +29,7 @@ namespace ClinicAPI.ViewModels.ServiceForm
         public int Id { get; set; }
 
         public int PatientId { get; set; }
-        public PatientBasicViewModel Patient { get; set; }
+        public PatientPartialViewModel Patient { get; set; }
         public string DoctorId { get; set; }
         public DoctorViewModel Doctor { get; set; }
     }

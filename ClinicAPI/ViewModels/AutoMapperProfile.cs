@@ -169,10 +169,19 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<CtFormAddModel, CtForm>();
             CreateMap<CtForm, CtFormViewModel>()
-                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientBasicViewModel()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientPartialViewModel()
                 {
                     Id = model.Patient.Id,
+                    IdCode = model.Patient.IdCode,
                     FullName = model.Patient.FullName,
+                    Age = model.Patient.Age,
+                    Gender = model.Patient.Gender,
+                    Address = model.Patient.Address,
+                    PhoneNumber = model.Patient.PhoneNumber,
+                    RelativePhoneNumber = model.Patient.RelativePhoneNumber,
+                    AppointmentDate = model.Patient.AppointmentDate,
+                    CheckedDate = model.Patient.CheckedDate,
+                    Status = model.Patient.Status,
                 }))
                 .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
                 {
@@ -183,10 +192,19 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<MriFormAddModel, MriForm>();
             CreateMap<MriForm, MriFormViewModel>()
-                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientBasicViewModel()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientPartialViewModel()
                 {
                     Id = model.Patient.Id,
+                    IdCode = model.Patient.IdCode,
                     FullName = model.Patient.FullName,
+                    Age = model.Patient.Age,
+                    Gender = model.Patient.Gender,
+                    Address = model.Patient.Address,
+                    PhoneNumber = model.Patient.PhoneNumber,
+                    RelativePhoneNumber = model.Patient.RelativePhoneNumber,
+                    AppointmentDate = model.Patient.AppointmentDate,
+                    CheckedDate = model.Patient.CheckedDate,
+                    Status = model.Patient.Status,
                 }))
                 .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
                 {
@@ -197,10 +215,19 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<TestFormAddModel, TestForm>();
             CreateMap<TestForm, TestFormViewModel>()
-                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientBasicViewModel()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientPartialViewModel()
                 {
                     Id = model.Patient.Id,
+                    IdCode = model.Patient.IdCode,
                     FullName = model.Patient.FullName,
+                    Age = model.Patient.Age,
+                    Gender = model.Patient.Gender,
+                    Address = model.Patient.Address,
+                    PhoneNumber = model.Patient.PhoneNumber,
+                    RelativePhoneNumber = model.Patient.RelativePhoneNumber,
+                    AppointmentDate = model.Patient.AppointmentDate,
+                    CheckedDate = model.Patient.CheckedDate,
+                    Status = model.Patient.Status,
                 }))
                 .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
                 {
@@ -211,10 +238,19 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<XqFormAddModel, XqForm>();
             CreateMap<XqForm, XqFormViewModel>()
-                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientBasicViewModel()
+                .ForMember(viewModel => viewModel.Patient, map => map.MapFrom((model) => new PatientPartialViewModel()
                 {
                     Id = model.Patient.Id,
+                    IdCode = model.Patient.IdCode,
                     FullName = model.Patient.FullName,
+                    Age = model.Patient.Age,
+                    Gender = model.Patient.Gender,
+                    Address = model.Patient.Address,
+                    PhoneNumber = model.Patient.PhoneNumber,
+                    RelativePhoneNumber = model.Patient.RelativePhoneNumber,
+                    AppointmentDate = model.Patient.AppointmentDate,
+                    CheckedDate = model.Patient.CheckedDate,
+                    Status = model.Patient.Status,
                 }))
                 .ForMember(viewModel => viewModel.Doctor, map => map.MapFrom((model) => new DoctorViewModel()
                 {

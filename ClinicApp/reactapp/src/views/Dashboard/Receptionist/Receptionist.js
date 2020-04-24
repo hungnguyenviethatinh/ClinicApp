@@ -169,7 +169,7 @@ const ctFormColumns = [
         title: 'Mã đơn', field: 'id',
         render: rowData =>
             <Link
-                to={`${RouteConstants.CtFormView.replace(':mode', FormMode.View).replace(':id', rowData.id)}`}
+                to={`${RouteConstants.CtFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
                 children={`${rowData.idCode}${rowData.id}`} />,
     },
     {
@@ -191,7 +191,7 @@ const mriFormColumns = [
         title: 'Mã đơn', field: 'id',
         render: rowData =>
             <Link
-                to={`${RouteConstants.MriFormView.replace(':mode', FormMode.View).replace(':id', rowData.id)}`}
+                to={`${RouteConstants.MriFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
                 children={`${rowData.idCode}${rowData.id}`} />,
     },
     {
@@ -213,7 +213,7 @@ const testFormColumns = [
         title: 'Mã đơn', field: 'id',
         render: rowData =>
             <Link
-                to={`${RouteConstants.TestFormView.replace(':mode', FormMode.View).replace(':id', rowData.id)}`}
+                to={`${RouteConstants.TestFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
                 children={`${rowData.idCode}${rowData.id}`} />,
     },
     {
@@ -235,7 +235,7 @@ const xqFormColumns = [
         title: 'Mã đơn', field: 'id',
         render: rowData =>
             <Link
-                to={`${RouteConstants.XqFormView.replace(':mode', FormMode.View).replace(':id', rowData.id)}`}
+                to={`${RouteConstants.XqFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
                 children={`${rowData.idCode}${rowData.id}`} />,
     },
     {

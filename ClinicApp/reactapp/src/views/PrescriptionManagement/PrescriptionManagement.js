@@ -694,8 +694,8 @@ const PrescriptionManagement = () => {
                     appointmentDate,
                 } = data[0].patient;
 
-                const value = patientNameOptions.find(p => p.id === id);
-                setPatientNameValue(value);
+                const nameValue = patientNameOptions.find(p => p.id === id);
+                setPatientNameValue(nameValue);
                 setPatientId(id);
                 setPatient({
                     ...patient,
@@ -707,13 +707,14 @@ const PrescriptionManagement = () => {
                     AppointmentDate: moment(appointmentDate).isValid() ? moment(appointmentDate) : null,
                 });
                 if (!updateMode) {
-                    const { history } = data[0];
-                    const hId = history ? history.id : null;
-                    setHistoryId(hId);
+                    const currentHistoryId =
+                        (data[0].history && data[0].history.id) ?
+                            data[0].history.id : null;
+                    setHistoryId(currentHistoryId);
                     setPrescription({
                         ...prescription,
                         PatientId: id,
-                        HistoryId: hId,
+                        HistoryId: currentHistoryId,
                     });
                 }
             }
@@ -742,26 +743,23 @@ const PrescriptionManagement = () => {
 
     const [patientNameValue, setPatientNameValue] = React.useState(null);
     const handlePatientNameChange = (event, value) => {
-        const id = value ? value.id : undefined;
-        if (id !== undefined) {
-            getPatient(id);
+        if (value && value.id) {
+            getPatient(value.id);
         }
     };
 
     const [patientNameOptions, setPatientNameOptions] = React.useState([{
-        id: 0,
+        id: '',
         idCode: '',
-        fullName: 'Không có bệnh nhân',
+        fullName: '',
     }]);
     const getPatientOptionLabel = (option) => `${option.idCode}${option.id} - ${option.fullName}`;
     const getPatientNameOptions = () => {
         Axios.get(GetPatientOptionsUrl, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                if (!_.isEmpty(data)) {
-                    setPatientNameOptions(data);
-                    setStopLoadingPatientName(true);
-                }
+                setPatientNameOptions(data);
+                setStopLoadingPatientName(true);
             }
         }).catch((reason) => {
             handleError(reason, getPatientsErrorMsg);
@@ -836,25 +834,16 @@ const PrescriptionManagement = () => {
     }];
     const [ingredientOptions, setIngredientOptions] = React.useState([ingredientOption]);
     const getIngredientOptions = (index, medicineId) => {
-        if (medicineId === '') {
-            medicineId = 0;
-        }
-
         const data = ingredients.filter(i => i.medicineId === medicineId);
-        const options = [];
-        if (_.isEmpty(data)) {
-            options.push({
-                label: '',
-                value: '',
-            })
-        } else {
+        if (!_.isEmpty(data)) {
+            const options = [];
             data.map(({ name }) => options.push({
                 label: name,
                 value: name,
             }));
+            ingredientOptions[index] = options;
+            setIngredientOptions([...ingredientOptions]);
         }
-        ingredientOptions[index] = options;
-        setIngredientOptions([...ingredientOptions]);
     };
 
     const [openPrescriptionList, setOpenPrescriptionList] = React.useState(false);

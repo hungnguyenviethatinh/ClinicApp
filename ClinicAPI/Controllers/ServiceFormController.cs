@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ClinicAPI.Authorization;
+using ClinicAPI.Helpers;
 using ClinicAPI.ViewModels.ServiceForm;
 using DAL;
 using DAL.Models.ServiceForm;
@@ -32,7 +35,10 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllServiceFormsPolicy)]
         public IActionResult GetCtForms()
         {
-            var ctForms = _unitOfWork.CtForms.GetCtForms();
+            var ctForms = _unitOfWork.CtForms
+                .GetCtForms()
+                .Where(f => f.DateCreated.Date == DateTime.Today)
+                .OrderByDescending(f => f.Id);
             var ctFormVMs = _mapper.Map<IEnumerable<CtFormViewModel>>(ctForms);
 
             return Ok(ctFormVMs);
@@ -42,7 +48,10 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllServiceFormsPolicy)]
         public IActionResult GetMriForms()
         {
-            var mriForms = _unitOfWork.MriForms.GetMriForms();
+            var mriForms = _unitOfWork.MriForms
+                .GetMriForms()
+                .Where(f => f.DateCreated.Date == DateTime.Today)
+                .OrderByDescending(f => f.Id);
             var mriFormVMs = _mapper.Map<IEnumerable<MriFormViewModel>>(mriForms);
 
             return Ok(mriFormVMs);
@@ -52,7 +61,10 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllServiceFormsPolicy)]
         public IActionResult GetTestForms()
         {
-            var testForms = _unitOfWork.TestForms.GetTestForms();
+            var testForms = _unitOfWork.TestForms
+                .GetTestForms()
+                .Where(f => f.DateCreated.Date == DateTime.Today)
+                .OrderByDescending(f => f.Id);
             var testFormVMs = _mapper.Map<IEnumerable<TestFormViewModel>>(testForms);
 
             return Ok(testFormVMs);
@@ -62,7 +74,10 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllServiceFormsPolicy)]
         public IActionResult GetXqForms()
         {
-            var xqForms = _unitOfWork.XqForms.GetXqForms();
+            var xqForms = _unitOfWork.XqForms
+                .GetXqForms()
+                .Where(f => f.DateCreated.Date == DateTime.Today)
+                .OrderByDescending(f => f.Id);
             var xqFormVMs = _mapper.Map<IEnumerable<XqFormViewModel>>(xqForms);
 
             return Ok(xqFormVMs);
@@ -344,6 +359,8 @@ namespace ClinicAPI.Controllers
                 }
 
                 var ctForm = _mapper.Map<CtForm>(model);
+                ctForm.DoctorId = GetCurrentUserId();
+
                 _unitOfWork.CtForms.Add(ctForm);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
@@ -369,6 +386,8 @@ namespace ClinicAPI.Controllers
                 }
 
                 var mriForm = _mapper.Map<MriForm>(model);
+                mriForm.DoctorId = GetCurrentUserId();
+
                 _unitOfWork.MriForms.Add(mriForm);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
@@ -394,6 +413,8 @@ namespace ClinicAPI.Controllers
                 }
 
                 var testForm = _mapper.Map<TestForm>(model);
+                testForm.DoctorId = GetCurrentUserId();
+
                 _unitOfWork.TestForms.Add(testForm);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
@@ -419,6 +440,8 @@ namespace ClinicAPI.Controllers
                 }
 
                 var xqForm = _mapper.Map<XqForm>(model);
+                xqForm.DoctorId = GetCurrentUserId();
+
                 _unitOfWork.XqForms.Add(xqForm);
                 int result = await _unitOfWork.SaveChangesAsync();
                 if (result < 1)
@@ -430,6 +453,11 @@ namespace ClinicAPI.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+
+        private string GetCurrentUserId()
+        {
+            return Utilities.GetUserId(User);
         }
     }
 }
