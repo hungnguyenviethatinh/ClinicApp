@@ -710,6 +710,10 @@ const PrescriptionManagement = () => {
                     const currentHistoryId =
                         (data[0].history && data[0].history.id) ?
                             data[0].history.id : null;
+                    if ((!data[0].history || !data[0].history.id)) {
+                        handleSnackbarOption('error', `Bệnh nhân này đã được khám xong.
+                        ${' '}Vui lòng chọn bệnh nhân khác!`);
+                    }
                     setHistoryId(currentHistoryId);
                     setPrescription({
                         ...prescription,
@@ -1142,7 +1146,7 @@ const PrescriptionManagement = () => {
                                             onChange={handlePrescriptionChange('Note')}
                                             fullWidth
                                             multiline
-                                            rowsMax="5"
+                                            rows={3}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

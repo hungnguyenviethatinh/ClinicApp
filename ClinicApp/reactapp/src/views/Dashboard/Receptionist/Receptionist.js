@@ -41,6 +41,7 @@ import {
     PrescriptionStatus,
     RouteConstants,
     DisplayDateFormat,
+    FormMode,
 } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -61,7 +62,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
     },
     fullHeight: {
-        height: 'auto',
+        height: '100%',
     }
 }));
 
@@ -595,7 +596,7 @@ const ReceptionistView = () => {
                 xs={12} sm={12} md={12} lg={12} xl={12}
             >
                 <Card
-                    className={clsx(classes.card, classes.fullHeight)}
+                    className={clsx({ [classes.card]: true, [classes.fullHeight]: false })}
                 >
                     <CardHeader
                         classes={{
@@ -631,7 +632,7 @@ const ReceptionistView = () => {
                 xs={12} sm={12} md={12} lg={12} xl={12}
             >
                 <Card
-                    className={clsx(classes.card, classes.fullHeight)}
+                    className={clsx({ [classes.card]: true, [classes.fullHeight]: false })}
                 >
                     <CardHeader
                         classes={{
@@ -688,8 +689,8 @@ const ReceptionistView = () => {
                                     getCtForms(resolve, reject, query);
                                 })
                             }
-                            onRowClick={handleSelectCtRow}
-                            selectedRow={selectedCtRow}
+                            // onRowClick={handleSelectCtRow}
+                            // selectedRow={selectedCtRow}
                         />
                     </CardContent>
                 </Card>
@@ -723,8 +724,8 @@ const ReceptionistView = () => {
                                     getMriForms(resolve, reject, query);
                                 })
                             }
-                            onRowClick={handleSelectMriRow}
-                            selectedRow={selectedMriRow}
+                            // onRowClick={handleSelectMriRow}
+                            // selectedRow={selectedMriRow}
                         />
                     </CardContent>
                 </Card>
@@ -758,8 +759,8 @@ const ReceptionistView = () => {
                                     getTestForms(resolve, reject, query);
                                 })
                             }
-                            onRowClick={handleSelectTestRow}
-                            selectedRow={selectedTestRow}
+                            // onRowClick={handleSelectTestRow}
+                            // selectedRow={selectedTestRow}
                         />
                     </CardContent>
                 </Card>
@@ -793,8 +794,8 @@ const ReceptionistView = () => {
                                     getXqForms(resolve, reject, query);
                                 })
                             }
-                            onRowClick={handleSelectXqRow}
-                            selectedRow={selectedXqRow}
+                            // onRowClick={handleSelectXqRow}
+                            // selectedRow={selectedXqRow}
                         />
                     </CardContent>
                 </Card>

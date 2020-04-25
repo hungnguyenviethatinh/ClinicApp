@@ -7,6 +7,7 @@ using ClinicAPI.Authorization;
 using ClinicAPI.Helpers;
 using ClinicAPI.ViewModels.ServiceForm;
 using DAL;
+using DAL.Core;
 using DAL.Models.ServiceForm;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -453,6 +454,33 @@ namespace ClinicAPI.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+
+        [HttpGet("patients/options")]
+        [Authorize(Policies.ViewAllPatientsPolicy)]
+        public IActionResult GetPatientOptions()
+        {
+            DateTime today = DateTime.Today;
+            var patients = _unitOfWork.Patients
+                .Where(p =>
+                !p.IsDeleted &&
+                (p.AppointmentDate == null && (p.CreatedDate.Date == today || p.UpdatedDate.Date == today)) ||
+                (p.AppointmentDate != null && p.AppointmentDate.Value.Date == today) ||
+                (p.Status == PatientStatus.IsChecked && p.AppointmentDate != null && p.AppointmentDate.Value.Date >= today))
+                .Select(p => new { p.IdCode, p.Id, p.FullName });
+
+            return Ok(patients);
+        }
+
+        [HttpGet("diagnoses")]
+        [Authorize(Policies.ViewAllPrescriptionsPolicy)]
+        public IActionResult GetDiagnoses()
+        {
+            var diagnoses = _unitOfWork.Diagnoses
+                .Where(d => !d.IsDeleted)
+                .Select(d => new { d.Name });
+
+            return Ok(diagnoses);
         }
 
         private string GetCurrentUserId()

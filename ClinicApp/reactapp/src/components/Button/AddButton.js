@@ -28,10 +28,12 @@ const AddButton = props => {
 };
 
 AddButton.propTypes = {
+    classes: PropTypes.object,
     onClick: PropTypes.func,
 };
 
 AddButton.defaultProps = {
+    classes: null,
     onClick: () => { console.log('I am so tired!'); }
 };
 

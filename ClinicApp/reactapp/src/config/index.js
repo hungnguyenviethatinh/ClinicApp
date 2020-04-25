@@ -98,6 +98,10 @@ export const GetCtFormUrl = "/api/ServiceForm/ctForm";
 export const GetMriFormUrl = "/api/ServiceForm/mriForm";
 export const GetTestFormUrl = "/api/ServiceForm/testForm";
 export const GetXqFormUrl = "/api/ServiceForm/xqForm";
+export const AddCtFormUrl = "/api/ServiceForm/ctForm";
+export const AddMriFormUrl = "/api/ServiceForm/mriForm";
+export const AddTestFormUrl = "/api/ServiceForm/testForm";
+export const AddXqFormUrl = "/api/ServiceForm/xqForm";
 export const UpdateCtFormUrl = "/api/ServiceForm/ctForm";
 export const UpdateMriFormUrl = "/api/ServiceForm/mriForm";
 export const UpdateTestFormUrl = "/api/ServiceForm/testForm";
@@ -106,6 +110,8 @@ export const DeleteCtFormUrl = "/api/ServiceForm/ctForm";
 export const DeleteMriFormUrl = "/api/ServiceForm/mriForm";
 export const DeleteTestFormUrl = "/api/ServiceForm/testForm";
 export const DeleteXqFormUrl = "/api/ServiceForm/xqForm";
+export const GetPatientNamesUrl = '/api/ServiceForm/patients/options';
+export const GetDiagnosisNamesUrl = '/api/ServiceForm/diagnoses';
 
 // Shared:
 export const PatientUrl = '/api/patient';

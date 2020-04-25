@@ -5,28 +5,22 @@ import { KeyboardDateTimePicker } from "@material-ui/pickers";
 import PropTypes from 'prop-types';
 
 const styles = {
-    picker: {
-        // width: 200,
-    }
+    picker: {}
 };
 
 const DateTimePickerComponent = props => {
-    const { 
-        classes, 
-        format, 
-        // views, 
-        id, 
+    const {
+        classes,
+        format,
+        id,
         label,
-        value, 
+        value,
         onChange,
         style,
         variant,
         fullWidth,
         disablePast,
-        // minDate, 
-        // maxDate, 
-        // minDateMessage, 
-        // maxDateMessage,
+        disabled,
         ...rest
     } = props;
 
@@ -36,6 +30,7 @@ const DateTimePickerComponent = props => {
             style={style}
         >
             <KeyboardDateTimePicker
+                disabled={disabled}
                 className={classes.picker}
                 autoOk
                 disableToolbar
@@ -44,7 +39,6 @@ const DateTimePickerComponent = props => {
                 variant={variant}
                 format={format}
                 margin="dense"
-                // views={views}
                 id={id}
                 inputVariant="outlined"
                 label={label}
@@ -54,9 +48,7 @@ const DateTimePickerComponent = props => {
                     "aria-label": `${id}_datetimepicker-label`
                 }}
                 invalidDateMessage="Ngày giờ không hợp lệ"
-                // minDate={minDate}
                 minDateMessage="Ngày nhỏ hơn ngày tối thiểu"
-                // maxDate={maxDate}
                 maxDateMessage="Ngày lớn hơn ngày tối đa"
                 {...rest}
             />
@@ -67,7 +59,6 @@ const DateTimePickerComponent = props => {
 DateTimePickerComponent.protoTypes = {
     classes: PropTypes.object,
     format: PropTypes.string,
-    // views: PropTypes.arrayOf(PropTypes.string),
     id: PropTypes.string,
     label: PropTypes.string,
     value: PropTypes.string,
@@ -76,16 +67,11 @@ DateTimePickerComponent.protoTypes = {
     variant: PropTypes.oneOf(['dialog', 'inline', 'static']),
     fullWidth: PropTypes.bool,
     disablePast: PropTypes.bool,
-    // minDate: PropTypes.instanceOf(Date),
-    // minDateMessage: PropTypes.string,
-    // maxDate: PropTypes.instanceOf(Date),
-    // maxDateMessage: PropTypes.string,
 };
 
 DateTimePickerComponent.defaultProps = {
     classes: null,
     format: 'DD-MM-YYYY HH:mm',
-    // views: ['date', 'month', 'year', 'hours', 'minutes'],
     id: '',
     label: '',
     value: '',
@@ -94,10 +80,7 @@ DateTimePickerComponent.defaultProps = {
     variant: 'inline',
     fullWidth: false,
     disablePast: false,
-    // minDate: moment(),
-    // minDateMessage: '',
-    // maxDate: moment(),
-    // maxDateMessage: '',
+    disabled: false,
 };
 
 export default withStyles(styles)(DateTimePickerComponent);

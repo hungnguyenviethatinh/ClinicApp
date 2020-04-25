@@ -247,7 +247,7 @@ const UserView = () => {
                                         <Typography
                                             variant="caption"
                                             component="h5"
-                                            children="Thay đổi mật khẩu"
+                                            children={`Thay đổi mật khẩu`}
                                         />
                                         <Divider />
                                     </Grid>
@@ -276,7 +276,7 @@ const UserView = () => {
                                             <Grid item>
                                                 <Button
                                                     color="warning"
-                                                    children="Đặt lại"
+                                                    children={`Đặt lại`}
                                                     iconName="reset"
                                                     onClick={handleReset}
                                                     disabled={disabled}
@@ -285,7 +285,7 @@ const UserView = () => {
                                             <Grid item>
                                                 <Button
                                                     color="success"
-                                                    children="Cập nhật"
+                                                    children={`Cập nhật`}
                                                     iconName="save"
                                                     onClick={handleSave}
                                                     disabled={disabled}

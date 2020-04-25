@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/styles';
 import { Button } from '@material-ui/core';
@@ -27,5 +28,13 @@ const HistoryButton = withRouter((props) => {
         </Button>
     );
 });
+
+HistoryButton.propTypes = {
+    classes: PropTypes.object,
+};
+
+HistoryButton.defaultProps = {
+    classes: null,
+};
 
 export default withStyles(styles)(HistoryButton);

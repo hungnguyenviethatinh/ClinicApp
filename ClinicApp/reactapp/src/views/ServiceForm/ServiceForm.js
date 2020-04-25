@@ -295,14 +295,14 @@ const ServiceForm = () => {
     };
     const handleCtUpdate = () => {
         const { id } = selectedCtRow;
-        const redirectUrl = RouteConstants.CtFormView.replace(':mode', FormMode.Update).replace(':id', id);
+        const redirectUrl = RouteConstants.CtFormView.replace(':mode', FormMode.Update).replace(':formId', id);
         setOpenCtActionOption(false);
         setTimeout(() => {
             browserHistory.push(redirectUrl);
         }, 1000);
     };
     const handleCtAdd = () => {
-        const redirectUrl = RouteConstants.CtFormView.replace(':mode', FormMode.Add).replace(':id', 'new');
+        const redirectUrl = RouteConstants.CtFormView.replace(':mode', FormMode.Add).replace(':formId', 'new');
         setTimeout(() => {
             browserHistory.push(redirectUrl);
         }, 1000);
@@ -324,14 +324,14 @@ const ServiceForm = () => {
     };
     const handleMriUpdate = () => {
         const { id } = selectedMriRow;
-        const redirectUrl = RouteConstants.MriFormView.replace(':mode', FormMode.Update).replace(':id', id);
+        const redirectUrl = RouteConstants.MriFormView.replace(':mode', FormMode.Update).replace(':formId', id);
         setOpenMriActionOption(false);
         setTimeout(() => {
             browserHistory.push(redirectUrl);
         }, 1000);
     };
     const handleMriAdd = () => {
-        const redirectUrl = RouteConstants.MriFormView.replace(':mode', FormMode.Add).replace(':id', 'new');
+        const redirectUrl = RouteConstants.MriFormView.replace(':mode', FormMode.Add).replace(':formId', 'new');
         setTimeout(() => {
             browserHistory.push(redirectUrl);
         }, 1000);
@@ -353,14 +353,14 @@ const ServiceForm = () => {
     };
     const handleTestUpdate = () => {
         const { id } = selectedTestRow;
-        const redirectUrl = RouteConstants.TestFormView.replace(':mode', FormMode.Update).replace(':id', id);
+        const redirectUrl = RouteConstants.TestFormView.replace(':mode', FormMode.Update).replace(':formId', id);
         setOpenTestActionOption(false);
         setTimeout(() => {
             browserHistory.push(redirectUrl);
         }, 1000);
     };
     const handleTestAdd = () => {
-        const redirectUrl = RouteConstants.TestFormView.replace(':mode', FormMode.Add).replace(':id', 'new');
+        const redirectUrl = RouteConstants.TestFormView.replace(':mode', FormMode.Add).replace(':formId', 'new');
         setTimeout(() => {
             browserHistory.push(redirectUrl);
         }, 1000);
@@ -382,14 +382,14 @@ const ServiceForm = () => {
     };
     const handleXqUpdate = () => {
         const { id } = selectedXqRow;
-        const redirectUrl = RouteConstants.XqFormView.replace(':mode', FormMode.Update).replace(':id', id);
+        const redirectUrl = RouteConstants.XqFormView.replace(':mode', FormMode.Update).replace(':formId', id);
         setOpenXqActionOption(false);
         setTimeout(() => {
             browserHistory.push(redirectUrl);
         }, 1000);
     };
     const handleXqAdd = () => {
-        const redirectUrl = RouteConstants.XqFormView.replace(':mode', FormMode.Add).replace(':id', 'new');
+        const redirectUrl = RouteConstants.XqFormView.replace(':mode', FormMode.Add).replace(':formId', 'new');
         setTimeout(() => {
             browserHistory.push(redirectUrl);
         }, 1000);

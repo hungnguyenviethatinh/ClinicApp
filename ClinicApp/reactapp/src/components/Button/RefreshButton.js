@@ -28,10 +28,12 @@ const RefreshButton = props => {
 };
 
 RefreshButton.propTypes = {
+    classes: PropTypes.object,
     onClick: PropTypes.func,
 };
 
 RefreshButton.defaultProps = {
+    classes: null,
     onClick: () => { console.log('I am so tired!'); }
 };
 

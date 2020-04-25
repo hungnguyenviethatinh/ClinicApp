@@ -2,7 +2,6 @@ import {
     PrescriptionStatusEnum,
     PrescriptionStatus,
     CtRequestType,
-    CtRequestTypeEnum
 } from "../constants";
 import moment from 'moment';
 
@@ -16,7 +15,7 @@ export const CtFormModel = {
 
     // Phiếu chỉ định chụp CT
     // Loại yêu cầu
-    Type: CtRequestTypeEnum[CtRequestType.Normal],
+    Type: CtRequestType.Normal,
     // Thuốc cản quang
     IsContrastMedicine: false,
     // Sọ não
@@ -78,23 +77,4 @@ export const CtFormModel = {
     IsDiabetesMellitus: false,
     // Rối loạn đông máu
     IsCoagulopathy: false,
-};
-
-export const CtFormAddModel = {
-    ...CtFormModel,
-    PatientId: '',
-    HistoryId: '',
-};
-
-export const CtFormViewModel = {
-    ...CtFormModel,
-    Id: '',
-    PatientId: '',
-    Patient: '',
-    DoctorId: '',
-    Doctor: '',
-};
-
-export const CtFormUpdateModel = {
-    ...CtFormModel,
 };

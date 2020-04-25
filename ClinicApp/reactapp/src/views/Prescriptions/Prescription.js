@@ -324,7 +324,7 @@ const Prescription = () => {
                                 color="warning"
                                 disabled={disabled}
                                 loading={loading}
-                                children="In"
+                                children={`In`}
                                 iconName="print"
                                 onClick={handlePrint}
                             />
@@ -355,28 +355,28 @@ const Prescription = () => {
                                     <Typography
                                         component="h2"
                                         variant="h2"
-                                        children="Dr. KHOA Clinic"
+                                        children={`Dr. KHOA Clinic`}
                                         style={{ fontWeight: 600 }}
                                     />
                                     <Typography
                                         component="p"
                                         variant="subtitle2"
-                                        children="ĐT:       0838.131973"
+                                        children={`ĐT:       0838.131973`}
                                     />
                                     <Typography
                                         component="p"
                                         variant="subtitle2"
-                                        children="Email:    clinic.drkhoa@gmail.com"
+                                        children={`Email:    clinic.drkhoa@gmail.com`}
                                     />
                                     <Typography
                                         component="p"
                                         variant="subtitle2"
-                                        children="Website:  www.drkhoaclinic.com"
+                                        children={`Website:  www.drkhoaclinic.com`}
                                     />
                                     <Typography
                                         component="p"
                                         variant="subtitle2"
-                                        children="Đc: 6A, Đường 36, Phường Tân Quy, Q7, TP.HCM"
+                                        children={`Đc: 6A, Đường 36, Phường Tân Quy, Q7, TP.HCM`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
@@ -391,7 +391,7 @@ const Prescription = () => {
                                                 align="left"
                                                 component="p"
                                                 variant="body1"
-                                                children="Mã BN:"
+                                                children={`Mã BN:`}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -407,7 +407,7 @@ const Prescription = () => {
                                                 align="left"
                                                 component="p"
                                                 variant="body1"
-                                                children="Ngày:"
+                                                children={`Ngày:`}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -423,7 +423,7 @@ const Prescription = () => {
                                                 align="left"
                                                 component="p"
                                                 variant="body1"
-                                                children="Giờ:"
+                                                children={`Giờ:`}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -440,7 +440,7 @@ const Prescription = () => {
                             <Typography
                                 component="h1"
                                 variant="h1"
-                                children="ĐƠN THUỐC"
+                                children={`ĐƠN THUỐC`}
                                 align="center"
                                 style={{ marginBottom: 24, fontWeight: 600 }}
                             />
@@ -455,7 +455,7 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="h5"
-                                        children="Họ tên BN:"
+                                        children={`Họ tên BN:`}
                                         style={{ fontWeight: 600 }}
                                     />
                                 </Grid>
@@ -471,7 +471,7 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="body1"
-                                        children="Tuổi:"
+                                        children={`Tuổi:`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
@@ -485,7 +485,7 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="body1"
-                                        children="Giới tính:"
+                                        children={`Giới tính:`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
@@ -499,7 +499,7 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="h5"
-                                        children="Địa chỉ:"
+                                        children={`Địa chỉ:`}
                                         style={{ fontWeight: 600 }}
                                     />
                                 </Grid>
@@ -514,7 +514,7 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="h5"
-                                        children="ĐT:"
+                                        children={`ĐT:`}
                                         style={{ fontWeight: 600 }}
                                     />
                                 </Grid>
@@ -529,7 +529,7 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="h5"
-                                        children="Chẩn đoán:"
+                                        children={`Chẩn đoán:`}
                                         style={{ fontWeight: 600 }}
                                     />
                                 </Grid>
@@ -544,7 +544,7 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="h5"
-                                        children="Chẩn đoán khác:"
+                                        children={`Chẩn đoán khác:`}
                                         style={{ fontWeight: 600 }}
                                     />
                                 </Grid>
@@ -567,7 +567,7 @@ const Prescription = () => {
                                                 <Typography
                                                     component="h5"
                                                     variant="h5"
-                                                    children="STT"
+                                                    children={`STT`}
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
@@ -575,7 +575,7 @@ const Prescription = () => {
                                                 <Typography
                                                     component="h5"
                                                     variant="h5"
-                                                    children="MẶT HÀNG THUỐC"
+                                                    children={`MẶT HÀNG THUỐC`}
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
@@ -584,7 +584,7 @@ const Prescription = () => {
                                                     align="center"
                                                     component="h5"
                                                     variant="h5"
-                                                    children="SỐ LƯỢNG"
+                                                    children={`SỐ LƯỢNG`}
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
@@ -592,7 +592,7 @@ const Prescription = () => {
                                                 <Typography
                                                     component="h5"
                                                     variant="h5"
-                                                    children="ĐƠN VỊ"
+                                                    children={`ĐƠN VỊ`}
                                                     style={{ fontWeight: 600 }}
                                                 />
                                             </Grid>
@@ -697,14 +697,14 @@ const Prescription = () => {
                                                     align="center"
                                                     component="h5"
                                                     variant="h5"
-                                                    children="Bác sĩ"
+                                                    children={`Bác sĩ`}
                                                     style={{ fontWeight: 600 }}
                                                 />
                                                 <Typography
                                                     align="center"
                                                     component="p"
                                                     variant="caption"
-                                                    children="(Kí, Họ tên)"
+                                                    children={`(Kí, Họ tên)`}
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
@@ -717,7 +717,7 @@ const Prescription = () => {
                                                 <Typography
                                                     component="h5"
                                                     variant="h5"
-                                                    children="* Giờ khám bệnh:"
+                                                    children={`* Giờ khám bệnh:`}
                                                     style={{ fontWeight: 600 }}
                                                 />
                                                 {
@@ -751,7 +751,7 @@ const Prescription = () => {
                                                 <Typography
                                                     component="p"
                                                     variant="body2"
-                                                    children="* Đơn thuốc có giá trị trong đợt khám. Tái khám khách hàng nhớ mang theo đơn thuốc."
+                                                    children={`* Đơn thuốc có giá trị trong đợt khám. Tái khám khách hàng nhớ mang theo đơn thuốc.`}
                                                 />
                                             </Grid>
                                         </Grid>
@@ -771,13 +771,13 @@ const Prescription = () => {
                                             align="center"
                                             component="h5"
                                             variant="body1"
-                                            children="* Đặt lịch khám, tái khám theo số điện thoại: 0838.131973"
+                                            children={`* Đặt lịch khám, tái khám theo số điện thoại: 0838.131973`}
                                         />
                                         <Typography
                                             align="center"
                                             component="h5"
                                             variant="body1"
-                                            children="(Quý khách vui lòng để lại tin nhắn khi chưa gọi điện thoại được.)"
+                                            children={`(Quý khách vui lòng để lại tin nhắn khi chưa gọi điện thoại được.)`}
                                             style={{ fontStyle: 'italic' }}
                                         />
                                     </div>

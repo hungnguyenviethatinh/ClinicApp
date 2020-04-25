@@ -16,6 +16,8 @@ export const TestFormModel = {
     // Bệnh phẩm
     // Máu
     IsBloodSample: false,
+    // Nước tiểu
+    IsUrineSample: false,
     // Mủ
     IsPusSample: false,
     // Đờm
@@ -190,23 +192,4 @@ export const TestFormModel = {
     IsDpbAnti: false,
     // Xét nghiệm khác
     OtherTest: '',
-};
-
-export const TestFormAddModel = {
-    ...TestFormModel,
-    PatientId: '',
-    HistoryId: '',
-};
-
-export const TestFormViewModel = {
-    ...TestFormModel,
-    Id: '',
-    PatientId: '',
-    Patient: '',
-    DoctorId: '',
-    Doctor: '',
-};
-
-export const TestFormUpdateModel = {
-    ...TestFormModel,
 };

@@ -18,22 +18,3 @@ export const XqFormModel = {
     // Ghi chú
     Note: '',
 };
-
-export const XqFormAddModel = {
-    ...XqFormModel,
-    PatientId: '',
-    HistoryId: '',
-};
-
-export const XqFormViewModel = {
-    ...XqFormModel,
-    Id: '',
-    PatientId: '',
-    Patient: '',
-    DoctorId: '',
-    Doctor: '',
-};
-
-export const XqFormUpdateModel = {
-    ...XqFormModel,
-};

@@ -1194,6 +1194,7 @@ const PatientManagement = () => {
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
                                     <CheckBox
+                                        id="IsNew"
                                         label="Khám lần đầu"
                                         checked={patient.Status === PatientStatus.IsNew}
                                         disabled={patient.Status === PatientStatus.IsChecking}
@@ -1203,6 +1204,7 @@ const PatientManagement = () => {
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
                                     <CheckBox
+                                        id="IsRechecking"
                                         label="Tái khám"
                                         checked={patient.Status === PatientStatus.IsRechecking}
                                         disabled={patient.Status === PatientStatus.IsChecking}
@@ -1212,6 +1214,7 @@ const PatientManagement = () => {
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
                                     <CheckBox
+                                        id="IsToAddDocs"
                                         label="BS Hồ sơ"
                                         checked={patient.Status === PatientStatus.IsToAddDocs}
                                         disabled={patient.Status === PatientStatus.IsChecking}

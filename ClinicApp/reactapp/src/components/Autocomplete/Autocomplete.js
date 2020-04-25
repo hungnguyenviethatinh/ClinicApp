@@ -24,6 +24,7 @@ const AutocompleteComponent = props => {
         onChange,
         getOptionLabel,
         margin,
+        disabled,
         ...rest
     } = props;
 
@@ -34,6 +35,7 @@ const AutocompleteComponent = props => {
             margin={margin}
         >
             <Autocomplete
+                disabled={disabled}
                 multiple={multiple}
                 freeSolo={freeSolo}
                 id={id}
@@ -69,6 +71,7 @@ AutocompleteComponent.propTypes = {
     freeSolo: PropTypes.bool,
     options: PropTypes.arrayOf(PropTypes.object),
     margin: PropTypes.oneOf(['none', 'dense', 'normal']),
+    disabled: PropTypes.bool,
     onChange: PropTypes.func,
     getOptionLabel: PropTypes.func,
 };
@@ -83,6 +86,7 @@ AutocompleteComponent.defaultProps = {
     freeSolo: false,
     options: [{}],
     margin: 'none',
+    disabled: false,
     onChange: () => { },
     getOptionLabel: () => { },
 };

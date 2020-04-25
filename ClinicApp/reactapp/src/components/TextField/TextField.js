@@ -18,7 +18,7 @@ const TextFieldComponent = props => {
     const { 
         classes, className, autoFocus, error, fullWidth, helperText, style,
         id, label, name, onChange, required, readOnly, value, maxLength,
-        placeholder, multiline, rowsMax, onBlur, onKeyPress, margin,
+        placeholder, multiline, rows, onBlur, onKeyPress, margin,
     } = props;
 
     const [showPassword, setShowPassword] = React.useState(false);
@@ -77,7 +77,7 @@ const TextFieldComponent = props => {
                 autoFocus={autoFocus}
                 className={classes.root}
                 multiline={multiline}
-                rowsMax={rowsMax}
+                rows={rows}
             />
         </FormControl>
     );
@@ -104,7 +104,7 @@ TextFieldComponent.propTypes = {
     style: PropTypes.object,
     placeholder: PropTypes.string,
     multiline: PropTypes.bool,
-    rowsMax: PropTypes.string,
+    rows: PropTypes.number,
     margin: PropTypes.oneOf(['none', 'dense', 'normal']),
 };
 
@@ -128,7 +128,7 @@ TextFieldComponent.defaultProps = {
     style: null,
     placeholder: '',
     multiline: false,
-    rowsMax: '0',
+    rows: 0,
     margin: 'dense',
 };
 

@@ -16,6 +16,9 @@ namespace ClinicAPI.ViewModels.ServiceForm
         // Bệnh phẩm
         // Máu
         public bool IsBloodSample { get; set; }
+        // Nước tiểu
+        public bool IsUrineSample { get; set; }
+
         // Mủ
         public bool IsPusSample { get; set; }
         // Đờm

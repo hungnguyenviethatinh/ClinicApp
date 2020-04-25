@@ -37,22 +37,3 @@ export const MriFormModel = {
     // Dùng chất đối quang
     IsContrastAgent: false,
 };
-
-export const MriFormAddModel = {
-    ...MriFormModel,
-    PatientId: '',
-    HistoryId: '',
-};
-
-export const MriFormViewModel = {
-    ...MriFormModel,
-    Id: '',
-    PatientId: '',
-    Patient: '',
-    DoctorId: '',
-    Doctor: '',
-};
-
-export const MriFormUpdateModel = {
-    ...MriFormModel,
-};

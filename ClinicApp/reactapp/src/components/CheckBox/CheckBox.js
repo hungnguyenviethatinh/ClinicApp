@@ -13,6 +13,7 @@ const styles = {
 
 const CheckBoxComponent = props => {
     const {
+        id,
         classes,
         style,
         fullWidth,
@@ -21,6 +22,7 @@ const CheckBoxComponent = props => {
         checked,
         onChange,
         disabled,
+        labelPlacement,
         ...rest
     } = props;
 
@@ -34,6 +36,7 @@ const CheckBoxComponent = props => {
                 className={classes.formControlLabel}
                 control={
                     <Checkbox
+                        id={id}
                         className={classes.checkBox}
                         checked={checked}
                         value={value}
@@ -42,7 +45,7 @@ const CheckBoxComponent = props => {
                     />
                 }
                 label={label}
-                labelPlacement="start"
+                labelPlacement={labelPlacement}
                 {...rest}
             />
         </FormControl>
@@ -50,6 +53,7 @@ const CheckBoxComponent = props => {
 };
 
 CheckBoxComponent.propTypes = {
+    id: PropTypes.string,
     classes: PropTypes.object,
     style: PropTypes.object,
     fullWidth: PropTypes.bool,
@@ -58,9 +62,11 @@ CheckBoxComponent.propTypes = {
     checked: PropTypes.bool,
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
+    labelPlacement: PropTypes.oneOf(['start', 'top', 'end', 'bottom']),
 };
 
 CheckBoxComponent.defaultProps = {
+    id: '',
     classes: null,
     style: null,
     fullWidth: false,
@@ -69,6 +75,7 @@ CheckBoxComponent.defaultProps = {
     checked: false,
     onChange: () => { },
     disabled: false,
+    labelPlacement: 'start',
 };
 
 export default withStyles(styles)(CheckBoxComponent);

@@ -81,8 +81,7 @@ const addEmployeeLogMsfHeader = '[Add Employee Error]';
 const updateEmployeeLogMsfHeader = '[Update Employee Error]';
 const deleteEmployeeLogMsfHeader = '[Delete Employee Error]';
 
-const validUserNameMessage = 'Tên tài khoản chỉ cho phép chứa các chữ cái a-z A-Z, chữ số 0-9 và kí tự .';
-const validPasswordMessage = 'Mật khẩu dài tối thiểu 4 kí tự và không có khoảng trắng';
+const validUserNameMessage = 'Tên tài khoản chỉ cho phép chứa các chữ cái a-z A-Z, chữ số 0-9 và dấu chấm.';
 
 const UserManagement = () => {
     // [Start] Common
@@ -193,12 +192,22 @@ const UserManagement = () => {
     };
 
     const handleDone = () => {
+        const validUserNameRegExp = new RegExp('^[a-zA-Z0-9\.]+$');
+
         if (!values.UserName.trim()) {
             handleSnackbarOption('error', 'Yêu cầu nhập tên tài khoản!');
             return;
         }
-        if (!/^[a-zA-Z0-9\.]+$/.test(values.UserName)) {
+        if (!validUserNameRegExp.test(values.UserName)) {
             handleSnackbarOption('error', validUserNameMessage);
+            return;
+        }
+        if (!values.FullName.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
+            return;
+        }
+        if (!values.RoleName.trim()) {
+            handleSnackbarOption('error', 'Yêu cầu chọn chức vụ!');
             return;
         }
         if (!updateMode && !values.Password.trim()) {
@@ -210,15 +219,7 @@ const UserManagement = () => {
             return;
         }
         if (values.Password.length > 0 && /\s/.test(values.Password)) {
-            handleSnackbarOption('error', 'Mật khẩu không được có khoảng trắng!');
-            return;
-        }
-        if (!values.FullName.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
-            return;
-        }
-        if (!values.RoleName.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu chọn chức vụ!');
+            handleSnackbarOption('error', 'Mật khẩu không được có dấu cách!');
             return;
         }
 
@@ -398,7 +399,7 @@ const UserManagement = () => {
                             <Typography
                                 variant="caption"
                                 component="p"
-                                children="BIỂU MẪU THÊM/SỬA NHÂN VIÊN"
+                                children={`BIỂU MẪU THÊM/SỬA NHÂN VIÊN`}
                             />
                             <Grid container spacing={2} style={{ marginBottom: 8 }}>
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -477,7 +478,7 @@ const UserManagement = () => {
                                         fullWidth
                                         disabled={disabled}
                                         color="warning"
-                                        children="Đặt lại"
+                                        children={`Đặt lại`}
                                         iconName="reset"
                                         onClick={handleReset}
                                     />
@@ -488,7 +489,7 @@ const UserManagement = () => {
                                         disabled={disabled}
                                         loading={loadingDone}
                                         color="success"
-                                        children={selectedRow ? 'Lưu' : 'Hoàn tất'}
+                                        children={selectedRow ? `Lưu` : `Hoàn tất`}
                                         iconName={selectedRow ? 'save' : 'done'}
                                         onClick={handleDone}
                                     />
@@ -517,7 +518,7 @@ const UserManagement = () => {
                             <Typography
                                 variant="caption"
                                 component="p"
-                                children="TÌM KIẾM NHÂN VIÊN"
+                                children={`TÌM KIẾM NHÂN VIÊN`}
                             />
                             <Grid container spacing={2} style={{ marginBottom: 8 }} >
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >

@@ -41,5 +41,6 @@ namespace ClinicAPI.ViewModels
     public class PatientPartialViewModel : PatientModel
     {
         public int Id { get; set; }
+        public int OrderNumber { get; set; }
     }
 }

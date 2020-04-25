@@ -1,11 +1,12 @@
 import React from 'react';
 import DropZone from 'react-dropzone';
-import { IconButton, Grid, Typography, Paper } from '@material-ui/core';
-import { red } from '@material-ui/core/colors';
-import { Close } from '@material-ui/icons';
+// import { IconButton, Grid, Typography, Paper } from '@material-ui/core';
+// import { red } from '@material-ui/core/colors';
+// import { Close } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import _ from 'lodash';
+
 import { encodeFileToBase64 } from '../../common';
 
 const styles = {
@@ -30,9 +31,10 @@ const styles = {
 };
 
 const DropZoneComponent = props => {
-    const { classes, fileType, onDropFile } = props;
+    // const { classes, fileType, onDropFile } = props;
+    const { fileType, onDropFile } = props;
 
-    const [uploadedFiles, setUploadedFiles] = React.useState([]);
+    // const [uploadedFiles, setUploadedFiles] = React.useState([]);
     const onDrop = (acceptedFiles) => {
         const files = [];
         acceptedFiles.map((file, index) => {
@@ -44,58 +46,58 @@ const DropZoneComponent = props => {
                 });
                 if (index === acceptedFiles.length - 1) {
                     onDropFile(files);
-                    setUploadedFiles([...files]);
+                    // setUploadedFiles([...files]);
                 }
             });
         });
     };
 
-    const clearAcceptedFiles = (file) => {
-        const restOfFiles = _.remove(uploadedFiles, (f) => f.name !== file.name);
+    // const clearAcceptedFiles = (file) => {
+    //     const restOfFiles = _.remove(uploadedFiles, (f) => f.name !== file.name);
 
-        onDropFile(restOfFiles);
-        setUploadedFiles([...restOfFiles]);
-    };
+    //     onDropFile(restOfFiles);
+    //     setUploadedFiles([...restOfFiles]);
+    // };
 
-    const thumbs = (files) => {
-        return (
-            <Paper elevation={0}>
-                <Typography
-                    style={{ marginBottom: 16 }}
-                    component="p"
-                    variant="caption"
-                    children="Hình ảnh đã tải lên"
-                />
-                <Grid
-                    className={classes.thumbContainer}
-                    container
-                    spacing={2}
-                >
-                    {files.map((file, index) => (
-                        <Grid
-                            className={classes.thumb}
-                            key={index}
-                            item
-                            xs={12} sm={12} md={4} lg={4} xl={4}
-                        >
-                            <div style={{ textAlign: 'right' }}>
-                                <IconButton
-                                    className={classes.clearButton}
-                                    onClick={() => clearAcceptedFiles(file)}
-                                >
-                                    <Close style={{ color: red[800] }} />
-                                </IconButton>
-                            </div>
-                            <img
-                                className={classes.img}
-                                src={file.data}
-                            />
-                        </Grid>
-                    ))}
-                </Grid>
-            </Paper>
-        );
-    };
+    // const thumbs = (files) => {
+    //     return (
+    //         <Paper elevation={0}>
+    //             <Typography
+    //                 style={{ marginBottom: 16 }}
+    //                 component="p"
+    //                 variant="caption"
+    //                 children="Hình ảnh đã tải lên"
+    //             />
+    //             <Grid
+    //                 className={classes.thumbContainer}
+    //                 container
+    //                 spacing={2}
+    //             >
+    //                 {files.map((file, index) => (
+    //                     <Grid
+    //                         className={classes.thumb}
+    //                         key={index}
+    //                         item
+    //                         xs={12} sm={12} md={4} lg={4} xl={4}
+    //                     >
+    //                         <div style={{ textAlign: 'right' }}>
+    //                             <IconButton
+    //                                 className={classes.clearButton}
+    //                                 onClick={() => clearAcceptedFiles(file)}
+    //                             >
+    //                                 <Close style={{ color: red[800] }} />
+    //                             </IconButton>
+    //                         </div>
+    //                         <img
+    //                             className={classes.img}
+    //                             src={file.data}
+    //                         />
+    //                     </Grid>
+    //                 ))}
+    //             </Grid>
+    //         </Paper>
+    //     );
+    // };
 
     return (
         <DropZone

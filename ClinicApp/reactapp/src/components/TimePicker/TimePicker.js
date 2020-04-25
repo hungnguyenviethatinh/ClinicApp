@@ -5,9 +5,7 @@ import { KeyboardTimePicker } from "@material-ui/pickers";
 import PropTypes from 'prop-types';
 
 const styles = {
-    picker: {
-        // width: 200,
-    }
+    picker: {}
 };
 
 const TimePickerComponent = props => {
@@ -22,10 +20,7 @@ const TimePickerComponent = props => {
         style,
         variant,
         fullWidth,
-        // minDate, 
-        // maxDate, 
-        // minDateMessage, 
-        // maxDateMessage,
+        disabled,
         ...rest
     } = props;
 
@@ -38,6 +33,7 @@ const TimePickerComponent = props => {
                 className={classes.picker}
                 autoOk
                 disableToolbar
+                disabled={disabled}
                 ampm={false}
                 variant={variant}
                 format={format}
@@ -51,10 +47,6 @@ const TimePickerComponent = props => {
                 KeyboardButtonProps={{
                     "aria-label": `${id}_timepicker-label`
                 }}
-                // minDate={minDate}
-                // minDateMessage={minDateMessage}
-                // maxDate={maxDate}
-                // maxDateMessage={maxDateMessage}
                 {...rest}
             />
         </FormControl>
@@ -72,10 +64,7 @@ TimePickerComponent.protoTypes = {
     style: PropTypes.object,
     variant: PropTypes.oneOf(['dialog', 'inline', 'static']),
     fullWidth: PropTypes.bool,
-    // minDate: PropTypes.instanceOf(Date),
-    // minDateMessage: PropTypes.string,
-    // maxDate: PropTypes.instanceOf(Date),
-    // maxDateMessage: PropTypes.string,
+    disabled: PropTypes.bool,
 };
 
 TimePickerComponent.defaultProps = {
@@ -89,10 +78,7 @@ TimePickerComponent.defaultProps = {
     style: null,
     variant: 'inline',
     fullWidth: false,
-    // minDate: moment(),
-    // minDateMessage: '',
-    // maxDate: moment(),
-    // maxDateMessage: '',
+    disabled: false,
 };
 
 export default withStyles(styles)(TimePickerComponent);

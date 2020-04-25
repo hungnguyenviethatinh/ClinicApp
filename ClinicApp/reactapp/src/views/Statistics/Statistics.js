@@ -319,7 +319,7 @@ const StatisticsView = () => {
                                 </Grid>
                                 <Grid item>
                                     <Button
-                                        children="Tìm kiếm"
+                                        children={`Tìm kiếm`}
                                         color="success"
                                         iconName="search"
                                         style={{ marginTop: 0, marginBottom: 0 }}
@@ -396,7 +396,7 @@ const StatisticsView = () => {
                                 </Grid>
                                 <Grid item>
                                     <Button
-                                        children="Tìm kiếm"
+                                        children={`Tìm kiếm`}
                                         color="success"
                                         iconName="search"
                                         style={{ marginTop: 0, marginBottom: 0 }}
