@@ -112,6 +112,10 @@ export const DeleteTestFormUrl = "/api/ServiceForm/testForm";
 export const DeleteXqFormUrl = "/api/ServiceForm/xqForm";
 export const GetPatientNamesUrl = '/api/ServiceForm/patients/options';
 export const GetDiagnosisNamesUrl = '/api/ServiceForm/diagnoses';
+export const UpdateStatusCtFormUrl = "/api/ServiceForm/ctForm";
+export const UpdateStatusMriFormUrl = "/api/ServiceForm/mriForm";
+export const UpdateStatusTestFormUrl = "/api/ServiceForm/testForm";
+export const UpdateStatusXqFormUrl = "/api/ServiceForm/xqForm";
 
 // Shared:
 export const PatientUrl = '/api/patient';
@@ -129,3 +133,7 @@ export const UpdateCurrentUserUrl = '/api/account/update';
 export const PrescriptionPrintUrl = '/prescription/print';
 export const GetAppConfigurationUrl = '/app/configuration';
 export const PatientPrintUrl = '/patient/print';
+export const CtFormPrintUrl = '/ctform/print';
+export const MriFormPrintUrl = '/mriform/print';
+export const TestFormPrintUrl = '/testform/print';
+export const XqFormPrintUrl = '/xqform/print';

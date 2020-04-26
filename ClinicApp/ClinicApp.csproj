@@ -33,11 +33,32 @@
     <None Update="wwwroot\logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="wwwroot\styles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\templates\ct.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\templates\dt.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\templates\mautiepnhan.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\templates\mri.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="wwwroot\templates\prescription.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="wwwroot\templates\patient.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\templates\pxn.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="wwwroot\templates\xq.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
@@ -45,7 +66,7 @@
     <PackageReference Include="CefSharp.Common" Version="71.0.2" />
     <PackageReference Include="Chromely.CefSharp.Winapi" Version="4.0.71" />
     <PackageReference Include="Chromely.Core" Version="4.0.0" />
-    <PackageReference Include="Select.HtmlToPdf" Version="19.2.0" />
+    <PackageReference Include="Select.HtmlToPdf" Version="20.1.0" />
     <PackageReference Include="System.Text.Json" Version="4.6.0" />
   </ItemGroup>
 

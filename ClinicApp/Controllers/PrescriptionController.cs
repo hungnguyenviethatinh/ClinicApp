@@ -43,18 +43,22 @@ namespace ClinicApp.Controllers
             var medicines = data.Medicines;
             var openTimes = data.OpenTimes;
 
-            string dots = "............";
-            string threeDots = "...";
+            string dayOfWeek = Utils.GetDayOfWeek(DateTime.Now);
+            string date = DateTime.Now.Day.ToString();
+            string month = DateTime.Now.Month.ToString();
+            string year = DateTime.Now.Year.ToString();
+            string hour = DateTime.Now.ToString("HH:mm");
 
-            string date = DateTime.Now.ToString("dd-MM-yyyy");
-            string time = DateTime.Now.ToString("HH:mm");
-            string address = !string.IsNullOrWhiteSpace(patient.Address) ? patient.Address : dots;
-            string phoneNumber = !string.IsNullOrWhiteSpace(patient.PhoneNumber) ? patient.PhoneNumber : dots;
-            string appointedDate = !string.IsNullOrWhiteSpace(patient.AppointmentDate) ? patient.AppointmentDate : dots;
-            string prescriptionNote = !string.IsNullOrWhiteSpace(prescription.Note) ? prescription.Note : dots;
+            string address = !string.IsNullOrWhiteSpace(patient.Address) ? patient.Address :
+                ".................................................................................................";
+            string phoneNumber = !string.IsNullOrWhiteSpace(patient.PhoneNumber) ? patient.PhoneNumber :
+                "....................................................";
+            string prescriptionNote = !string.IsNullOrWhiteSpace(prescription.Note) ? prescription.Note :
+                "................................................................................................................................................................";
 
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string templateHtml = $"{appDirectory}/wwwroot/templates/prescription.html";
+            string templateHtml = $"{appDirectory}/wwwroot/templates/dt.html";
+
 
             string html = "";
             using (StreamReader sr = new StreamReader(templateHtml, Encoding.UTF8))
@@ -62,15 +66,59 @@ namespace ClinicApp.Controllers
                 html = sr.ReadToEnd();
             }
 
-            html = html.Replace("{patient.Id}", $"{patient.IdCode}{patient.Id}");
+            html = html.Replace("{patientId}", $"{patient.IdCode}{patient.Id}");
             html = html.Replace("{date}", date);
-            html = html.Replace("{time}", time);
-            html = html.Replace("{patient.FullName}", patient.FullName);
-            html = html.Replace("{patient.Age}", $"{patient.Age}");
-            html = html.Replace("{patient.Gender}", patient.Gender);
-            html = html.Replace("{patient.Address}", address);
-            html = html.Replace("{patient.PhoneNumber}", phoneNumber);
-            html = html.Replace("{prescription.Diagnosis}", $"{prescription.Diagnosis}, {prescription.OtherDiagnosis}");
+            html = html.Replace("{dayOfWeek}", dayOfWeek);
+            html = html.Replace("{date}", date);
+            html = html.Replace("{month}", month);
+            html = html.Replace("{year}", year);
+            html = html.Replace("{hour}", hour);
+
+            html = html.Replace("{patientName}", patient.FullName);
+            html = html.Replace("{patientAge}", $"{patient.Age}");
+            html = html.Replace("{patientOrderNumber}", $"{patient.OrderNumber}");
+
+            string genderHtml;
+            if (patient.Gender.Equals(GenderConstants.Male, StringComparison.OrdinalIgnoreCase))
+            {
+                genderHtml =
+                    @"<div class=""custom-control custom-checkbox"">
+                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"" checked>
+                      <label class=""custom-control-label"" for=""nam"">Nam</label>
+                    </div>
+                    <div class=""custom-control custom-checkbox"">
+                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"">
+                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
+                    </div>";
+            }
+            else if (patient.Gender.Equals(GenderConstants.Female, StringComparison.OrdinalIgnoreCase))
+            {
+                genderHtml =
+                    @"<div class=""custom-control custom-checkbox"">
+                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"">
+                      <label class=""custom-control-label"" for=""nam"">Nam</label>
+                    </div>
+                    <div class=""custom-control custom-checkbox"">
+                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"" checked>
+                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
+                    </div>";
+            }
+            else
+            {
+                genderHtml =
+                    @"<div class=""custom-control custom-checkbox"">
+                      <label class=""custom-control-label"" for=""nam"">Nam</label>
+                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"" checked>
+                    </div>
+                    <div class=""custom-control custom-checkbox"">
+                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
+                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"">
+                    </div>";
+            }
+            html = html.Replace("{patientGender}", genderHtml);
+            html = html.Replace("{patientAddress}", address);
+            html = html.Replace("{patientPhone}", phoneNumber);
+            html = html.Replace("{diagnosisName}", $"{prescription.Diagnosis}, {prescription.OtherDiagnosis}");
 
             string medicineHtmls = "";
             if (medicines != null && medicines.Count > 0)
@@ -84,88 +132,76 @@ namespace ClinicApp.Controllers
                 foreach (var medicine in medicines)
                 {
                     string medicineHtml =
-                    @"<div class=""col-1"">
-                            <p class=""mb-0"" style=""padding-left: 10px;"">{index}</p>
-                        </div>
-                        <div class=""col-5"">
-                            <p class=""mb-0"" style=""font-weight: bolder;"">{medicine.Name}</p>
-                        </div>
-                        <div class=""col-3"">
-                            <p class=""mb-0"" style=""font-weight: bolder; text-align: center;"">{medicine.Quantity}</p>
-                        </div>
-                        <div class=""col-2"">
-                            <p class=""mb-0"" style=""font-weight: bolder; text-align: center;"">{medicine.Unit}</p>
-                        </div>
-                        <div class=""col-1""></div>
-                        <div class=""col-1""></div>
-                        <div class=""col-8"">
-                            <p class=""mb-0"" style=""font-style: italic;"">
-                                {medicine}
-                            </p>
-                        </div>
-                        <div class=""col-3"">
-                            <p class=""mb-0"" style=""font-style: italic;""><u>Lưu ý:</u> {medicine.Note}</p>
-                        </div>";
+                    @"<div class=""prescription-item"">
+                        <div><b class=""fs-16"">{index} </b><i> {medicineName}  Số lượng : {medicineQuantity} {medicineUnit}</i></div>
+                        <div class=""font-italic"">{medicineTakeMethod} {medicineTakePeriod} <u>{medicineTakeTimes}</u> lần, lần <u>{amountPerTime}</u> {medicineUnit}, <u>......................</u>ăn. <u>Lưu ý :</u> {medicineNote} </div>
+                      </div>";
 
-                    string ingredient = !string.IsNullOrWhiteSpace(medicine.Ingredient) ? $"{medicine.Ingredient}" : "";
+                    string ingredient = !string.IsNullOrWhiteSpace(medicine.Ingredient) ? $"({medicine.Ingredient})" : "";
 
                     medicineHtml = medicineHtml.Replace("{index}", $"{index}");
-                    medicineHtml = medicineHtml.Replace("{medicine.Name}", $"{medicine.MedicineName} {medicine.NetWeight} ({ingredient})");
-                    medicineHtml = medicineHtml.Replace("{medicine.Quantity}", medicine.Quantity.ToString());
-                    medicineHtml = medicineHtml.Replace("{medicine.Unit}", medicine.Unit);
-
+                    medicineHtml = medicineHtml.Replace("{medicineName}", $"{medicine.MedicineName} {medicine.NetWeight} {ingredient}");
+                    medicineHtml = medicineHtml.Replace("{medicineQuantity}", medicine.Quantity.ToString());
+                    medicineHtml = medicineHtml.Replace("{medicineUnit}", medicine.Unit);
+                    medicineHtml = medicineHtml.Replace("{medicineTakePeriod}", medicine.TakePeriod.ToLower());
+                    medicineHtml = medicineHtml.Replace("{medicineTakeMethod}", medicine.TakeMethod);
+                    medicineHtml = medicineHtml.Replace("{medicineTakeTimes}", $"{medicine.TakeTimes}");
                     string takePeriod = medicine.TakePeriod;
                     if (takePeriod.Equals(TakePeriodConstants.Day, StringComparison.OrdinalIgnoreCase))
                     {
-                        string medicinePerDayHtml = "Ngày {medicine.TakeMethod}: <u>{medicine.TakeTimes} lần</u>, Sáng: <u>{medicine.AfterBreakfast}</u> {medicine.Unit}, Trưa: <u>{medicine.AfterLunch}</u> {medicine.Unit}, Chiều: <u>{medicine.Afternoon}</u> {medicine.Unit}, Tối: <u>{medicine.AfterDinner}</u> {medicine.Unit}";
-
-                        string afterBreakfast = medicine.AfterBreakfast != null ? medicine.AfterBreakfast.ToString() : threeDots;
-                        string afterLunch = medicine.AfterLunch != null ? medicine.AfterLunch.ToString() : threeDots;
-                        string afternoon = medicine.Afternoon != null ? medicine.Afternoon.ToString() : threeDots;
-                        string afterDinner = medicine.AfterDinner != null ? medicine.AfterDinner.ToString() : threeDots;
-                        medicinePerDayHtml = medicinePerDayHtml.Replace("{medicine.TakeMethod}", medicine.TakeMethod);
-                        medicinePerDayHtml = medicinePerDayHtml.Replace("{medicine.TakeTimes}", $"{medicine.TakeTimes}");
-                        medicinePerDayHtml = medicinePerDayHtml.Replace("{medicine.AfterBreakfast}", afterBreakfast);
-                        medicinePerDayHtml = medicinePerDayHtml.Replace("{medicine.AfterLunch}", afterLunch);
-                        medicinePerDayHtml = medicinePerDayHtml.Replace("{medicine.Afternoon}", afternoon);
-                        medicinePerDayHtml = medicinePerDayHtml.Replace("{medicine.AfterDinner}", afterDinner);
-                        medicinePerDayHtml = medicinePerDayHtml.Replace("{medicine.Unit}", medicine.Unit);
-
-                        medicineHtml = medicineHtml.Replace("{medicine}", medicinePerDayHtml);
+                        string afterBreakfast = medicine.AfterBreakfast != null ? medicine.AfterBreakfast.ToString() : "........";
+                        medicineHtml = medicineHtml.Replace("{amountPerTime}", afterBreakfast);
                     }
                     else
                     {
-                        string medicineByPeriodHtml = "{medicine.TakePeriod} {medicine.TakeMethod}: {medicine.TakeTimes} lần, Mỗi lần dùng: {medicine.AmountPerTime} {medicine.Unit}";
-
-                        string ammountPerTime = medicine.AmountPerTime != null ? medicine.AmountPerTime.ToString() : threeDots;
-                        medicineByPeriodHtml = medicineByPeriodHtml.Replace("{medicine.TakePeriod}", medicine.TakePeriod);
-                        medicineByPeriodHtml = medicineByPeriodHtml.Replace("{medicine.TakeMethod}", medicine.TakeMethod);
-                        medicineByPeriodHtml = medicineByPeriodHtml.Replace("{medicine.TakeTimes}", $"{medicine.TakeTimes}");
-                        medicineByPeriodHtml = medicineByPeriodHtml.Replace("{medicine.AmountPerTime}", ammountPerTime);
-                        medicineByPeriodHtml = medicineByPeriodHtml.Replace("{medicine.Unit}", medicine.Unit);
-
-                        medicineHtml = medicineHtml.Replace("{medicine}", medicineByPeriodHtml);
+                        string ammountPerTime = medicine.AmountPerTime != null ? medicine.AmountPerTime.ToString() : "........";
+                        medicineHtml = medicineHtml.Replace("{amountPerTime}", ammountPerTime);
                     }
 
-                    string note = !string.IsNullOrWhiteSpace(medicine.Note) ? medicine.Note : dots;
-                    medicineHtml = medicineHtml.Replace("{medicine.Note}", note);
+                    string note = !string.IsNullOrWhiteSpace(medicine.Note) ? medicine.Note :
+                        "........................................................................... ";
+                    medicineHtml = medicineHtml.Replace("{medicineNote}", note);
 
                     medicineHtmls += medicineHtml;
                     index++;
                 }
             }
 
+            string appointmentHtml;
+            if (!string.IsNullOrWhiteSpace(patient.AppointmentDate))
+            {
+                appointmentHtml =
+                @"<u class=""font-weight-bold"">Tái khám :</u>........................................., Thứ {thu}, ngày {ngay} tháng {thang} năm {nam}.";
+
+                DateTime appointedDate = DateTime.ParseExact(patient.AppointmentDate, "dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+                string thu = Utils.GetDayOfWeek(appointedDate);
+                string ngay = appointedDate.Day.ToString();
+                string thang = appointedDate.Month.ToString();
+                string nam = appointedDate.Year.ToString();
+
+                appointmentHtml = appointmentHtml.Replace("{thu}", thu);
+                appointmentHtml = appointmentHtml.Replace("{ngay}", ngay);
+                appointmentHtml = appointmentHtml.Replace("{thang}", thang);
+                appointmentHtml = appointmentHtml.Replace("{nam}", nam);
+
+            }
+            else
+            {
+                appointmentHtml =
+                @"<u class=""font-weight-bold"">Tái khám :</u>........................................., Thứ ........, ngày .......... tháng .......... năm 20............";
+            }
+
+            html = html.Replace("{patientAppointment}", appointmentHtml);
             html = html.Replace("{medicines}", medicineHtmls);
-            html = html.Replace("{prescription.Note}", prescriptionNote);
-            html = html.Replace("{patient.AppointedDate}", appointedDate);
-            html = html.Replace("{doctor.FullName}", doctor.FullName);
+            html = html.Replace("{prescriptionNote}", prescriptionNote);
+            html = html.Replace("{doctorName}", doctor.FullName);
 
             if (openTimes.Count > 0)
             {
                 string openTimeHtmls = "";
                 foreach (var openTime in openTimes)
                 {
-                    openTimeHtmls += $"<p>{openTime.OpenClosedTime}</p>";
+                    openTimeHtmls += $"<span>- {openTime.OpenClosedTime}</span>";
                 }
                 html = html.Replace("{openTimes}", openTimeHtmls);
             }
@@ -180,18 +216,16 @@ namespace ClinicApp.Controllers
                 sw.WriteLine(html);
             }
 
+            Process.Start(indexHtml);
+
             string url = $"file:///{appDirectory}/wwwroot/index.html";
+
             HtmlToPdf converter = new HtmlToPdf();
             converter.Options.PdfPageSize = PdfPageSize.Letter;
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
-            converter.Options.WebPageWidth = 1024;
-            converter.Options.WebPageHeight = 1280;
-            if (medicines.Count >= 10)
-            {
-                converter.Options.WebPageHeight = 0;
-            }
+            converter.Options.WebPageWidth = 800;
 
-            string patientId = string.Concat("DKC-DT", patient.Id);
+            string patientId = string.Concat(patient.IdCode, patient.Id);
             string patientName = patient.FullName;
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
             string saveFile = $"{patientId}_{patientName}_{createdTime}.pdf";
@@ -202,13 +236,13 @@ namespace ClinicApp.Controllers
             pdf.Save(savePath);
             pdf.Close();
 
-            ProcessStartInfo info = new ProcessStartInfo(savePath)
-            {
-                Verb = "Print",
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden
-            };
-            Process.Start(info);
+            //ProcessStartInfo info = new ProcessStartInfo(savePath)
+            //{
+            //    Verb = "Print",
+            //    CreateNoWindow = true,
+            //    WindowStyle = ProcessWindowStyle.Hidden
+            //};
+            //Process.Start(info);
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {

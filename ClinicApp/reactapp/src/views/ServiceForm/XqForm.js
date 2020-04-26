@@ -23,6 +23,7 @@ import { DatePicker } from '../../components/DatePicker'
 import Axios, {
     axiosRequestConfig,
     verifyJWT,
+    ChromeLyService,
 } from '../../common';
 
 import {
@@ -44,6 +45,8 @@ import {
     UpdateXqFormUrl,
     GetPatientNamesUrl,
     GetDiagnosisNamesUrl,
+    XqFormPrintUrl,
+    UpdateStatusXqFormUrl,
 } from '../../config';
 
 const useStyles = makeStyles(theme => ({
@@ -395,14 +398,49 @@ const XqForm = () => {
         }
     };
 
+    const updateXqFormStatus = () => {
+        const url = `${UpdateStatusXqFormUrl}/${formId}`;
+        Axios.patch(url, null, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                console.log('[Update XqForm Status Success', response);
+            } else {
+                console.log('[Update XqForm Status Error]', response);
+            }
+        }).catch((reason) => {
+            console.log('[Update XqForm Status Error]', reason);
+        });
+    };
+
     const handlePrint = () => {
-        const printData = {
+        const data = JSON.stringify({
             ...xqForm,
             Doctor: currentDoctor,
             Patient: currentPatient,
-        };
+        });
 
-        console.log(printData);
+        console.log(JSON.parse(data));
+
+        setDisabled(true);
+        setLoadingDone(true);
+
+        ChromeLyService.post(XqFormPrintUrl, null, data, response => {
+            const { ResponseText } = response;
+            const { ReadyState, Status, Data } = JSON.parse(ResponseText);
+            if (ReadyState === 4 && Status === 200) {
+                const { Message } = Data;
+                console.log(Message);
+                updateXqFormStatus();
+                handleSnackbarOption('success', 'In phiếu chỉ định thành công.');
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi in!');
+                console.log('[Print XqForm Error] - An error occurs during message routing. With url: '
+                    + XqFormPrintUrl
+                    + '. Response received: ', response);
+            }
+            setDisabled(false);
+            setLoadingDone(false);
+        });
     };
 
     const handleDone = () => {

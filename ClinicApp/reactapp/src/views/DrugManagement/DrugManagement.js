@@ -406,6 +406,7 @@ const DrugManagement = () => {
                         deleteIngredients(id);
                     }
                 } else {
+                    refreshData();
                     setDisabled(false);
                     setLoadingDone(false);
                 }

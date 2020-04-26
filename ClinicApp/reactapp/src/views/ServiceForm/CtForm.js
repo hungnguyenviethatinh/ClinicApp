@@ -25,6 +25,7 @@ import { CheckBox } from '../../components/CheckBox';
 import Axios, {
     axiosRequestConfig,
     verifyJWT,
+    ChromeLyService,
 } from '../../common';
 
 import {
@@ -48,6 +49,8 @@ import {
     UpdateCtFormUrl,
     GetPatientNamesUrl,
     GetDiagnosisNamesUrl,
+    CtFormPrintUrl,
+    UpdateStatusCtFormUrl,
 } from '../../config';
 
 const useStyles = makeStyles(theme => ({
@@ -449,14 +452,49 @@ const CtForm = () => {
         }
     };
 
+    const updateCtFormStatus = () => {
+        const url = `${UpdateStatusCtFormUrl}/${formId}`;
+        Axios.patch(url, null, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                console.log('[Update CtForm Status Success', response);
+            } else {
+                console.log('[Update CtForm Status Error]', response);
+            }
+        }).catch((reason) => {
+            console.log('[Update CtForm Status Error]', reason);
+        });
+    };
+
     const handlePrint = () => {
-        const printData = {
+        const data = JSON.stringify({
             ...ctForm,
             Doctor: currentDoctor,
             Patient: currentPatient,
-        };
+        });
 
-        console.log(printData);
+        console.log(JSON.parse(data));
+
+        setDisabled(true);
+        setLoadingDone(true);
+
+        ChromeLyService.post(CtFormPrintUrl, null, data, response => {
+            const { ResponseText } = response;
+            const { ReadyState, Status, Data } = JSON.parse(ResponseText);
+            if (ReadyState === 4 && Status === 200) {
+                const { Message } = Data;
+                console.log(Message);
+                updateCtFormStatus();
+                handleSnackbarOption('success', 'In phiếu chỉ định thành công.');
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi in!');
+                console.log('[Print CtForm Error] - An error occurs during message routing. With url: '
+                    + CtFormPrintUrl
+                    + '. Response received: ', response);
+            }
+            setDisabled(false);
+            setLoadingDone(false);
+        });
     };
 
     const handleDone = () => {

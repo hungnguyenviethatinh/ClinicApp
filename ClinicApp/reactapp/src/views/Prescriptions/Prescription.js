@@ -116,6 +116,7 @@ const Prescription = () => {
     const [patient, setPatient] = React.useState({
         IdCode: '',
         Id: '',
+        OrderNumber: '',
         FullName: '',
         Age: '',
         Gender: '',
@@ -200,6 +201,7 @@ const Prescription = () => {
 
                 const {
                     fullName,
+                    orderNumber,
                     age,
                     gender,
                     address,
@@ -213,6 +215,7 @@ const Prescription = () => {
                 setPatient({
                     IdCode: data[0].patient.idCode,
                     Id: data[0].patient.id,
+                    OrderNumber: orderNumber,
                     FullName: fullName,
                     Age: age,
                     Gender: [Gender.None, Gender.Male, Gender.Female][gender],

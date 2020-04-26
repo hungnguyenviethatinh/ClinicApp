@@ -1,0 +1,408 @@
+body {
+    color: #011D42;
+    padding: 16px 12px;
+    /* line-height: 1.3; */
+    letter-spacing: -0.5px;
+    /* font-family: Arial, Helvetica, sans-serif; */
+}
+.box-container {
+    border: 3px solid #011D42;
+    padding: 12px 4px;
+    min-height: 600px;
+    height: auto;
+    width: 420px;
+    font-size: 12px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.header .left-header {
+    font-size: 9px;
+}
+.header .left-header .title{
+    font-size: 16px;
+}
+
+.header .right-header {
+    font-size: 10px;
+}
+.header .right-header p {
+    margin-bottom: 4px;
+}
+.header .row, .treatment-info .row {
+    margin-left: -2px;
+    margin-right: -2px;
+}
+.header .row [class*="col-"], .treatment-info .row [class*="col-"] {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.space-1 {
+    letter-spacing: -1.2px;
+}
+
+.pat-info {
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-top: 8px;
+}
+.pat-info .title {
+    font-size: 18px;
+}
+.pat-info .title p {
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+    font-weight: 600;
+}
+
+.treatment-info {
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+.treatment-registration {
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-top: 8px;
+}
+.treatment-registration .title p {
+    margin-bottom: -8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.treatment-registration .title .sub-title {
+    font-size: 10px;
+    font-weight: 400;
+}
+
+.treatment-info .box-left, .treatment-info .box-right {
+    border: 1px solid #011D42;
+    padding: 4px;
+}
+.treatment-info p {
+    margin-bottom: 3px;
+}
+.treatment-info .box-left p{
+    font-weight: 600;
+}
+.treatment-info .box-left .hint {
+    font-size: 10px;
+    margin-bottom: 6px;
+}
+.treatment-info .box-right .title {
+    font-size: 14px;
+    /* margin-bottom: 1px; */
+    font-weight: 600;
+}
+
+.footer {
+    margin-top: 4px;
+    border: 1px solid #011D42;
+    padding: 6px 40px;
+    font-size: 10px;
+}
+.footer p {
+    margin-bottom: 2px;
+}
+.footer .title {
+    font-weight: 600;
+    text-decoration: underline;
+    font-size: 12px;
+}
+.custom-control-input {
+    height: 1em;
+}
+.custom-control-label::before, .custom-control-label::after {
+    left: -1rem;
+}
+.custom-control {
+    padding-left: 1rem;
+}
+.treatment-registration .custom-control-label::after, .treatment-registration .custom-control-label::before,
+.pat-info .custom-control-label::after, .pat-info .custom-control-label::before,
+.requirement .custom-control-label::after, .requirement .custom-control-label::before,
+.essential-info .custom-control-label::after, .essential-info .custom-control-label::before{
+    width: 12px;
+    height: 12px;
+}
+
+.header .custom-control-label::after, .header .custom-control-label::before,
+.footer .custom-control-label::after, .footer .custom-control-label::before,
+.assignment .custom-control-label::after, .assignment .custom-control-label::before,
+.pxn .exam-request .custom-control-label::after, .pxn .exam-request .custom-control-label::before   {
+    width: 9px;
+    height: 9px;
+}
+.custom-checkbox .custom-control-label::before {
+    border-radius: 0;
+    border: 1px solid #011D42;
+}
+.custom-checkbox .custom-control-input:checked~.custom-control-label::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23011D42' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e");
+}
+.custom-control-input:checked~.custom-control-label::before {
+    border-color: #011D42;
+    background-color: #fff;
+}
+.footer .custom-control, .header .custom-control {
+    line-height: 1.6;
+}
+.header .custom-control, .footer .custom-control, .pat-info .custom-control, .treatment-registration .custom-control {
+    padding-left: 0;
+    padding-right: 1.5rem;
+    min-height: 1em;
+}
+.header .custom-control-input, .footer .custom-control-input, .pat-info .custom-control-input {
+    left: unset;
+    right: 0;
+}
+.header .custom-control-label::before, .footer .custom-control-label::before, 
+.pat-info .custom-control-label::before, .treatment-registration .custom-control-label::before,
+.header .custom-control-label::after, .footer .custom-control-label::after, 
+.pat-info .custom-control-label::after, .treatment-registration .custom-control-label::after {
+    left: unset;
+    right: -1rem;
+}
+
+/* .font-weight-bold, b {
+    font-weight: 600!important;
+} */
+
+.word-break {
+    word-break: break-all;
+}
+
+.box-a4-container {
+    width: 595px /*548px*/;
+    min-height: 842px/*800px*/;
+    height: auto;
+    border: 3px solid #011D42;
+    padding: 6px 12px;
+    font-size: 14px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.box-a4-container.ct {
+    padding: 6px 4px;
+}
+.box-a4-container .header {
+    margin-left: -10px;
+}
+.box-a4-container.ct .header {
+    margin-left: 0;
+}
+.box-a4-container .header .left-header {
+    font-size: 12px;
+}
+.box-a4-container .header .left-header .title{
+    font-size: 24px;
+    line-height: 1;
+}
+
+.box-a4-container .header .right-header {
+    font-size: 12px;
+}
+.box-a4-container  .pat-info .title {
+    font-size: 29px;
+}
+
+.box-a4-container .header .right-header p {
+    margin-bottom: 2px;
+}
+.box-a4-container .header .custom-control {
+    line-height: 1.4;
+}
+.prescription{
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.prescription-item {
+    margin-bottom: 12px;
+}
+.prescription .prescription-item:last-child {
+    margin-bottom: 4px;
+}
+.prescription-footer {
+    border: #011D42 3px solid;
+    padding: 6px 12px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.exam-hours {
+    border: #011D42 3px solid;
+    padding: 6px;
+}
+
+/* ct */
+.ct .essential-info, .ct .requirement {
+    font-size: 12px;
+    font-weight: 600;
+}
+.ct .essential-info .row, .ct .requirement .row, .mri .row, .xq .row, .pxn .row {
+    margin-left: -2px;
+    margin-right: -2px;
+}
+.ct .essential-info .row [class*="col-"], .ct .requirement .row [class*="col-"],
+.mri .row [class*="col-"], .xq .row [class*="col-"], .pxn .row [class*="col-"] {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.ct .essential-info .table td, .ct .requirement .table td{
+    padding: 2px 4px;
+    border-color: #011D42;
+}
+.ct .essential-info .table .custom-control, .ct .requirement .table .custom-control {
+    min-height: 1rem;
+}
+.ct-footer {
+    min-height: 110px;
+}
+.ct-footer .footer-right, .ct-footer .footer-left {
+    border: #011D42 solid 1px;
+}
+.ct-footer .footer-right{
+    border-left: unset;
+}
+
+/* mri */
+.box-a4-container.mri {
+    border: unset;
+    padding: 0;
+}
+.mri .box {
+    border: 3px solid #011D42;
+    padding: 6px 12px 0 12px;
+}
+.mri .pat-info .title p {
+    font-size: 20px;
+    color: #BE1E2D;
+}
+.mri .assignment {
+    font-size: 12px;
+}
+.mri .assignment .custom-control {
+    min-height: 1.2rem;
+    line-height: 1.4;
+    padding-left: 0.75rem;
+}
+.assignment .custom-control-label::before, .assignment .custom-control-label::after {
+    left: -0.75rem;
+}
+.assignment .custom-checkbox .custom-control-label::before {
+    border-radius: 0;
+    border: 1px solid #BE1E2D;
+}
+.assignment .custom-checkbox .custom-control-input:checked~.custom-control-label::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23BE1E2D' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e");
+}
+.assignment .custom-control-input:checked~.custom-control-label::before {
+    border-color: #BE1E2D;
+    background-color: #fff;
+}
+.mri u.u-red {
+    text-decoration-color: #BE1E2D;
+}
+.mri .signature {
+    min-height: 120px;
+}
+
+/* xq */
+.box-a4-container.xq {
+    border: unset;
+    padding: 0;
+}
+.xq .box {
+    border: 3px solid #011D42;
+    padding: 6px 12px 0 12px;
+}
+.xq .pat-info .title p {
+    font-size: 20px;
+}
+.xq .xq-requirement {
+    margin-top: 4px;
+    border: 2px solid #011D42;
+}
+.xq .xq-req-header {
+    border-bottom: 1px solid #011D42;
+    width: 100%;
+    text-align: center;
+}
+.xq .xq-req-body {
+    min-height: 126px;
+}
+.xq .signature {
+    min-height: 120px;
+}
+
+/* pxn */
+.pxn .pat-info .title p {
+    font-size: 20px;
+    color: #BE1E2D;
+}
+.pxn .exam-request {
+    font-size: 12px;
+}
+.pxn .exam-request .custom-control {
+    min-height: 0.8rem;
+    line-height: 1;
+    padding-left: 1rem;
+}
+.pxn .exam-request .custom-control-label::before, .pxn .exam-request .custom-control-label::after {
+    left: -1rem;
+}
+.pxn .exam-card {
+    margin-bottom: 4px;
+}
+.pxn .exam-card.huyet-hoc {
+    color: #BE1E2D;
+}
+.pxn .exam-card.sinh-hoa {
+    color: #1B75BB;
+}
+.pxn .exam-card.vi-sinh {
+    color: #FAAF40;
+}
+.pxn .exam-request .group-header {
+    margin-left: 1rem;
+    font-weight: bold;
+    font-style: italic;
+    letter-spacing: -1px;
+}
+.pxn .exam-request .custom-control-label::before, .pxn .exam-request .custom-control-label::after {
+    top: 0.15rem;
+}
+
+
+/* ====================================== */
+.fs-17 {
+    font-size: 17px;
+}
+.fs-16 {
+    font-size: 16px;
+}
+.fs-15 {
+    font-size: 15px;
+}
+.fs-12 {
+    font-size: 12px;
+}
+.fs-11 {
+    font-size: 11px;
+}
+.fs-10 {
+    font-size: 10px;
+}
+.w-85 {
+    width: 85%;
+}
+.w-15 {
+    width: 15%;
+}
+.pl-5px {
+    padding-left: 5px;
+}
+.color-red {
+    color: #BE1E2D;
+}
+.border-right-2 {
+    border-right: 2px solid #011D42;
+}

@@ -483,6 +483,106 @@ namespace ClinicAPI.Controllers
             return Ok(diagnoses);
         }
 
+        [HttpPatch("ctform/{id}")]
+        public async Task<IActionResult> UpdateCtStatus(int id)
+        {
+            var ctForm = _unitOfWork.CtForms.Find(id);
+            if (ctForm == null)
+            {
+                return NotFound();
+            }
+
+            if (ctForm.Status == PrescriptionStatus.IsPrinted)
+            {
+                return Ok();
+            }
+
+            ctForm.Status = PrescriptionStatus.IsPrinted;
+            _unitOfWork.CtForms.Update(ctForm);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
+        }
+
+        [HttpPatch("mriform/{id}")]
+        public async Task<IActionResult> UpdateMriStatus(int id)
+        {
+            var mriForm = _unitOfWork.MriForms.Find(id);
+            if (mriForm == null)
+            {
+                return NotFound();
+            }
+
+            if (mriForm.Status == PrescriptionStatus.IsPrinted)
+            {
+                return Ok();
+            }
+
+            mriForm.Status = PrescriptionStatus.IsPrinted;
+            _unitOfWork.MriForms.Update(mriForm);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
+        }
+
+        [HttpPatch("testform/{id}")]
+        public async Task<IActionResult> UpdateTestStatus(int id)
+        {
+            var testForm = _unitOfWork.TestForms.Find(id);
+            if (testForm == null)
+            {
+                return NotFound();
+            }
+
+            if (testForm.Status == PrescriptionStatus.IsPrinted)
+            {
+                return Ok();
+            }
+
+            testForm.Status = PrescriptionStatus.IsPrinted;
+            _unitOfWork.TestForms.Update(testForm);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
+        }
+
+        [HttpPatch("xqform/{id}")]
+        public async Task<IActionResult> UpdateXqStatus(int id)
+        {
+            var xqForm = _unitOfWork.XqForms.Find(id);
+            if (xqForm == null)
+            {
+                return NotFound();
+            }
+
+            if (xqForm.Status == PrescriptionStatus.IsPrinted)
+            {
+                return Ok();
+            }
+
+            xqForm.Status = PrescriptionStatus.IsPrinted;
+            _unitOfWork.XqForms.Update(xqForm);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
+        }
+
         private string GetCurrentUserId()
         {
             return Utilities.GetUserId(User);

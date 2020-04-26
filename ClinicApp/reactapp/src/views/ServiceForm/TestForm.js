@@ -25,6 +25,7 @@ import { CheckBox } from '../../components/CheckBox';
 import Axios, {
     axiosRequestConfig,
     verifyJWT,
+    ChromeLyService,
 } from '../../common';
 
 import {
@@ -46,6 +47,8 @@ import {
     UpdateTestFormUrl,
     GetPatientNamesUrl,
     GetDiagnosisNamesUrl,
+    TestFormPrintUrl,
+    UpdateStatusTestFormUrl,
 } from '../../config';
 
 const useStyles = makeStyles(theme => ({
@@ -485,14 +488,49 @@ const TestForm = () => {
         }
     };
 
+    const updateTestFormStatus = () => {
+        const url = `${UpdateStatusTestFormUrl}/${formId}`;
+        Axios.patch(url, null, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                console.log('[Update TestForm Status Success', response);
+            } else {
+                console.log('[Update TestForm Status Error]', response);
+            }
+        }).catch((reason) => {
+            console.log('[Update TestForm Status Error]', reason);
+        });
+    };
+
     const handlePrint = () => {
-        const printData = {
+        const data = JSON.stringify({
             ...testForm,
             Doctor: currentDoctor,
             Patient: currentPatient,
-        };
+        });
 
-        console.log(printData);
+        console.log(JSON.parse(data));
+
+        setDisabled(true);
+        setLoadingDone(true);
+
+        ChromeLyService.post(TestFormPrintUrl, null, data, response => {
+            const { ResponseText } = response;
+            const { ReadyState, Status, Data } = JSON.parse(ResponseText);
+            if (ReadyState === 4 && Status === 200) {
+                const { Message } = Data;
+                console.log(Message);
+                updateTestFormStatus();
+                handleSnackbarOption('success', 'In phiếu chỉ định thành công.');
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi in!');
+                console.log('[Print TestForm Error] - An error occurs during message routing. With url: '
+                    + TestFormPrintUrl
+                    + '. Response received: ', response);
+            }
+            setDisabled(false);
+            setLoadingDone(false);
+        });
     };
 
     const handleDone = () => {

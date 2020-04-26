@@ -25,6 +25,7 @@ import { CheckBox } from '../../components/CheckBox';
 import Axios, {
     axiosRequestConfig,
     verifyJWT,
+    ChromeLyService,
 } from '../../common';
 
 import {
@@ -46,6 +47,8 @@ import {
     UpdateMriFormUrl,
     GetPatientNamesUrl,
     GetDiagnosisNamesUrl,
+    MriFormPrintUrl,
+    UpdateStatusMriFormUrl,
 } from '../../config';
 
 const useStyles = makeStyles(theme => ({
@@ -426,14 +429,49 @@ const MriForm = () => {
         }
     };
 
+    const updateMriFormStatus = () => {
+        const url = `${UpdateStatusMriFormUrl}/${formId}`;
+        Axios.patch(url, null, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                console.log('[Update MriForm Status Success', response);
+            } else {
+                console.log('[Update MriForm Status Error]', response);
+            }
+        }).catch((reason) => {
+            console.log('[Update MriForm Status Error]', reason);
+        });
+    };
+
     const handlePrint = () => {
-        const printData = {
+        const data = JSON.stringify({
             ...mriForm,
             Doctor: currentDoctor,
             Patient: currentPatient,
-        };
+        });
 
-        console.log(printData);
+        console.log(JSON.parse(data));
+
+        setDisabled(true);
+        setLoadingDone(true);
+
+        ChromeLyService.post(MriFormPrintUrl, null, data, response => {
+            const { ResponseText } = response;
+            const { ReadyState, Status, Data } = JSON.parse(ResponseText);
+            if (ReadyState === 4 && Status === 200) {
+                const { Message } = Data;
+                console.log(Message);
+                updateMriFormStatus();
+                handleSnackbarOption('success', 'In phiếu chỉ định thành công.');
+            } else {
+                handleSnackbarOption('error', 'Có lỗi khi in!');
+                console.log('[Print MriForm Error] - An error occurs during message routing. With url: '
+                    + MriFormPrintUrl
+                    + '. Response received: ', response);
+            }
+            setDisabled(false);
+            setLoadingDone(false);
+        });
     };
 
     const handleDone = () => {
