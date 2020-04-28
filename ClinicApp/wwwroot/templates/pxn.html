@@ -7,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="bootstrap.css">
     <link rel="stylesheet" href="styles.css">
 
     <title>Dr. KHOA Clinic</title>
@@ -61,24 +60,21 @@
                     </div>
                     <div class="right-header col-4">
                         <p class="text-right"><i>Thứ {dayOfWeek}, ngày {date} tháng {month} năm {year}</i></p>
-                        <p class="text-right font-weight-bold">Mã DKC : 2020/BN {patientId}</p>
+                        <p class="text-right font-weight-bold">Mã DKC : 2020/BN {patientIdCode}</p>
                         <div class="row">
-                            <div class="col-3 ml-auto">
-                                <div class="text-right">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="kbld">
-                                        <label class="custom-control-label" for="kbld">
-                                            KBLĐ
-                                        </label>
-                                    </div>
-                                </div>
+                            <div class="ml-auto text-right">
+                                KBLĐ
                             </div>
-                            <div class="col-5">
-                                <p class="text-right">TKL: ........</p>
+                            <div class="custom-control custom-checkbox" style="padding-left: 1.5rem; padding-right: 0;">
+                                <input type="checkbox" class="custom-control-input" id="kbld">
+                                <label class="custom-control-label" for="kbld"></label>
+                            </div>
+                            <div class="text-right">
+                                TKL: ........
                             </div>
                         </div>
                         <p class="text-right"><i>Số thứ tự : {patientOrderNumber}</i></p>
-                        <p class="text-right"><i>Giờ : {hour}</i></p>
+                        <p class="text-right"><i>Giờ : {time}</i></p>
                     </div>
                 </div>
             </div>
@@ -88,43 +84,56 @@
                 </div>
                 <div class="pat-info-content">
                     <div class="d-flex flex-row flex-wrap">
-                        <div class="flex-fill">- Họ tên BN: {patientName} Tuổi: {patientAge}</div>
-                        {patientGender}
-                    </div>
-                    <div class="d-flex flex-row flex-wrap">
-                        <div class="flex-fill">- Địa chỉ: {patientAddress} Điện thoại: {patientPhone}</div>
-                    </div>
-                    <div class="d-flex flex-row flex-wrap">
-                        <div class="flex-fill">
-                            - Chuẩn đoán lâm sàng: {patientDiagnosisName}
+                        <div class="text-left">- Họ tên BN:&nbsp;</div>
+                        <div class="flex-fill text-center text-uppercase"> {patientName}</div>
+                        <div class="text-left pr-1">Tuổi: {patientAge}</div>
+                        <div class="text-right">Nam</div>
+                        <div class="custom-control custom-checkbox" style="padding-left: 1.5rem; padding-right: 0;">
+                            <input type="checkbox" class="custom-control-input" id="nam" {isMale}>
+                            <label class="custom-control-label" for="nam"></label>
+                        </div>
+                        <div class="text-right">Nữ</div>
+                        <div class="custom-control custom-checkbox" style="padding-left: 1.5rem; padding-right: 0;">
+                            <input type="checkbox" class="custom-control-input" id="nu" {isFemale}>
+                            <label class="custom-control-label" for="nu"></label>
                         </div>
                     </div>
                     <div class="d-flex flex-row flex-wrap">
-                        <div>
-                            - Bệnh phẩm:&nbsp;&nbsp;
-
+                        <div class="text-left">- Địa chỉ:&nbsp;</div>
+                        <div class="flex-fill text-center">{patientAddress}</div>
+                        <div class="text-left">Điện thoại: {patientPhoneNumber}</div>
+                    </div>
+                    <div class="d-flex flex-row flex-wrap">
+                        <div class="flex-fill">- Chuẩn đoán lâm sàng: {diagnosisName}</div>
+                    </div>
+                    <div class="d-flex flex-row flex-wrap">
+                        <div>- Bệnh phẩm:&nbsp;&nbsp;</div>
+                        <div class="text-right">Máu</div>
+                        <div class="custom-control custom-checkbox" style="padding-left: 1.25rem; padding-right: 0.25rem;">
+                            <input type="checkbox" class="custom-control-input" id="mau1" {IsBloodSample}>
+                            <label class="custom-control-label" for="mau1"></label>
                         </div>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="mau1">
-                            <label class="custom-control-label" for="mau1">Máu</label>
+                        <div class="text-right">Nước tiểu</div>
+                        <div class="custom-control custom-checkbox" style="padding-left: 1.25rem; padding-right: 0.25rem;">
+                            <input type="checkbox" class="custom-control-input" id="nc-tieu" {IsUrineSample}>
+                            <label class="custom-control-label" for="nc-tieu"></label>
                         </div>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="nc-tieu">
-                            <label class="custom-control-label" for="nc-tieu">Nước tiểu</label>
+                        <div class="text-right">Mũ</div>
+                        <div class="custom-control custom-checkbox" style="padding-left: 1.25rem; padding-right: 0.25rem;">
+                            <input type="checkbox" class="custom-control-input" id="mu1" {IsPusSample}>
+                            <label class="custom-control-label" for="mu1"></label>
                         </div>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="mu1">
-                            <label class="custom-control-label" for="mu1">Mũ</label>
+                        <div class="text-right">Đàm</div>
+                        <div class="custom-control custom-checkbox" style="padding-left: 1.25rem; padding-right: 0.25rem;">
+                            <input type="checkbox" class="custom-control-input" id="dam1" {IsSputumSample}>
+                            <label class="custom-control-label" for="dam1"></label>
                         </div>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="dam1">
-                            <label class="custom-control-label" for="dam1">Đàm</label>
+                        <div class="text-right">Phân</div>
+                        <div class="custom-control custom-checkbox" style="padding-left: 1.25rem; padding-right: 0.25rem;">
+                            <input type="checkbox" class="custom-control-input" id="phan1" {IsShitSample}>
+                            <label class="custom-control-label" for="phan1"></label>
                         </div>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="phan1">
-                            <label class="custom-control-label" for="phan1">Phân</label>
-                        </div>
-                        <div class="flex-fill">Dịch ....................................</div>
+                        <div class="flex-fill">Dịch: {HumourSample}</div>
                     </div>
                 </div>
             </div>
@@ -135,19 +144,19 @@
                         <div class="exam-card huyet-hoc d-flex flex-column">
                             <u class="text-center font-weight-bold">HUYẾT HỌC</u>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="nhom-mau">
+                                <input type="checkbox" class="custom-control-input" id="nhom-mau" {IsBloodGroup}>
                                 <label class="custom-control-label" for="nhom-mau">Nhóm máu</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="huyet-do">
+                                <input type="checkbox" class="custom-control-input" id="huyet-do" {IsBlood}>
                                 <label class="custom-control-label" for="huyet-do">Huyết đồ</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="toc-do-mau">
+                                <input type="checkbox" class="custom-control-input" id="toc-do-mau" {IsVS}>
                                 <label class="custom-control-label" for="toc-do-mau">Tốc độ máu lắng (VS)</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="sot-ret">
+                                <input type="checkbox" class="custom-control-input" id="sot-ret" {IsFeverTest}>
                                 <label class="custom-control-label" for="sot-ret">KST sốt rét</label>
                             </div>
                         </div>
@@ -155,102 +164,98 @@
                         <div class="exam-card d-flex flex-column">
                             <u class="text-center font-weight-bold">ĐÔNG MÁU</u>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="ts">
+                                <input type="checkbox" class="custom-control-input" id="ts" {IsTs}>
                                 <label class="custom-control-label" for="ts">TS</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="tc">
+                                <input type="checkbox" class="custom-control-input" id="tc" {IsTc}>
                                 <label class="custom-control-label" for="tc">TC</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="pt-tq">
+                                <input type="checkbox" class="custom-control-input" id="pt-tq" {IsPt}>
                                 <label class="custom-control-label" for="pt-tq">PT (TQ)</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="atpp">
+                                <input type="checkbox" class="custom-control-input" id="atpp" {IsAtpp}>
                                 <label class="custom-control-label" for="atpp">ATPP (TCK)</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="fibrinogen">
+                                <input type="checkbox" class="custom-control-input" id="fibrinogen" {IsFibrinogen}>
                                 <label class="custom-control-label" for="fibrinogen">Fibrinogen</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="d-dimer">
+                                <input type="checkbox" class="custom-control-input" id="d-dimer" {IsDdimer}>
                                 <label class="custom-control-label" for="d-dimer">D-Dimer</label>
                             </div>
 
                             <div class="exam-card d-flex flex-column">
                                 <u class="text-center font-weight-bold">MIỄN DỊCH</u>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="aso">
+                                    <input type="checkbox" class="custom-control-input" id="aso" {IsAso}>
                                     <label class="custom-control-label" for="aso">ASO</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="crp">
+                                    <input type="checkbox" class="custom-control-input" id="crp" {IsCrp}>
                                     <label class="custom-control-label" for="crp">CRP</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="rf">
+                                    <input type="checkbox" class="custom-control-input" id="rf" {IsRf}>
                                     <label class="custom-control-label" for="rf">RF</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="ana">
+                                    <input type="checkbox" class="custom-control-input" id="ana" {IsAna}>
                                     <label class="custom-control-label" for="ana">ANA</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="anti-ccp">
+                                    <input type="checkbox" class="custom-control-input" id="anti-ccp" {IsAntiCcp}>
                                     <label class="custom-control-label" for="anti-ccp">Anti CCP</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="cortisol">
+                                    <input type="checkbox" class="custom-control-input" id="cortisol" {IsCortisol}>
                                     <label class="custom-control-label" for="cortisol">Cortisol</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="procalciltonin">
+                                    <input type="checkbox" class="custom-control-input" id="procalciltonin" {IsProcal}>
                                     <label class="custom-control-label" for="procalciltonin">Procalciltonin</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="ft4">
+                                    <input type="checkbox" class="custom-control-input" id="ft4" {IsFt4}>
                                     <label class="custom-control-label" for="ft4">FT4 (Free T4)</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="tsh">
+                                    <input type="checkbox" class="custom-control-input" id="tsh" {IsTsh}>
                                     <label class="custom-control-label" for="tsh">TSH</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="Interleukin 6">
+                                    <input type="checkbox" class="custom-control-input" id="Interleukin 6" {IsInterlukin6}>
                                     <label class="custom-control-label" for="Interleukin 6">Interleukin 6</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="HBsAg (test nhanh)">
+                                    <input type="checkbox" class="custom-control-input" id="HBsAg (test nhanh)" {IsHbsAg}>
                                     <label class="custom-control-label" for="HBsAg (test nhanh)">HBsAg (test nhanh)</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="HBsAg (Elisa)">
+                                    <input type="checkbox" class="custom-control-input" id="HBsAg (Elisa)" {IsHbsQgE}>
                                     <label class="custom-control-label" for="HBsAg (Elisa)">HBsAg (Elisa)</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="Anti HIV (test nhanh)">
+                                    <input type="checkbox" class="custom-control-input" id="Anti HIV (test nhanh)" {IsAntiHiv}>
                                     <label class="custom-control-label" for="Anti HIV (test nhanh)">Anti HIV (test nhanh)</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="Anti HIV (Elisa)">
+                                    <input type="checkbox" class="custom-control-input" id="Anti HIV (Elisa)" {IsAnitHivE}>
                                     <label class="custom-control-label" for="Anti HIV (Elisa)">Anti HIV (Elisa)</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="Anti HCV (test nhanh)">
+                                    <input type="checkbox" class="custom-control-input" id="Anti HCV (test nhanh)" {IsAntiHcv}>
                                     <label class="custom-control-label" for="Anti HCV (test nhanh)">Anti HCV (test nhanh)</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="Anti HCV (test nhanh)">
-                                    <label class="custom-control-label" for="Anti HCV (test nhanh)">Anti HCV (test nhanh)</label>
-                                </div>
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="Anti HCV (Elisa)">
+                                    <input type="checkbox" class="custom-control-input" id="Anti HCV (Elisa)" {IsAntiHcvE}>
                                     <label class="custom-control-label" for="Anti HCV (Elisa)">Anti HCV (Elisa)</label>
                                 </div>
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="RPR">
+                                    <input type="checkbox" class="custom-control-input" id="RPR" {IsRpr}>
                                     <label class="custom-control-label" for="RPR">RPR</label>
                                 </div>
                             </div>
@@ -258,93 +263,96 @@
                     </div>
 
                     <div class="col-4">
-
                         <div class="exam-card sinh-hoa d-flex flex-column">
                             <u class="text-center font-weight-bold">SINH HÓA</u>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Glucose">
+                                <input type="checkbox" class="custom-control-input" id="Glucose" {IsGlucose}>
                                 <label class="custom-control-label" for="Glucose">Glucose</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="HbA1C">
+                                <input type="checkbox" class="custom-control-input" id="HbA1C" {IsHpA1c}>
                                 <label class="custom-control-label" for="HbA1C">HbA1C</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Urea">
+                                <input type="checkbox" class="custom-control-input" id="Urea" {IsUrea}>
                                 <label class="custom-control-label" for="Urea">Urea</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Creatinine">
+                                <input type="checkbox" class="custom-control-input" id="Creatinine" {IsCreatinine}>
                                 <label class="custom-control-label" for="Creatinine">Creatinine</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Uric acid">
+                                <input type="checkbox" class="custom-control-input" id="Uric acid" {IsUricAcid}>
                                 <label class="custom-control-label" for="Uric acid">Uric acid</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="AST (SGOT)">
+                                <input type="checkbox" class="custom-control-input" id="AST (SGOT)" {IsAst}>
                                 <label class="custom-control-label" for="d-dimer">AST (SGOT)</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Bilirubin toàn phần">
+                                <input type="checkbox" class="custom-control-input" id="ALT (SGPT)" {IsAlt}>
+                                <label class="custom-control-label" for="d-dimer">ALT (SGPT)</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="Bilirubin toàn phần" {IsFBilirubin}>
                                 <label class="custom-control-label" for="Bilirubin toàn phần">Bilirubin toàn phần</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Bilirubin trực tiếp">
+                                <input type="checkbox" class="custom-control-input" id="Bilirubin trực tiếp" {IsBilirubin}>
                                 <label class="custom-control-label" for="Bilirubin trực tiếp">Bilirubin trực tiếp</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="GGT">
+                                <input type="checkbox" class="custom-control-input" id="GGT" {IsGgt}>
                                 <label class="custom-control-label" for="GGT">GGT</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Protein toàn phần">
+                                <input type="checkbox" class="custom-control-input" id="Protein toàn phần" {IsProtein}>
                                 <label class="custom-control-label" for="Protein toàn phần">Protein toàn phần</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Albumin">
+                                <input type="checkbox" class="custom-control-input" id="Albumin" {IsAlbumin}>
                                 <label class="custom-control-label" for="Albumin">Albumin</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Triglycerid">
+                                <input type="checkbox" class="custom-control-input" id="Triglycerid" {IsTriglycerid}>
                                 <label class="custom-control-label" for="Triglycerid">Triglycerid</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Cholesterol toàn phần">
+                                <input type="checkbox" class="custom-control-input" id="Cholesterol toàn phần" {IsCholes}>
                                 <label class="custom-control-label" for="Cholesterol toàn phần">Cholesterol toàn phần</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="HDL - Cholesterol">
+                                <input type="checkbox" class="custom-control-input" id="HDL - Cholesterol" {IsHdlCholes}>
                                 <label class="custom-control-label" for="HDL - Cholesterol">HDL - Cholesterol</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="LDL - Cholesterol">
+                                <input type="checkbox" class="custom-control-input" id="LDL - Cholesterol" {IsLdlCholes}>
                                 <label class="custom-control-label" for="LDL - Cholesterol">LDL - Cholesterol</label>
                             </div>
                             <br>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Điện giải đồ (Na+, K+, Cl-)">
+                                <input type="checkbox" class="custom-control-input" id="Điện giải đồ (Na+, K+, Cl-)" {IsElectrolytes}>
                                 <label class="custom-control-label" for="Điện giải đồ (Na+, K+, Cl-)">Điện giải đồ (Na+, K+, Cl-)</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Ca toàn phần">
+                                <input type="checkbox" class="custom-control-input" id="Ca toàn phần" {IsCa}>
                                 <label class="custom-control-label" for="Ca toàn phần">Ca toàn phần</label>
                             </div>
                             <br>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="CPK">
+                                <input type="checkbox" class="custom-control-input" id="CPK" {IsCpk}>
                                 <label class="custom-control-label" for="CPK">CPK</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="CK-MB">
+                                <input type="checkbox" class="custom-control-input" id="CK-MB" {IsCkMb}>
                                 <label class="custom-control-label" for="CK-MB">CK-MB</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Troponin I">
+                                <input type="checkbox" class="custom-control-input" id="Troponin I" {IsTroponin}>
                                 <label class="custom-control-label" for="Troponin I">Troponin I</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Ethanol (Cồn)">
+                                <input type="checkbox" class="custom-control-input" id="Ethanol (Cồn)" {IsEthanol}>
                                 <label class="custom-control-label" for="Ethanol (Cồn)">Ethanol (Cồn)</label>
                             </div>
                         </div>
@@ -353,19 +361,19 @@
                         <div class="exam-card vi-sinh d-flex flex-column">
                             <u class="text-center font-weight-bold">VI SINH</u>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Soi trực tiếp">
+                                <input type="checkbox" class="custom-control-input" id="Soi trực tiếp" {IsEndoscopy}>
                                 <label class="custom-control-label" for="Soi trực tiếp">Soi trực tiếp</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Nhuộm Gram">
+                                <input type="checkbox" class="custom-control-input" id="Nhuộm Gram" {IsGram}>
                                 <label class="custom-control-label" for="Nhuộm Gram">Nhuộm Gram</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Nhuộm Ziehl tìm BK">
+                                <input type="checkbox" class="custom-control-input" id="Nhuộm Ziehl tìm BK" {IsZiehl}>
                                 <label class="custom-control-label" for="Nhuộm Ziehl tìm BK">Nhuộm Ziehl tìm BK</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Cấy + Kháng sinh đồ ">
+                                <input type="checkbox" class="custom-control-input" id="Cấy + Kháng sinh đồ " {IsAntibiotic}>
                                 <label class="custom-control-label" for="Cấy + Kháng sinh đồ ">Cấy + Kháng sinh đồ </label>
                             </div>
                         </div>
@@ -375,39 +383,39 @@
                         <div class="exam-card d-flex flex-column">
                             <u class="text-center font-weight-bold">NƯỚC TIỂU</u>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Tổng phân tích nước tiểu">
+                                <input type="checkbox" class="custom-control-input" id="Tổng phân tích nước tiểu" {IsUrine}>
                                 <label class="custom-control-label" for="Tổng phân tích nước tiểu">Tổng phân tích nước tiểu</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Cặn Addis">
+                                <input type="checkbox" class="custom-control-input" id="Cặn Addis" {IsAddis}>
                                 <label class="custom-control-label" for="Cặn Addis">Cặn Addis</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Protein Bence Jones">
+                                <input type="checkbox" class="custom-control-input" id="Protein Bence Jones" {IsProteinBj}>
                                 <label class="custom-control-label" for="Protein Bence Jones">Protein Bence Jones</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Protein 24h">
+                                <input type="checkbox" class="custom-control-input" id="Protein 24h" {IsProtein24h}>
                                 <label class="custom-control-label" for="Protein 24h">Protein 24h</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Urea 24h">
+                                <input type="checkbox" class="custom-control-input" id="Urea 24h" {IsUrea24h}>
                                 <label class="custom-control-label" for="Urea 24h">Urea 24h</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Uric acid 24h">
+                                <input type="checkbox" class="custom-control-input" id="Uric acid 24h" {IsUricAcid24h}>
                                 <label class="custom-control-label" for="Uric acid 24h">Uric acid 24h</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Creatinine 24h">
+                                <input type="checkbox" class="custom-control-input" id="Creatinine 24h" {IsCreat24h}>
                                 <label class="custom-control-label" for="Creatinine 24h">Creatinine 24h</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Điện giải đồ (Na+, K+, Cl-) 24h">
+                                <input type="checkbox" class="custom-control-input" id="Điện giải đồ (Na+, K+, Cl-) 24h" {IsElec24h}>
                                 <label class="custom-control-label" for="Điện giải đồ (Na+, K+, Cl-) 24h">Điện giải đồ (Na+, K+, Cl-) 24h</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Ca/24h">
+                                <input type="checkbox" class="custom-control-input" id="Ca/24h" {IsCa24h}>
                                 <label class="custom-control-label" for="Ca/24h">Ca/24h</label>
                             </div>
                         </div>
@@ -415,15 +423,15 @@
                         <div class="exam-card d-flex flex-column">
                             <u class="text-center font-weight-bold">KÝ SINH</u>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="KST đường ruột/phân">
+                                <input type="checkbox" class="custom-control-input" id="KST đường ruột/phân" {IsKstRuot}>
                                 <label class="custom-control-label" for="KST đường ruột/phân">KST đường ruột/phân</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Máu ẩn/phân">
+                                <input type="checkbox" class="custom-control-input" id="Máu ẩn/phân" {IsKstMau}>
                                 <label class="custom-control-label" for="Máu ẩn/phân">Máu ẩn/phân</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="HC-BC/phân">
+                                <input type="checkbox" class="custom-control-input" id="HC-BC/phân" {IsHcBc}>
                                 <label class="custom-control-label" for="HC-BC/phân">HC-BC/phân</label>
                             </div>
                         </div>
@@ -432,57 +440,57 @@
                             <u class="text-center font-weight-bold">PHÂN TÍCH DỊCH</u>
                             <div class="group-header">Dịch não tủy</div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Protein">
+                                <input type="checkbox" class="custom-control-input" id="Protein" {IsDntProtein}>
                                 <label class="custom-control-label" for="Protein">Protein</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Glucose">
+                                <input type="checkbox" class="custom-control-input" id="Glucose" {IsDntGlucose}>
                                 <label class="custom-control-label" for="Glucose">Glucose</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Tế bào-CTBC">
+                                <input type="checkbox" class="custom-control-input" id="Tế bào-CTBC" {IsDntCtbc}>
                                 <label class="custom-control-label" for="Tế bào-CTBC">Tế bào-CTBC</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Cấy + Kháng sinh đồ">
+                                <input type="checkbox" class="custom-control-input" id="Cấy + Kháng sinh đồ" {IsDntAnti}>
                                 <label class="custom-control-label" for="Cấy + Kháng sinh đồ">Cấy + Kháng sinh đồ</label>
                             </div>
 
                             <div class="group-header">Dịch khớp</div>
 
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Protein1">
+                                <input type="checkbox" class="custom-control-input" id="Protein1" {IsDkProtein}>
                                 <label class="custom-control-label" for="Protein1">Protein</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Glucose1">
+                                <input type="checkbox" class="custom-control-input" id="Glucose1" {IsDkGlucose}>
                                 <label class="custom-control-label" for="Glucose1">Glucose</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Tế bào-CTBC1">
+                                <input type="checkbox" class="custom-control-input" id="Tế bào-CTBC1" {IsDkCtbc}>
                                 <label class="custom-control-label" for="Tế bào-CTBC1">Tế bào-CTBC</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Cấy + Kháng sinh đồ1">
+                                <input type="checkbox" class="custom-control-input" id="Cấy + Kháng sinh đồ1" {IsDkAnti}>
                                 <label class="custom-control-label" for="Cấy + Kháng sinh đồ1">Cấy + Kháng sinh đồ</label>
                             </div>
 
                             <div class="group-header">Dịch màng phổi - Màng bụng</div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Protein">
+                                <input type="checkbox" class="custom-control-input" id="Protein" {IsDpbProtein}>
                                 <label class="custom-control-label" for="Protein">Protein</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Rivalta">
+                                <input type="checkbox" class="custom-control-input" id="Rivalta" {IsDpbRivalta}>
                                 <label class="custom-control-label" for="Rivalta">Rivalta</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Tế bào">
+                                <input type="checkbox" class="custom-control-input" id="Tế bào" {IsDpbCell}>
                                 <label class="custom-control-label" for="Tế bào">Tế bào</label>
                             </div>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Cấy + Kháng sinh đồ  ">
-                                <label class="custom-control-label" for="Cấy + Kháng sinh đồ  ">Cấy + Kháng sinh đồ  </label>
+                                <input type="checkbox" class="custom-control-input" id="Cấy + Kháng sinh đồ" {IsDpbAnti}>
+                                <label class="custom-control-label" for="Cấy + Kháng sinh đồ  ">Cấy + Kháng sinh đồ</label>
                             </div>
                         </div>
                     </div>
@@ -494,19 +502,18 @@
                 <div class="row">
                     <div class="col-7">
                         <p class="mb-0 fs-12 font-weight-bold">XÉT NGHIỆM KHÁC</p>
-                        <div class="">
-                            .................................................................................. .................................................................. ................................. .................... .................... .................... .................... ....................
-                        </div>
+                        <div class="">{OtherTest}</div>
                     </div>
                     <div class="col-5 text-center d-flex flex-column">
                         <span class="font-italic">Ngày …… tháng ……. năm 20…...</span>
-                        <span class="font-weight-bold fs-14">BÁC SĨ ĐIỀU TRỊ</span>
+                        <span class="font-weight-bold fs-14 flex-grow-1">BÁC SĨ ĐIỀU TRỊ</span>
+                        <span class="mt-3 text-capitalize">{doctorName}</span>
                     </div>
                 </div>
             </div>
 
             <p class="font-italic mb-0 fs-11 mt-3">* Bệnh nhân đến bàn hướng dẫn để biết thêm thông tin.</p>
-            <p class="font-italic mb-0 fs-11">* Mọi thông tin liên lạc, hỗ trợ qua số điện thoại:   <u class="font-weight-bold">0838.131973</u></p>
+            <p class="font-italic mb-0 fs-11">* Mọi thông tin liên lạc, hỗ trợ qua số điện thoại:  <u class="font-weight-bold">0838.131973</u></p>
         </div>
     </div>
 </body>

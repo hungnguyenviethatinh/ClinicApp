@@ -1,4 +1,6 @@
-﻿namespace ClinicApp.Models
+﻿using System;
+
+namespace ClinicApp.Models
 {
     public class Patient
     {
