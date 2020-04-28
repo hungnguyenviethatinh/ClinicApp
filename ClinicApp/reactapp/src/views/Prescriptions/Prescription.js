@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'flex-end',
     },
     paper: {
-        border: '1px solid rgba(224, 224, 224, 1)',
+        border: '3px solid #011D42',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'auto',
@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
         width: '100%',
         height: '100px',
         display: 'flex',
-        border: '1px solid rgb(224, 224, 224)',
+        border: '3px solid #011D42',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
@@ -710,7 +710,12 @@ const Prescription = () => {
                                                     children={`(Kí, Họ tên)`}
                                                 />
                                             </Grid>
-                                            <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
+                                            <Grid
+                                                item
+                                                xs={12} sm={12} md={4} lg={4} xl={4}
+                                                style={{
+                                                    border: '3px solid #011D42',
+                                                }}>
                                                 <Typography
                                                     component="h5"
                                                     variant="h5"
@@ -740,7 +745,7 @@ const Prescription = () => {
                                                 item
                                                 justify="center"
                                                 alignItems="flex-end"
-                                                xs={12} sm={12} md={3} lg={3} xl={3}
+                                                xs={12} sm={12} md={8} lg={8} xl={8}
                                             >
                                                 <Typography
                                                     align="center"

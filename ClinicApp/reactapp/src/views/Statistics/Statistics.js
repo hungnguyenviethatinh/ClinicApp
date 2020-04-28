@@ -259,9 +259,9 @@ const StatisticsView = () => {
             if (status === 200) {
                 const xAxis = [];
                 const yAxis = [];
-                data.map(({ name, quantity, unit }) => {
+                data.map(({ name, totalQuantity, unit }) => {
                     xAxis.push(`${name} (${unit})`);
-                    yAxis.push(quantity);
+                    yAxis.push(totalQuantity);
                 });
                 setXAxisMedicineData(xAxis);
                 setMedicineData(yAxis);
@@ -452,7 +452,7 @@ const StatisticsView = () => {
                                         xAxisData={xAxisMedicineData}
                                         series={[
                                             {
-                                                name: 'Số lượng còn lại',
+                                                name: 'Số lượng đã nhập',
                                                 type: 'bar',
                                                 data: medicineData,
                                                 axisTick: {

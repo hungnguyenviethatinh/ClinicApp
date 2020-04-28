@@ -20,16 +20,16 @@ import { Snackbar } from '../../../components/Snackbar';
 import { RefreshButton } from '../../../components/Button';
 import { ActionOption } from '../../../components/ActionOption';
 import { DeleteConfirm } from '../../../components/DeleteConfirm';
-import { PrintConfirmDialog } from '../../../components/PrintDialog';
+// import { PrintConfirmDialog } from '../../../components/PrintDialog';
 
 import {
     GetPatientInQueueUrl,
     GetPrescriptionsInQueueUrl,
     DeletePatientUrl,
-    GetCtFormsUrl,
-    GetMriFormsUrl,
-    GetTestFormsUrl,
-    GetXqFormsUrl,
+    // GetCtFormsUrl,
+    // GetMriFormsUrl,
+    // GetTestFormsUrl,
+    // GetXqFormsUrl,
 } from '../../../config';
 import Axios, {
     axiosRequestConfig,
@@ -165,105 +165,105 @@ const prescriptionColumns = [
     },
 ];
 
-const ctFormColumns = [
-    {
-        title: 'Mã đơn', field: 'id',
-        render: rowData =>
-            <Link
-                to={`${RouteConstants.CtFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
-                children={`${rowData.idCode}${rowData.id}`} />,
-    },
-    {
-        title: 'Bác sĩ kê đơn', field: 'doctorId',
-        render: rowData => rowData.doctor.fullName,
-    },
-    {
-        title: 'Bệnh nhân', field: 'patientId',
-        render: rowData => renderPatient(rowData),
-    },
-    {
-        title: 'Trạng thái', field: 'status',
-        render: rowData => renderStatus(rowData),
-    },
-];
+// const ctFormColumns = [
+//     {
+//         title: 'Mã đơn', field: 'id',
+//         render: rowData =>
+//             <Link
+//                 to={`${RouteConstants.CtFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
+//                 children={`${rowData.idCode}${rowData.id}`} />,
+//     },
+//     {
+//         title: 'Bác sĩ kê đơn', field: 'doctorId',
+//         render: rowData => rowData.doctor.fullName,
+//     },
+//     {
+//         title: 'Bệnh nhân', field: 'patientId',
+//         render: rowData => renderPatient(rowData),
+//     },
+//     {
+//         title: 'Trạng thái', field: 'status',
+//         render: rowData => renderStatus(rowData),
+//     },
+// ];
 
-const mriFormColumns = [
-    {
-        title: 'Mã đơn', field: 'id',
-        render: rowData =>
-            <Link
-                to={`${RouteConstants.MriFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
-                children={`${rowData.idCode}${rowData.id}`} />,
-    },
-    {
-        title: 'Bác sĩ kê đơn', field: 'doctorId',
-        render: rowData => rowData.doctor.fullName,
-    },
-    {
-        title: 'Bệnh nhân', field: 'patientId',
-        render: rowData => renderPatient(rowData),
-    },
-    {
-        title: 'Trạng thái', field: 'status',
-        render: rowData => renderStatus(rowData),
-    },
-];
+// const mriFormColumns = [
+//     {
+//         title: 'Mã đơn', field: 'id',
+//         render: rowData =>
+//             <Link
+//                 to={`${RouteConstants.MriFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
+//                 children={`${rowData.idCode}${rowData.id}`} />,
+//     },
+//     {
+//         title: 'Bác sĩ kê đơn', field: 'doctorId',
+//         render: rowData => rowData.doctor.fullName,
+//     },
+//     {
+//         title: 'Bệnh nhân', field: 'patientId',
+//         render: rowData => renderPatient(rowData),
+//     },
+//     {
+//         title: 'Trạng thái', field: 'status',
+//         render: rowData => renderStatus(rowData),
+//     },
+// ];
 
-const testFormColumns = [
-    {
-        title: 'Mã đơn', field: 'id',
-        render: rowData =>
-            <Link
-                to={`${RouteConstants.TestFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
-                children={`${rowData.idCode}${rowData.id}`} />,
-    },
-    {
-        title: 'Bác sĩ kê đơn', field: 'doctorId',
-        render: rowData => rowData.doctor.fullName,
-    },
-    {
-        title: 'Bệnh nhân', field: 'patientId',
-        render: rowData => renderPatient(rowData),
-    },
-    {
-        title: 'Trạng thái', field: 'status',
-        render: rowData => renderStatus(rowData),
-    },
-];
+// const testFormColumns = [
+//     {
+//         title: 'Mã đơn', field: 'id',
+//         render: rowData =>
+//             <Link
+//                 to={`${RouteConstants.TestFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
+//                 children={`${rowData.idCode}${rowData.id}`} />,
+//     },
+//     {
+//         title: 'Bác sĩ kê đơn', field: 'doctorId',
+//         render: rowData => rowData.doctor.fullName,
+//     },
+//     {
+//         title: 'Bệnh nhân', field: 'patientId',
+//         render: rowData => renderPatient(rowData),
+//     },
+//     {
+//         title: 'Trạng thái', field: 'status',
+//         render: rowData => renderStatus(rowData),
+//     },
+// ];
 
-const xqFormColumns = [
-    {
-        title: 'Mã đơn', field: 'id',
-        render: rowData =>
-            <Link
-                to={`${RouteConstants.XqFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
-                children={`${rowData.idCode}${rowData.id}`} />,
-    },
-    {
-        title: 'Bác sĩ kê đơn', field: 'doctorId',
-        render: rowData => rowData.doctor.fullName,
-    },
-    {
-        title: 'Bệnh nhân', field: 'patientId',
-        render: rowData => renderPatient(rowData),
-    },
-    {
-        title: 'Trạng thái', field: 'status',
-        render: rowData => renderStatus(rowData),
-    },
-];
+// const xqFormColumns = [
+//     {
+//         title: 'Mã đơn', field: 'id',
+//         render: rowData =>
+//             <Link
+//                 to={`${RouteConstants.XqFormView.replace(':mode', FormMode.View).replace(':formId', rowData.id)}`}
+//                 children={`${rowData.idCode}${rowData.id}`} />,
+//     },
+//     {
+//         title: 'Bác sĩ kê đơn', field: 'doctorId',
+//         render: rowData => rowData.doctor.fullName,
+//     },
+//     {
+//         title: 'Bệnh nhân', field: 'patientId',
+//         render: rowData => renderPatient(rowData),
+//     },
+//     {
+//         title: 'Trạng thái', field: 'status',
+//         render: rowData => renderStatus(rowData),
+//     },
+// ];
 
 const getPatientLogMsgHeader = '[Get Patients Error]';
 const getPrescriptionLogMsgHeader = '[Get Prescriptions Error]';
 const deletePatientLogMsgHeader = '[Delete Patient Response] ';
-const getCtFormsLogMsgHeader = '[Get CtForms Error]';
-const getMriFormsLogMsgHeader = '[Get MriForms Error]';
-const getTestFormsLogMsgHeader = '[Get TestForms Error]';
-const getXqFormsLogMsgHeader = '[Get XqForms Error]';
-const printCtFormsLogMsgHeader = '[Print CtForm Error]';
-const printMriFormsLogMsgHeader = '[Print MriForm Error]';
-const printTestFormsLogMsgHeader = '[Print TestForm Error]';
-const printXqFormsLogMsgHeader = '[Print XqForm Error]';
+// const getCtFormsLogMsgHeader = '[Get CtForms Error]';
+// const getMriFormsLogMsgHeader = '[Get MriForms Error]';
+// const getTestFormsLogMsgHeader = '[Get TestForms Error]';
+// const getXqFormsLogMsgHeader = '[Get XqForms Error]';
+// const printCtFormsLogMsgHeader = '[Print CtForm Error]';
+// const printMriFormsLogMsgHeader = '[Print MriForm Error]';
+// const printTestFormsLogMsgHeader = '[Print TestForm Error]';
+// const printXqFormsLogMsgHeader = '[Print XqForm Error]';
 
 const ReceptionistView = () => {
     const classes = useStyles();
@@ -427,163 +427,163 @@ const ReceptionistView = () => {
     };
 
     // Service forms handlers:
-    const ctFormTableRef = React.useRef(null);
-    const mriFormTableRef = React.useRef(null);
-    const testFormTableRef = React.useRef(null);
-    const xqFormTableRef = React.useRef(null);
+    // const ctFormTableRef = React.useRef(null);
+    // const mriFormTableRef = React.useRef(null);
+    // const testFormTableRef = React.useRef(null);
+    // const xqFormTableRef = React.useRef(null);
 
-    const refreshCtFormData = () => {
-        ctFormTableRef.current && ctFormTableRef.current.onQueryChange();
-    };
-    const refreshMriFormData = () => {
-        mriFormTableRef.current && mriFormTableRef.current.onQueryChange();
-    };
-    const refreshTestFormData = () => {
-        testFormTableRef.current && testFormTableRef.current.onQueryChange();
-    };
-    const refreshXqFormData = () => {
-        xqFormTableRef.current && xqFormTableRef.current.onQueryChange();
-    };
+    // const refreshCtFormData = () => {
+    //     ctFormTableRef.current && ctFormTableRef.current.onQueryChange();
+    // };
+    // const refreshMriFormData = () => {
+    //     mriFormTableRef.current && mriFormTableRef.current.onQueryChange();
+    // };
+    // const refreshTestFormData = () => {
+    //     testFormTableRef.current && testFormTableRef.current.onQueryChange();
+    // };
+    // const refreshXqFormData = () => {
+    //     xqFormTableRef.current && xqFormTableRef.current.onQueryChange();
+    // };
 
-    const [openCtPrintConfirmDialog, setOpenCtPrintConfirmDialog] = React.useState(false);
-    const handleCloseCtPrintConfirm = () => {
-        setSelectedCtRow(null);
-        setOpenCtPrintConfirmDialog(false);
-    };
-    const [selectedCtRow, setSelectedCtRow] = React.useState(null);
-    const handleCtPrint = () => {
+    // const [openCtPrintConfirmDialog, setOpenCtPrintConfirmDialog] = React.useState(false);
+    // const handleCloseCtPrintConfirm = () => {
+    //     setSelectedCtRow(null);
+    //     setOpenCtPrintConfirmDialog(false);
+    // };
+    // const [selectedCtRow, setSelectedCtRow] = React.useState(null);
+    // const handleCtPrint = () => {
 
-    };
-    const handleSelectCtRow = (event, rowData) => {
-        if (!selectedCtRow || selectedCtRow.tableData.id !== rowData.tableData.id) {
-            setSelectedCtRow(rowData);
-            setOpenCtPrintConfirmDialog(true);
-        } else {
-            setSelectedCtRow(null);
-        }
-    };
+    // };
+    // const handleSelectCtRow = (event, rowData) => {
+    //     if (!selectedCtRow || selectedCtRow.tableData.id !== rowData.tableData.id) {
+    //         setSelectedCtRow(rowData);
+    //         setOpenCtPrintConfirmDialog(true);
+    //     } else {
+    //         setSelectedCtRow(null);
+    //     }
+    // };
 
-    const [openMriPrintConfirmDialog, setOpenMriPrintConfirmDialog] = React.useState(false);
-    const handleCloseMriPrintConfirm = () => {
-        setSelectedMriRow(null);
-        setOpenMriPrintConfirmDialog(false);
-    };
-    const [selectedMriRow, setSelectedMriRow] = React.useState(null);
-    const handleMriPrint = () => {
+    // const [openMriPrintConfirmDialog, setOpenMriPrintConfirmDialog] = React.useState(false);
+    // const handleCloseMriPrintConfirm = () => {
+    //     setSelectedMriRow(null);
+    //     setOpenMriPrintConfirmDialog(false);
+    // };
+    // const [selectedMriRow, setSelectedMriRow] = React.useState(null);
+    // const handleMriPrint = () => {
 
-    };
-    const handleSelectMriRow = (event, rowData) => {
-        if (!selectedMriRow || selectedMriRow.tableData.id !== rowData.tableData.id) {
-            setSelectedMriRow(rowData);
-            setOpenMriPrintConfirmDialog(true);
-        } else {
-            setSelectedMriRow(null);
-        }
-    };
+    // };
+    // const handleSelectMriRow = (event, rowData) => {
+    //     if (!selectedMriRow || selectedMriRow.tableData.id !== rowData.tableData.id) {
+    //         setSelectedMriRow(rowData);
+    //         setOpenMriPrintConfirmDialog(true);
+    //     } else {
+    //         setSelectedMriRow(null);
+    //     }
+    // };
 
-    const [openTestPrintConfirmDialog, setOpenTestPrintConfirmDialog] = React.useState(false);
-    const handleCloseTestPrintConfirm = () => {
-        setSelectedTestRow(null);
-        setOpenTestPrintConfirmDialog(false);
-    };
-    const [selectedTestRow, setSelectedTestRow] = React.useState(null);
-    const handleTestPrint = () => {
+    // const [openTestPrintConfirmDialog, setOpenTestPrintConfirmDialog] = React.useState(false);
+    // const handleCloseTestPrintConfirm = () => {
+    //     setSelectedTestRow(null);
+    //     setOpenTestPrintConfirmDialog(false);
+    // };
+    // const [selectedTestRow, setSelectedTestRow] = React.useState(null);
+    // const handleTestPrint = () => {
 
-    };
-    const handleSelectTestRow = (event, rowData) => {
-        if (!selectedTestRow || selectedTestRow.tableData.id !== rowData.tableData.id) {
-            setSelectedTestRow(rowData);
-            setOpenTestPrintConfirmDialog(true);
-        } else {
-            setSelectedTestRow(null);
-        }
-    };
+    // };
+    // const handleSelectTestRow = (event, rowData) => {
+    //     if (!selectedTestRow || selectedTestRow.tableData.id !== rowData.tableData.id) {
+    //         setSelectedTestRow(rowData);
+    //         setOpenTestPrintConfirmDialog(true);
+    //     } else {
+    //         setSelectedTestRow(null);
+    //     }
+    // };
 
-    const [openXqPrintConfirmDialog, setOpenXqPrintConfirmDialog] = React.useState(false);
-    const handleCloseXqPrintConfirm = () => {
-        setSelectedXqRow(null);
-        setOpenXqPrintConfirmDialog(false);
-    };
-    const [selectedXqRow, setSelectedXqRow] = React.useState(null);
-    const handleXqPrint = () => {
+    // const [openXqPrintConfirmDialog, setOpenXqPrintConfirmDialog] = React.useState(false);
+    // const handleCloseXqPrintConfirm = () => {
+    //     setSelectedXqRow(null);
+    //     setOpenXqPrintConfirmDialog(false);
+    // };
+    // const [selectedXqRow, setSelectedXqRow] = React.useState(null);
+    // const handleXqPrint = () => {
 
-    };
-    const handleSelectXqRow = (event, rowData) => {
-        if (!selectedXqRow || selectedXqRow.tableData.id !== rowData.tableData.id) {
-            setSelectedXqRow(rowData);
-            setOpenXqPrintConfirmDialog(true);
-        } else {
-            setSelectedXqRow(null);
-        }
-    };
+    // };
+    // const handleSelectXqRow = (event, rowData) => {
+    //     if (!selectedXqRow || selectedXqRow.tableData.id !== rowData.tableData.id) {
+    //         setSelectedXqRow(rowData);
+    //         setOpenXqPrintConfirmDialog(true);
+    //     } else {
+    //         setSelectedXqRow(null);
+    //     }
+    // };
 
-    const getCtForms = (resolve, reject, query) => {
-        Axios.get(GetCtFormsUrl, config).then((response) => {
-            const { status, data } = response;
-            if (status === 200) {
-                const { page } = query;
-                const totalCount = data.length;
-                resolve({
-                    data,
-                    page,
-                    totalCount,
-                });
-            }
-        }).catch((reason) => {
-            handleError(reason, getCtFormsLogMsgHeader);
-        });
-    };
+    // const getCtForms = (resolve, reject, query) => {
+    //     Axios.get(GetCtFormsUrl, config).then((response) => {
+    //         const { status, data } = response;
+    //         if (status === 200) {
+    //             const { page } = query;
+    //             const totalCount = data.length;
+    //             resolve({
+    //                 data,
+    //                 page,
+    //                 totalCount,
+    //             });
+    //         }
+    //     }).catch((reason) => {
+    //         handleError(reason, getCtFormsLogMsgHeader);
+    //     });
+    // };
 
-    const getMriForms = (resolve, reject, query) => {
-        Axios.get(GetMriFormsUrl, config).then((response) => {
-            const { status, data } = response;
-            if (status === 200) {
-                const { page } = query;
-                const totalCount = data.length;
-                resolve({
-                    data,
-                    page,
-                    totalCount,
-                });
-            }
-        }).catch((reason) => {
-            handleError(reason, getMriFormsLogMsgHeader);
-        });
-    };
+    // const getMriForms = (resolve, reject, query) => {
+    //     Axios.get(GetMriFormsUrl, config).then((response) => {
+    //         const { status, data } = response;
+    //         if (status === 200) {
+    //             const { page } = query;
+    //             const totalCount = data.length;
+    //             resolve({
+    //                 data,
+    //                 page,
+    //                 totalCount,
+    //             });
+    //         }
+    //     }).catch((reason) => {
+    //         handleError(reason, getMriFormsLogMsgHeader);
+    //     });
+    // };
 
-    const getTestForms = (resolve, reject, query) => {
-        Axios.get(GetTestFormsUrl, config).then((response) => {
-            const { status, data } = response;
-            if (status === 200) {
-                const { page } = query;
-                const totalCount = data.length;
-                resolve({
-                    data,
-                    page,
-                    totalCount,
-                });
-            }
-        }).catch((reason) => {
-            handleError(reason, getTestFormsLogMsgHeader);
-        });
-    };
+    // const getTestForms = (resolve, reject, query) => {
+    //     Axios.get(GetTestFormsUrl, config).then((response) => {
+    //         const { status, data } = response;
+    //         if (status === 200) {
+    //             const { page } = query;
+    //             const totalCount = data.length;
+    //             resolve({
+    //                 data,
+    //                 page,
+    //                 totalCount,
+    //             });
+    //         }
+    //     }).catch((reason) => {
+    //         handleError(reason, getTestFormsLogMsgHeader);
+    //     });
+    // };
 
-    const getXqForms = (resolve, reject, query) => {
-        Axios.get(GetXqFormsUrl, config).then((response) => {
-            const { status, data } = response;
-            if (status === 200) {
-                const { page } = query;
-                const totalCount = data.length;
-                resolve({
-                    data,
-                    page,
-                    totalCount,
-                });
-            }
-        }).catch((reason) => {
-            handleError(reason, getXqFormsLogMsgHeader);
-        });
-    };
+    // const getXqForms = (resolve, reject, query) => {
+    //     Axios.get(GetXqFormsUrl, config).then((response) => {
+    //         const { status, data } = response;
+    //         if (status === 200) {
+    //             const { page } = query;
+    //             const totalCount = data.length;
+    //             resolve({
+    //                 data,
+    //                 page,
+    //                 totalCount,
+    //             });
+    //         }
+    //     }).catch((reason) => {
+    //         handleError(reason, getXqFormsLogMsgHeader);
+    //     });
+    // };
     // Service forms handlers.
 
     return (
@@ -660,7 +660,7 @@ const ReceptionistView = () => {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid
+            {/* <Grid
                 item
                 xs={12} sm={12} md={6} lg={6} xl={6}
             >
@@ -799,7 +799,7 @@ const ReceptionistView = () => {
                         />
                     </CardContent>
                 </Card>
-            </Grid>
+            </Grid>*/}
             <DeleteConfirm
                 open={openDeleteConfirm}
                 handleClose={handleCloseDeleteConfirm}
@@ -811,7 +811,7 @@ const ReceptionistView = () => {
                 handleDelete={onOpenDeleteConfirm}
                 handleClose={handleCloseActionOption}
             />
-            <PrintConfirmDialog
+            {/* <PrintConfirmDialog
                 open={openCtPrintConfirmDialog}
                 handleClose={handleCloseCtPrintConfirm}
                 handlePrint={handleCtPrint}
@@ -830,7 +830,7 @@ const ReceptionistView = () => {
                 open={openXqPrintConfirmDialog}
                 handleClose={handleCloseXqPrintConfirm}
                 handlePrint={handleXqPrint}
-            />
+            /> */}
             <Snackbar
                 vertical="bottom"
                 horizontal="right"

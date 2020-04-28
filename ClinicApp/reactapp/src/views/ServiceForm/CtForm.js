@@ -258,7 +258,7 @@ const CtForm = () => {
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { patient, history } = data[0];
+                const { patient } = data[0];
                 const {
                     id,
                     idCode,
@@ -283,17 +283,10 @@ const CtForm = () => {
                     PhoneNumber: phoneNumber,
                 });
                 if (addMode) {
-                    const currentHistoryId =
-                        (history && history.id) ?
-                            history.id : null;
-                    if ((!history || !history.id)) {
-                        handleSnackbarOption('error', `Bệnh nhân này đã được khám xong.
-                                ${' '}Vui lòng chọn bệnh nhân khác!`);
-                    }
                     setCtForm({
                         ...ctForm,
+                        IdCode: idCode,
                         PatientId: id,
-                        HistoryId: currentHistoryId,
                     });
                 }
             }
@@ -434,6 +427,10 @@ const CtForm = () => {
         });
     };
 
+    const handleEdit = () => {
+        browserHistory.push(RouteConstants.CtFormView.replace(':mode', FormMode.Update).replace(':formId', formId));
+    };
+
     const handleReset = () => {
         setCtForm(CtFormModel);
         setDiagnosisNameValue(null);
@@ -506,10 +503,10 @@ const CtForm = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập chẩn đoán!');
             return;
         }
-        if (!ctForm.IdCode.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập mã đơn!');
-            return;
-        }
+        // if (!ctForm.IdCode.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập mã đơn!');
+        //     return;
+        // }
         if (!ctForm.DateCreated) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày kê đơn!');
             return;
@@ -522,6 +519,7 @@ const CtForm = () => {
         setDisabled(true);
         setLoadingDone(true);
 
+        const IdCode = currentPatient.IdCode;
         const DateCreated = ctForm.DateCreated.format();
         const Type = CtRequestTypeEnum[ctForm.Type];
         const UpperVein = ctForm.IsUpperVein ? ctForm.UpperVein : '';
@@ -529,6 +527,7 @@ const CtForm = () => {
         const Other = ctForm.IsOther ? ctForm.Other : '';
         const ctFormModel = {
             ...ctForm,
+            IdCode,
             DateCreated,
             Type,
             UpperVein,
@@ -671,7 +670,7 @@ const CtForm = () => {
                                         value={ctForm.IdCode}
                                         onChange={handleCtFormChange('IdCode')}
                                         fullWidth
-                                        readOnly={viewMode}
+                                        readOnly
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -1438,6 +1437,16 @@ const CtForm = () => {
                                     justify="flex-end"
                                     style={{ marginTop: 8 }}
                                 >
+                                    <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                                        <Button
+                                            fullWidth
+                                            disabled={disabled}
+                                            color="info"
+                                            children="Sửa"
+                                            iconName="edit"
+                                            onClick={handleEdit}
+                                        />
+                                    </Grid>
                                     <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                                         <Button
                                             fullWidth

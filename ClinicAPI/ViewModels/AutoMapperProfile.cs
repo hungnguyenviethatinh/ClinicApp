@@ -42,11 +42,17 @@ namespace ClinicAPI.ViewModels
 
             CreateMap<Medicine, MedicineModel>();
             CreateMap<MedicineModel, Medicine>()
+                .ForMember(m => m.TotalQuantity, map => map.MapFrom(
+                    (medicineModel, medicine) =>
+                    medicine.TotalQuantity.GetValueOrDefault(0) + medicineModel.Quantity.GetValueOrDefault(0)))
                 .ForMember(m => m.Quantity,
                 map => map.MapFrom(
                     (medicineModel, medicine) =>
                     medicine.Quantity.GetValueOrDefault(0) + medicineModel.Quantity.GetValueOrDefault(0)));
             CreateMap<MedicineUpdateModel, Medicine>()
+                .ForMember(m => m.TotalQuantity, map => map.MapFrom(
+                    (medicineModel, medicine) =>
+                    medicine.TotalQuantity.GetValueOrDefault(0) + medicineModel.Quantity))
                 .ForMember(m => m.Quantity,
                 map => map.MapFrom((medicineModel, medicine) =>
                 {

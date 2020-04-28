@@ -12,6 +12,7 @@ namespace DAL.Models
         public string ExpiredDate { get; set; }
         public string NetWeight { get; set; }
         public int? Quantity { get; set; }
+        public int? TotalQuantity { get; set; }
         public string Unit { get; set; }
         public bool IsDeleted { get; set; }
 

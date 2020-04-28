@@ -235,7 +235,7 @@ const XqForm = () => {
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { patient, history } = data[0];
+                const { patient } = data[0];
                 const {
                     id,
                     idCode,
@@ -260,17 +260,10 @@ const XqForm = () => {
                     PhoneNumber: phoneNumber,
                 });
                 if (addMode) {
-                    const currentHistoryId =
-                        (history && history.id) ?
-                            history.id : null;
-                    if ((!history || !history.id)) {
-                        handleSnackbarOption('error', `Bệnh nhân này đã được khám xong.
-                                ${' '}Vui lòng chọn bệnh nhân khác!`);
-                    }
                     setXqForm({
                         ...xqForm,
+                        IdCode: idCode,
                         PatientId: id,
-                        HistoryId: currentHistoryId,
                     });
                 }
             }
@@ -380,6 +373,10 @@ const XqForm = () => {
         });
     };
 
+    const handleEdit = () => {
+        browserHistory.push(RouteConstants.XqFormView.replace(':mode', FormMode.Update).replace(':formId', formId));
+    };
+
     const handleReset = () => {
         setXqForm(XqFormModel);
         setDiagnosisNameValue(null);
@@ -452,10 +449,10 @@ const XqForm = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập chẩn đoán!');
             return;
         }
-        if (!xqForm.IdCode.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập mã đơn!');
-            return;
-        }
+        // if (!xqForm.IdCode.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập mã đơn!');
+        //     return;
+        // }
         if (!xqForm.DateCreated) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày kê đơn!');
             return;
@@ -468,9 +465,11 @@ const XqForm = () => {
         setDisabled(true);
         setLoadingDone(true);
 
+        const IdCode = currentPatient.IdCode;
         const DateCreated = xqForm.DateCreated.format();
         const xqFormModel = {
             ...xqForm,
+            IdCode,
             DateCreated,
         };
         if (addMode) {
@@ -609,7 +608,7 @@ const XqForm = () => {
                                         value={xqForm.IdCode}
                                         onChange={handleXqFormChange('IdCode')}
                                         fullWidth
-                                        readOnly={viewMode}
+                                        readOnly
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -712,6 +711,16 @@ const XqForm = () => {
                                     justify="flex-end"
                                     style={{ marginTop: 8 }}
                                 >
+                                    <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                                        <Button
+                                            fullWidth
+                                            disabled={disabled}
+                                            color="info"
+                                            children="Sửa"
+                                            iconName="edit"
+                                            onClick={handleEdit}
+                                        />
+                                    </Grid>
                                     <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                                         <Button
                                             fullWidth

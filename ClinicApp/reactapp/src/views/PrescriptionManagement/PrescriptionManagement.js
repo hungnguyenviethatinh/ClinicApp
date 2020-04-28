@@ -377,7 +377,7 @@ const PrescriptionManagement = () => {
         })
         setPrescription({
             ...prescription,
-            IdCode: '',
+            // IdCode: '',
             DateCreated: moment(),
             Diagnosis: '',
             OtherDiagnosis: '',
@@ -687,6 +687,7 @@ const PrescriptionManagement = () => {
             if (status === 200) {
                 const {
                     id,
+                    idCode,
                     age,
                     gender,
                     address,
@@ -717,6 +718,7 @@ const PrescriptionManagement = () => {
                     setHistoryId(currentHistoryId);
                     setPrescription({
                         ...prescription,
+                        IdCode: idCode,
                         PatientId: id,
                         HistoryId: currentHistoryId,
                     });
@@ -866,6 +868,7 @@ const PrescriptionManagement = () => {
         if (!updateMode) {
             setPrescription({
                 ...prescription,
+                IdCode: idCode,
                 Diagnosis: diagnosis,
                 OtherDiagnosis: otherDiagnosis,
                 Note: note,
@@ -1104,6 +1107,7 @@ const PrescriptionManagement = () => {
                                             label="Mã đơn thuốc"
                                             value={prescription.IdCode}
                                             onChange={handlePrescriptionChange('IdCode')}
+                                            readOnly
                                             fullWidth
                                         />
                                     </Grid>

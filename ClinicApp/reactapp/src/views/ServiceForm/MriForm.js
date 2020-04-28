@@ -256,7 +256,7 @@ const MriForm = () => {
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { patient, history } = data[0];
+                const { patient } = data[0];
                 const {
                     id,
                     idCode,
@@ -281,17 +281,10 @@ const MriForm = () => {
                     PhoneNumber: phoneNumber,
                 });
                 if (addMode) {
-                    const currentHistoryId =
-                        (history && history.id) ?
-                            history.id : null;
-                    if ((!history || !history.id)) {
-                        handleSnackbarOption('error', `Bệnh nhân này đã được khám xong.
-                                ${' '}Vui lòng chọn bệnh nhân khác!`);
-                    }
                     setMriForm({
                         ...mriForm,
+                        IdCode: idCode,
                         PatientId: id,
-                        HistoryId: currentHistoryId,
                     });
                 }
             }
@@ -411,6 +404,10 @@ const MriForm = () => {
         });
     };
 
+    const handleEdit = () => {
+        browserHistory.push(RouteConstants.MriFormView.replace(':mode', FormMode.Update).replace(':formId', formId));
+    };
+
     const handleReset = () => {
         setMriForm(MriFormModel);
         setDiagnosisNameValue(null);
@@ -483,10 +480,10 @@ const MriForm = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập chẩn đoán!');
             return;
         }
-        if (!mriForm.IdCode.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập mã đơn!');
-            return;
-        }
+        // if (!mriForm.IdCode.trim()) {
+        //     handleSnackbarOption('error', 'Yêu cầu nhập mã đơn!');
+        //     return;
+        // }
         if (!mriForm.DateCreated) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày kê đơn!');
             return;
@@ -500,9 +497,11 @@ const MriForm = () => {
         setLoadingDone(true);
 
         const Other = mriForm.IsOther ? mriForm.Other : '';
+        const IdCode = currentPatient.IdCode;
         const DateCreated = mriForm.DateCreated.format();
         const mriFormModel = {
             ...mriForm,
+            IdCode,
             DateCreated,
             Other,
         };
@@ -642,7 +641,7 @@ const MriForm = () => {
                                         value={mriForm.IdCode}
                                         onChange={handleMriFormChange('IdCode')}
                                         fullWidth
-                                        readOnly={viewMode}
+                                        readOnly
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -896,6 +895,16 @@ const MriForm = () => {
                                     justify="flex-end"
                                     style={{ marginTop: 8 }}
                                 >
+                                    <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                                        <Button
+                                            fullWidth
+                                            disabled={disabled}
+                                            color="info"
+                                            children="Sửa"
+                                            iconName="edit"
+                                            onClick={handleEdit}
+                                        />
+                                    </Grid>
                                     <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
                                         <Button
                                             fullWidth

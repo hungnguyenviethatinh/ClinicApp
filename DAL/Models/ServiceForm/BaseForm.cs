@@ -17,8 +17,6 @@ namespace DAL.Models.ServiceForm
         public Patient Patient { get; set; }
         public string DoctorId { get; set; }
         public User Doctor { get; set; }
-        public int HistoryId { get; set; }
-        public virtual History History { get; set; }
 
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }

@@ -184,8 +184,8 @@ namespace ClinicApp.Controllers
 
             string note = !string.IsNullOrWhiteSpace(patient.Note) ?
                 patient.Note :
-                "................................................... " +
-                ".................................................................";
+                "........................................ " +
+                ".............................................";
             html = html.Replace("{patientNote}", note);
 
             if (doctors.Count > 1)

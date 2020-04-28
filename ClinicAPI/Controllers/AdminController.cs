@@ -915,7 +915,7 @@ namespace ClinicAPI.Controllers
         {
             var medicineStat = _unitOfWork.Medicines
                 .Where(m => !m.IsDeleted)
-                .Select(m => new { m.Name, m.Quantity, m.Unit });
+                .Select(m => new { m.Name, m.TotalQuantity, m.Unit });
 
             return Ok(medicineStat);
         }
