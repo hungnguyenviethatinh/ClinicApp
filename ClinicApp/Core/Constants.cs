@@ -1,4 +1,6 @@
-﻿namespace ClinicApp.Core
+﻿using System.Configuration;
+
+namespace ClinicApp.Core
 {
     public static class KeyConstants
     {
@@ -33,5 +35,12 @@
         public const string Normal = "Thường";
         public const string Urgent = "Khẩn";
         public const string Emergency = "Khẩn cấp";
+    }
+
+    public static class ConfigurationValues
+    {
+        public static string ApiUrl = ConfigurationManager.AppSettings.Get(KeyConstants.ApiUrlKey);
+        public static string ClientSecret = ConfigurationManager.AppSettings.Get(KeyConstants.SecretKey);
+        public static string DebuggingMode = ConfigurationManager.AppSettings.Get(KeyConstants.DebuggingModeKey);
     }
 }

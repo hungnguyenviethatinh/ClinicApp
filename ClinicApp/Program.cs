@@ -5,7 +5,6 @@ using Chromely.Core.Host;
 using Chromely.Core.Infrastructure;
 using ClinicApp.Core;
 using System;
-using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
@@ -21,7 +20,8 @@ namespace ClinicApp
                 HostHelpers.SetupDefaultExceptionHandlers();
 
                 string startUrl = "local://dist/index.html";
-                string debuggingMode = ConfigurationManager.AppSettings.Get(KeyConstants.DebuggingModeKey);
+
+                string debuggingMode = ConfigurationValues.DebuggingMode;
                 bool.TryParse(debuggingMode, out bool isDebuggingMode);
 
                 ChromelyConfiguration config = ChromelyConfiguration
