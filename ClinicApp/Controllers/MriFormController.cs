@@ -53,65 +53,156 @@ namespace ClinicApp.Controllers
             string date = DateTime.Now.Day.ToString();
             string month = DateTime.Now.Month.ToString();
             string year = DateTime.Now.Year.ToString();
-            string hour = DateTime.Now.ToString("HH:mm");
+            string time = DateTime.Now.ToString("HH:mm");
 
             html = html.Replace("{date}", date);
             html = html.Replace("{dayOfWeek}", dayOfWeek);
             html = html.Replace("{date}", date);
             html = html.Replace("{month}", month);
             html = html.Replace("{year}", year);
-            html = html.Replace("{hour}", hour);
+            html = html.Replace("{time}", time);
 
-            string patientId = $"{patient.IdCode}{patient.Id}";
+            string patientIdCode = $"{patient.Id}";
+            html = html.Replace("{patientIdCode}", patientIdCode);
+
             string patientOrderNumber = $"{patient.OrderNumber}";
-            html = html.Replace("{patientId}", patientId);
             html = html.Replace("{patientOrderNumber}", patientOrderNumber);
-            html = html.Replace("{patientName}", patient.FullName);
-            html = html.Replace("{patientAge}", $"{patient.Age}");
 
-            string genderHtml;
+            string patientName = patient.FullName;
+            html = html.Replace("{patientName}", patientName);
+
+            string patientAge = $"{patient.Age}";
+            html = html.Replace("{patientAge}", patientAge);
+
             if (patient.Gender.Equals(GenderConstants.Male, StringComparison.OrdinalIgnoreCase))
             {
-                genderHtml =
-                    @"<div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"" checked>
-                      <label class=""custom-control-label"" for=""nam"">Nam</label>
-                    </div>
-                    <div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"">
-                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
-                    </div>";
+                html = html.Replace("{isMale}", "checked").Replace("{isFemale}", "");
             }
             else if (patient.Gender.Equals(GenderConstants.Female, StringComparison.OrdinalIgnoreCase))
             {
-                genderHtml =
-                    @"<div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"">
-                      <label class=""custom-control-label"" for=""nam"">Nam</label>
-                    </div>
-                    <div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"" checked>
-                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
-                    </div>";
+                html = html.Replace("{isMale}", "").Replace("{isFemale}", "checked");
             }
             else
             {
-                genderHtml =
-                    @"<div class=""custom-control custom-checkbox"">
-                      <label class=""custom-control-label"" for=""nam"">Nam</label>
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"">
-                    </div>
-                    <div class=""custom-control custom-checkbox"">
-                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"">
-                    </div>";
+                html = html.Replace("{isMale}", "").Replace("{isFemale}", "");
             }
 
-            html = html.Replace("{patientGender}", genderHtml);
-            html = html.Replace("{patientAddress}", patient.Address);
-            html = html.Replace("{patientPhone}", patient.PhoneNumber);
-            html = html.Replace("{patientDiagnosisName}", mriForm.DiagnosisName);
+            string patientAddress = !string.IsNullOrWhiteSpace(patient.Address) ?
+                patient.Address :
+                ".................................................................................................";
+            html = html.Replace("{patientAddress}", patientAddress);
 
+            string patientPhoneNumber = !string.IsNullOrWhiteSpace(patient.PhoneNumber) ?
+                patient.PhoneNumber :
+                ".........................................................";
+            html = html.Replace("{patientPhoneNumber}", patientPhoneNumber);
+
+            string diagnosisName = !string.IsNullOrWhiteSpace(mriForm.DiagnosisName) ?
+                mriForm.DiagnosisName :
+                "................................................................................................." +
+                "................................................................................................." +
+                "................................................................................................." +
+                "..........................................................................................";
+            html = html.Replace("{diagnosisName}", diagnosisName);
+
+            if (mriForm.IsSkull)
+            {
+                html = html.Replace("{IsSkull}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsSkull}", "");
+            }
+            if (mriForm.IsHeadNeck)
+            {
+                html = html.Replace("{IsHeadNeck}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsHeadNeck}", "");
+            }
+            if (mriForm.IsChest)
+            {
+                html = html.Replace("{IsChest}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsChest}", "");
+            }
+            if (mriForm.IsStomachGroin)
+            {
+                html = html.Replace("{IsStomachGroin}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsStomachGroin}", "");
+            }
+            if (mriForm.IsLimbs)
+            {
+                html = html.Replace("{IsLimbs}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsLimbs}", "");
+            }
+            if (mriForm.IsNeckSpine)
+            {
+                html = html.Replace("{IsNeckSpine}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsNeckSpine}", "");
+            }
+            if (mriForm.IsChestSpine)
+            {
+                html = html.Replace("{IsChestSpine}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsChestSpine}", "");
+            }
+            if (mriForm.IsPelvisSpine)
+            {
+                html = html.Replace("{IsPelvisSpine}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsPelvisSpine}", "");
+            }
+            if (mriForm.IsBloodVessel)
+            {
+                html = html.Replace("{IsBloodVessel}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsBloodVessel}", "");
+            }
+            if (mriForm.IsOther)
+            {
+                html = html.Replace("{IsOther}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsOther}", "");
+            }
+            if (mriForm.IsContrastAgent)
+            {
+                html = html.Replace("{IsContrastAgent}", "checked").Replace("{IsNotContrastAgent}", "");
+            }
+            else
+            {
+                html = html.Replace("{IsContrastAgent}", "").Replace("{IsNotContrastAgent}", "checked");
+            }
+
+            string other = !string.IsNullOrWhiteSpace(mriForm.Other) ?
+                mriForm.Other :
+                "................................................................................................." +
+                "................................................................................................." +
+                "...............................................................";
+            html = html.Replace("{Other}", other);
+
+            string doctorName = doctor.FullName;
+            html = html.Replace("{doctorName}", doctorName);
 
             string indexHtml = $"{appDirectory}/wwwroot/index.html";
             using (StreamWriter sw = new StreamWriter(indexHtml, false, Encoding.UTF8))
@@ -119,39 +210,35 @@ namespace ClinicApp.Controllers
                 sw.WriteLine(html);
             }
 
-            Process.Start(indexHtml);
-
             string url = $"file:///{appDirectory}/wwwroot/index.html";
 
             HtmlToPdf converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A5;
+            converter.Options.PdfPageSize = PdfPageSize.A4;
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
-            converter.Options.WebPageWidth = 600;
+            converter.Options.WebPageWidth = 800;
 
-            string patientIdCode = string.Concat(patient.IdCode, patient.Id);
-            string patientName = patient.FullName;
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
-            string saveFile = $"{patientIdCode}_{patientName}_{createdTime}.pdf";
-            string saveDirectory = $"{appDirectory}\\BenhNhan";
+            string saveFile = $"MRI_{createdTime}.pdf";
+            string saveDirectory = $"{appDirectory}\\MRI";
             string savePath = $"{saveDirectory}\\{saveFile}";
 
             PdfDocument pdf = converter.ConvertUrl(url);
             pdf.Save(savePath);
             pdf.Close();
 
-            //ProcessStartInfo info = new ProcessStartInfo(savePath)
-            //{
-            //    Verb = "Print",
-            //    CreateNoWindow = true,
-            //    WindowStyle = ProcessWindowStyle.Hidden
-            //};
-            //Process.Start(info);
+            ProcessStartInfo info = new ProcessStartInfo(savePath)
+            {
+                Verb = "Print",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            Process.Start(info);
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {
                 Data = new
                 {
-                    Message = $"In phiếu chỉ định thành công lúc {DateTime.Now.ToString()}.",
+                    Message = $"In phiếu chỉ định chụp cộng hưởng từ (mri) thành công lúc {DateTime.Now.ToString()}.",
                 }
             };
 
