@@ -53,70 +53,68 @@ namespace ClinicApp.Controllers
             string date = DateTime.Now.Day.ToString();
             string month = DateTime.Now.Month.ToString();
             string year = DateTime.Now.Year.ToString();
-            string hour = DateTime.Now.ToString("HH:mm");
+            string time = DateTime.Now.ToString("HH:mm");
 
             html = html.Replace("{date}", date);
             html = html.Replace("{dayOfWeek}", dayOfWeek);
             html = html.Replace("{date}", date);
             html = html.Replace("{month}", month);
             html = html.Replace("{year}", year);
-            html = html.Replace("{hour}", hour);
+            html = html.Replace("{time}", time);
 
-            string patientId = $"{patient.IdCode}{patient.Id}";
+            string patientIdCode = $"{patient.Id}";
+            html = html.Replace("{patientIdCode}", patientIdCode);
+
             string patientOrderNumber = $"{patient.OrderNumber}";
-            html = html.Replace("{patientId}", patientId);
             html = html.Replace("{patientOrderNumber}", patientOrderNumber);
-            html = html.Replace("{patientName}", patient.FullName);
-            html = html.Replace("{patientAge}", $"{patient.Age}");
 
-            string genderHtml;
+            string patientName = patient.FullName;
+            html = html.Replace("{patientName}", patientName);
+
+            string patientAge = $"{patient.Age}";
+            html = html.Replace("{patientAge}", patientAge);
+
             if (patient.Gender.Equals(GenderConstants.Male, StringComparison.OrdinalIgnoreCase))
             {
-                genderHtml =
-                    @"<div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"" checked>
-                      <label class=""custom-control-label"" for=""nam"">Nam</label>
-                    </div>
-                    <div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"">
-                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
-                    </div>";
+                html = html.Replace("{isMale}", "checked").Replace("{isFemale}", "");
             }
             else if (patient.Gender.Equals(GenderConstants.Female, StringComparison.OrdinalIgnoreCase))
             {
-                genderHtml =
-                    @"<div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"">
-                      <label class=""custom-control-label"" for=""nam"">Nam</label>
-                    </div>
-                    <div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"" checked>
-                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
-                    </div>";
+                html = html.Replace("{isMale}", "").Replace("{isFemale}", "checked");
             }
             else
             {
-                genderHtml =
-                    @"<div class=""custom-control custom-checkbox"">
-                      <label class=""custom-control-label"" for=""nam"">Nam</label>
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"">
-                    </div>
-                    <div class=""custom-control custom-checkbox"">
-                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"">
-                    </div>";
+                html = html.Replace("{isMale}", "").Replace("{isFemale}", "");
             }
 
-            html = html.Replace("{patientGender}", genderHtml);
-            html = html.Replace("{patientAddress}", patient.Address);
-            html = html.Replace("{patientPhone}", patient.PhoneNumber);
-            html = html.Replace("{patientDiagnosisName}", xqForm.DiagnosisName);
-            html = html.Replace("{request}", xqForm.Request);
-            string note = !string.IsNullOrEmpty(xqForm.Note) ? xqForm.Note :
-                @".................................................................................. .......
-                    .................................................................. ...............................
-                    ........... .................... .................... .................... ........................";
+            string patientAddress = !string.IsNullOrWhiteSpace(patient.Address) ?
+                patient.Address :
+                ".................................................................................................";
+            html = html.Replace("{patientAddress}", patientAddress);
+
+            string patientPhoneNumber = !string.IsNullOrWhiteSpace(patient.PhoneNumber) ?
+                patient.PhoneNumber :
+                ".........................................................";
+            html = html.Replace("{patientPhoneNumber}", patientPhoneNumber);
+
+            string diagnosisName = !string.IsNullOrWhiteSpace(xqForm.DiagnosisName) ?
+                xqForm.DiagnosisName :
+                "................................................................................................." +
+                "...........................................................................................";
+            html = html.Replace("{diagnosisName}", diagnosisName);
+
+            string requestName = xqForm.Request;
+            html = html.Replace("{request}", requestName);
+
+            string note = !string.IsNullOrWhiteSpace(xqForm.Note) ?
+                xqForm.Note :
+                ".................................................................................................. " +
+                "...................................................................................................................... " +
+                "......................................................................................................................";
             html = html.Replace("{note}", note);
+
+            string doctorName = doctor.FullName;
+            html = html.Replace("{doctorName}", doctorName);
 
             string indexHtml = $"{appDirectory}/wwwroot/index.html";
             using (StreamWriter sw = new StreamWriter(indexHtml, false, Encoding.UTF8))
@@ -124,33 +122,29 @@ namespace ClinicApp.Controllers
                 sw.WriteLine(html);
             }
 
-            Process.Start(indexHtml);
-
             string url = $"file:///{appDirectory}/wwwroot/index.html";
 
             HtmlToPdf converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A5;
+            converter.Options.PdfPageSize = PdfPageSize.A4;
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
-            converter.Options.WebPageWidth = 600;
+            converter.Options.WebPageWidth = 800;
 
-            string patientIdCode = string.Concat(patient.IdCode, patient.Id);
-            string patientName = patient.FullName;
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
-            string saveFile = $"{patientIdCode}_{patientName}_{createdTime}.pdf";
-            string saveDirectory = $"{appDirectory}\\BenhNhan";
+            string saveFile = $"XQ_{createdTime}.pdf";
+            string saveDirectory = $"{appDirectory}\\XQ";
             string savePath = $"{saveDirectory}\\{saveFile}";
 
             PdfDocument pdf = converter.ConvertUrl(url);
             pdf.Save(savePath);
             pdf.Close();
 
-            //ProcessStartInfo info = new ProcessStartInfo(savePath)
-            //{
-            //    Verb = "Print",
-            //    CreateNoWindow = true,
-            //    WindowStyle = ProcessWindowStyle.Hidden
-            //};
-            //Process.Start(info);
+            ProcessStartInfo info = new ProcessStartInfo(savePath)
+            {
+                Verb = "Print",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            Process.Start(info);
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {
