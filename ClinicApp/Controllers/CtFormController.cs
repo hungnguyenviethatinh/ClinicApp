@@ -53,165 +53,82 @@ namespace ClinicApp.Controllers
             string date = DateTime.Now.Day.ToString();
             string month = DateTime.Now.Month.ToString();
             string year = DateTime.Now.Year.ToString();
-            string hour = DateTime.Now.ToString("HH:mm");
+            string time = DateTime.Now.ToString("HH:mm");
 
             html = html.Replace("{date}", date);
             html = html.Replace("{dayOfWeek}", dayOfWeek);
             html = html.Replace("{date}", date);
             html = html.Replace("{month}", month);
             html = html.Replace("{year}", year);
-            html = html.Replace("{hour}", hour);
+            html = html.Replace("{time}", time);
 
-            string patientId = $"{patient.IdCode}{patient.Id}";
+            string patientIdCode = $"{patient.Id}";
+            html = html.Replace("{patientIdCode}", patientIdCode);
+
             string patientOrderNumber = $"{patient.OrderNumber}";
-            html = html.Replace("{patientId}", patientId);
             html = html.Replace("{patientOrderNumber}", patientOrderNumber);
-            html = html.Replace("{patientName}", patient.FullName);
-            html = html.Replace("{patientAge}", $"{patient.Age}");
 
-            string genderHtml;
+            string patientName = patient.FullName;
+            html = html.Replace("{patientName}", patientName);
+
+            string patientAge = $"{patient.Age}";
+            html = html.Replace("{patientAge}", patientAge);
+
             if (patient.Gender.Equals(GenderConstants.Male, StringComparison.OrdinalIgnoreCase))
             {
-                genderHtml =
-                    @"<div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"" checked>
-                      <label class=""custom-control-label"" for=""nam"">Nam</label>
-                    </div>
-                    <div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"">
-                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
-                    </div>";
+                html = html.Replace("{isMale}", "checked").Replace("{isFemale}", "");
             }
             else if (patient.Gender.Equals(GenderConstants.Female, StringComparison.OrdinalIgnoreCase))
             {
-                genderHtml =
-                    @"<div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"">
-                      <label class=""custom-control-label"" for=""nam"">Nam</label>
-                    </div>
-                    <div class=""custom-control custom-checkbox"">
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"" checked>
-                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
-                    </div>";
+                html = html.Replace("{isMale}", "").Replace("{isFemale}", "checked");
             }
             else
             {
-                genderHtml =
-                    @"<div class=""custom-control custom-checkbox"">
-                      <label class=""custom-control-label"" for=""nam"">Nam</label>
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nam"">
-                    </div>
-                    <div class=""custom-control custom-checkbox"">
-                      <label class=""custom-control-label"" for=""nu"">Nữ</label>
-                      <input type=""checkbox"" class=""custom-control-input"" id=""nu"">
-                    </div>";
+                html = html.Replace("{isMale}", "").Replace("{isFemale}", "");
             }
 
-            html = html.Replace("{patientGender}", genderHtml);
-            html = html.Replace("{patientAddress}", patient.Address);
-            html = html.Replace("{patientPhone}", patient.PhoneNumber);
-            html = html.Replace("{patientDiagnosisName}", ctForm.DiagnosisName);
+            string patientAddress = !string.IsNullOrWhiteSpace(patient.Address) ?
+                patient.Address :
+                ".................................................................................................";
+            html = html.Replace("{patientAddress}", patientAddress);
 
-            string ctRequestTypeHtml;
+            string patientPhoneNumber = !string.IsNullOrWhiteSpace(patient.PhoneNumber) ?
+                patient.PhoneNumber :
+                ".........................................................";
+            html = html.Replace("{patientPhoneNumber}", patientPhoneNumber);
+
+            string diagnosisName = !string.IsNullOrWhiteSpace(ctForm.DiagnosisName) ?
+                ctForm.DiagnosisName :
+                "................................................................................................." +
+                "...........................................................................................";
+            html = html.Replace("{diagnosisName}", diagnosisName);
+
             if (ctForm.Type.Equals(CtRequestTypeConstants.Normal, StringComparison.OrdinalIgnoreCase))
             {
-                ctRequestTypeHtml =
-                    @"<div class=""col-4"">
-                            <div class=""custom-control custom-checkbox"">
-                                <input type=""checkbox"" class=""custom-control-input"" id=""thuong"" checked>
-                                <label class=""custom-control-label"" for=""thuong"">Thường</label>
-                            </div>
-                      </div>
-                      <div class=""col-4"">
-                          <div class=""custom-control custom-checkbox"">
-                               <input type=""checkbox"" class=""custom-control-input"" id=""khan"">
-                               <label class=""custom-control-label"" for=""khan"">Khẩn</label>
-                          </div>
-                      </div>
-                      <div class=""col-4"">
-                        <div class=""custom-control custom-checkbox"">
-                           <input type=""checkbox"" class=""custom-control-input"" id=""capcuu"">
-                           <label class=""custom-control-label"" for=""capcuu"">Cấp cứu</label>
-                      </div>
-                     </div>";
+                html = html.Replace("{normal}", "checked").Replace("{urgent}", "").Replace("{emergency}", "");
             }
             else if (ctForm.Type.Equals(CtRequestTypeConstants.Urgent, StringComparison.OrdinalIgnoreCase))
             {
-                ctRequestTypeHtml =
-                    @"<div class=""col-4"">
-                            <div class=""custom-control custom-checkbox"">
-                                <input type=""checkbox"" class=""custom-control-input"" id=""thuong"">
-                                <label class=""custom-control-label"" for=""thuong"">Thường</label>
-                            </div>
-                      </div>
-                      <div class=""col-4"">
-                          <div class=""custom-control custom-checkbox"">
-                               <input type=""checkbox"" class=""custom-control-input"" id=""khan"" checked>
-                               <label class=""custom-control-label"" for=""khan"">Khẩn</label>
-                          </div>
-                      </div>
-                      <div class=""col-4"">
-                        <div class=""custom-control custom-checkbox"">
-                           <input type=""checkbox"" class=""custom-control-input"" id=""capcuu"">
-                           <label class=""custom-control-label"" for=""capcuu"">Cấp cứu</label>
-                        </div>
-                       </div>";
+                html = html.Replace("{normal}", "").Replace("{urgent}", "checked").Replace("{emergency}", "");
             }
             else if (ctForm.Type.Equals(CtRequestTypeConstants.Emergency, StringComparison.OrdinalIgnoreCase))
             {
-                ctRequestTypeHtml =
-                    @"<div class=""col-4"">
-                            <div class=""custom-control custom-checkbox"">
-                                <input type=""checkbox"" class=""custom-control-input"" id=""thuong"">
-                                <label class=""custom-control-label"" for=""thuong"">Thường</label>
-                            </div>
-                      </div>
-                      <div class=""col-4"">
-                          <div class=""custom-control custom-checkbox"">
-                               <input type=""checkbox"" class=""custom-control-input"" id=""khan"">
-                               <label class=""custom-control-label"" for=""khan"">Khẩn</label>
-                          </div>
-                      </div>
-                      <div class=""col-4"">
-                        <div class=""custom-control custom-checkbox"">
-                           <input type=""checkbox"" class=""custom-control-input"" id=""capcuu"" checked>
-                           <label class=""custom-control-label"" for=""capcuu"">Cấp cứu</label>
-                      </div>
-                     </div>";
+                html = html.Replace("{normal}", "").Replace("{urgent}", "").Replace("{emergency}", "checked");
             }
             else
             {
-                ctRequestTypeHtml =
-                    @"<div class=""col-4"">
-                            <div class=""custom-control custom-checkbox"">
-                                <input type=""checkbox"" class=""custom-control-input"" id=""thuong"">
-                                <label class=""custom-control-label"" for=""thuong"">Thường</label>
-                            </div>
-                      </div>
-                      <div class=""col-4"">
-                          <div class=""custom-control custom-checkbox"">
-                               <input type=""checkbox"" class=""custom-control-input"" id=""khan"">
-                               <label class=""custom-control-label"" for=""khan"">Khẩn</label>
-                          </div>
-                      </div>
-                      div class=""col-4"">
-                        <div class=""custom-control custom-checkbox"">
-                           <input type=""checkbox"" class=""custom-control-input"" id=""capcuu"">
-                           <label class=""custom-control-label"" for=""capcuu"">Cấp cứu</label>
-                      </div>
-                     </div>";
+                html = html.Replace("{normal}", "").Replace("{urgent}", "").Replace("{emergency}", "");
             }
-
-            html = html.Replace("{ctRequestType}", ctRequestTypeHtml);
 
             if (ctForm.IsContrastMedicine)
             {
-                html = html.Replace("{IsContrastMedicine}", "checked").Replace("{IsNotContrastMedicine}","");
+                html = html.Replace("{IsContrastMedicine}", "checked").Replace("{IsNotContrastMedicine}", "");
             }
             else
             {
                 html = html.Replace("{IsContrastMedicine}", "").Replace("{IsNotContrastMedicine}", "checked");
             }
+
             if (ctForm.IsSkull)
             {
                 html = html.Replace("{IsSkull}", "checked");
@@ -340,14 +257,6 @@ namespace ClinicApp.Controllers
             {
                 html = html.Replace("{IsChest}", "");
             }
-            if (ctForm.IsUpperVein)
-            {
-                html = html.Replace("{IsUpperVein}", "checked");
-            }
-            else
-            {
-                html = html.Replace("{IsUpperVein}", "");
-            }
             if (ctForm.IsStomach)
             {
                 html = html.Replace("{IsStomach}", "checked");
@@ -355,14 +264,6 @@ namespace ClinicApp.Controllers
             else
             {
                 html = html.Replace("{IsStomach}", "");
-            }
-            if (ctForm.IsLowerVein)
-            {
-                html = html.Replace("{IsLowerVein}", "checked");
-            }
-            else
-            {
-                html = html.Replace("{IsLowerVein}", "");
             }
             if (ctForm.IsUrinary)
             {
@@ -372,6 +273,105 @@ namespace ClinicApp.Controllers
             {
                 html = html.Replace("{IsUrinary}", "");
             }
+            if (ctForm.IsUpperVein)
+            {
+                html = html.Replace("{IsUpperVein}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsUpperVein}", "");
+            }
+            if (ctForm.IsLowerVein)
+            {
+                html = html.Replace("{IsLowerVein}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsLowerVein}", "");
+            }
+            if (ctForm.IsOther)
+            {
+                html = html.Replace("{IsOther}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsOther}", "");
+            }
+
+            string upperVein = !string.IsNullOrWhiteSpace(ctForm.UpperVein) ?
+                ctForm.UpperVein :
+                "...............................................................";
+            html = html.Replace("{UpperVein}", upperVein);
+
+            string lowerVein = !string.IsNullOrWhiteSpace(ctForm.LowerVein) ?
+                ctForm.LowerVein :
+                "...............................................................";
+            html = html.Replace("{LowerVein}", lowerVein);
+
+            string other = !string.IsNullOrWhiteSpace(ctForm.Other) ?
+                ctForm.Other :
+                "............................................................................................";
+            html = html.Replace("{Other}", other);
+
+            if (ctForm.IsPregnant)
+            {
+                html = html.Replace("{IsPregnant}", "checked").Replace("{IsNotPregnant}", "");
+            }
+            else
+            {
+                html = html.Replace("{IsPregnant}", "").Replace("{IsNotPregnant}", "checked");
+            }
+            if (ctForm.IsAllergy)
+            {
+                html = html.Replace("{IsAllergy}", "checked").Replace("{IsNotAllergy}", "");
+            }
+            else
+            {
+                html = html.Replace("{IsAllergy}", "").Replace("{IsNotAllergy}", "checked");
+            }
+            if (ctForm.IsHeartDisease)
+            {
+                html = html.Replace("{IsHeartDisease}", "checked").Replace("{IsNotHeartDisease}", "");
+            }
+            else
+            {
+                html = html.Replace("{IsHeartDisease}", "").Replace("{IsNotHeartDisease}", "checked");
+            }
+            if (ctForm.IsBloodDisease)
+            {
+                html = html.Replace("{IsBloodDisease}", "checked").Replace("{IsNotBloodDisease}", "");
+            }
+            else
+            {
+                html = html.Replace("{IsBloodDisease}", "").Replace("{IsNotBloodDisease}", "checked");
+            }
+            if (ctForm.IsKidneyFailure)
+            {
+                html = html.Replace("{IsKidneyFailure}", "checked").Replace("{IsNotKidneyFailure}", "");
+            }
+            else
+            {
+                html = html.Replace("{IsKidneyFailure}", "").Replace("{IsNotKidneyFailure}", "checked");
+            }
+            if (ctForm.IsDiabetesMellitus)
+            {
+                html = html.Replace("{IsDiabetesMellitus}", "checked").Replace("{IsNotDiabetesMellitus}", "");
+            }
+            else
+            {
+                html = html.Replace("{IsDiabetesMellitus}", "").Replace("{IsNotDiabetesMellitus}", "checked");
+            }
+            if (ctForm.IsCoagulopathy)
+            {
+                html = html.Replace("{IsCoagulopathy}", "checked").Replace("{IsNotCoagulopathy}", "");
+            }
+            else
+            {
+                html = html.Replace("{IsCoagulopathy}", "").Replace("{IsNotCoagulopathy}", "checked");
+            }
+
+            string doctorName = doctor.FullName;
+            html = html.Replace("{doctorName}", doctorName);
 
             string indexHtml = $"{appDirectory}/wwwroot/index.html";
             using (StreamWriter sw = new StreamWriter(indexHtml, false, Encoding.UTF8))
@@ -379,39 +379,35 @@ namespace ClinicApp.Controllers
                 sw.WriteLine(html);
             }
 
-            Process.Start(indexHtml);
-
             string url = $"file:///{appDirectory}/wwwroot/index.html";
 
             HtmlToPdf converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A5;
+            converter.Options.PdfPageSize = PdfPageSize.A4;
             converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
-            converter.Options.WebPageWidth = 600;
+            converter.Options.WebPageWidth = 800;
 
-            string patientIdCode = string.Concat(patient.IdCode, patient.Id);
-            string patientName = patient.FullName;
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
-            string saveFile = $"{patientIdCode}_{patientName}_{createdTime}.pdf";
-            string saveDirectory = $"{appDirectory}\\BenhNhan";
+            string saveFile = $"CT_{createdTime}.pdf";
+            string saveDirectory = $"{appDirectory}\\CT";
             string savePath = $"{saveDirectory}\\{saveFile}";
 
             PdfDocument pdf = converter.ConvertUrl(url);
             pdf.Save(savePath);
             pdf.Close();
 
-            //ProcessStartInfo info = new ProcessStartInfo(savePath)
-            //{
-            //    Verb = "Print",
-            //    CreateNoWindow = true,
-            //    WindowStyle = ProcessWindowStyle.Hidden
-            //};
-            //Process.Start(info);
+            ProcessStartInfo info = new ProcessStartInfo(savePath)
+            {
+                Verb = "Print",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            Process.Start(info);
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {
                 Data = new
                 {
-                    Message = $"In phiếu chỉ định thành công lúc {DateTime.Now.ToString()}.",
+                    Message = $"In phiếu chỉ định chụp ct thành công lúc {DateTime.Now.ToString()}.",
                 }
             };
 
