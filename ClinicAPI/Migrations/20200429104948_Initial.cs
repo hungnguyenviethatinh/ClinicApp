@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ClinicAPI.Migrations
 {
-    public partial class Initialize : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -87,6 +87,7 @@ namespace ClinicAPI.Migrations
                     ExpiredDate = table.Column<string>(maxLength: 30, nullable: true),
                     NetWeight = table.Column<string>(maxLength: 30, nullable: true),
                     Quantity = table.Column<int>(nullable: true),
+                    TotalQuantity = table.Column<int>(nullable: true),
                     Unit = table.Column<string>(maxLength: 100, nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
@@ -329,11 +330,12 @@ namespace ClinicAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    IdCode = table.Column<string>(maxLength: 30, nullable: true),
                     DiagnosisName = table.Column<string>(nullable: true),
                     DateCreated = table.Column<DateTime>(nullable: false),
+                    Status = table.Column<int>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),
-                    HistoryId = table.Column<int>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
                     UpdatedBy = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
@@ -370,7 +372,8 @@ namespace ClinicAPI.Migrations
                     IsBloodDisease = table.Column<bool>(nullable: false),
                     IsKidneyFailure = table.Column<bool>(nullable: false),
                     IsDiabetesMellitus = table.Column<bool>(nullable: false),
-                    IsCoagulopathy = table.Column<bool>(nullable: false)
+                    IsCoagulopathy = table.Column<bool>(nullable: false),
+                    HistoryId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -436,11 +439,12 @@ namespace ClinicAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    IdCode = table.Column<string>(maxLength: 30, nullable: true),
                     DiagnosisName = table.Column<string>(nullable: true),
                     DateCreated = table.Column<DateTime>(nullable: false),
+                    Status = table.Column<int>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),
-                    HistoryId = table.Column<int>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
                     UpdatedBy = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
@@ -456,7 +460,8 @@ namespace ClinicAPI.Migrations
                     IsBloodVessel = table.Column<bool>(nullable: false),
                     IsOther = table.Column<bool>(nullable: false),
                     Other = table.Column<string>(nullable: true),
-                    IsContrastAgent = table.Column<bool>(nullable: false)
+                    IsContrastAgent = table.Column<bool>(nullable: false),
+                    HistoryId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -531,16 +536,18 @@ namespace ClinicAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    IdCode = table.Column<string>(maxLength: 30, nullable: true),
                     DiagnosisName = table.Column<string>(nullable: true),
                     DateCreated = table.Column<DateTime>(nullable: false),
+                    Status = table.Column<int>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),
-                    HistoryId = table.Column<int>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
                     UpdatedBy = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     UpdatedDate = table.Column<DateTime>(nullable: false),
                     IsBloodSample = table.Column<bool>(nullable: false),
+                    IsUrineSample = table.Column<bool>(nullable: false),
                     IsPusSample = table.Column<bool>(nullable: false),
                     IsSputumSample = table.Column<bool>(nullable: false),
                     IsShitSample = table.Column<bool>(nullable: false),
@@ -622,7 +629,8 @@ namespace ClinicAPI.Migrations
                     IsDpbRivalta = table.Column<bool>(nullable: false),
                     IsDpbCell = table.Column<bool>(nullable: false),
                     IsDpbAnti = table.Column<bool>(nullable: false),
-                    OtherTest = table.Column<string>(nullable: true)
+                    OtherTest = table.Column<string>(nullable: true),
+                    HistoryId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -653,17 +661,19 @@ namespace ClinicAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    IdCode = table.Column<string>(maxLength: 30, nullable: true),
                     DiagnosisName = table.Column<string>(nullable: true),
                     DateCreated = table.Column<DateTime>(nullable: false),
+                    Status = table.Column<int>(nullable: false),
                     PatientId = table.Column<int>(nullable: false),
                     DoctorId = table.Column<string>(nullable: false),
-                    HistoryId = table.Column<int>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
                     UpdatedBy = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     UpdatedDate = table.Column<DateTime>(nullable: false),
                     Request = table.Column<string>(nullable: true),
-                    Note = table.Column<string>(nullable: true)
+                    Note = table.Column<string>(nullable: true),
+                    HistoryId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {

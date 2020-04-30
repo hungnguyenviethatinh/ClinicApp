@@ -349,6 +349,7 @@ const DrugManagement = () => {
                     }));
                     addIngredients(ingredientModels);
                 } else {
+                    refreshData();
                     setDisabled(false);
                     setLoadingDone(false);
                 }

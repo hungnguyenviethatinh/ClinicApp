@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200423093759_UpdateFormModels")]
-    partial class UpdateFormModels
+    [Migration("20200429104948_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -212,6 +212,9 @@ namespace ClinicAPI.Migrations
                         .HasMaxLength(30);
 
                     b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalQuantity")
                         .HasColumnType("int");
 
                     b.Property<string>("Unit")
@@ -512,7 +515,7 @@ namespace ClinicAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("HistoryId")
+                    b.Property<int?>("HistoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("IdCode")
@@ -615,6 +618,9 @@ namespace ClinicAPI.Migrations
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -661,7 +667,7 @@ namespace ClinicAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("HistoryId")
+                    b.Property<int?>("HistoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("IdCode")
@@ -707,6 +713,9 @@ namespace ClinicAPI.Migrations
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -747,7 +756,7 @@ namespace ClinicAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("HistoryId")
+                    b.Property<int?>("HistoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("HumourSample")
@@ -994,6 +1003,9 @@ namespace ClinicAPI.Migrations
                     b.Property<bool>("IsUrine")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsUrineSample")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsVS")
                         .HasColumnType("bit");
 
@@ -1004,6 +1016,9 @@ namespace ClinicAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("UpdatedBy")
@@ -1046,7 +1061,7 @@ namespace ClinicAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("HistoryId")
+                    b.Property<int?>("HistoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("IdCode")
@@ -1061,6 +1076,9 @@ namespace ClinicAPI.Migrations
 
                     b.Property<string>("Request")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -1437,11 +1455,9 @@ namespace ClinicAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DAL.Models.History", "History")
+                    b.HasOne("DAL.Models.History", null)
                         .WithMany("CtForms")
-                        .HasForeignKey("HistoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("HistoryId");
 
                     b.HasOne("DAL.Models.Patient", "Patient")
                         .WithMany("CtForms")
@@ -1458,11 +1474,9 @@ namespace ClinicAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DAL.Models.History", "History")
+                    b.HasOne("DAL.Models.History", null)
                         .WithMany("MriForms")
-                        .HasForeignKey("HistoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("HistoryId");
 
                     b.HasOne("DAL.Models.Patient", "Patient")
                         .WithMany("MriForms")
@@ -1479,11 +1493,9 @@ namespace ClinicAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DAL.Models.History", "History")
+                    b.HasOne("DAL.Models.History", null)
                         .WithMany("TestForms")
-                        .HasForeignKey("HistoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("HistoryId");
 
                     b.HasOne("DAL.Models.Patient", "Patient")
                         .WithMany("TestForms")
@@ -1500,11 +1512,9 @@ namespace ClinicAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("DAL.Models.History", "History")
+                    b.HasOne("DAL.Models.History", null)
                         .WithMany("XqForms")
-                        .HasForeignKey("HistoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("HistoryId");
 
                     b.HasOne("DAL.Models.Patient", "Patient")
                         .WithMany("XqForms")

@@ -409,7 +409,10 @@ const MriForm = () => {
     };
 
     const handleReset = () => {
-        setMriForm(MriFormModel);
+        setMriForm({
+            ...MriFormModel,
+            IdCode: currentPatient.IdCode,
+        });
         setDiagnosisNameValue(null);
         if (addMode) {
             setCurrentPatient({

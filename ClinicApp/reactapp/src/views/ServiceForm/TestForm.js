@@ -468,7 +468,10 @@ const TestForm = () => {
     };
 
     const handleReset = () => {
-        setTestForm(TestFormModel);
+        setTestForm({
+            ...TestFormModel,
+            IdCode: currentPatient.IdCode,
+        });
         setDiagnosisNameValue(null);
         if (addMode) {
             setCurrentPatient({

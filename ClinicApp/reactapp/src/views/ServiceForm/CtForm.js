@@ -432,7 +432,10 @@ const CtForm = () => {
     };
 
     const handleReset = () => {
-        setCtForm(CtFormModel);
+        setCtForm({
+            ...CtFormModel,
+            IdCode: currentPatient.IdCode,
+        });
         setDiagnosisNameValue(null);
         if (addMode) {
             setCurrentPatient({

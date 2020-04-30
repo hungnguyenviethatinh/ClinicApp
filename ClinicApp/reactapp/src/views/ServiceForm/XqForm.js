@@ -378,7 +378,10 @@ const XqForm = () => {
     };
 
     const handleReset = () => {
-        setXqForm(XqFormModel);
+        setXqForm({
+            ...XqFormModel,
+            IdCode: currentPatient.IdCode,
+        });
         setDiagnosisNameValue(null);
         if (addMode) {
             setCurrentPatient({
