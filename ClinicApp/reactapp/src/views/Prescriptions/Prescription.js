@@ -684,7 +684,7 @@ const Prescription = () => {
                                         <Grid
                                             container
                                             spacing={2}
-                                            justify="center"
+                                            justify="space-between"
                                             alignItems="center"
                                         >
                                             <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
@@ -745,7 +745,7 @@ const Prescription = () => {
                                                 item
                                                 justify="center"
                                                 alignItems="flex-end"
-                                                xs={12} sm={12} md={8} lg={8} xl={8}
+                                                xs={12} sm={12} md={3} lg={3} xl={3}
                                             >
                                                 <Typography
                                                     align="center"

@@ -54,6 +54,7 @@
     <PackageReference Include="CefSharp.Common" Version="71.0.2" />
     <PackageReference Include="Chromely.CefSharp.Winapi" Version="4.0.71" />
     <PackageReference Include="Chromely.Core" Version="4.0.0" />
+    <PackageReference Include="FreeSpire.PDF" Version="6.2.0" />
     <PackageReference Include="Select.HtmlToPdf" Version="20.1.0" />
     <PackageReference Include="System.Text.Json" Version="4.6.0" />
   </ItemGroup>

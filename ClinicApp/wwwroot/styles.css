@@ -60,7 +60,7 @@ body {
         .pat-info .title p {
             margin-bottom: 8px;
             letter-spacing: -1px;
-            font-weight: 600;
+            font-weight: bolder;
         }
 
 .treatment-info {
@@ -77,7 +77,7 @@ body {
     .treatment-registration .title p {
         margin-bottom: -8px;
         font-size: 14px;
-        font-weight: 600;
+        font-weight: bolder;
     }
 
     .treatment-registration .title .sub-title {
@@ -95,7 +95,7 @@ body {
 }
 
 .treatment-info .box-left p {
-    font-weight: 600;
+    font-weight: bolder;
 }
 
 .treatment-info .box-left .hint {
@@ -105,8 +105,7 @@ body {
 
 .treatment-info .box-right .title {
     font-size: 14px;
-    /* margin-bottom: 1px; */
-    font-weight: 600;
+    font-weight: bolder;
 }
 
 .footer {
@@ -121,7 +120,7 @@ body {
     }
 
     .footer .title {
-        font-weight: 600;
+        font-weight: bolder;
         text-decoration: underline;
         font-size: 12px;
     }
@@ -284,7 +283,7 @@ body {
 /* ct */
 .ct .essential-info, .ct .requirement {
     font-size: 12px;
-    font-weight: 600;
+    font-weight: bolder;
 }
 
     .ct .essential-info .row, .ct .requirement .row, .mri .row, .xq .row, .pxn .row {

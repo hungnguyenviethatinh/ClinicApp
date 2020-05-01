@@ -1065,342 +1065,344 @@ const CtForm = () => {
                                     />
                                 </Grid>
                             </Grid>
-                            <Typography
-                                align="center"
-                                variant="h5"
-                                component="h5"
-                                children="THÔNG TIN CẦN THIẾT TRƯỚC KHI CHỤP CT-SCAN CÓ THUỐC CẢN QUANG"
-                            />
-                            <Typography
-                                align="center"
-                                variant="caption"
-                                component="p"
-                                children="(Bác Sĩ chỉ định đánh dấu vào các mục này)"
-                            />
-                            <Grid
-                                container
-                                justify="center"
-                                alignItems="center"
-                                spacing={2}
-                                style={{
-                                    marginTop: 24,
-                                    marginBottom: 24,
-                                }}
-                            >
+                            <div style={{ display: 'none', }}>
+                                <Typography
+                                    align="center"
+                                    variant="h5"
+                                    component="h5"
+                                    children="THÔNG TIN CẦN THIẾT TRƯỚC KHI CHỤP CT-SCAN CÓ THUỐC CẢN QUANG"
+                                />
+                                <Typography
+                                    align="center"
+                                    variant="caption"
+                                    component="p"
+                                    children="(Bác Sĩ chỉ định đánh dấu vào các mục này)"
+                                />
                                 <Grid
-                                    item
-                                    xs={12} sm={12} md={6} lg={6} xl={6}
-                                >
-                                    <Typography
-                                        align="center"
-                                        variant="h6"
-                                        component="h6"
-                                        children="Phần chung"
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <Typography
-                                        align="center"
-                                        variant="h6"
-                                        component="h6"
-                                        children="Có"
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <Typography
-                                        align="center"
-                                        variant="h6"
-                                        component="h6"
-                                        children="Không"
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12} sm={12} md={6} lg={6} xl={6}
-                                >
-                                    <Typography
-                                        align="left"
-                                        variant="h6"
-                                        component="h6"
-                                        children="Có thai"
-                                        className={classes.typography}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
                                     container
                                     justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
+                                    alignItems="center"
+                                    spacing={2}
+                                    style={{
+                                        marginTop: 24,
+                                        marginBottom: 24,
+                                    }}
                                 >
-                                    <CheckBox
-                                        id="IsPregnant"
-                                        checked={ctForm.IsPregnant}
-                                        disabled={viewMode}
-                                        value="Yes"
-                                        onChange={handleCtFormChange('IsPregnant')}
-                                    />
+                                    <Grid
+                                        item
+                                        xs={12} sm={12} md={6} lg={6} xl={6}
+                                    >
+                                        <Typography
+                                            align="center"
+                                            variant="h6"
+                                            component="h6"
+                                            children="Phần chung"
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <Typography
+                                            align="center"
+                                            variant="h6"
+                                            component="h6"
+                                            children="Có"
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <Typography
+                                            align="center"
+                                            variant="h6"
+                                            component="h6"
+                                            children="Không"
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12} sm={12} md={6} lg={6} xl={6}
+                                    >
+                                        <Typography
+                                            align="left"
+                                            variant="h6"
+                                            component="h6"
+                                            children="Có thai"
+                                            className={classes.typography}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsPregnant"
+                                            checked={ctForm.IsPregnant}
+                                            disabled={viewMode}
+                                            value="Yes"
+                                            onChange={handleCtFormChange('IsPregnant')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsNotPregnant"
+                                            checked={!ctForm.IsPregnant}
+                                            disabled={viewMode}
+                                            value="No"
+                                            onChange={handleCtFormChange('IsPregnant')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12} sm={12} md={6} lg={6} xl={6}
+                                    >
+                                        <Typography
+                                            align="left"
+                                            variant="h6"
+                                            component="h6"
+                                            children="Dị ứng"
+                                            className={classes.typography}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsAllergy"
+                                            checked={ctForm.IsAllergy}
+                                            disabled={viewMode}
+                                            value="Yes"
+                                            onChange={handleCtFormChange('IsAllergy')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsNotAllergy"
+                                            checked={!ctForm.IsAllergy}
+                                            disabled={viewMode}
+                                            value="No"
+                                            onChange={handleCtFormChange('IsAllergy')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12} sm={12} md={6} lg={6} xl={6}
+                                    >
+                                        <Typography
+                                            align="left"
+                                            variant="h6"
+                                            component="h6"
+                                            children="Bệnh lý tim mạch"
+                                            className={classes.typography}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsHeartDisease"
+                                            checked={ctForm.IsHeartDisease}
+                                            disabled={viewMode}
+                                            value="Yes"
+                                            onChange={handleCtFormChange('IsHeartDisease')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsNotHeartDisease"
+                                            checked={!ctForm.IsHeartDisease}
+                                            disabled={viewMode}
+                                            value="No"
+                                            onChange={handleCtFormChange('IsHeartDisease')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12} sm={12} md={6} lg={6} xl={6}
+                                    >
+                                        <Typography
+                                            align="left"
+                                            variant="h6"
+                                            component="h6"
+                                            children="Bệnh lý mạch máu ngoại biên"
+                                            className={classes.typography}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsBloodDisease"
+                                            checked={ctForm.IsBloodDisease}
+                                            disabled={viewMode}
+                                            value="Yes"
+                                            onChange={handleCtFormChange('IsBloodDisease')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsNotBloodDisease"
+                                            checked={!ctForm.IsBloodDisease}
+                                            disabled={viewMode}
+                                            value="No"
+                                            onChange={handleCtFormChange('IsBloodDisease')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12} sm={12} md={6} lg={6} xl={6}
+                                    >
+                                        <Typography
+                                            align="left"
+                                            variant="h6"
+                                            component="h6"
+                                            children="Suy thận"
+                                            className={classes.typography}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsKidneyFailure"
+                                            checked={ctForm.IsKidneyFailure}
+                                            disabled={viewMode}
+                                            value="Yes"
+                                            onChange={handleCtFormChange('IsKidneyFailure')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsNotKidneyFailure"
+                                            checked={!ctForm.IsKidneyFailure}
+                                            disabled={viewMode}
+                                            value="No"
+                                            onChange={handleCtFormChange('IsKidneyFailure')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12} sm={12} md={6} lg={6} xl={6}
+                                    >
+                                        <Typography
+                                            align="left"
+                                            variant="h6"
+                                            component="h6"
+                                            children="Đái tháo đường"
+                                            className={classes.typography}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsDiabetesMellitus"
+                                            checked={ctForm.IsDiabetesMellitus}
+                                            disabled={viewMode}
+                                            value="Yes"
+                                            onChange={handleCtFormChange('IsDiabetesMellitus')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsNotDiabetesMellitus"
+                                            checked={!ctForm.IsDiabetesMellitus}
+                                            disabled={viewMode}
+                                            value="No"
+                                            onChange={handleCtFormChange('IsDiabetesMellitus')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12} sm={12} md={6} lg={6} xl={6}
+                                    >
+                                        <Typography
+                                            align="left"
+                                            variant="h6"
+                                            component="h6"
+                                            children="Rối loạn đông máu"
+                                            className={classes.typography}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsCoagulopathy"
+                                            checked={ctForm.IsCoagulopathy}
+                                            disabled={viewMode}
+                                            value="Yes"
+                                            onChange={handleCtFormChange('IsCoagulopathy')}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        container
+                                        justify="center"
+                                        xs={12} sm={12} md={3} lg={3} xl={3}
+                                    >
+                                        <CheckBox
+                                            id="IsNotCoagulopathy"
+                                            checked={!ctForm.IsCoagulopathy}
+                                            disabled={viewMode}
+                                            value="No"
+                                            onChange={handleCtFormChange('IsCoagulopathy')}
+                                        />
+                                    </Grid>
                                 </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsNotPregnant"
-                                        checked={!ctForm.IsPregnant}
-                                        disabled={viewMode}
-                                        value="No"
-                                        onChange={handleCtFormChange('IsPregnant')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12} sm={12} md={6} lg={6} xl={6}
-                                >
-                                    <Typography
-                                        align="left"
-                                        variant="h6"
-                                        component="h6"
-                                        children="Dị ứng"
-                                        className={classes.typography}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsAllergy"
-                                        checked={ctForm.IsAllergy}
-                                        disabled={viewMode}
-                                        value="Yes"
-                                        onChange={handleCtFormChange('IsAllergy')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsNotAllergy"
-                                        checked={!ctForm.IsAllergy}
-                                        disabled={viewMode}
-                                        value="No"
-                                        onChange={handleCtFormChange('IsAllergy')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12} sm={12} md={6} lg={6} xl={6}
-                                >
-                                    <Typography
-                                        align="left"
-                                        variant="h6"
-                                        component="h6"
-                                        children="Bệnh lý tim mạch"
-                                        className={classes.typography}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsHeartDisease"
-                                        checked={ctForm.IsHeartDisease}
-                                        disabled={viewMode}
-                                        value="Yes"
-                                        onChange={handleCtFormChange('IsHeartDisease')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsNotHeartDisease"
-                                        checked={!ctForm.IsHeartDisease}
-                                        disabled={viewMode}
-                                        value="No"
-                                        onChange={handleCtFormChange('IsHeartDisease')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12} sm={12} md={6} lg={6} xl={6}
-                                >
-                                    <Typography
-                                        align="left"
-                                        variant="h6"
-                                        component="h6"
-                                        children="Bệnh lý mạch máu ngoại biên"
-                                        className={classes.typography}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsBloodDisease"
-                                        checked={ctForm.IsBloodDisease}
-                                        disabled={viewMode}
-                                        value="Yes"
-                                        onChange={handleCtFormChange('IsBloodDisease')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsNotBloodDisease"
-                                        checked={!ctForm.IsBloodDisease}
-                                        disabled={viewMode}
-                                        value="No"
-                                        onChange={handleCtFormChange('IsBloodDisease')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12} sm={12} md={6} lg={6} xl={6}
-                                >
-                                    <Typography
-                                        align="left"
-                                        variant="h6"
-                                        component="h6"
-                                        children="Suy thận"
-                                        className={classes.typography}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsKidneyFailure"
-                                        checked={ctForm.IsKidneyFailure}
-                                        disabled={viewMode}
-                                        value="Yes"
-                                        onChange={handleCtFormChange('IsKidneyFailure')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsNotKidneyFailure"
-                                        checked={!ctForm.IsKidneyFailure}
-                                        disabled={viewMode}
-                                        value="No"
-                                        onChange={handleCtFormChange('IsKidneyFailure')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12} sm={12} md={6} lg={6} xl={6}
-                                >
-                                    <Typography
-                                        align="left"
-                                        variant="h6"
-                                        component="h6"
-                                        children="Đái tháo đường"
-                                        className={classes.typography}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsDiabetesMellitus"
-                                        checked={ctForm.IsDiabetesMellitus}
-                                        disabled={viewMode}
-                                        value="Yes"
-                                        onChange={handleCtFormChange('IsDiabetesMellitus')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsNotDiabetesMellitus"
-                                        checked={!ctForm.IsDiabetesMellitus}
-                                        disabled={viewMode}
-                                        value="No"
-                                        onChange={handleCtFormChange('IsDiabetesMellitus')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12} sm={12} md={6} lg={6} xl={6}
-                                >
-                                    <Typography
-                                        align="left"
-                                        variant="h6"
-                                        component="h6"
-                                        children="Rối loạn đông máu"
-                                        className={classes.typography}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsCoagulopathy"
-                                        checked={ctForm.IsCoagulopathy}
-                                        disabled={viewMode}
-                                        value="Yes"
-                                        onChange={handleCtFormChange('IsCoagulopathy')}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    container
-                                    justify="center"
-                                    xs={12} sm={12} md={3} lg={3} xl={3}
-                                >
-                                    <CheckBox
-                                        id="IsNotCoagulopathy"
-                                        checked={!ctForm.IsCoagulopathy}
-                                        disabled={viewMode}
-                                        value="No"
-                                        onChange={handleCtFormChange('IsCoagulopathy')}
-                                    />
-                                </Grid>
-                            </Grid>
+                            </div>
                             {
                                 (addMode || updateMode) &&
                                 <Grid

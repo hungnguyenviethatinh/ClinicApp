@@ -27,10 +27,11 @@ const PatientPreview = (props) => {
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const maxWidth = useMediaQuery(theme.breakpoints.up('xl')) ? 'lg' : 'md';
 
     return (
         <Dialog
-            maxWidth="md"
+            maxWidth={maxWidth}
             fullScreen={fullScreen}
             open={open}
             onClose={handleCancel}

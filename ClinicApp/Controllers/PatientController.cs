@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Chromely.Core.RestfulService;
-using SelectPdf;
 using System.Text.Json;
 using ClinicApp.Core;
 using ClinicApp.ViewModels;
@@ -51,14 +49,12 @@ namespace ClinicApp.Controllers
                 html = sr.ReadToEnd();
             }
 
-            string dayOfWeek = Utils.GetDayOfWeek(DateTime.Now);
             string date = DateTime.Now.Day.ToString();
             string month = DateTime.Now.Month.ToString();
             string year = DateTime.Now.Year.ToString();
             string time = DateTime.Now.ToString("HH:mm");
 
             html = html.Replace("{date}", date);
-            html = html.Replace("{dayOfWeek}", dayOfWeek);
             html = html.Replace("{date}", date);
             html = html.Replace("{month}", month);
             html = html.Replace("{year}", year);
@@ -136,7 +132,7 @@ namespace ClinicApp.Controllers
             string appointmentHtml;
             if (!string.IsNullOrWhiteSpace(patient.AppointmentDate))
             {
-                appointmentHtml = "thứ {thu}, {ngay}/{thang}/{nam}, giờ khám: ................................";
+                appointmentHtml = "thứ {thu}, {ngay}/{thang}/{nam}, giờ khám: ....................................";
 
                 DateTime appointedDate = DateTime.ParseExact(patient.AppointmentDate, "dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
                 string thu = Utils.GetDayOfWeek(appointedDate);
@@ -153,7 +149,7 @@ namespace ClinicApp.Controllers
             else
             {
                 appointmentHtml =
-                $"thứ .........., ............../............../{DateTime.Now.Year}, giờ khám: ...............................";
+                $"thứ .........., ............../............../{DateTime.Now.Year}, giờ khám: ....................................";
             }
             html = html.Replace("{appointmentDate}", appointmentHtml);
 
@@ -194,19 +190,19 @@ namespace ClinicApp.Controllers
                 {
                     string fullName = doctor.FullName.ToUpper();
 
-                    if (fullName.Equals("TRẦN ĐĂNG KHOA", StringComparison.OrdinalIgnoreCase))
+                    if (fullName.Contains("TRẦN ĐĂNG KHOA"))
                     {
                         html = html.Replace("{bs.tdk}", "checked");
                     }
-                    if (fullName.Equals("LÂM QUỐC THANH", StringComparison.OrdinalIgnoreCase))
+                    else if (fullName.Contains("LÂM QUỐC THANH"))
                     {
                         html = html.Replace("{bs.lqt}", "checked");
                     }
-                    if (fullName.Equals("LÊ ĐỨC HIẾU", StringComparison.OrdinalIgnoreCase))
+                    else if (fullName.Contains("LÊ ĐỨC HIẾU"))
                     {
-                        html = html.Replace("{{bs.ldh}", "checked");
+                        html = html.Replace("{bs.ldh}", "checked");
                     }
-                    if (fullName.Equals("PHẠM BÁ HẢI ĐƯỜNG", StringComparison.OrdinalIgnoreCase))
+                    else if (fullName.Contains("PHẠM BÁ HẢI ĐƯỜNG"))
                     {
                         html = html.Replace("{bs.pbhd}", "checked");
                     }
@@ -226,27 +222,25 @@ namespace ClinicApp.Controllers
 
             string url = $"file:///{appDirectory}/wwwroot/index.html";
 
-            HtmlToPdf converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A5;
-            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
-            converter.Options.WebPageWidth = 600;
+            SelectPdf.HtmlToPdf converter = new SelectPdf.HtmlToPdf();
+            converter.Options.PdfPageSize = SelectPdf.PdfPageSize.A5;
+            converter.Options.PdfPageOrientation = SelectPdf.PdfPageOrientation.Portrait;
+            converter.Options.WebPageWidth = 595;
 
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
             string saveFile = $"PTNBN_{createdTime}.pdf";
             string saveDirectory = $"{appDirectory}\\PTNBN";
             string savePath = $"{saveDirectory}\\{saveFile}";
 
-            PdfDocument pdf = converter.ConvertUrl(url);
+            SelectPdf.PdfDocument pdf = converter.ConvertUrl(url);
             pdf.Save(savePath);
             pdf.Close();
 
-            ProcessStartInfo info = new ProcessStartInfo(savePath)
-            {
-                Verb = "Print",
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden
-            };
-            Process.Start(info);
+            Spire.Pdf.PdfDocument document = new Spire.Pdf.PdfDocument();
+            document.LoadFromFile(savePath);
+            document.PrintSettings.PaperSize.RawKind = (int)System.Drawing.Printing.PaperKind.A5;
+            document.Print();
+            document.Close();
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {

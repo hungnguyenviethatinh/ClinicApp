@@ -209,7 +209,7 @@ const PatientManagement = () => {
     };
 
     const [patient, setPatient] = React.useState({
-        IdCode: '',
+        IdCode: `${moment().year()}/BN`,
         FullName: '',
         Age: '',
         Address: '',
@@ -437,7 +437,7 @@ const PatientManagement = () => {
 
     const handleReset = () => {
         setPatient({
-            IdCode: '',
+            IdCode: `${moment().year()}/BN`,
             FullName: '',
             Age: '',
             Address: '',

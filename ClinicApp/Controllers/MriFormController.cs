@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Chromely.Core.RestfulService;
-using SelectPdf;
 using System.Text.Json;
 using ClinicApp.Core;
 using ClinicApp.ViewModels;
@@ -196,9 +195,9 @@ namespace ClinicApp.Controllers
 
             string other = !string.IsNullOrWhiteSpace(mriForm.Other) ?
                 mriForm.Other :
-                "................................................................................................." +
-                "................................................................................................." +
-                "...............................................................";
+                "........................................................................................." +
+                "........................................................................................." +
+                ".................................";
             html = html.Replace("{Other}", other);
 
             string doctorName = doctor.FullName;
@@ -212,9 +211,9 @@ namespace ClinicApp.Controllers
 
             string url = $"file:///{appDirectory}/wwwroot/index.html";
 
-            HtmlToPdf converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A4;
-            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
+            SelectPdf.HtmlToPdf converter = new SelectPdf.HtmlToPdf();
+            converter.Options.PdfPageSize = SelectPdf.PdfPageSize.A4;
+            converter.Options.PdfPageOrientation = SelectPdf.PdfPageOrientation.Portrait;
             converter.Options.WebPageWidth = 800;
 
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
@@ -222,17 +221,15 @@ namespace ClinicApp.Controllers
             string saveDirectory = $"{appDirectory}\\MRI";
             string savePath = $"{saveDirectory}\\{saveFile}";
 
-            PdfDocument pdf = converter.ConvertUrl(url);
+            SelectPdf.PdfDocument pdf = converter.ConvertUrl(url);
             pdf.Save(savePath);
             pdf.Close();
 
-            ProcessStartInfo info = new ProcessStartInfo(savePath)
-            {
-                Verb = "Print",
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden
-            };
-            Process.Start(info);
+            Spire.Pdf.PdfDocument document = new Spire.Pdf.PdfDocument();
+            document.LoadFromFile(savePath);
+            document.PrintSettings.PaperSize.RawKind = (int)System.Drawing.Printing.PaperKind.A4;
+            document.Print();
+            document.Close();
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {

@@ -57,8 +57,8 @@
 
                     </div>
                     <div class="right-header col-5">
-                        <p class="text-right"><i>Thứ {dayOfWeek}, ngày {date} tháng {month} năm {year}</i></p>
-                        <p class="text-right font-weight-bold">Mã DKC : 2020/BN {patientIdCode}</p>
+                        <p class="text-right" style="font-weight: bolder;"><i>Ngày {date} tháng {month} năm {year}</i></p>
+                        <p class="text-right" style="font-weight: bolder;">Mã DKC : 2020/BN {patientIdCode}</p>
                         <div class="row">
                             <div class="ml-auto text-right">
                                 KBLĐ
@@ -82,7 +82,7 @@
                 <div class="pat-info-content">
                     <div class="d-flex flex-row flex-wrap">
                         <div class="text-left">- Họ tên BN:&nbsp;</div>
-                        <div class="flex-fill text-center text-uppercase"> {patientName}</div>
+                        <div class="flex-fill text-left text-capitalize"> {patientName}</div>
                         <div class="text-left pr-1">Tuổi: {patientAge}</div>
                         <div class="text-right">Nam</div>
                         <div class="custom-control custom-checkbox" style="padding-left: 1.5rem; padding-right: 0;">
@@ -97,7 +97,7 @@
                     </div>
                     <div class="d-flex flex-row flex-wrap">
                         <div class="text-left">- Địa chỉ:&nbsp;</div>
-                        <div class="flex-fill text-center">{patientAddress}</div>
+                        <div class="flex-fill text-left">{patientAddress}</div>
                     </div>
                     <div class="d-flex flex-row flex-wrap">
                         <div class="flex-fill text-left" style="padding-right: 3px;">Điện thoại: {patientPhoneNumber}</div>
@@ -146,24 +146,24 @@
                             <div class="ml-4 hint"><i>(tại bàn hướng dẫn)</i></div>
                             <div class="d-flex flex-row flex-wrap">
                                 <i>Chiều cao: </i>
-                                <div class="flex-fill">&nbsp;{patientHeight}<i>&#176;C</i></div>
+                                <div class="flex-fill">&nbsp;{patientHeight}&nbsp;<b>&#176;C</b></div>
                             </div>
                             <div class="d-flex flex-row flex-wrap">
                                 <i>Cân nặng: </i>
-                                <div class="flex-fill">&nbsp;{patientWeight}<i>kg</i></div>
+                                <div class="flex-fill">&nbsp;{patientWeight}&nbsp;<i>kg</i></div>
                             </div>
                             <div class="d-flex flex-row flex-wrap">
                                 <i>Huyết áp: </i>
-                                <div class="flex-fill">&nbsp;{patientBloodPresure}<i>mmHg</i></div>
+                                <div class="flex-fill">&nbsp;{patientBloodPresure}&nbsp;<i>mmHg</i></div>
                             </div>
                             <div class="d-flex flex-row flex-wrap">
                                 <i>Nhịp tim: </i>
-                                <div class="flex-fill">&nbsp;{patientPulse}<i>lần/phút</i></div>
+                                <div class="flex-fill">&nbsp;{patientPulse}&nbsp;<i>lần/phút</i></div>
                             </div>
                             <div class="">
-                                <u><i>Lưu ý:&nbsp;</i></u>{patientNote}
+                                <u><i>Lưu ý:</i></u>&nbsp;{patientNote}
                             </div>
-                            <span><i>Trợ Lý:</i>..................................................</span>
+                            <span><i>Trợ Lý:&nbsp;</i>..............................................</span>
                         </div>
                     </div>
 
@@ -178,7 +178,7 @@
                             </div>
                             <div class="d-flex flex-row flex-wrap">
                                 <div>Bổ sung hồ sơ :</div>
-                                <div>...........................................................</div>
+                                <div>&nbsp;...........................................................</div>
                                 <div class="flex-fill">
                                     .........................................................................................
                                 </div>
@@ -212,7 +212,7 @@
                 </div>
                 <div class="row">
                     <div class="col-6 text-right d-flex">
-                        <div class="text-right">
+                        <div class="ml-auto text-right">
                             BS.CK2 <span class="font-weight-bold">TRẦN ĐĂNG KHOA</span>
                         </div>
                         <div class="custom-control custom-checkbox" style="padding-left: 1.25rem; padding-right: 0.25rem;">
@@ -222,7 +222,7 @@
 
                     </div>
                     <div class="col-6 text-right d-flex">
-                        <div class="text-right">
+                        <div class="ml-auto text-right">
                             BS.CK2 <span class="font-weight-bold">LÂM QUỐC THANH</span>
                         </div>
                         <div class="custom-control custom-checkbox" style="padding-left: 1.25rem; padding-right: 0.25rem;">
@@ -234,7 +234,7 @@
                 </div>
                 <div class="row">
                     <div class="col-6 text-right d-flex">
-                        <div class="text-right">
+                        <div class="ml-auto text-right">
                             BS. <span class="font-weight-bold">LÊ ĐỨC HIẾU</span>
                         </div>
                         <div class="custom-control custom-checkbox" style="padding-left: 1.25rem; padding-right: 0.25rem;">
@@ -244,7 +244,7 @@
 
                     </div>
                     <div class="col-6 text-right d-flex">
-                        <div class="text-right">
+                        <div class="ml-auto text-right">
                             BS. <span class="font-weight-bold">PHẠM BÁ HẢI ĐƯỜNG</span>
                         </div>
                         <div class="custom-control custom-checkbox" style="padding-left: 1.25rem; padding-right: 0.25rem;">
@@ -256,11 +256,5 @@
             </div>
         </div>
     </div>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
 </body>
 </html>
