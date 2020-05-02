@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using Chromely.Core.RestfulService;
 using System.Text.Json;
+using SelectPdf;
 using ClinicApp.Core;
 using ClinicApp.ViewModels;
+using Chromely.Core.RestfulService;
 
 namespace ClinicApp.Controllers
 {
@@ -211,21 +212,21 @@ namespace ClinicApp.Controllers
 
             string url = $"file:///{appDirectory}/wwwroot/index.html";
 
-            SelectPdf.HtmlToPdf converter = new SelectPdf.HtmlToPdf();
-            converter.Options.PdfPageSize = SelectPdf.PdfPageSize.A4;
-            converter.Options.PdfPageOrientation = SelectPdf.PdfPageOrientation.Portrait;
+            HtmlToPdf converter = new HtmlToPdf();
+            converter.Options.PdfPageSize = PdfPageSize.A4;
+            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
             converter.Options.WebPageFixedSize = true;
             converter.Options.WebPageWidth = 793;
             converter.Options.WebPageHeight = 1123;
-            converter.Options.AutoFitWidth = SelectPdf.HtmlToPdfPageFitMode.AutoFit;
-            converter.Options.AutoFitHeight = SelectPdf.HtmlToPdfPageFitMode.ShrinkOnly;
+            converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.AutoFit;
+            converter.Options.AutoFitHeight = HtmlToPdfPageFitMode.ShrinkOnly;
 
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
             string saveFile = $"MRI_{createdTime}.pdf";
             string saveDirectory = $"{appDirectory}\\MRI";
             string savePath = $"{saveDirectory}\\{saveFile}";
 
-            SelectPdf.PdfDocument pdf = converter.ConvertUrl(url);
+            PdfDocument pdf = converter.ConvertUrl(url);
             pdf.Save(savePath);
             pdf.Close();
 

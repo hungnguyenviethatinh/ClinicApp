@@ -1,21 +1,12 @@
 body {
     color: #011D42;
-    /*padding: 16px 12px;*/
     padding: 0;
-    /* line-height: 1.3; */
     letter-spacing: -0.5px;
-    /* font-family: Arial, Helvetica, sans-serif; */
 }
 
     body.box-a5 {
-        /*height: 595px;
-        width: 420px;
-        margin-left: auto;
-        margin-right: auto;*/
         width: 560px;
         height: 793px;
-        /*width: 420px;
-        height: 595px;*/
     }
 
     body.box-a4 {
@@ -26,15 +17,8 @@ body {
 
 .box-container {
     border: 3px solid #011D42;
-    /*padding: 12px 4px;*/
     padding: 8px 4px;
-    /*min-height: 595px;
-    height: auto;
-    width: 420px;*/
-    /*font-size: 12px;*/
     font-size: 16px;
-    /*margin-left: auto;
-    margin-right: auto;*/
     height: 100%;
     display: flex !important;
     flex-direction: column !important;
@@ -181,15 +165,9 @@ body {
     height: 16px;
 }
 
-/* .treatment-registration .custom-checkbox .custom-control-input:checked~.custom-control-label::after,
-.pat-info .custom-checkbox .custom-control-input:checked~.custom-control-label::after,
-.requirement .custom-checkbox .custom-control-input:checked~.custom-control-label::after,
-.essential-info .custom-checkbox .custom-control-input:checked~.custom-control-label::after {
-    background-size: 8px;
-} */
-
 .custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
-    background-size: 8px;
+    /*background-size: 8px;*/
+    background-size: 12px;
 }
 
 .header .custom-control-label::after, .header .custom-control-label::before,
@@ -239,24 +217,15 @@ body {
     right: -1rem;
 }
 
-/* .font-weight-bold, b {
-    font-weight: 600!important;
-} */
-
 .word-break {
     word-break: break-all;
 }
 
 .box-a4-container {
-    /*width: 595px;
-    min-height: 842px;
-    height: auto;*/
     border: 3px solid #011D42;
     padding: 6px 12px;
     /*font-size: 14px;*/
     font-size: 18px;
-    /*margin-left: auto;
-    margin-right: auto;*/
     height: 100%;
 }
 
