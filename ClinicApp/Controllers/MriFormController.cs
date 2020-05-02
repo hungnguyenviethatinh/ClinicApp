@@ -197,7 +197,7 @@ namespace ClinicApp.Controllers
                 mriForm.Other :
                 "........................................................................................." +
                 "........................................................................................." +
-                ".................................";
+                ".........................................................................................";
             html = html.Replace("{Other}", other);
 
             string doctorName = doctor.FullName;
@@ -214,7 +214,11 @@ namespace ClinicApp.Controllers
             SelectPdf.HtmlToPdf converter = new SelectPdf.HtmlToPdf();
             converter.Options.PdfPageSize = SelectPdf.PdfPageSize.A4;
             converter.Options.PdfPageOrientation = SelectPdf.PdfPageOrientation.Portrait;
-            converter.Options.WebPageWidth = 800;
+            converter.Options.WebPageFixedSize = true;
+            converter.Options.WebPageWidth = 793;
+            converter.Options.WebPageHeight = 1123;
+            converter.Options.AutoFitWidth = SelectPdf.HtmlToPdfPageFitMode.AutoFit;
+            converter.Options.AutoFitHeight = SelectPdf.HtmlToPdfPageFitMode.ShrinkOnly;
 
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
             string saveFile = $"MRI_{createdTime}.pdf";
@@ -225,11 +229,13 @@ namespace ClinicApp.Controllers
             pdf.Save(savePath);
             pdf.Close();
 
-            Spire.Pdf.PdfDocument document = new Spire.Pdf.PdfDocument();
-            document.LoadFromFile(savePath);
-            document.PrintSettings.PaperSize.RawKind = (int)System.Drawing.Printing.PaperKind.A4;
-            document.Print();
-            document.Close();
+            ProcessStartInfo startInfo = new ProcessStartInfo(savePath)
+            {
+                Verb = "Print",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+            };
+            Process.Start(startInfo);
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {

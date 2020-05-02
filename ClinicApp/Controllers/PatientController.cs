@@ -5,7 +5,7 @@ using Chromely.Core.RestfulService;
 using System.Text.Json;
 using ClinicApp.Core;
 using ClinicApp.ViewModels;
-
+using System.Diagnostics;
 
 namespace ClinicApp.Controllers
 {
@@ -175,13 +175,14 @@ namespace ClinicApp.Controllers
 
             string other = !string.IsNullOrWhiteSpace(patient.Other) ?
                 patient.Other :
-                "...................";
+                "............................................................";
             html = html.Replace("{patientOther}", other);
 
             string note = !string.IsNullOrWhiteSpace(patient.Note) ?
                 patient.Note :
-                "........................................ " +
-                ".............................................";
+                "........................................................... " +
+                "........................................................................... " +
+                "...........................................................................";
             html = html.Replace("{patientNote}", note);
 
             if (doctors.Count > 1)
@@ -225,7 +226,11 @@ namespace ClinicApp.Controllers
             SelectPdf.HtmlToPdf converter = new SelectPdf.HtmlToPdf();
             converter.Options.PdfPageSize = SelectPdf.PdfPageSize.A5;
             converter.Options.PdfPageOrientation = SelectPdf.PdfPageOrientation.Portrait;
-            converter.Options.WebPageWidth = 595;
+            converter.Options.WebPageFixedSize = true;
+            converter.Options.WebPageWidth = 560;
+            converter.Options.WebPageHeight = 793;
+            converter.Options.AutoFitWidth = SelectPdf.HtmlToPdfPageFitMode.AutoFit;
+            converter.Options.AutoFitHeight = SelectPdf.HtmlToPdfPageFitMode.ShrinkOnly;
 
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
             string saveFile = $"PTNBN_{createdTime}.pdf";
@@ -236,11 +241,13 @@ namespace ClinicApp.Controllers
             pdf.Save(savePath);
             pdf.Close();
 
-            Spire.Pdf.PdfDocument document = new Spire.Pdf.PdfDocument();
-            document.LoadFromFile(savePath);
-            document.PrintSettings.PaperSize.RawKind = (int)System.Drawing.Printing.PaperKind.A5;
-            document.Print();
-            document.Close();
+            ProcessStartInfo startInfo = new ProcessStartInfo(savePath)
+            {
+                Verb = "Print",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+            };
+            Process.Start(startInfo);
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {

@@ -5,6 +5,7 @@ using Chromely.Core.RestfulService;
 using System.Text.Json;
 using ClinicApp.Core;
 using ClinicApp.ViewModels;
+using System.Diagnostics;
 
 namespace ClinicApp.Controllers
 {
@@ -298,19 +299,19 @@ namespace ClinicApp.Controllers
 
             string upperVein = !string.IsNullOrWhiteSpace(ctForm.UpperVein) ?
                 ctForm.UpperVein :
-                ".........................................................";
+                "....................................................";
             html = html.Replace("{UpperVein}", upperVein);
 
             string lowerVein = !string.IsNullOrWhiteSpace(ctForm.LowerVein) ?
                 ctForm.LowerVein :
-                "........................................................";
+                "...................................................";
             html = html.Replace("{LowerVein}", lowerVein);
 
             string other = !string.IsNullOrWhiteSpace(ctForm.Other) ?
                 ctForm.Other :
-                "................................................................................... " +
-                "............................................................................................... " +
-                "...............................................................................................";
+                "................................................................................ " +
+                "................................................................................................. " +
+                ".................................................................................................";
             html = html.Replace("{Other}", other);
 
             if (ctForm.IsPregnant)
@@ -384,7 +385,11 @@ namespace ClinicApp.Controllers
             SelectPdf.HtmlToPdf converter = new SelectPdf.HtmlToPdf();
             converter.Options.PdfPageSize = SelectPdf.PdfPageSize.A4;
             converter.Options.PdfPageOrientation = SelectPdf.PdfPageOrientation.Portrait;
-            converter.Options.WebPageWidth = 842;
+            converter.Options.WebPageFixedSize = true;
+            converter.Options.WebPageWidth = 793;
+            converter.Options.WebPageHeight = 1123;
+            converter.Options.AutoFitWidth = SelectPdf.HtmlToPdfPageFitMode.AutoFit;
+            converter.Options.AutoFitHeight = SelectPdf.HtmlToPdfPageFitMode.ShrinkOnly;
 
             string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
             string saveFile = $"CT_{createdTime}.pdf";
@@ -395,11 +400,13 @@ namespace ClinicApp.Controllers
             pdf.Save(savePath);
             pdf.Close();
 
-            Spire.Pdf.PdfDocument document = new Spire.Pdf.PdfDocument();
-            document.LoadFromFile(savePath);
-            document.PrintSettings.PaperSize.RawKind = (int)System.Drawing.Printing.PaperKind.A4;
-            document.Print();
-            document.Close();
+            ProcessStartInfo startInfo = new ProcessStartInfo(savePath)
+            {
+                Verb = "Print",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+            };
+            Process.Start(startInfo);
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {

@@ -1,32 +1,58 @@
 body {
     color: #011D42;
-    padding: 16px 12px;
+    /*padding: 16px 12px;*/
+    padding: 0;
     /* line-height: 1.3; */
     letter-spacing: -0.5px;
     /* font-family: Arial, Helvetica, sans-serif; */
 }
 
+    body.box-a5 {
+        /*height: 595px;
+        width: 420px;
+        margin-left: auto;
+        margin-right: auto;*/
+        width: 560px;
+        height: 793px;
+        /*width: 420px;
+        height: 595px;*/
+    }
+
+    body.box-a4 {
+        width: 793px;
+        height: 1123px;
+        padding: 1rem;
+    }
+
 .box-container {
     border: 3px solid #011D42;
-    padding: 12px 4px;
-    min-height: 595px;
+    /*padding: 12px 4px;*/
+    padding: 8px 4px;
+    /*min-height: 595px;
     height: auto;
-    width: 420px;
-    font-size: 12px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 420px;*/
+    /*font-size: 12px;*/
+    font-size: 16px;
+    /*margin-left: auto;
+    margin-right: auto;*/
+    height: 100%;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 .header .left-header {
-    font-size: 9px;
+    /*font-size: 9px;*/
+    font-size: 11px;
 }
 
     .header .left-header .title {
-        font-size: 16px;
+        /*font-size: 16px;*/
+        font-size: 20px;
     }
 
 .header .right-header {
-    font-size: 10px;
+    /*font-size: 10px;*/
+    font-size: 12px;
 }
 
     .header .right-header p {
@@ -54,7 +80,8 @@ body {
 }
 
     .pat-info .title {
-        font-size: 18px;
+        /*font-size: 18px;*/
+        font-size: 24px;
     }
 
         .pat-info .title p {
@@ -66,6 +93,7 @@ body {
 .treatment-info {
     margin-top: 4px;
     margin-bottom: 6px;
+    flex-grow: 1;
 }
 
 .treatment-registration {
@@ -76,12 +104,14 @@ body {
 
     .treatment-registration .title p {
         margin-bottom: -8px;
-        font-size: 14px;
+        /*font-size: 14px;*/
+        font-size: 18px;
         font-weight: bolder;
     }
 
     .treatment-registration .title .sub-title {
-        font-size: 10px;
+        /*font-size: 10px;*/
+        font-size: 14px;
         font-weight: 400;
     }
 
@@ -99,8 +129,10 @@ body {
 }
 
 .treatment-info .box-left .hint {
-    font-size: 10px;
+    /*font-size: 10px;*/
+    font-size: 14px;
     margin-bottom: 6px;
+    text-align: center;
 }
 
 .treatment-info .box-right .title {
@@ -112,7 +144,8 @@ body {
     margin-top: 4px;
     border: 1px solid #011D42;
     padding: 6px 40px;
-    font-size: 10px;
+    /*font-size: 10px;*/
+    font-size: 12px;
 }
 
     .footer p {
@@ -122,7 +155,8 @@ body {
     .footer .title {
         font-weight: bolder;
         text-decoration: underline;
-        font-size: 12px;
+        /*font-size: 12px;*/
+        font-size: 14px;
     }
 
 .custom-control-input {
@@ -141,8 +175,10 @@ body {
 .pat-info .custom-control-label::after, .pat-info .custom-control-label::before,
 .requirement .custom-control-label::after, .requirement .custom-control-label::before,
 .essential-info .custom-control-label::after, .essential-info .custom-control-label::before {
-    width: 12px;
-    height: 12px;
+    /*width: 12px;
+    height: 12px;*/
+    width: 16px;
+    height: 16px;
 }
 
 /* .treatment-registration .custom-checkbox .custom-control-input:checked~.custom-control-label::after,
@@ -160,8 +196,10 @@ body {
 .footer .custom-control-label::after, .footer .custom-control-label::before,
 .assignment .custom-control-label::after, .assignment .custom-control-label::before,
 .pxn .exam-request .custom-control-label::after, .pxn .exam-request .custom-control-label::before {
-    width: 9px;
-    height: 9px;
+    /*width: 9px;
+    height: 9px;*/
+    width: 12px;
+    height: 12px;
 }
 
 .custom-checkbox .custom-control-label::before {
@@ -210,14 +248,16 @@ body {
 }
 
 .box-a4-container {
-    width: 595px;
+    /*width: 595px;
     min-height: 842px;
-    height: auto;
+    height: auto;*/
     border: 3px solid #011D42;
     padding: 6px 12px;
-    font-size: 14px;
-    margin-left: auto;
-    margin-right: auto;
+    /*font-size: 14px;*/
+    font-size: 18px;
+    /*margin-left: auto;
+    margin-right: auto;*/
+    height: 100%;
 }
 
     .box-a4-container.ct {
@@ -233,20 +273,24 @@ body {
     }
 
     .box-a4-container .header .left-header {
-        font-size: 12px;
+        /*font-size: 12px;*/
+        font-size: 14px;
     }
 
         .box-a4-container .header .left-header .title {
-            font-size: 24px;
+            /*font-size: 24px;*/
+            font-size: 27px;
             line-height: 1;
         }
 
     .box-a4-container .header .right-header {
-        font-size: 12px;
+        /*font-size: 12px;*/
+        font-size: 14px;
     }
 
     .box-a4-container .pat-info .title {
-        font-size: 29px;
+        /*font-size: 29px;*/
+        font-size: 40px;
     }
 
     .box-a4-container .header .right-header p {
@@ -260,6 +304,9 @@ body {
 .prescription {
     padding-left: 4px;
     padding-right: 4px;
+    line-height: 1.5;
+    flex-grow: 1;
+    margin-top: 2rem;
 }
 
 .prescription-item {
@@ -282,7 +329,8 @@ body {
 
 /* ct */
 .ct .essential-info, .ct .requirement {
-    font-size: 12px;
+    /*font-size: 12px;*/
+    font-size: 16px;
     font-weight: bolder;
 }
 
@@ -305,6 +353,10 @@ body {
     .ct .essential-info .table .custom-control, .ct .requirement .table .custom-control {
         min-height: 1rem;
     }
+
+        .ct .essential-info .table .custom-control, .ct .requirement .table .custom-control label.custom-control-label {
+            padding-left: .25rem !important;
+        }
 
 .ct-footer {
     min-height: 110px;
@@ -330,12 +382,15 @@ body {
 }
 
 .mri .pat-info .title p {
-    font-size: 20px;
+    /*font-size: 20px;*/
+    font-size: 30px;
     color: #BE1E2D;
 }
 
 .mri .assignment {
-    font-size: 12px;
+    /*font-size: 12px;*/
+    font-size: 16px;
+    flex-grow: 1;
 }
 
     .mri .assignment .custom-control {
@@ -343,6 +398,10 @@ body {
         line-height: 1.4;
         padding-left: 0.75rem;
     }
+
+        .mri .assignment .custom-control label.custom-control-label {
+            padding-left: 0.25rem !important;
+        }
 
 .assignment .custom-control-label::before, .assignment .custom-control-label::after {
     left: -0.75rem;
@@ -382,7 +441,8 @@ body {
 }
 
 .xq .pat-info .title p {
-    font-size: 20px;
+    /*font-size: 20px;*/
+    font-size: 30px;
 }
 
 .xq .xq-requirement {
@@ -397,7 +457,8 @@ body {
 }
 
 .xq .xq-req-body {
-    min-height: 126px;
+    /*min-height: 126px;*/
+    min-height: 250px;
 }
 
 .xq .signature {
@@ -405,54 +466,64 @@ body {
 }
 
 /* pxn */
-.pxn .pat-info .title p {
-    font-size: 20px;
-    color: #BE1E2D;
+.pxn {
+    display: flex;
+    flex-direction: column;
 }
 
-.pxn .exam-request {
-    font-size: 12px;
-}
-
-    .pxn .exam-request .custom-control {
-        min-height: 0.8rem;
-        line-height: 1;
-        padding-left: 1rem;
-    }
-
-    .pxn .exam-request .custom-control-label::before, .pxn .exam-request .custom-control-label::after {
-        left: -1rem;
-    }
-
-.pxn .exam-card {
-    margin-bottom: 4px;
-}
-
-    .pxn .exam-card.huyet-hoc {
+    .pxn .pat-info .title p {
+        /*font-size: 20px;*/
+        font-size: 30px;
         color: #BE1E2D;
     }
 
-    .pxn .exam-card.sinh-hoa {
-        color: #1B75BB;
+    .pxn .exam-request {
+        /*font-size: 12px;*/
+        font-size: 16px;
     }
 
-    .pxn .exam-card.vi-sinh {
-        color: #FAAF40;
+        .pxn .exam-request .custom-control {
+            min-height: 0.8rem;
+            line-height: 1;
+            padding-left: 1rem;
+        }
+
+        .pxn .exam-request .custom-control-label::before, .pxn .exam-request .custom-control-label::after {
+            left: -1rem;
+        }
+
+    .pxn .exam-card {
+        margin-bottom: 4px;
     }
 
-.pxn .exam-request .group-header {
-    margin-left: 1rem;
-    font-weight: bold;
-    font-style: italic;
-    letter-spacing: -1px;
-}
+        .pxn .exam-card.huyet-hoc {
+            color: #BE1E2D;
+        }
 
-.pxn .exam-request .custom-control-label::before, .pxn .exam-request .custom-control-label::after {
-    top: 0.15rem;
-}
+        .pxn .exam-card.sinh-hoa {
+            color: #1B75BB;
+        }
 
+        .pxn .exam-card.vi-sinh {
+            color: #FAAF40;
+        }
 
-/* ====================================== */
+    .pxn .exam-request .group-header {
+        margin-left: 1rem;
+        font-weight: bold;
+        font-style: italic;
+        letter-spacing: -1px;
+    }
+
+    .pxn .exam-request .custom-control-label::before, .pxn .exam-request .custom-control-label::after {
+        top: 0.15rem;
+    }
+
+    .pxn .signature {
+        margin-top: 3rem;
+        flex-grow: 1;
+    }
+
 .fs-17 {
     font-size: 17px;
 }
