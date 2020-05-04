@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Chromely.Core.RestfulService;
 using System.Text.Json;
 using ClinicApp.Core;
 using ClinicApp.ViewModels;
-using System.Diagnostics;
 
 namespace ClinicApp.Controllers
 {
@@ -123,7 +123,7 @@ namespace ClinicApp.Controllers
                     medicineHtml = medicineHtml.Replace("{index}", $"{index}");
 
                     string ingredient = !string.IsNullOrWhiteSpace(medicine.Ingredient) ? $"({medicine.Ingredient})" : "";
-                    string medicineName = $"{medicine.MedicineName} {medicine.NetWeight} {ingredient}";
+                    string medicineName = $"<b>{medicine.MedicineName}</b>&nbsp;{medicine.NetWeight} {ingredient}";
                     medicineHtml = medicineHtml.Replace("{medicineName}", medicineName);
 
                     string quantity = $"{medicine.Quantity}";
@@ -196,8 +196,8 @@ namespace ClinicApp.Controllers
 
             string prescriptionNote = !string.IsNullOrWhiteSpace(prescription.Note) ?
                 prescription.Note :
-                " .............................................................................................." +
-                "......................................................................................................";
+                "....................................................................................." +
+                ".....................................................................................";
             html = html.Replace("{prescriptionNote}", prescriptionNote);
 
             if (openTimes.Count > 0)

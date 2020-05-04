@@ -214,14 +214,14 @@ const PatientPreview = (props) => {
                                         <Typography
                                             variant="body1"
                                             component="p"
-                                            children="Chiều cao:"
+                                            children="Nhiệt độ:"
                                         />
                                     </Grid>
                                     <Grid item xs={6} sm={6} md={8} lg={8} xl={8}>
                                         <Typography
                                             variant="h6"
                                             component="h6"
-                                            children={`${patient.Height} cm`}
+                                            children={`${patient.Height} °C`}
                                             style={{ fontWeight: 600 }}
                                         />
                                     </Grid>

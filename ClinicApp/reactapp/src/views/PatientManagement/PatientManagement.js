@@ -1300,10 +1300,10 @@ const PatientManagement = () => {
                                     <TextField
                                         fullWidth
                                         id="Height"
-                                        label="Chiều cao"
+                                        label="Nhiệt độ"
                                         value={history.Height}
                                         onChange={handleHistoryChange('Height')}
-                                        placeholder=".......cm"
+                                        placeholder=".......°C"
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3} >
