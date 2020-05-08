@@ -37,6 +37,12 @@ namespace ClinicApp.Core
         public const string Emergency = "Khẩn cấp";
     }
 
+    public static class Constants
+    {
+        public const string DisplayDateFormat = "dd-MM-yyyy";
+        public const string DisplayDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
+    }
+
     public static class ConfigurationValues
     {
         public static string ApiUrl = ConfigurationManager.AppSettings.Get(KeyConstants.ApiUrlKey);

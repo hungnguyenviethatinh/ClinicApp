@@ -96,6 +96,12 @@ const takePeriodOptions = [
     { label: takePeriodValue.Month, value: takePeriodValue.Month },
 ];
 
+const appointmentDayOptions = [
+    { label: 'Không tái khám', value: 0 },
+    { label: '14 ngày sau', value: 14 },
+    { label: '17 ngày sau', value: 17 },
+];
+
 const PrescriptionManagement = () => {
     // [Start] Common
     const classes = useStyles();
@@ -163,6 +169,14 @@ const PrescriptionManagement = () => {
         }
     };
 
+    const [appointmentDays, setAppointmentDays] = React.useState(0);
+    const handleAppointmentDayChange = event => {
+        const days = event.target.value;
+        const appointmentDate = days > 0 ? moment().add(days, 'days') : null;
+        setAppointmentDays(days);
+        handleAppointmentDateChange(appointmentDate);
+    };
+
     const [patient, setPatient] = React.useState({
         Id: 0,
         Age: '',
@@ -172,17 +186,10 @@ const PrescriptionManagement = () => {
         AppointmentDate: null,
     });
     const handleAppointmentDateChange = (date) => {
-        if (moment(date).isValid()) {
-            setPatient({
-                ...patient,
-                AppointmentDate: date.format(),
-            });
-        } else {
-            setPatient({
-                ...patient,
-                AppointmentDate: null,
-            });
-        }
+        setPatient({
+            ...patient,
+            AppointmentDate: moment(date).isValid() ? date.format() : null,
+        });
 
         let days = 0;
         const now = moment();
@@ -377,7 +384,6 @@ const PrescriptionManagement = () => {
         })
         setPrescription({
             ...prescription,
-            // IdCode: '',
             DateCreated: moment(),
             Diagnosis: '',
             OtherDiagnosis: '',
@@ -409,10 +415,6 @@ const PrescriptionManagement = () => {
         }
         if (patient.AppointmentDate && !moment(patient.AppointmentDate).isValid()) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày hẹn tái khám hợp lệ (không có để trống)!');
-            return;
-        }
-        if (!prescription.Diagnosis.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập chẩn đoán!');
             return;
         }
         if (!prescription.IdCode.trim()) {
@@ -805,7 +807,10 @@ const PrescriptionManagement = () => {
                     id,
                     name,
                 }));
-                setDiagnosisOptions(options);
+                setDiagnosisOptions([
+                    ...diagnosisOptions,
+                    ...options,
+                ]);
                 setStopLoadingDiagnosisName(true);
             }
         }).catch((reason) => {
@@ -1153,7 +1158,21 @@ const PrescriptionManagement = () => {
                                             rows={3}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                        <Select
+                                            fullWidth
+                                            id="appointmentDays"
+                                            label="Tái khám sau"
+                                            value={appointmentDays}
+                                            options={appointmentDayOptions}
+                                            onChange={handleAppointmentDayChange}
+                                            style={{
+                                                marginTop: 0,
+                                                marginBottom: 0,
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                         <DatePicker
                                             fullWidth
                                             disablePast

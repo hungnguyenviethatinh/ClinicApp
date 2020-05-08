@@ -160,6 +160,8 @@ const Prescription = () => {
             openTimes,
         });
 
+        console.log(JSON.parse(data));
+
         setDisabled(true);
         setLoading(true);
 
@@ -540,10 +542,13 @@ const Prescription = () => {
                                     <Typography
                                         component="h5"
                                         variant="h5"
-                                        children={`${prescription.Diagnosis}`}
+                                        children={`${!prescription.Diagnosis.trim() ?
+                                            '................................................................'
+                                            + '...............................................................' :
+                                            prescription.Diagnosis}`}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                                <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                     <Typography
                                         component="h5"
                                         variant="h5"
@@ -551,11 +556,14 @@ const Prescription = () => {
                                         style={{ fontWeight: 600 }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={12} md={10} lg={10} xl={10}>
+                                <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
                                     <Typography
                                         component="h5"
                                         variant="h5"
-                                        children={`${prescription.OtherDiagnosis}`}
+                                        children={`${!prescription.OtherDiagnosis.trim() ?
+                                            '................................................................'
+                                            + '..................................................' :
+                                            prescription.OtherDiagnosis}`}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -686,16 +694,25 @@ const Prescription = () => {
                                             spacing={2}
                                             justify="space-between"
                                             alignItems="center"
+                                            style={{
+                                                marginLeft: 0,
+                                                marginRight: 0,
+                                                width: '100%',
+                                            }}
                                         >
-                                            <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
+                                            <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
                                                 <Typography
                                                     component="h5"
                                                     variant="h5"
-                                                    children={`Dặn dò: ${prescription.Note || '............'}`}
+                                                    children={
+                                                        `Dặn dò: ${prescription.Note ||
+                                                        '.......................................................... '
+                                                        + '.........................................................................'}`
+                                                    }
                                                     style={{ textDecoration: 'underline', fontWeight: 600 }}
                                                 />
                                             </Grid>
-                                            <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                            <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                                 <Typography
                                                     align="center"
                                                     component="h5"
@@ -719,7 +736,7 @@ const Prescription = () => {
                                                 <Typography
                                                     component="h5"
                                                     variant="h5"
-                                                    children={`Tái khám: ${patient.AppointmentDate || '............'}`}
+                                                    children={`Tái khám: ${patient.AppointmentDate || '............................'}`}
                                                     style={{ textDecoration: 'underline', fontWeight: 600 }}
                                                 />
                                                 <Typography
@@ -745,7 +762,7 @@ const Prescription = () => {
                                                 item
                                                 justify="center"
                                                 alignItems="flex-end"
-                                                xs={12} sm={12} md={3} lg={3} xl={3}
+                                                xs={12} sm={12} md={4} lg={4} xl={4}
                                             >
                                                 <Typography
                                                     align="center"

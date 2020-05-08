@@ -22,6 +22,7 @@ const AutocompleteComponent = props => {
         freeSolo,
         options,
         onChange,
+        onBlur,
         getOptionLabel,
         margin,
         disabled,
@@ -44,6 +45,7 @@ const AutocompleteComponent = props => {
                 noOptionsText={`Không có lựa chọn nào`}
                 value={value}
                 onChange={onChange}
+                onBlur={onBlur}
                 renderInput={params => (
                     <TextField
                         {...params}
@@ -73,6 +75,7 @@ AutocompleteComponent.propTypes = {
     margin: PropTypes.oneOf(['none', 'dense', 'normal']),
     disabled: PropTypes.bool,
     onChange: PropTypes.func,
+    onBlur: PropTypes.func,
     getOptionLabel: PropTypes.func,
 };
 
@@ -88,6 +91,7 @@ AutocompleteComponent.defaultProps = {
     margin: 'none',
     disabled: false,
     onChange: () => { },
+    onBlur: () => { },
     getOptionLabel: () => { },
 };
 

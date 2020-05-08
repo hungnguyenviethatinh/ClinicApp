@@ -205,6 +205,12 @@ const XqForm = () => {
         }
         setDiagnosisNameValue(value);
     };
+    const handleDiagnosisNameValueBlur = (event) => {
+        setXqForm({
+            ...xqForm,
+            DiagnosisName: event.target.value,
+        });
+    };
     const [diagnosisNameOptions, setDiagnosisNameOptions] = React.useState([{
         id: '',
         name: '',
@@ -308,7 +314,11 @@ const XqForm = () => {
                     Address: address,
                     PhoneNumber: phoneNumber,
                 });
-                const diagnosisNameValue = diagnosisNameOptions.find(p => p.name === data[0].diagnosisName);
+                const diagnosisNameValue = diagnosisNameOptions
+                    .find(p => p.name === data[0].diagnosisName) || {
+                    id: '',
+                    name: data[0].diagnosisName,
+                };
                 setDiagnosisNameValue(diagnosisNameValue);
                 setXqForm({
                     IdCode: data[0].idCode,
@@ -448,14 +458,6 @@ const XqForm = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên bệnh nhân!');
             return;
         }
-        if (!xqForm.DiagnosisName.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập chẩn đoán!');
-            return;
-        }
-        // if (!xqForm.IdCode.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập mã đơn!');
-        //     return;
-        // }
         if (!xqForm.DateCreated) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày kê đơn!');
             return;
@@ -636,6 +638,7 @@ const XqForm = () => {
                                         getOptionLabel={option => getDiagnosisOptionLabel(option)}
                                         value={diagnosisNameValue}
                                         onChange={handleDiagnosisNameValueChange}
+                                        onBlur={handleDiagnosisNameValueBlur}
                                     />
                                 </Grid>
                             </Grid>

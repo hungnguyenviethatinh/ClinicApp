@@ -226,6 +226,12 @@ const MriForm = () => {
         }
         setDiagnosisNameValue(value);
     };
+    const handleDiagnosisNameValueBlur = (event) => {
+        setMriForm({
+            ...mriForm,
+            DiagnosisName: event.target.value,
+        });
+    };
     const [diagnosisNameOptions, setDiagnosisNameOptions] = React.useState([{
         id: '',
         name: '',
@@ -329,7 +335,11 @@ const MriForm = () => {
                     Address: address,
                     PhoneNumber: phoneNumber,
                 });
-                const diagnosisNameValue = diagnosisNameOptions.find(p => p.name === data[0].diagnosisName);
+                const diagnosisNameValue = diagnosisNameOptions
+                    .find(p => p.name === data[0].diagnosisName) || {
+                    id: '',
+                    name: data[0].diagnosisName,
+                };
                 setDiagnosisNameValue(diagnosisNameValue);
                 setMriForm({
                     IdCode: data[0].idCode,
@@ -479,14 +489,6 @@ const MriForm = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên bệnh nhân!');
             return;
         }
-        if (!mriForm.DiagnosisName.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập chẩn đoán!');
-            return;
-        }
-        // if (!mriForm.IdCode.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập mã đơn!');
-        //     return;
-        // }
         if (!mriForm.DateCreated) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày kê đơn!');
             return;
@@ -669,6 +671,7 @@ const MriForm = () => {
                                         getOptionLabel={option => getDiagnosisOptionLabel(option)}
                                         value={diagnosisNameValue}
                                         onChange={handleDiagnosisNameValueChange}
+                                        onBlur={handleDiagnosisNameValueBlur}
                                     />
                                 </Grid>
                             </Grid>

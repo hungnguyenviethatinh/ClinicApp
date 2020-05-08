@@ -135,7 +135,9 @@ namespace ClinicApp.Controllers
             {
                 appointmentHtml = "thứ {thu}, {ngay}/{thang}/{nam}, giờ khám: ....................................";
 
-                DateTime appointedDate = DateTime.ParseExact(patient.AppointmentDate, "dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+                DateTime appointedDate = DateTime.ParseExact(patient.AppointmentDate,
+                    Constants.DisplayDateTimeFormat,
+                    System.Globalization.CultureInfo.CurrentCulture);
                 string thu = Utils.GetDayOfWeek(appointedDate);
                 string ngay = appointedDate.Day.ToString();
                 string thang = appointedDate.Month.ToString();

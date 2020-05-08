@@ -228,6 +228,12 @@ const CtForm = () => {
         }
         setDiagnosisNameValue(value);
     };
+    const handleDiagnosisNameValueBlur = (event) => {
+        setCtForm({
+            ...ctForm,
+            DiagnosisName: event.target.value,
+        });
+    };
     const [diagnosisNameOptions, setDiagnosisNameOptions] = React.useState([{
         id: '',
         name: '',
@@ -331,7 +337,11 @@ const CtForm = () => {
                     Address: address,
                     PhoneNumber: phoneNumber,
                 });
-                const diagnosisNameValue = diagnosisNameOptions.find(p => p.name === data[0].diagnosisName);
+                const diagnosisNameValue = diagnosisNameOptions
+                    .find(p => p.name === data[0].diagnosisName) || {
+                    id: '',
+                    name: data[0].diagnosisName,
+                };
                 setDiagnosisNameValue(diagnosisNameValue);
                 setCtForm({
                     IdCode: data[0].idCode,
@@ -502,14 +512,6 @@ const CtForm = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập tên bệnh nhân!');
             return;
         }
-        if (!ctForm.DiagnosisName.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập chẩn đoán!');
-            return;
-        }
-        // if (!ctForm.IdCode.trim()) {
-        //     handleSnackbarOption('error', 'Yêu cầu nhập mã đơn!');
-        //     return;
-        // }
         if (!ctForm.DateCreated) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày kê đơn!');
             return;
@@ -690,6 +692,7 @@ const CtForm = () => {
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                                     <Autocomplete
                                         fullWidth
+                                        freeSolo
                                         disabled={viewMode}
                                         margin="dense"
                                         id="Diagnosis"
@@ -698,6 +701,7 @@ const CtForm = () => {
                                         getOptionLabel={option => getDiagnosisOptionLabel(option)}
                                         value={diagnosisNameValue}
                                         onChange={handleDiagnosisNameValueChange}
+                                        onBlur={handleDiagnosisNameValueBlur}
                                     />
                                 </Grid>
                             </Grid>

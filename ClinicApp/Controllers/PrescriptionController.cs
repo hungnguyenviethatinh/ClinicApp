@@ -100,8 +100,11 @@ namespace ClinicApp.Controllers
                 ".........................................................";
             html = html.Replace("{patientPhoneNumber}", patientPhoneNumber);
 
-            string diagnosisName = (!string.IsNullOrWhiteSpace(prescription.Diagnosis) || !string.IsNullOrWhiteSpace(prescription.OtherDiagnosis)) ?
-                $"{prescription.Diagnosis}, {prescription.OtherDiagnosis}" :
+            string diagnosis = !string.IsNullOrWhiteSpace(prescription.Diagnosis) ? prescription.Diagnosis : "";
+            string otherDiagnosis = !string.IsNullOrWhiteSpace(prescription.OtherDiagnosis) ? prescription.OtherDiagnosis : "";
+            string separator = (!string.IsNullOrEmpty(diagnosis) && !string.IsNullOrEmpty(otherDiagnosis)) ? ", " : "";
+            string diagnosisName = (!string.IsNullOrEmpty(diagnosis) || !string.IsNullOrEmpty(otherDiagnosis)) ?
+                $"{diagnosis}{separator}{otherDiagnosis}" :
                 "................................................................................................." +
                 "...........................................................................................";
             html = html.Replace("{diagnosisName}", diagnosisName);
@@ -174,7 +177,9 @@ namespace ClinicApp.Controllers
                 @"<u class=""font-weight-bold"">Tái khám: </u>
                     ........................................, Thứ {thu}, ngày {ngay} tháng {thang} năm {nam}.";
 
-                DateTime appointedDate = DateTime.ParseExact(patient.AppointmentDate, "dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+                DateTime appointedDate = DateTime.ParseExact(patient.AppointmentDate,
+                    Constants.DisplayDateFormat,
+                    System.Globalization.CultureInfo.CurrentCulture);
                 string thu = Utils.GetDayOfWeek(appointedDate);
                 string ngay = appointedDate.Day.ToString();
                 string thang = appointedDate.Month.ToString();
@@ -205,7 +210,15 @@ namespace ClinicApp.Controllers
                 string openTimeHtmls = "";
                 foreach (var openTime in openTimes)
                 {
-                    openTimeHtmls += $"<span>- {openTime.OpenClosedTime}</span>";
+                    string openClosedTime = openTime.OpenClosedTime;
+                    if (openClosedTime.StartsWith("-"))
+                    {
+                        openTimeHtmls += $"<span>{openClosedTime}</span>";
+                    }
+                    else
+                    {
+                        openTimeHtmls += $"<span>- {openClosedTime}</span>";
+                    }
                 }
                 html = html.Replace("{openTimes}", openTimeHtmls);
             }

@@ -7,7 +7,7 @@ namespace ClinicApp.Core
         public static string GetDayOfWeek(DateTime dateTime)
         {
             string dayOfWeek;
-            switch (DateTime.Now.DayOfWeek)
+            switch (dateTime.DayOfWeek)
             {
                 case DayOfWeek.Monday:
                     dayOfWeek = "2";
