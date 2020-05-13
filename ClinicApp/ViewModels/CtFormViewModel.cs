@@ -16,6 +16,7 @@ namespace ClinicApp.ViewModels
         public string Type { get; set; }
         // Thuốc cản quang
         public bool IsContrastMedicine { get; set; }
+        public bool IsNotContrastMedicine { get; set; }
         // Sọ não
         public bool IsSkull { get; set; }
         // Tai mũi họng

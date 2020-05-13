@@ -36,6 +36,7 @@ namespace ClinicAPI.ViewModels.ServiceForm
         public string Other { get; set; }
         // Dùng chất đối quang
         public bool IsContrastAgent { get; set; }
+        public bool IsNotContrastAgent { get; set; }
     }
 
     public class MriFormAddModel : MriFormModel

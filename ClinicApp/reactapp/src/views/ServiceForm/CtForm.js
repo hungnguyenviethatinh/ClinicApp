@@ -147,29 +147,50 @@ const CtForm = () => {
 
     const [ctForm, setCtForm] = React.useState(CtFormModel);
     const handleCtFormChange = prop => event => {
-        const value = event.target.value;
-        if (value === 'Yes') {
+        // const value = event.target.value;
+        // if (value === 'Yes') {
+        //     setCtForm({
+        //         ...ctForm,
+        //         [prop]: true,
+        //     });
+        // } else if (value === 'No') {
+        //     setCtForm({
+        //         ...ctForm,
+        //         [prop]: false,
+        //     });
+        // } else {
+        //     setCtForm({
+        //         ...ctForm,
+        //         [prop]: value,
+        //     });
+        // }
+
+        setCtForm({
+            ...ctForm,
+            [prop]: event.target.value,
+        });
+    };
+    const handleCtFormCheck = prop => event => {
+        const checked = event.target.checked;
+
+        if (prop === 'IsContrastMedicine') {
             setCtForm({
                 ...ctForm,
-                [prop]: true,
+                IsContrastMedicine: checked,
+                IsNotContrastMedicine: false,
             });
-        } else if (value === 'No') {
+        } else if (prop === 'IsNotContrastMedicine') {
             setCtForm({
                 ...ctForm,
-                [prop]: false,
+                IsContrastMedicine: false,
+                IsNotContrastMedicine: checked,
             });
         } else {
             setCtForm({
                 ...ctForm,
-                [prop]: value,
+                [prop]: checked,
             });
         }
-    };
-    const handleCtFormCheck = prop => event => {
-        setCtForm({
-            ...ctForm,
-            [prop]: event.target.checked,
-        });
     };
     const handleDateCreatedChange = (date) => {
         setCtForm({
@@ -348,8 +369,9 @@ const CtForm = () => {
                     DiagnosisName: data[0].diagnosisName,
                     DateCreated: moment(data[0].dateCreated),
                     Status: data[0].status,
-                    Type: [CtRequestType.Normal, CtRequestType.Urgent, CtRequestType.Emergency][data[0].type],
+                    Type: [CtRequestType.Normal, CtRequestType.Urgent, CtRequestType.Emergency, CtRequestType.None][data[0].type],
                     IsContrastMedicine: data[0].isContrastMedicine,
+                    IsNotContrastMedicine: data[0].isNotContrastMedicine,
                     IsSkull: data[0].isSkull,
                     IsEarNoseThroat: data[0].isEarNoseThroat,
                     IsCsNeck: data[0].isCsNeck,
@@ -789,24 +811,22 @@ const CtForm = () => {
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <CheckBox
-                                            id="UseContrastMedicine"
+                                            id="IsContrastMedicine"
                                             label="Có"
                                             labelPlacement="end"
                                             checked={ctForm.IsContrastMedicine}
                                             disabled={viewMode}
-                                            value="Yes"
-                                            onChange={handleCtFormChange('IsContrastMedicine')}
+                                            onChange={handleCtFormCheck('IsContrastMedicine')}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                         <CheckBox
-                                            id="NoContrastMedicine"
+                                            id="IsNotContrastMedicine"
                                             label="Không"
                                             labelPlacement="end"
-                                            checked={!ctForm.IsContrastMedicine}
+                                            checked={ctForm.IsNotContrastMedicine}
                                             disabled={viewMode}
-                                            value="No"
-                                            onChange={handleCtFormChange('IsContrastMedicine')}
+                                            onChange={handleCtFormCheck('IsNotContrastMedicine')}
                                         />
                                     </Grid>
                                 </Grid>

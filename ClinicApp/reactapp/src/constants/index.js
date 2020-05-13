@@ -142,10 +142,12 @@ export const CtRequestType = {
     Normal: 'Thường',
     Urgent: 'Khẩn',
     Emergency: 'Khẩn cấp',
+    None: 'Không',
 }
 
 export const CtRequestTypeEnum = {
     'Thường': 0,
     'Khẩn': 1,
     'Khẩn cấp': 2,
+    'Không': 3,
 }

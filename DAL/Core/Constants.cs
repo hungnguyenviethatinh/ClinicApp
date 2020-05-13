@@ -73,5 +73,6 @@
         public const string Normal = "Thường";
         public const string Urgent = "Khẩn";
         public const string Emergency = "Khẩn cấp";
+        public const string None = "Không";
     }
 }

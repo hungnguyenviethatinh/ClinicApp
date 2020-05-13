@@ -15,9 +15,10 @@ export const CtFormModel = {
 
     // Phiếu chỉ định chụp CT
     // Loại yêu cầu
-    Type: CtRequestType.Normal,
+    Type: CtRequestType.None,
     // Thuốc cản quang
     IsContrastMedicine: false,
+    IsNotContrastMedicine: false,
     // Sọ não
     IsSkull: false,
     // Tai mũi họng

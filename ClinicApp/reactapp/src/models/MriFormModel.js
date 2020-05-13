@@ -36,4 +36,5 @@ export const MriFormModel = {
     Other: '',
     // Dùng chất đối quang
     IsContrastAgent: false,
+    IsNotContrastAgent: false,
 };

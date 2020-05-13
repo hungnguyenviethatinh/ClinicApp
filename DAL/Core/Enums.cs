@@ -34,5 +34,6 @@
         Normal,
         Urgent,
         Emergency,
+        None,
     }
 }

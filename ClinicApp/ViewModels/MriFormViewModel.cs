@@ -35,6 +35,7 @@ namespace ClinicApp.ViewModels
         public string Other { get; set; }
         // Dùng chất đối quang
         public bool IsContrastAgent { get; set; }
+        public bool IsNotContrastAgent { get; set; }
         public Doctor Doctor { get; set; }
         public Patient Patient { get; set; }
     }

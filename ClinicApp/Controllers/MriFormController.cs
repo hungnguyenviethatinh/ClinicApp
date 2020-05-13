@@ -187,11 +187,19 @@ namespace ClinicApp.Controllers
             }
             if (mriForm.IsContrastAgent)
             {
-                html = html.Replace("{IsContrastAgent}", "checked").Replace("{IsNotContrastAgent}", "");
+                html = html.Replace("{IsContrastAgent}", "checked");
             }
             else
             {
-                html = html.Replace("{IsContrastAgent}", "").Replace("{IsNotContrastAgent}", "checked");
+                html = html.Replace("{IsContrastAgent}", "");
+            }
+            if (mriForm.IsNotContrastAgent)
+            {
+                html = html.Replace("{IsNotContrastAgent}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsNotContrastAgent}", "");
             }
 
             string other = !string.IsNullOrWhiteSpace(mriForm.Other) ?

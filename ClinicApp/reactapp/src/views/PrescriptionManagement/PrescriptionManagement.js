@@ -263,7 +263,7 @@ const PrescriptionManagement = () => {
         AfterLunch: '',
         Afternoon: '',
         AfterDinner: '',
-        Note: '',
+        Note: 'sau khi ăn/trước khi ăn',
     }]);
     const handleMedicinesChange = (index, prop) => event => {
         medicines[index][prop] = event.target.value;
@@ -318,10 +318,16 @@ const PrescriptionManagement = () => {
         const medicineId = value ? value.id : '';
         const unit = value ? value.unit : '';
         const netWeight = value ? value.netWeight : '';
+
         medicines[index].MedicineId = medicineId;
         medicines[index].NetWeight = netWeight;
         medicines[index].Unit = unit;
+        if (unit.toLowerCase() === 'viên') {
+            medicines[index].TakeMethod = 'uống';
+        }
+
         medicineNames[index].value = value;
+        
         setMedicines([...medicines]);
         setMedicineNames([...medicineNames]);
         getIngredientOptions(index, medicineId);
@@ -361,7 +367,7 @@ const PrescriptionManagement = () => {
             AfterLunch: '',
             Afternoon: '',
             AfterDinner: '',
-            Note: '',
+            Note: 'sau khi ăn/trước khi ăn',
         });
         medicineNames.push({
             value: null,
@@ -404,7 +410,7 @@ const PrescriptionManagement = () => {
             AfterLunch: '',
             Afternoon: '',
             AfterDinner: '',
-            Note: '',
+            Note: 'sau khi ăn/trước khi ăn',
         }]);
     };
 
@@ -854,6 +860,10 @@ const PrescriptionManagement = () => {
             }));
             ingredientOptions[index] = options;
             setIngredientOptions([...ingredientOptions]);
+
+            const { 0: ingredient } = data;
+            medicines[index].Ingredient = ingredient.name;
+            setMedicines([...medicines]);
         }
     };
 

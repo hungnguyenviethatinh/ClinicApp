@@ -145,29 +145,50 @@ const MriForm = () => {
 
     const [mriForm, setMriForm] = React.useState(MriFormModel);
     const handleMriFormChange = prop => event => {
-        const value = event.target.value;
-        if (value === 'Yes') {
+        // const value = event.target.value;
+        // if (value === 'Yes') {
+        //     setMriForm({
+        //         ...mriForm,
+        //         [prop]: true,
+        //     });
+        // } else if (value === 'No') {
+        //     setMriForm({
+        //         ...mriForm,
+        //         [prop]: false,
+        //     });
+        // } else {
+        //     setMriForm({
+        //         ...mriForm,
+        //         [prop]: value,
+        //     });
+        // }
+
+        setMriForm({
+            ...mriForm,
+            [prop]: event.target.value,
+        });
+    };
+    const handleMriFormCheck = prop => event => {
+        const checked = event.target.checked;
+
+        if (prop === 'IsContrastAgent') {
             setMriForm({
                 ...mriForm,
-                [prop]: true,
+                IsContrastAgent: checked,
+                IsNotContrastAgent: false,
             });
-        } else if (value === 'No') {
+        } else if (prop === 'IsNotContrastAgent') {
             setMriForm({
                 ...mriForm,
-                [prop]: false,
+                IsContrastAgent: false,
+                IsNotContrastAgent: checked,
             });
         } else {
             setMriForm({
                 ...mriForm,
-                [prop]: value,
+                [prop]: checked,
             });
         }
-    };
-    const handleMriFormCheck = prop => event => {
-        setMriForm({
-            ...mriForm,
-            [prop]: event.target.checked,
-        });
     };
     const handleDateCreatedChange = (date) => {
         setMriForm({
@@ -358,6 +379,7 @@ const MriForm = () => {
                     IsOther: data[0].isOther,
                     Other: data[0].other,
                     IsContrastAgent: data[0].isContrastAgent,
+                    IsNotContrastAgent: data[0].isNotContrastAgent,
                 });
             }
             setDisabled(false);
@@ -846,19 +868,17 @@ const MriForm = () => {
                                         labelPlacement="end"
                                         checked={mriForm.IsContrastAgent}
                                         disabled={viewMode}
-                                        value="Yes"
-                                        onChange={handleMriFormChange('IsContrastAgent')}
+                                        onChange={handleMriFormCheck('IsContrastAgent')}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                                     <CheckBox
                                         id="IsNotContrastAgent"
-                                        label="No"
+                                        label="Không"
                                         labelPlacement="end"
-                                        checked={!mriForm.IsContrastAgent}
+                                        checked={mriForm.IsNotContrastAgent}
                                         disabled={viewMode}
-                                        value="No"
-                                        onChange={handleMriFormChange('IsContrastAgent')}
+                                        onChange={handleMriFormCheck('IsNotContrastAgent')}
                                     />
                                 </Grid>
                             </Grid>

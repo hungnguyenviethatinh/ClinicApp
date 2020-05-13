@@ -122,11 +122,19 @@ namespace ClinicApp.Controllers
 
             if (ctForm.IsContrastMedicine)
             {
-                html = html.Replace("{IsContrastMedicine}", "checked").Replace("{IsNotContrastMedicine}", "");
+                html = html.Replace("{IsContrastMedicine}", "checked");
             }
             else
             {
-                html = html.Replace("{IsContrastMedicine}", "").Replace("{IsNotContrastMedicine}", "checked");
+                html = html.Replace("{IsContrastMedicine}", "");
+            }
+            if (ctForm.IsNotContrastMedicine)
+            {
+                html = html.Replace("{IsNotContrastMedicine}", "checked");
+            }
+            else
+            {
+                html = html.Replace("{IsNotContrastMedicine}", "");
             }
 
             if (ctForm.IsSkull)
