@@ -214,9 +214,10 @@ const TestForm = () => {
         setDiagnosisNameValue(value);
     };
     const handleDiagnosisNameValueBlur = (event) => {
+        const diagnosisName = event.target.value;
         setTestForm({
             ...testForm,
-            DiagnosisName: event.target.value,
+            DiagnosisName: diagnosisName,
         });
     };
     const [diagnosisNameOptions, setDiagnosisNameOptions] = React.useState([{

@@ -206,9 +206,10 @@ const XqForm = () => {
         setDiagnosisNameValue(value);
     };
     const handleDiagnosisNameValueBlur = (event) => {
+        const diagnosisName = event.target.value;
         setXqForm({
             ...xqForm,
-            DiagnosisName: event.target.value,
+            DiagnosisName: diagnosisName,
         });
     };
     const [diagnosisNameOptions, setDiagnosisNameOptions] = React.useState([{

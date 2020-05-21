@@ -102,6 +102,12 @@ const appointmentDayOptions = [
     { label: '17 ngày sau', value: 17 },
 ];
 
+const medicineNoteOptions = [
+    '',
+    'Trước bữa ăn',
+    'Sau bữa ăn',
+];
+
 const PrescriptionManagement = () => {
     // [Start] Common
     const classes = useStyles();
@@ -263,7 +269,7 @@ const PrescriptionManagement = () => {
         AfterLunch: '',
         Afternoon: '',
         AfterDinner: '',
-        Note: 'sau khi ăn/trước khi ăn',
+        Note: '',
     }]);
     const handleMedicinesChange = (index, prop) => event => {
         medicines[index][prop] = event.target.value;
@@ -327,17 +333,29 @@ const PrescriptionManagement = () => {
         }
 
         medicineNames[index].value = value;
-        
+
         setMedicines([...medicines]);
         setMedicineNames([...medicineNames]);
         getIngredientOptions(index, medicineId);
     };
 
+    const handleMedicineNoteChange = index => (event, value) => {
+        const note = value ? value : '';
+        medicines[index].Note = note;
+        setMedicines([...medicines]);
+    };
+    const handleMedicineNoteBlur = index => event => {
+        const note = event.target.value;
+        medicines[index].Note = note;
+        setMedicines([...medicines]);
+    };
+
     const [diagnosisValue, setDiagnosisValue] = React.useState(null);
     const handleDiagnosisValueChange = (event, value) => {
+        const diagnosis = value ? value.name : '';
         setPrescription({
             ...prescription,
-            Diagnosis: value ? value.name : '',
+            Diagnosis: diagnosis,
         })
         setDiagnosisValue(value);
     };
@@ -367,7 +385,7 @@ const PrescriptionManagement = () => {
             AfterLunch: '',
             Afternoon: '',
             AfterDinner: '',
-            Note: 'sau khi ăn/trước khi ăn',
+            Note: '',
         });
         medicineNames.push({
             value: null,
@@ -410,7 +428,7 @@ const PrescriptionManagement = () => {
             AfterLunch: '',
             Afternoon: '',
             AfterDinner: '',
-            Note: 'sau khi ăn/trước khi ăn',
+            Note: '',
         }]);
     };
 
@@ -1204,7 +1222,7 @@ const PrescriptionManagement = () => {
                                                         id={`MedicineId${index}`}
                                                         label="Mặt hàng thuốc"
                                                         options={medicineNameOptions}
-                                                        getOptionLabel={option => getOptionLabel(option)}
+                                                        getOptionLabel={(option) => getOptionLabel(option)}
                                                         value={medicineNames[index] ? medicineNames[index].value : null}
                                                         onChange={handleMedicineNameChange(index)}
                                                     />
@@ -1340,12 +1358,16 @@ const PrescriptionManagement = () => {
                                                         paddingBottom: 0,
                                                     }}
                                                 >
-                                                    <TextField
+                                                    <Autocomplete
+                                                        fullWidth
+                                                        freeSolo
                                                         id={`Note${index}`}
                                                         label="Lưu ý"
+                                                        options={medicineNoteOptions}
+                                                        getOptionLabel={(option) => option}
                                                         value={medicine.Note}
-                                                        onChange={handleMedicinesChange(index, 'Note')}
-                                                        fullWidth
+                                                        onChange={handleMedicineNoteChange(index)}
+                                                        onBlur={handleMedicineNoteBlur(index)}
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}

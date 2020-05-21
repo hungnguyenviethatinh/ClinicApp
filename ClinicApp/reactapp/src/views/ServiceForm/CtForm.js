@@ -250,9 +250,10 @@ const CtForm = () => {
         setDiagnosisNameValue(value);
     };
     const handleDiagnosisNameValueBlur = (event) => {
+        const diagnosisName = event.target.value;
         setCtForm({
             ...ctForm,
-            DiagnosisName: event.target.value,
+            DiagnosisName: diagnosisName,
         });
     };
     const [diagnosisNameOptions, setDiagnosisNameOptions] = React.useState([{

@@ -248,9 +248,10 @@ const MriForm = () => {
         setDiagnosisNameValue(value);
     };
     const handleDiagnosisNameValueBlur = (event) => {
+        const diagnosisName = event.target.value;
         setMriForm({
             ...mriForm,
-            DiagnosisName: event.target.value,
+            DiagnosisName: diagnosisName,
         });
     };
     const [diagnosisNameOptions, setDiagnosisNameOptions] = React.useState([{
