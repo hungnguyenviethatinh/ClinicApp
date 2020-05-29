@@ -70,7 +70,9 @@ namespace ClinicApp.Controllers
             string patientName = patient.FullName;
             html = html.Replace("{patientName}", patientName);
 
-            string patientAge = $"{patient.Age}";
+            string patientAge = patient.Age != 0 ?
+                $"{patient.Age}" :
+                ".......";
             html = html.Replace("{patientAge}", patientAge);
 
             if (patient.Gender.Equals(GenderConstants.Male, StringComparison.OrdinalIgnoreCase))
@@ -88,17 +90,18 @@ namespace ClinicApp.Controllers
 
             string patientAddress = !string.IsNullOrWhiteSpace(patient.Address) ?
                 patient.Address :
+                "................................................................................................." +
                 ".................................................................................................";
             html = html.Replace("{patientAddress}", patientAddress);
 
             string patientPhoneNumber = !string.IsNullOrWhiteSpace(patient.PhoneNumber) ?
                 patient.PhoneNumber :
-                ".........................................................";
+                ".......................................................................................";
             html = html.Replace("{patientPhoneNumber}", patientPhoneNumber);
 
             string patientRelativePhoneNumber = !string.IsNullOrWhiteSpace(patient.RelativePhoneNumber) ?
                 patient.RelativePhoneNumber :
-                ".........................................................";
+                ".......................................................";
             html = html.Replace("{patientRelativePhoneNumber}", patientRelativePhoneNumber);
 
             if (patient.Status.Equals(PatientStatusConstants.IsNew, StringComparison.OrdinalIgnoreCase))

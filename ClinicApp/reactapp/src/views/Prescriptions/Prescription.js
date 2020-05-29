@@ -144,6 +144,7 @@ const Prescription = () => {
         AfterLunch: '',
         Afternoon: '',
         AfterDinner: '',
+        MealTime: '',
         Note: '',
     }]);
     const [openTimes, setOpenTimes] = React.useState(null);
@@ -243,6 +244,7 @@ const Prescription = () => {
                         afterLunch,
                         afternoon,
                         afterDinner,
+                        mealTime,
                         note,
                     } = m;
                     ms.push({
@@ -260,6 +262,7 @@ const Prescription = () => {
                         AfterLunch: afterLunch,
                         Afternoon: afternoon,
                         AfterDinner: afterDinner,
+                        MealTime: mealTime,
                         Note: note,
                     });
                 });
@@ -677,7 +680,8 @@ const Prescription = () => {
                                                             <Typography
                                                                 component="p"
                                                                 variant="subtitle1"
-                                                                children={`Lưu ý: ${m.Note || '............'}`}
+                                                                children={`${m.MealTime || '...'} ăn.
+                                                                Lưu ý: ${m.Note || '.........'}`}
                                                                 style={{ fontStyle: 'italic' }}
                                                             />
                                                         </Grid>

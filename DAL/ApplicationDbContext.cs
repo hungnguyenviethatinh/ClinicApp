@@ -232,6 +232,10 @@ namespace DAL
             builder.Entity<PrescriptionMedicine>()
                 .Property(pm => pm.Unit).HasMaxLength(100);
             builder.Entity<PrescriptionMedicine>()
+                .Property(pm => pm.MealTime).HasMaxLength(30);
+            builder.Entity<PrescriptionMedicine>()
+                .Property(pm => pm.Note).HasMaxLength(100);
+            builder.Entity<PrescriptionMedicine>()
                 .HasOne(pm => pm.Prescription)
                 .WithMany(p => p.Medicines)
                 .HasForeignKey(pm => pm.PrescriptionId)

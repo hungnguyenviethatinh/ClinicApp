@@ -213,7 +213,7 @@ const PatientManagement = () => {
         FullName: '',
         Age: '',
         Address: '',
-        Gender: '',
+        Gender: GenderEnum[Gender.Male],
         PhoneNumber: '',
         RelativePhoneNumber: '',
         AppointmentDate: null,
@@ -304,10 +304,6 @@ const PatientManagement = () => {
 
     const [openPatientPreview, setOpenPatientPreview] = React.useState(false);
     const handleOpenPatientPreview = () => {
-        if (!patient.IdCode.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập mã bệnh nhân!');
-            return;
-        }
         if (!patient.CheckedDate) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày khám!');
             return;
@@ -320,12 +316,8 @@ const PatientManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập họ tên!');
             return;
         }
-        if (!_.toString(patient.Age).trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập tuổi!');
-            return;
-        }
         if (_.toString(patient.Age).trim() && !_.isFinite(_.toNumber(patient.Age))) {
-            handleSnackbarOption('error', 'Yêu cầu nhập số tuổi!');
+            handleSnackbarOption('error', 'Yêu cầu nhập tuổi là một số!');
             return;
         }
         if (patient.AppointmentDate && !moment(patient.AppointmentDate).isValid()) {
@@ -340,24 +332,12 @@ const PatientManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày khám hợp lệ!');
             return;
         }
-        if (!_.isFinite(patient.Gender)) {
-            handleSnackbarOption('error', 'Yêu cầu nhập giới tính!');
-            return;
-        }
-        if (!patient.Address.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập địa chỉ!');
-            return;
-        }
-        if (!_.isFinite(_.toNumber(patient.PhoneNumber))) {
-            handleSnackbarOption('error', 'Yêu cầu nhập số điện thoại (hợp lệ)!');
-            return;
-        }
         if (!updateMode && !patient.Status.trim()) {
             handleSnackbarOption('error', 'Yêu cầu chọn trạng thái cho bệnh nhân!');
             return;
         }
         if (hasXRay && _.isEmpty(_xRayImages)) {
-            handleSnackbarOption('error', 'Yêu cầu nhập cung cấp XQ!');
+            handleSnackbarOption('error', 'Yêu cầu cung cấp hình ảnh XQ!');
             return;
         }
         if (_.isEmpty(_doctors)) {
@@ -382,21 +362,22 @@ const PatientManagement = () => {
         setDisabled(true);
         setLoadingDone(true);
 
+        const Age = _.toNumber(patient.Age);
         const AppointmentDate = moment(patient.AppointmentDate).isValid() ? patient.AppointmentDate.format() : null;
         const CheckedDate = moment(patient.CheckedDate).isValid() ? patient.CheckedDate.format() : moment().format();
 
         let Status = PatientStatusEnum[patient.Status];
-        if (updateMode) {
-            if (patient.Status !== PatientStatus.IsNew &&
-                patient.Status !== PatientStatus.IsRechecking &&
-                patient.Status !== PatientStatus.IsToAddDocs &&
-                patient.Status !== PatientStatus.IsChecking) {
-                Status = PatientStatusEnum[PatientStatus.IsChecked];
-            }
+        if (updateMode &&
+            patient.Status !== PatientStatus.IsNew &&
+            patient.Status !== PatientStatus.IsRechecking &&
+            patient.Status !== PatientStatus.IsToAddDocs &&
+            patient.Status !== PatientStatus.IsChecking) {
+            Status = PatientStatusEnum[PatientStatus.IsChecked];
         }
 
         const patientModel = {
             ...patient,
+            Age,
             AppointmentDate,
             CheckedDate,
             Status,
@@ -441,7 +422,7 @@ const PatientManagement = () => {
             FullName: '',
             Age: '',
             Address: '',
-            Gender: '',
+            Gender: GenderEnum[Gender.Male],
             PhoneNumber: '',
             RelativePhoneNumber: '',
             AppointmentDate: null,

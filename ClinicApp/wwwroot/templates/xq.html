@@ -115,17 +115,17 @@
                 <div class="xq-req-body p-3">{request}</div>
             </div>
 
-            <div class="signature mx-3 flex-grow-1">
-                <div class="row" style="height: 100%;">
-                    <div class="col-7">
-                        <div class="">
-                            Ghi chú: {note}
-                        </div>
+            <div class="row signature mx-3 flex-grow-1">
+                <div class="col-7 d-flex flex-column">
+                    <div class="flex-grow-1">
+                        Ghi chú: {note}
                     </div>
-                    <div class="col-5 text-center d-flex flex-column">
-                        <span class="font-italic">Ngày …… tháng ……. năm 20…...</span>
+                </div>
+                <div class="col-5 d-flex flex-column">
+                    <div class="d-flex flex-column text-center flex-grow-1">
+                        <span class="font-italic">Ngày {date} tháng {month} năm {year}</span>
                         <span class="font-weight-bold fs-14 flex-grow-1">BÁC SĨ ĐIỀU TRỊ</span>
-                        <span class="mb-5 text-capitalize">{doctorName}</span>
+                        <span class="mb-0 text-capitalize">{doctorName}</span>
                     </div>
                 </div>
             </div>

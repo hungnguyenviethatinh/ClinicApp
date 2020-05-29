@@ -74,7 +74,9 @@ namespace ClinicApp.Controllers
             string patientName = patient.FullName;
             html = html.Replace("{patientName}", patientName);
 
-            string patientAge = $"{patient.Age}";
+            string patientAge = patient.Age != 0 ?
+                $"{patient.Age}" :
+                ".......";
             html = html.Replace("{patientAge}", patientAge);
 
             if (patient.Gender.Equals(GenderConstants.Male, StringComparison.OrdinalIgnoreCase))
@@ -105,8 +107,8 @@ namespace ClinicApp.Controllers
             string separator = (!string.IsNullOrEmpty(diagnosis) && !string.IsNullOrEmpty(otherDiagnosis)) ? ", " : "";
             string diagnosisName = (!string.IsNullOrEmpty(diagnosis) || !string.IsNullOrEmpty(otherDiagnosis)) ?
                 $"{diagnosis}{separator}{otherDiagnosis}" :
-                "................................................................................................." +
-                "...........................................................................................";
+                "..................................................................................." +
+                "...................................................................................";
             html = html.Replace("{diagnosisName}", diagnosisName);
 
             string medicineHtmls = "";
@@ -117,9 +119,15 @@ namespace ClinicApp.Controllers
                 {
                     string medicineHtml =
                     @"<div class=""prescription-item row"">
-                        <div class=""col-6""><b class=""fs-16"">{index} </b><i> {medicineName}</div>
-                        <div class=""col-6""> Số lượng : {medicineQuantity} {medicineUnit}</i></div>
-                        <div class=""col-12 font-italic"">{medicineTakeMethod} {medicineTakePeriod} <u>{medicineTakeTimes}</u> lần, lần <u>{amountPerTime}</u> {medicineUnit}, <u>......................</u>ăn. <u>Lưu ý :</u> {medicineNote} </div>
+                        <div class=""col-9""><b class=""fs-16"">{index} </b><i> {medicineName}</div>
+                        <div class=""col-3""> Số lượng : {medicineQuantity} {medicineUnit}</i></div>
+                        <div class=""col-12 font-italic"">
+                            {medicineTakeMethod} {medicineTakePeriod} 
+                            <u>{medicineTakeTimes}</u> lần, lần 
+                            <u>{amountPerTime}</u> {medicineUnit}, 
+                            <u>{mealTime}</u> ăn. 
+                            <u>Lưu ý :</u> {medicineNote} 
+                        </div>
                       </div>";
 
 
@@ -146,10 +154,29 @@ namespace ClinicApp.Controllers
 
                     if (takePeriod.Equals(TakePeriodConstants.Day, StringComparison.OrdinalIgnoreCase))
                     {
-                        string afterBreakfast = medicine.AfterBreakfast != null ?
-                            medicine.AfterBreakfast.ToString() :
-                            "..............";
-                        medicineHtml = medicineHtml.Replace("{amountPerTime}", afterBreakfast);
+                        string amountPerTime;
+                        if (medicine.AfterBreakfast != null)
+                        {
+                            amountPerTime = medicine.AfterBreakfast.ToString();
+                        }
+                        else if (medicine.AfterDinner != null)
+                        {
+                            amountPerTime = medicine.AfterDinner.ToString();
+                        }
+                        else if (medicine.AfterLunch != null)
+                        {
+                            amountPerTime = medicine.AfterLunch.ToString();
+                        }
+                        else if (medicine.Afternoon != null)
+                        {
+                            amountPerTime = medicine.Afternoon.ToString();
+                        }
+                        else
+                        {
+                            amountPerTime = "..............";
+                        }
+
+                        medicineHtml = medicineHtml.Replace("{amountPerTime}", amountPerTime);
                     }
                     else
                     {
@@ -158,6 +185,11 @@ namespace ClinicApp.Controllers
                             "..............";
                         medicineHtml = medicineHtml.Replace("{amountPerTime}", ammountPerTime);
                     }
+
+                    string mealTime = !string.IsNullOrWhiteSpace(medicine.MealTime) ?
+                        medicine.MealTime :
+                        "......................";
+                    medicineHtml = medicineHtml.Replace("{mealTime}", mealTime);
 
                     string medicineNote = !string.IsNullOrWhiteSpace(medicine.Note) ?
                         medicine.Note :

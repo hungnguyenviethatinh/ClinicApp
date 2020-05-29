@@ -102,10 +102,14 @@ const appointmentDayOptions = [
     { label: '17 ngày sau', value: 17 },
 ];
 
+const mealTimeOptions = [
+    { label: 'sau', value: 'sau' },
+    { label: 'trước', value: 'trước' },
+];
+
 const medicineNoteOptions = [
-    '',
-    'Trước bữa ăn',
-    'Sau bữa ăn',
+    'sáng',
+    'trưa',
 ];
 
 const PrescriptionManagement = () => {
@@ -269,6 +273,7 @@ const PrescriptionManagement = () => {
         AfterLunch: '',
         Afternoon: '',
         AfterDinner: '',
+        MealTime: '',
         Note: '',
     }]);
     const handleMedicinesChange = (index, prop) => event => {
@@ -359,6 +364,13 @@ const PrescriptionManagement = () => {
         })
         setDiagnosisValue(value);
     };
+    const handleDiagnosisValueBlur = (event) => {
+        const diagnosis = event.target.value;
+        setPrescription({
+            ...prescription,
+            Diagnosis: diagnosis,
+        });
+    };
 
     const handlePopMedicine = index => event => {
         medicines.splice(index, 1);
@@ -385,6 +397,7 @@ const PrescriptionManagement = () => {
             AfterLunch: '',
             Afternoon: '',
             AfterDinner: '',
+            MealTime: '',
             Note: '',
         });
         medicineNames.push({
@@ -428,6 +441,7 @@ const PrescriptionManagement = () => {
             AfterLunch: '',
             Afternoon: '',
             AfterDinner: '',
+            MealTime: '',
             Note: '',
         }]);
     };
@@ -439,10 +453,6 @@ const PrescriptionManagement = () => {
         }
         if (patient.AppointmentDate && !moment(patient.AppointmentDate).isValid()) {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày hẹn tái khám hợp lệ (không có để trống)!');
-            return;
-        }
-        if (!prescription.IdCode.trim()) {
-            handleSnackbarOption('error', 'Yêu cầu nhập mã đơn thuốc!');
             return;
         }
         if (!prescription.DateCreated) {
@@ -831,10 +841,7 @@ const PrescriptionManagement = () => {
                     id,
                     name,
                 }));
-                setDiagnosisOptions([
-                    ...diagnosisOptions,
-                    ...options,
-                ]);
+                setDiagnosisOptions(options);
                 setStopLoadingDiagnosisName(true);
             }
         }).catch((reason) => {
@@ -894,7 +901,11 @@ const PrescriptionManagement = () => {
     };
     const onCopyPrescription = (selectedPrescription) => {
         const { id, idCode, dateCreated, diagnosis, otherDiagnosis, note } = selectedPrescription;
-        const value = diagnosisOptions.find(d => d.name = diagnosis);
+        const value = diagnosisOptions
+            .find(d => d.name = diagnosis) || {
+            id: '',
+            name: diagnosis,
+        };
 
         getMedicineList(id);
         setDiagnosisValue(value);
@@ -943,6 +954,7 @@ const PrescriptionManagement = () => {
                         afterLunch,
                         afternoon,
                         afterDinner,
+                        mealTime,
                         note,
                     } = m;
 
@@ -965,6 +977,7 @@ const PrescriptionManagement = () => {
                         AfterLunch: afterLunch,
                         Afternoon: afternoon,
                         AfterDinner: afterDinner,
+                        MealTime: mealTime,
                         Note: note,
                     });
 
@@ -1157,6 +1170,7 @@ const PrescriptionManagement = () => {
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                                         <Autocomplete
                                             fullWidth
+                                            freeSolo
                                             margin="dense"
                                             id="Diagnosis"
                                             label="Chẩn đoán"
@@ -1164,6 +1178,7 @@ const PrescriptionManagement = () => {
                                             getOptionLabel={option => getOptionLabel(option)}
                                             value={diagnosisValue}
                                             onChange={handleDiagnosisValueChange}
+                                            onBlur={handleDiagnosisValueBlur}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
@@ -1353,7 +1368,21 @@ const PrescriptionManagement = () => {
                                                             </Grid>
                                                         </Grid>
                                                 }
-                                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}
+                                                <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                                                    <Select
+                                                        fullWidth
+                                                        id={`MealTime${index}`}
+                                                        label="... ăn"
+                                                        value={medicine.MealTime}
+                                                        options={mealTimeOptions}
+                                                        onChange={handleMedicinesChange(index, 'MealTime')}
+                                                        style={{
+                                                            marginTop: 0,
+                                                            marginBottom: 0,
+                                                        }}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} sm={12} md={8} lg={8} xl={8}
                                                     style={{
                                                         paddingBottom: 0,
                                                     }}

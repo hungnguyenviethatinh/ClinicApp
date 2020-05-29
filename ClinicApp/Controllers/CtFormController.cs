@@ -71,7 +71,9 @@ namespace ClinicApp.Controllers
             string patientName = patient.FullName;
             html = html.Replace("{patientName}", patientName);
 
-            string patientAge = $"{patient.Age}";
+            string patientAge = patient.Age != 0 ?
+                $"{patient.Age}" :
+                ".......";
             html = html.Replace("{patientAge}", patientAge);
 
             if (patient.Gender.Equals(GenderConstants.Male, StringComparison.OrdinalIgnoreCase))
@@ -99,8 +101,8 @@ namespace ClinicApp.Controllers
 
             string diagnosisName = !string.IsNullOrWhiteSpace(ctForm.DiagnosisName) ?
                 ctForm.DiagnosisName :
-                "................................................................................................." +
-                "...........................................................................................";
+                "....................................................................................." +
+                ".....................................................................................";
             html = html.Replace("{diagnosisName}", diagnosisName);
 
             if (ctForm.Type.Equals(CtRequestTypeConstants.Normal, StringComparison.OrdinalIgnoreCase))

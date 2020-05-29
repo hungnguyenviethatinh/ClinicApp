@@ -71,7 +71,9 @@ namespace ClinicApp.Controllers
             string patientName = patient.FullName;
             html = html.Replace("{patientName}", patientName);
 
-            string patientAge = $"{patient.Age}";
+            string patientAge = patient.Age != 0 ?
+                $"{patient.Age}" :
+                ".......";
             html = html.Replace("{patientAge}", patientAge);
 
             if (patient.Gender.Equals(GenderConstants.Male, StringComparison.OrdinalIgnoreCase))
@@ -94,13 +96,13 @@ namespace ClinicApp.Controllers
 
             string patientPhoneNumber = !string.IsNullOrWhiteSpace(patient.PhoneNumber) ?
                 patient.PhoneNumber :
-                ".........................................................";
+                "...............................................";
             html = html.Replace("{patientPhoneNumber}", patientPhoneNumber);
 
             string diagnosisName = !string.IsNullOrWhiteSpace(xqForm.DiagnosisName) ?
                 xqForm.DiagnosisName :
-                "................................................................................................." +
-                "...........................................................................................";
+                "..............................................................................." +
+                "...............................................................................";
             html = html.Replace("{diagnosisName}", diagnosisName);
 
             string requestName = xqForm.Request;
