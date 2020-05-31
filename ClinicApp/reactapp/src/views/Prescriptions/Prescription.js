@@ -69,9 +69,20 @@ const getPrescriptionError = '[Get Prescription Error]';
 const getOpenTimesError = '[Get Open Times Error]';
 const updatePrescriptionError = '[Update Prescription Error]';
 
+const getDateString = (date) => {
+    const day = date.day() === 0 ?
+        'CN' : `Thứ ${date.day() + 1}`;
+    const month = date.month() + 1;
+    return `${day}, ngày ${date.date()} tháng ${month} năm ${date.year()}`;
+};
+
 const Prescription = () => {
     const classes = useStyles();
     const config = axiosRequestConfig();
+
+    const now = moment();
+    const currentDate = getDateString(now);
+    const currentTime = `${now.format('HH:mm')}`;
 
     const { id } = useParams();
 
@@ -128,6 +139,7 @@ const Prescription = () => {
         Diagnosis: '',
         OtherDiagnosis: '',
         Note: '',
+        DateCreated: '',
     });
     const [medicines, setMedicines] = React.useState([{
         MedicineName: '',
@@ -135,15 +147,10 @@ const Prescription = () => {
         NetWeight: '',
         Quantity: '',
         Unit: '',
-        Price: '',
         TakePeriod: takePeriodValue.Day,
         TakeMethod: '',
         TakeTimes: '',
         AmountPerTime: '',
-        AfterBreakfast: '',
-        AfterLunch: '',
-        Afternoon: '',
-        AfterDinner: '',
         MealTime: '',
         Note: '',
     }]);
@@ -185,17 +192,28 @@ const Prescription = () => {
         });
     };
 
+    const [dateCreatedString, setDateCreatedString] = React.useState('Thứ ..., ngày ... tháng ... năm 20...');
+    const [appointmentDateString, setAppointmentDateString] = React.useState('Thứ ..., ngày ... tháng ... năm 20...');
+
     const getPrescription = () => {
         setDisabled(true);
         const url = `${PrescriptionUrl}/${id}`;
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { diagnosis, otherDiagnosis, note } = data[0];
+                const { diagnosis, otherDiagnosis, note, dateCreated } = data[0];
+
+                let DateCreated = null;
+                if (moment(dateCreated).isValid()) {
+                    const date = moment(dateCreated);
+                    DateCreated = date.format(DisplayDateFormat);
+                    setDateCreatedString(getDateString(date));
+                }
                 setPrescription({
                     Diagnosis: diagnosis,
                     OtherDiagnosis: otherDiagnosis,
                     Note: note,
+                    DateCreated,
                 });
 
                 setDoctor({
@@ -212,15 +230,19 @@ const Prescription = () => {
                     appointmentDate,
                 } = data[0].patient;
 
-                const AppointmentDate =
-                    (moment(appointmentDate).isValid() && moment(appointmentDate) >= moment()) ?
-                        moment(appointmentDate).format(DisplayDateFormat) : null;
+                let AppointmentDate = null;
+                if (moment(appointmentDate).isValid() && moment(appointmentDate) >= moment()) {
+                    const date = moment(appointmentDate);
+                    AppointmentDate = date.format(DisplayDateFormat);
+                    setAppointmentDateString(getDateString(date));
+                }
+
                 setPatient({
                     IdCode: data[0].patient.idCode,
                     Id: data[0].patient.id,
                     OrderNumber: orderNumber,
                     FullName: fullName,
-                    Age: age,
+                    Age: age !== 0 ? age : '',
                     Gender: [Gender.None, Gender.Male, Gender.Female][gender],
                     Address: address,
                     PhoneNumber: phoneNumber,
@@ -235,35 +257,25 @@ const Prescription = () => {
                         netWeight,
                         quantity,
                         unit,
-                        price,
                         takePeriod,
                         takeMethod,
                         takeTimes,
                         amountPerTime,
-                        afterBreakfast,
-                        afterLunch,
-                        afternoon,
-                        afterDinner,
                         mealTime,
                         note,
                     } = m;
                     ms.push({
                         MedicineName: medicine.name,
-                        Ingredient: ingredient,
-                        NetWeight: netWeight,
-                        Quantity: quantity,
+                        Ingredient: !_.isEmpty(ingredient) ? ingredient : '',
+                        NetWeight: !_.isEmpty(netWeight) ? netWeight : '',
+                        Quantity: !_.isNull(quantity) ? quantity : '......',
                         Unit: unit,
-                        Price: price,
-                        TakePeriod: takePeriod,
-                        TakeMethod: takeMethod,
-                        TakeTimes: takeTimes,
-                        AmountPerTime: amountPerTime,
-                        AfterBreakfast: afterBreakfast,
-                        AfterLunch: afterLunch,
-                        Afternoon: afternoon,
-                        AfterDinner: afterDinner,
-                        MealTime: mealTime,
-                        Note: note,
+                        TakePeriod: _.toLower(takePeriod),
+                        TakeMethod: _.capitalize(takeMethod),
+                        TakeTimes: !_.isNull(takeTimes) ? takeTimes : '......',
+                        AmountPerTime: !_.isNull(amountPerTime) ? amountPerTime : '......',
+                        MealTime: !_.isEmpty(mealTime) ? mealTime : '......',
+                        Note: !_.isEmpty(note) ? note : '............',
                     });
                 });
                 setMedicines(ms);
@@ -394,52 +406,36 @@ const Prescription = () => {
                                         justify="center"
                                         alignItems="center"
                                     >
-                                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                             <Typography
-                                                align="left"
+                                                align="right"
                                                 component="p"
                                                 variant="body1"
-                                                children={`Mã BN:`}
+                                                children={`${currentDate}`}
                                             />
                                         </Grid>
-                                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                             <Typography
-                                                align="left"
+                                                align="right"
                                                 component="p"
                                                 variant="body1"
-                                                children={`${patient.IdCode}${patient.Id}`}
+                                                children={`Mã DKC: ${patient.IdCode}${patient.Id}`}
                                             />
                                         </Grid>
-                                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                             <Typography
-                                                align="left"
+                                                align="right"
                                                 component="p"
                                                 variant="body1"
-                                                children={`Ngày:`}
+                                                children={`Số thứ tự: ${patient.OrderNumber}`}
                                             />
                                         </Grid>
-                                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                             <Typography
-                                                align="left"
+                                                align="right"
                                                 component="p"
                                                 variant="body1"
-                                                children={moment().format(DisplayDateFormat)}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                            <Typography
-                                                align="left"
-                                                component="p"
-                                                variant="body1"
-                                                children={`Giờ:`}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                            <Typography
-                                                align="left"
-                                                component="p"
-                                                variant="body1"
-                                                children={moment().format('HH:mm')}
+                                                children={`Giờ: ${currentTime}`}
                                             />
                                         </Grid>
                                     </Grid>
@@ -546,9 +542,10 @@ const Prescription = () => {
                                         component="h5"
                                         variant="h5"
                                         children={`${!prescription.Diagnosis.trim() ?
-                                            '................................................................'
-                                            + '...............................................................' :
-                                            prescription.Diagnosis}`}
+                                            '................................................................' +
+                                            '...............................................................' :
+                                            prescription.Diagnosis}`
+                                        }
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
@@ -564,9 +561,10 @@ const Prescription = () => {
                                         component="h5"
                                         variant="h5"
                                         children={`${!prescription.OtherDiagnosis.trim() ?
-                                            '................................................................'
-                                            + '..................................................' :
-                                            prescription.OtherDiagnosis}`}
+                                            '................................................................' +
+                                            '..................................................' :
+                                            prescription.OtherDiagnosis}`
+                                        }
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -625,7 +623,7 @@ const Prescription = () => {
                                                             <Typography
                                                                 component="h5"
                                                                 variant="h5"
-                                                                children={`${m.MedicineName} ${m.NetWeight}${!m.Ingredient.trim() ? '' : ` (${m.Ingredient})`}`}
+                                                                children={`${m.MedicineName} ${m.NetWeight}${m.Ingredient}`}
                                                                 style={{ fontWeight: 600 }}
                                                             />
                                                         </Grid>
@@ -647,41 +645,15 @@ const Prescription = () => {
                                                             />
                                                         </Grid>
                                                         <Grid item xs={12} sm={12} md={1} lg={1} xl={1}></Grid>
-                                                        {
-                                                            m.TakePeriod === takePeriodValue.Day ?
-                                                                <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
-                                                                    <Typography
-                                                                        component="p"
-                                                                        variant="subtitle1"
-                                                                        children={
-                                                                            `Ngày ${m.TakeMethod}: ${m.TakeTimes} lần,
-                                                                            ${' '}Sáng: ${m.AfterBreakfast || '...'} ${m.Unit},
-                                                                            ${' '}Trưa: ${m.AfterLunch || '...'} ${m.Unit}, 
-                                                                            ${' '}Chiều: ${m.Afternoon || '...'} ${m.Unit}, 
-                                                                            ${' '}Tối: ${m.AfterDinner || '...'} ${m.Unit}`
-                                                                        }
-                                                                        style={{ fontStyle: 'italic' }}
-                                                                    />
-                                                                </Grid>
-                                                                :
-                                                                <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
-                                                                    <Typography
-                                                                        component="p"
-                                                                        variant="subtitle1"
-                                                                        children={
-                                                                            `${m.TakePeriod} ${m.TakeMethod}: ${m.TakeTimes} lần,
-                                                                            Mỗi lần dùng: ${m.AmountPerTime} ${m.Unit}`
-                                                                        }
-                                                                        style={{ fontStyle: 'italic' }}
-                                                                    />
-                                                                </Grid>
-                                                        }
-                                                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                                                        <Grid item xs={12} sm={12} md={11} lg={11} xl={11}>
                                                             <Typography
                                                                 component="p"
                                                                 variant="subtitle1"
-                                                                children={`${m.MealTime || '...'} ăn.
-                                                                Lưu ý: ${m.Note || '.........'}`}
+                                                                children={
+                                                                    `${m.TakeMethod} ${m.TakePeriod} ${m.TakeTimes} lần,
+                                                                    lần ${m.AmountPerTime} ${m.Unit}, ${m.MealTime} ăn.
+                                                                    Lưu ý: ${m.Note}`
+                                                                }
                                                                 style={{ fontStyle: 'italic' }}
                                                             />
                                                         </Grid>
@@ -692,99 +664,111 @@ const Prescription = () => {
                                     </div>
                                 </Grid>
                                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    <div style={{ width: '100%', padding: '16px 0px' }}>
+                                    <Typography
+                                        component="h5"
+                                        variant="h5"
+                                    >
+                                        <b><u>Ghi chú: </u></b>
+                                        {
+                                            prescription.Note ||
+                                            '........................................................................' +
+                                            '.................................................................... ' +
+                                            '........................................................................' +
+                                            '....................................................................................'
+                                        }
+                                    </Typography>
+                                    <Typography
+                                        component="h5"
+                                        variant="h5"
+                                    >
+                                        <b><u>Tái khám: </u></b>{appointmentDateString}
+                                    </Typography>
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={12} sm={12} md={12} lg={12} xl={12}
+                                    style={{
+                                        width: '100%',
+                                        padding: '16px 0px'
+                                    }}
+                                >
+                                    <Grid
+                                        container
+                                        spacing={2}
+                                        justify="space-between"
+                                        alignItems="center"
+                                        style={{
+                                            marginLeft: 0,
+                                            marginRight: 0,
+                                            width: '100%',
+                                        }}
+                                    >
+
                                         <Grid
-                                            container
-                                            spacing={2}
-                                            justify="space-between"
-                                            alignItems="center"
+                                            item
+                                            xs={12} sm={12} md={4} lg={4} xl={4}
                                             style={{
-                                                marginLeft: 0,
-                                                marginRight: 0,
-                                                width: '100%',
-                                            }}
-                                        >
-                                            <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
-                                                <Typography
-                                                    component="h5"
-                                                    variant="h5"
-                                                    children={
-                                                        `Dặn dò: ${prescription.Note ||
-                                                        '.......................................................... '
-                                                        + '.........................................................................'}`
-                                                    }
-                                                    style={{ textDecoration: 'underline', fontWeight: 600 }}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                                <Typography
-                                                    align="center"
-                                                    component="h5"
-                                                    variant="h5"
-                                                    children={`Bác sĩ`}
-                                                    style={{ fontWeight: 600 }}
-                                                />
-                                                <Typography
-                                                    align="center"
-                                                    component="p"
-                                                    variant="caption"
-                                                    children={`(Kí, Họ tên)`}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12} sm={12} md={4} lg={4} xl={4}
-                                                style={{
-                                                    border: '3px solid #011D42',
-                                                }}>
-                                                <Typography
-                                                    component="h5"
-                                                    variant="h5"
-                                                    children={`Tái khám: ${patient.AppointmentDate || '............................'}`}
-                                                    style={{ textDecoration: 'underline', fontWeight: 600 }}
-                                                />
-                                                <Typography
-                                                    component="h5"
-                                                    variant="h5"
-                                                    children={`* Giờ khám bệnh:`}
-                                                    style={{ fontWeight: 600 }}
-                                                />
-                                                {
-                                                    !_.isEmpty(openTimes) &&
-                                                    openTimes.map((openTime, index) => (
-                                                        <Typography
-                                                            key={index}
-                                                            component="p"
-                                                            variant="body2"
-                                                            children={`${openTime.openClosedTime}`}
-                                                        />
-                                                    ))
-                                                }
-                                            </Grid>
-                                            <Grid
-                                                container
-                                                item
-                                                justify="center"
-                                                alignItems="flex-end"
-                                                xs={12} sm={12} md={4} lg={4} xl={4}
-                                            >
-                                                <Typography
-                                                    align="center"
-                                                    component="h5"
-                                                    variant="h5"
-                                                    children={`${doctor.FullName}`}
-                                                    style={{ fontWeight: 600 }}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                <Typography
-                                                    component="p"
-                                                    variant="body2"
-                                                    children={`* Đơn thuốc có giá trị trong đợt khám. Tái khám khách hàng nhớ mang theo đơn thuốc.`}
-                                                />
-                                            </Grid>
+                                                border: '3px solid #011D42',
+                                            }}>
+                                            <Typography
+                                                component="h5"
+                                                variant="h5"
+                                                children={`* Giờ khám bệnh:`}
+                                                style={{ fontWeight: 600 }}
+                                            />
+                                            {
+                                                !_.isEmpty(openTimes) &&
+                                                openTimes.map((openTime, index) => (
+                                                    <Typography
+                                                        key={index}
+                                                        component="p"
+                                                        variant="body2"
+                                                        children={`${openTime.openClosedTime}`}
+                                                    />
+                                                ))
+                                            }
                                         </Grid>
-                                    </div>
+                                        <Grid
+                                            item
+                                            xs={12} sm={12} md={4} lg={4} xl={4}
+                                        >
+                                            <Typography
+                                                align="center"
+                                                component="h5"
+                                                variant="body1"
+                                                children={`${dateCreatedString}`}
+                                            />
+                                            <Typography
+                                                align="center"
+                                                component="h5"
+                                                variant="h5"
+                                                children={`Bác sĩ khám bệnh`}
+                                                style={{
+                                                    fontWeight: 600,
+                                                    textTransform: 'uppercase',
+                                                }}
+                                            />\
+                                                <Typography
+                                                align="center"
+                                                component="h5"
+                                                variant="h5"
+                                                children={`${doctor.FullName}`}
+                                                style={{
+                                                    fontWeight: 600,
+                                                    marginTop: '3rem',
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                            <Typography
+                                                component="p"
+                                                variant="body2"
+                                                children={
+                                                    `* Đơn thuốc có giá trị trong đợt khám. Tái khám khách hàng nhớ mang theo đơn thuốc.`
+                                                }
+                                            />
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                             <Grid
@@ -806,7 +790,7 @@ const Prescription = () => {
                                             align="center"
                                             component="h5"
                                             variant="body1"
-                                            children={`(Quý khách vui lòng để lại tin nhắn khi chưa gọi điện thoại được.)`}
+                                            children={`(Quý khách vui lòng để lại tin nhắn, zalo khi chưa gọi điện thoại được.)`}
                                             style={{ fontStyle: 'italic' }}
                                         />
                                     </div>

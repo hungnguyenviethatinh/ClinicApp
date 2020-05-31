@@ -24,7 +24,7 @@
                     <span class="title"><b>Dr. KHOA</b> Clinic</span>
                     <div class="row">
                         <div class="col-2">
-                            <u>ĐT:</u>
+                            <span>ĐT:</span>
                         </div>
                         <div class="col-10">
                             <b>0838.131973</b>
@@ -32,7 +32,7 @@
                     </div>
                     <div class="row">
                         <div class="col-2">
-                            <u>Email:</u>
+                            <span>Email:</span>
                         </div>
                         <div class="col-10">
                             <span><b>clinic.drkhoa</b>@gmail.com</span>
@@ -40,24 +40,23 @@
                     </div>
                     <div class="row">
                         <div class="col-2">
-                            <u>Website:</u>
+                            <span>Website:</span>
                         </div>
                         <div class="col-10">
                             <span>www.<b>drkhoaclinic</b>.com</span>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-1">
-                            <u>Đc:</u>
+                        <div class="col-2">
+                            <span>Đc:</span>
                         </div>
-                        <div class="col-11">
+                        <div class="col-10">
                             <span class="space-1 font-weight-bold">6A, Đường 36, Phường Tân Quy, Quận 7, TP. HCM</span>
                         </div>
                     </div>
-
                 </div>
                 <div class="right-header col-4">
-                    <p class="text-right"><i>Thứ {dayOfWeek}, ngày {date} tháng {month} năm {year}</i></p>
+                    <p class="text-right" style="font-size: 15px;"><b><i>Thứ {dayOfWeek}, ngày {date} tháng {month} năm {year}</i></b></p>
                     <p class="text-right" style="font-weight: bolder;">Mã DKC : 2020/BN {patientIdCode}</p>
                     <div class="row">
                         <div class="ml-auto text-right">
@@ -114,7 +113,8 @@
 
         <div style="line-height: 2;">
             <div class="prescription-note">
-                <u class="font-weight-bold font-italic">Ghi chú :&nbsp;</u>{prescriptionNote}
+                <u class="font-weight-bold font-italic">Ghi chú:</u>&nbsp;
+                {prescriptionNote}
             </div>
             <div class="prescription-note font-italic">{appointmentDate}</div>
 
@@ -124,7 +124,8 @@
                     {openTimes}
                 </div>
                 <div class="mr-5 d-flex flex-column">
-                    <span class="font-weight-bold flex-grow-1">BÁC SĨ KHÁM BỆNH</span>
+                    <p class="text-center mb-0"><i>{dateCreated}</i></p>
+                    <span class="font-weight-bold text-center flex-grow-1">BÁC SĨ KHÁM BỆNH</span>
                     <p class="mb-0 text-capitalize text-center">{doctorName}</p>
                 </div>
             </div>

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
 using System.Text.Json;
-using SelectPdf;
 using ClinicApp.Core;
 using ClinicApp.ViewModels;
 using Chromely.Core.RestfulService;
@@ -39,16 +35,9 @@ namespace ClinicApp.Controllers
 
             var doctors = patient.Doctors;
 
-
-
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string templateHtml = $"{appDirectory}/wwwroot/templates/mautiepnhan.html";
-
-            string html = "";
-            using (StreamReader sr = new StreamReader(templateHtml, Encoding.UTF8))
-            {
-                html = sr.ReadToEnd();
-            }
+            string html = Utils.ReadTemplate(templateHtml);
 
             string date = DateTime.Now.Day.ToString();
             string month = DateTime.Now.Month.ToString();
@@ -133,24 +122,10 @@ namespace ClinicApp.Controllers
                     .Replace("{IsToAddDocs}", "");
             }
 
-            string appointmentHtml;
+            string appointmentHtml = "thứ {thu}, {ngay}/{thang}/{nam}, giờ khám: ....................................";
             if (!string.IsNullOrWhiteSpace(patient.AppointmentDate))
             {
-                appointmentHtml = "thứ {thu}, {ngay}/{thang}/{nam}, giờ khám: ....................................";
-
-                DateTime appointedDate = DateTime.ParseExact(patient.AppointmentDate,
-                    Constants.DisplayDateTimeFormat,
-                    System.Globalization.CultureInfo.CurrentCulture);
-                string thu = Utils.GetDayOfWeek(appointedDate);
-                string ngay = appointedDate.Day.ToString();
-                string thang = appointedDate.Month.ToString();
-                string nam = appointedDate.Year.ToString();
-
-                appointmentHtml = appointmentHtml
-                    .Replace("{thu}", thu)
-                    .Replace("{ngay}", ngay)
-                    .Replace("{thang}", thang)
-                    .Replace("{nam}", nam);
+                appointmentHtml = Utils.GetDateString(patient.AppointmentDate, appointmentHtml);
             }
             else
             {
@@ -222,44 +197,20 @@ namespace ClinicApp.Controllers
                 .Replace("{bs.pbhd}", "");
 
             string indexHtml = $"{appDirectory}/wwwroot/index.html";
-            using (StreamWriter sw = new StreamWriter(indexHtml, false, Encoding.UTF8))
-            {
-                sw.WriteLine(html);
-            }
+            Utils.WriteTemplate(indexHtml, html);
 
             string url = $"file:///{appDirectory}/wwwroot/index.html";
+            var converter = Utils.CreateA5Converter();
+            string savePath = Utils.GetSavePath(appDirectory, "PTNBN");
 
-            HtmlToPdf converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A5;
-            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
-            converter.Options.WebPageFixedSize = true;
-            converter.Options.WebPageWidth = 560;
-            converter.Options.WebPageHeight = 793;
-            converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.AutoFit;
-            converter.Options.AutoFitHeight = HtmlToPdfPageFitMode.ShrinkOnly;
-
-            string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
-            string saveFile = $"PTNBN_{createdTime}.pdf";
-            string saveDirectory = $"{appDirectory}\\PTNBN";
-            string savePath = $"{saveDirectory}\\{saveFile}";
-
-            PdfDocument pdf = converter.ConvertUrl(url);
-            pdf.Save(savePath);
-            pdf.Close();
-
-            ProcessStartInfo startInfo = new ProcessStartInfo(savePath)
-            {
-                Verb = "Print",
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-            };
-            Process.Start(startInfo);
+            Utils.ConvertPdfFromUrl(converter, url, savePath);
+            Utils.PrintPdf(savePath);
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {
                 Data = new
                 {
-                    Message = $"In phiếu tiếp nhận bệnh nhân thành công lúc {DateTime.Now.ToString()}.",
+                    Message = $"In phiếu tiếp nhận bệnh nhân thành công lúc {DateTime.Now:dd/MM/yyyy HH:mm:ss}.",
                 }
             };
 

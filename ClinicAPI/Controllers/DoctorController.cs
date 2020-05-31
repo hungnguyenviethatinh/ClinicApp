@@ -397,7 +397,7 @@ namespace ClinicAPI.Controllers
                     {
                         if (medicine.Id == model.Id)
                         {
-                            int quantity = medicine.Quantity.GetValueOrDefault(0) - model.Quantity;
+                            int quantity = medicine.Quantity.GetValueOrDefault(0) - model.Quantity.GetValueOrDefault(0);
                             medicine.Quantity = quantity > 0 ? quantity : 0;
                             break;
                         }
@@ -437,7 +437,8 @@ namespace ClinicAPI.Controllers
                     {
                         if (medicine.Id == model.Id)
                         {
-                            medicine.Quantity = medicine.Quantity != null ? medicine.Quantity.Value + model.Quantity : 0;
+                            int quantity = medicine.Quantity.GetValueOrDefault(0) + model.Quantity.GetValueOrDefault(0);
+                            medicine.Quantity = quantity > 0 ? quantity : 0;
                             break;
                         }
                     }

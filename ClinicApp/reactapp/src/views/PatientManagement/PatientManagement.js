@@ -42,7 +42,7 @@ import {
     ExpiredSessionMsg,
     NotFoundMsg,
     RouteConstants,
-    DisplayDateTimeFormat,
+    DisplayDateFormat,
 } from '../../constants';
 import {
     GetDoctorsUrl,
@@ -978,7 +978,7 @@ const PatientManagement = () => {
         const Age = _.toNumber(printData.Age);
         const AppointmentDate =
             moment(printData.AppointmentDate).isValid() ?
-                printData.AppointmentDate.format(DisplayDateTimeFormat) : null;
+                printData.AppointmentDate.format(DisplayDateFormat) : null;
         const Doctors = [];
         if (!_.isEmpty(printData.Doctors)) {
             printData.Doctors.map(({ fullName }) => Doctors.push({

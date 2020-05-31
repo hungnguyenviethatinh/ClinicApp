@@ -28,7 +28,7 @@ namespace ClinicAPI.ViewModels
     public class MedicineUpdateModel
     {
         public int Id { get; set; }
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
     }
 
     public class MedicineRestoreModel : MedicineUpdateModel

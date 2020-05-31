@@ -56,7 +56,7 @@ namespace ClinicAPI.ViewModels
                 .ForMember(m => m.Quantity,
                 map => map.MapFrom((medicineModel, medicine) =>
                 {
-                    int quantity = medicine.Quantity.GetValueOrDefault(0) - medicineModel.Quantity;
+                    int quantity = medicine.Quantity.GetValueOrDefault(0) - medicineModel.Quantity.GetValueOrDefault(0);
 
                     return quantity > 0 ? quantity : 0;
                 }));
