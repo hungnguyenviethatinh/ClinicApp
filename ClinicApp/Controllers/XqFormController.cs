@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
 using System.Text.Json;
-using SelectPdf;
 using ClinicApp.Core;
 using ClinicApp.ViewModels;
 using Chromely.Core.RestfulService;
@@ -42,12 +38,7 @@ namespace ClinicApp.Controllers
 
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string templateHtml = $"{appDirectory}/wwwroot/templates/xq.html";
-
-            string html = "";
-            using (StreamReader sr = new StreamReader(templateHtml, Encoding.UTF8))
-            {
-                html = sr.ReadToEnd();
-            }
+            string html = Utils.ReadTemplate(templateHtml);
 
             string dayOfWeek = Utils.GetDayOfWeek(DateTime.Now);
             string date = DateTime.Now.Day.ToString();
@@ -115,48 +106,36 @@ namespace ClinicApp.Controllers
                 "......................................................................................................................";
             html = html.Replace("{note}", note);
 
-            string doctorName = doctor.FullName;
+            string dateCreated = xqForm.DateCreated.Day.ToString();
+            string monthCreated = xqForm.DateCreated.Month.ToString();
+            string yearCreated = xqForm.DateCreated.Year.ToString();
+            html = html
+                .Replace("{dateCreated}", dateCreated)
+                .Replace("{monthCreated}", monthCreated)
+                .Replace("{yearCreated}", yearCreated);
+
+            string doctorName = doctor.FullName.ToUpper();
+            if (doctorName.Contains("TRẦN ĐĂNG KHOA"))
+            {
+                doctorName = doctorName.Replace("TRẦN ĐĂNG KHOA", "") + "&nbsp;<b>TRẦN ĐĂNG KHOA</b>";
+            }
             html = html.Replace("{doctorName}", doctorName);
 
             string indexHtml = $"{appDirectory}/wwwroot/index.html";
-            using (StreamWriter sw = new StreamWriter(indexHtml, false, Encoding.UTF8))
-            {
-                sw.WriteLine(html);
-            }
+            Utils.WriteTemplate(indexHtml, html);
 
             string url = $"file:///{appDirectory}/wwwroot/index.html";
+            var converter = Utils.CreateA4Converter();
+            string savePath = Utils.GetSavePath(appDirectory, "XQ");
 
-            HtmlToPdf converter = new HtmlToPdf();
-            converter.Options.PdfPageSize = PdfPageSize.A4;
-            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
-            converter.Options.WebPageFixedSize = true;
-            converter.Options.WebPageWidth = 793;
-            converter.Options.WebPageHeight = 1123;
-            converter.Options.AutoFitWidth = HtmlToPdfPageFitMode.AutoFit;
-            converter.Options.AutoFitHeight = HtmlToPdfPageFitMode.ShrinkOnly;
-
-            string createdTime = DateTime.Now.ToString("HHmmssddMMyyyy");
-            string saveFile = $"XQ_{createdTime}.pdf";
-            string saveDirectory = $"{appDirectory}\\XQ";
-            string savePath = $"{saveDirectory}\\{saveFile}";
-
-            PdfDocument pdf = converter.ConvertUrl(url);
-            pdf.Save(savePath);
-            pdf.Close();
-
-            ProcessStartInfo startInfo = new ProcessStartInfo(savePath)
-            {
-                Verb = "Print",
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-            };
-            Process.Start(startInfo);
+            Utils.ConvertPdfFromUrl(converter, url, savePath);
+            Utils.PrintPdf(savePath);
 
             ChromelyResponse response = new ChromelyResponse(request.Id)
             {
                 Data = new
                 {
-                    Message = $"In phiếu chỉ định thành công lúc {DateTime.Now.ToString()}.",
+                    Message = $"In phiếu chỉ định thành công lúc {DateTime.Now:dd/MM/yyyy HH:mm:ss}.",
                 }
             };
 
