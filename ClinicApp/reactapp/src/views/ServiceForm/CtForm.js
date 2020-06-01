@@ -147,24 +147,6 @@ const CtForm = () => {
 
     const [ctForm, setCtForm] = React.useState(CtFormModel);
     const handleCtFormChange = prop => event => {
-        // const value = event.target.value;
-        // if (value === 'Yes') {
-        //     setCtForm({
-        //         ...ctForm,
-        //         [prop]: true,
-        //     });
-        // } else if (value === 'No') {
-        //     setCtForm({
-        //         ...ctForm,
-        //         [prop]: false,
-        //     });
-        // } else {
-        //     setCtForm({
-        //         ...ctForm,
-        //         [prop]: value,
-        //     });
-        // }
-
         setCtForm({
             ...ctForm,
             [prop]: event.target.value,

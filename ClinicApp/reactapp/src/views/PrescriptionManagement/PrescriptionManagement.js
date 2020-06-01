@@ -216,34 +216,7 @@ const PrescriptionManagement = () => {
         });
 
         calculateAppointmentDay(date, prescription.DateCreated);
-
-        // medicines.map((medicine) => calculateMedicineQuantity(medicine, date));
-        // setMedicines([...medicines]);
     };
-    // const calculateMedicineQuantity = (medicine, appointmentDate) => {
-    //     const days = moment(appointmentDate).isValid() ?
-    //         _.round(appointmentDate.diff(prescription.DateCreated, 'days', true)) : 0;
-
-    //     const takeTimes = _.toNumber(medicine.TakeTimes);
-    //     const amountPerTime = _.toNumber(medicine.AmountPerTime);
-    //     let quantity = amountPerTime * takeTimes;
-    //     if (days > 1) {
-    //         if (medicine.TakePeriod === takePeriodValue.Day) {
-    //             quantity *= days;
-    //         }
-    //         if (medicine.TakePeriod === takePeriodValue.Week && days % 7 === 0) {
-    //             quantity *= (days / 7);
-    //         }
-    //         if (medicine.TakePeriod === takePeriodValue.Month && days % 30 === 0) {
-    //             quantity *= (days / 30);
-    //         }
-    //     }
-
-    //     return {
-    //         ...medicine,
-    //         Quantity: _.toString(quantity),
-    //     };
-    // };
 
     const [prescription, setPrescription] = React.useState({
         IdCode: '',
@@ -286,10 +259,6 @@ const PrescriptionManagement = () => {
         medicines[index][prop] = event.target.value;
         setMedicines([...medicines]);
     };
-    // const handleMedicinesBlur = (index, prop) => event => {
-    //     medicines[index] = calculateMedicineQuantity(medicines[index], patient.AppointmentDate);
-    //     setMedicines([...medicines]);
-    // };
 
     const [medicineNames, setMedicineNames] = React.useState([{
         value: null,

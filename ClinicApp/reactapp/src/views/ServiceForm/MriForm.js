@@ -145,24 +145,6 @@ const MriForm = () => {
 
     const [mriForm, setMriForm] = React.useState(MriFormModel);
     const handleMriFormChange = prop => event => {
-        // const value = event.target.value;
-        // if (value === 'Yes') {
-        //     setMriForm({
-        //         ...mriForm,
-        //         [prop]: true,
-        //     });
-        // } else if (value === 'No') {
-        //     setMriForm({
-        //         ...mriForm,
-        //         [prop]: false,
-        //     });
-        // } else {
-        //     setMriForm({
-        //         ...mriForm,
-        //         [prop]: value,
-        //     });
-        // }
-
         setMriForm({
             ...mriForm,
             [prop]: event.target.value,
