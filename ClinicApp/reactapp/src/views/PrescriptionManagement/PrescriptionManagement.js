@@ -36,6 +36,7 @@ import {
     RouteConstants,
     SnackbarMessage,
     TakePeriodValue,
+    CurrentCheckingPatientId,
     NewPrescriptionId,
 } from '../../constants';
 
@@ -593,11 +594,17 @@ const PrescriptionManagement = () => {
     const handleRedirectToPrescriptionDetail = () => {
         const newPrescriptionId = localStorage.getItem(NewPrescriptionId);
         enableButtons();
+        cleanLocalStorage();
         setTimeout(() => {
             browserHistory
                 .push(RouteConstants.PrescriptionDetailView
                     .replace(':id', prescriptionId || newPrescriptionId));
         }, 1000);
+    };
+
+    const cleanLocalStorage = () => {
+        localStorage.removeItem(CurrentCheckingPatientId);
+        localStorage.removeItem(NewPrescriptionId);
     };
 
     const updatePrescription = (prescriptionModel) => {
@@ -694,12 +701,12 @@ const PrescriptionManagement = () => {
                     AppointmentDate: moment(appointmentDate).isValid() ? moment(appointmentDate) : null,
                 });
                 if (!updateMode) {
-                    const currentHistoryId =
-                        (data[0].history && data[0].history.id) ?
-                            data[0].history.id : null;
-                    if ((!data[0].history || !data[0].history.id)) {
+                    let currentHistoryId = null;
+                    if (!data[0].history || !data[0].history.id) {
                         handleSnackbarOption('error', `Bệnh nhân này đã được khám xong.
                         ${' '}Vui lòng chọn bệnh nhân khác!`);
+                    } else {
+                        currentHistoryId = data[0].history.id;
                     }
                     setHistoryId(currentHistoryId);
                     setPrescription({
@@ -736,6 +743,7 @@ const PrescriptionManagement = () => {
     const [patientNameValue, setPatientNameValue] = React.useState(null);
     const handlePatientNameChange = (event, value) => {
         if (value && value.id) {
+            localStorage.setItem(CurrentCheckingPatientId, `${value.id}`);
             getPatient(value.id);
         }
     };
@@ -987,6 +995,13 @@ const PrescriptionManagement = () => {
         getUnitOptions();
         handleUpdate();
     }, []);
+
+    React.useEffect(() => {
+        const currentCheckingPatientId = localStorage.getItem(CurrentCheckingPatientId);
+        if (stopLoadingPatientName && currentCheckingPatientId) {
+            getPatient(currentCheckingPatientId);
+        }
+    }, [stopLoadingPatientName]);
 
     React.useEffect(() => {
         if (stopLoadingPatientName &&

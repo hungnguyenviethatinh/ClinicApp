@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import {
     Card,
     CardHeader,
@@ -21,6 +21,7 @@ import { HistoryButton as Back } from '../../components/Button';
 import Axios, {
     axiosRequestConfig,
     ChromeLyService,
+    verifyJWT,
 } from '../../common';
 import {
     PrescriptionUrl,
@@ -35,6 +36,9 @@ import {
     DisplayDateFormat,
     PrescriptionStatus,
     TakePeriodValue,
+    RouteConstants,
+    RoleConstants,
+    AccessTokenKey,
 } from '../../constants';
 
 import { logo } from '../../components/Logo';
@@ -78,6 +82,7 @@ const getDateString = (date) => {
 
 const Prescription = () => {
     const classes = useStyles();
+    const browserHistory = useHistory();
     const config = axiosRequestConfig();
 
     const now = moment();
@@ -141,6 +146,7 @@ const Prescription = () => {
         Note: '',
         DateCreated: '',
     });
+    const [currentHistoryId, setCurrentHistoryId] = React.useState(null);
     const [medicines, setMedicines] = React.useState([{
         MedicineName: '',
         Ingredient: '',
@@ -158,6 +164,20 @@ const Prescription = () => {
 
     const [disabled, setDisabled] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
+
+    const [canEditOrCopy, setCanEditOrCopy] = React.useState(false);
+    const checkCanEditOrCopy = () => {
+        const token = localStorage.getItem(AccessTokenKey);
+        verifyJWT(token, RoleConstants.DoctorRoleName) && setCanEditOrCopy(true);
+    };
+
+    const handleUpdate = () => {
+        const queryParams = `?uId=${id}&uPId=${patient.Id}&uHId=${currentHistoryId}`;
+        const redirectUrl = RouteConstants.PrescriptionManagementView + queryParams;
+        setTimeout(() => {
+            browserHistory.push(redirectUrl);
+        }, 1000);
+    };
 
     const handlePrint = () => {
         const data = JSON.stringify({
@@ -201,7 +221,7 @@ const Prescription = () => {
         Axios.get(url, config).then((response) => {
             const { status, data } = response;
             if (status === 200) {
-                const { diagnosis, otherDiagnosis, note, dateCreated } = data[0];
+                const { diagnosis, otherDiagnosis, note, dateCreated, historyId } = data[0];
 
                 let DateCreated = null;
                 if (moment(dateCreated).isValid()) {
@@ -215,6 +235,8 @@ const Prescription = () => {
                     Note: note,
                     DateCreated,
                 });
+
+                setCurrentHistoryId(historyId);
 
                 setDoctor({
                     FullName: data[0].doctor.fullName,
@@ -319,6 +341,7 @@ const Prescription = () => {
     };
 
     React.useEffect(() => {
+        checkCanEditOrCopy();
         getPrescription();
         getOpenTimes();
     }, []);
@@ -340,14 +363,28 @@ const Prescription = () => {
                 >
                     <CardHeader
                         action={
-                            <Button
-                                color="warning"
-                                disabled={disabled}
-                                loading={loading}
-                                children={`In`}
-                                iconName="print"
-                                onClick={handlePrint}
-                            />
+                            <React.Fragment>
+                                {canEditOrCopy &&
+                                    <Button
+                                        color="info"
+                                        disabled={disabled || loading}
+                                        children="Sửa"
+                                        iconName="edit"
+                                        onClick={handleUpdate}
+                                        style={{
+                                            marginRight: '5px',
+                                        }}
+                                    />
+                                }
+                                <Button
+                                    color="warning"
+                                    disabled={disabled}
+                                    loading={loading}
+                                    children="In"
+                                    iconName="print"
+                                    onClick={handlePrint}
+                                />
+                            </React.Fragment>
                         }
                         title="ĐƠN THUỐC"
                         subheader="Xem chi tiết thuốc và in"
@@ -623,7 +660,7 @@ const Prescription = () => {
                                                             <Typography
                                                                 component="h5"
                                                                 variant="h5"
-                                                                children={`${m.MedicineName} ${m.NetWeight}${m.Ingredient}`}
+                                                                children={`${m.MedicineName} ${m.NetWeight} ${m.Ingredient}`}
                                                                 style={{ fontWeight: 600 }}
                                                             />
                                                         </Grid>
@@ -748,7 +785,7 @@ const Prescription = () => {
                                                     textTransform: 'uppercase',
                                                 }}
                                             />
-                                                <Typography
+                                            <Typography
                                                 align="center"
                                                 component="h5"
                                                 variant="h5"

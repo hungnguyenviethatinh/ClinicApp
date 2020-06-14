@@ -36,7 +36,6 @@ import {
     PrescriptionStatus,
     RouteConstants,
     DisplayDateFormat,
-    FormMode,
 } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({

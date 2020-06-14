@@ -127,12 +127,11 @@ const prescriptionColumns = [
 
 const getPatientLogMsgHeader = '[Get Patients Error]';
 const getPrescriptionLogMsgHeader = '[Get Prescriptions Error]';
-const updatePatientLogMsgHeader = '[Update Patient Error]';
 const deletePrescriptionLogMsgHeader = '[Delete Prescription Error]';
 
 const DoctorView = () => {
     const classes = useStyles();
-    const history = useHistory();
+    const browserHistory = useHistory();
     const config = axiosRequestConfig();
 
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
@@ -192,15 +191,6 @@ const DoctorView = () => {
         setOpenActionOption(false);
     };
 
-    const [selectedRow, setSelectedRow] = React.useState(null);
-    const handleSelectRow = (event, rowData) => {
-        if (!selectedRow || selectedRow.tableData.id !== rowData.tableData.id) {
-            setSelectedRow(rowData);
-        } else {
-            setSelectedRow(null);
-        }
-    };
-
     const [selectedPrescriptionRow, setSelectedPrescriptionRow] = React.useState(null);
     const handleDelete = () => {
         const { id } = selectedPrescriptionRow;
@@ -213,7 +203,7 @@ const DoctorView = () => {
         const redirectUrl = RouteConstants.PrescriptionManagementView + queryParams;
         setOpenActionOption(false);
         setTimeout(() => {
-            history.push(redirectUrl);
+            browserHistory.push(redirectUrl);
         }, 1000);
     };
     const handleSelectPrescriptionRow = (event, rowData) => {
@@ -237,7 +227,6 @@ const DoctorView = () => {
                     totalCount,
                 });
             }
-            setSelectedRow(null);
         }).catch((reason) => {
             handleError(reason, getPatientLogMsgHeader);
         });
@@ -312,8 +301,6 @@ const DoctorView = () => {
                                     getPatientsInQueue(resolve, reject, query);
                                 })
                             }
-                        // onRowClick={handleSelectRow}
-                        // selectedRow={selectedRow}
                         />
                     </CardContent>
                 </Card>

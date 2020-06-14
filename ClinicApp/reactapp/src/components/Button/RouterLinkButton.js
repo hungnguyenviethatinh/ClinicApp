@@ -42,7 +42,7 @@ const CustomRouterLink = forwardRef((props, ref) => (
 ));
 
 const RouterLinkButton = props => {
-    const { title, href, icon, className } = props;
+    const { title, href, icon } = props;
 
     const classes = useStyles();
 
@@ -60,7 +60,6 @@ const RouterLinkButton = props => {
 };
 
 RouterLinkButton.propTypes = {
-    className: PropTypes.string,
     href: PropTypes.string,
     icon: PropTypes.node,
     title: PropTypes.string,

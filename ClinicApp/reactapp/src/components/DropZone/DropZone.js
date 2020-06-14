@@ -5,7 +5,7 @@ import DropZone from 'react-dropzone';
 // import { Close } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import _ from 'lodash';
+// import _ from 'lodash';
 
 import { encodeFileToBase64 } from '../../common';
 

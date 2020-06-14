@@ -12,7 +12,6 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 
-import _ from 'lodash';
 import moment from 'moment';
 
 import { TextField } from '../../components/TextField';
