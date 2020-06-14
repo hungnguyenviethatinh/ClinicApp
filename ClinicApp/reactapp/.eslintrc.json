@@ -1,6 +1,7 @@
 {
     "env": {
         "browser": true,
+        "node": true,
         "es6": true
     },
     "extends": [
@@ -30,11 +31,11 @@
         "react"
     ],
     "rules": {
-        "no-prototype-builtins": 1,
+        "no-prototype-builtins": 0,
         "no-unused-vars": 1,
-        "no-useless-escape": 1,
-        "react/display-name": 1,
-        "react/no-children-prop": 1,
-        "react/prop-types": 1
+        "no-useless-escape": 0,
+        "react/display-name": 0,
+        "react/no-children-prop": 0,
+        "react/prop-types": 0
     }
 }
