@@ -34,4 +34,14 @@ namespace ClinicAPI.ViewModels
     public class MedicineRestoreModel : MedicineUpdateModel
     {
     }
+
+    public class MedicineOptionModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Ingredient { get; set; }
+        public string NetWeight { get; set; }
+        public int? Quantity { get; set; }
+        public string Unit { get; set; }
+    }
 }

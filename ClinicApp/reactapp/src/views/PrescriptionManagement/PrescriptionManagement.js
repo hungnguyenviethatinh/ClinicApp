@@ -42,7 +42,7 @@ import {
 import {
     GetMedicineNameOptionsUrl,
     GetDiagnosisNameOptionsUrl,
-    GetIngredientOptionsUrl,
+    // GetIngredientOptionsUrl,
     GetUnitNameOptionsUrl,
     GetCurrentPatientUrl,
     AddPrescriptionsUrl,
@@ -91,7 +91,7 @@ const updateMedicineErrorMsg = '[Update Medicines Error] ';
 const deleteMedicineErrorMsg = '[Delete Medicines Error] ';
 const getDiagnosesErrMsg = '[Get Diagnoses Error] ';
 const getUnitsErrorMsg = '[Get Units Error] ';
-const getIngredientsErrorMsg = '[Get Ingredients Error] ';
+// const getIngredientsErrorMsg = '[Get Ingredients Error] ';
 const getMedicineListErrorMsg = '[Get Medicine List Error] ';
 
 const takePeriodOptions = [
@@ -159,7 +159,7 @@ const PrescriptionManagement = () => {
     const [stopLoadingMedicineName, setStopLoadingMedicineName] = React.useState(false);
     const [stopLoadingDiagnosisName, setStopLoadingDiagnosisName] = React.useState(false);
     const [stopLoadingUnitName, setStopLoadingUnitName] = React.useState(false);
-    const [stopLoadingIngredientName, setStopLoadingIngredientName] = React.useState(false);
+    // const [stopLoadingIngredientName, setStopLoadingIngredientName] = React.useState(false);
 
     const [disabled, setDisabled] = React.useState(false);
     const [loadingDone, setLoadingDone] = React.useState(false);
@@ -276,8 +276,10 @@ const PrescriptionManagement = () => {
         const medicineId = value ? value.id : '';
         const unit = value ? value.unit : '';
         const netWeight = value ? value.netWeight : '';
+        const ingredient = value ? value.ingredient : '';
 
         medicines[index].MedicineId = medicineId;
+        medicines[index].Ingredient = ingredient;
         medicines[index].NetWeight = netWeight;
         medicines[index].Unit = unit;
         if (unit.toLowerCase() === 'viên') {
@@ -288,7 +290,7 @@ const PrescriptionManagement = () => {
 
         setMedicines([...medicines]);
         setMedicineNames([...medicineNames]);
-        getIngredientOptions(index, medicineId);
+        // getIngredientOptions(index, medicineId);
     };
 
     const handleMedicineMealTimeChange = index => (event, value) => {
@@ -333,10 +335,10 @@ const PrescriptionManagement = () => {
     const handlePopMedicine = index => event => {
         medicines.splice(index, 1);
         medicineNames.splice(index, 1);
-        ingredientOptions.splice(index, 1);
+        // ingredientOptions.splice(index, 1);
         setMedicines([...medicines]);
         setMedicineNames([...medicineNames]);
-        setIngredientOptions([...ingredientOptions]);
+        // setIngredientOptions([...ingredientOptions]);
     };
 
     const handlePushMedicine = () => {
@@ -357,17 +359,17 @@ const PrescriptionManagement = () => {
         medicineNames.push({
             value: null,
         });
-        ingredientOptions.push(ingredientOption);
+        // ingredientOptions.push(ingredientOption);
         setMedicines([...medicines]);
         setMedicineNames([...medicineNames]);
-        setIngredientOptions([...ingredientOptions]);
+        // setIngredientOptions([...ingredientOptions]);
     };
 
     const handleReset = () => {
         setMedicineNames([{
             value: null,
         }]);
-        setIngredientOptions([ingredientOption]);
+        // setIngredientOptions([ingredientOption]);
         setDiagnosisValue(null);
         setPatient({
             ...patient,
@@ -759,11 +761,12 @@ const PrescriptionManagement = () => {
     const [medicineNameOptions, setMedicineNameOptions] = React.useState([{
         id: '',
         name: '',
+        ingredient: '',
         netWeight: '',
         quantity: '',
         unit: '',
     }]);
-    const getOptionLabel = (option) => option.name;
+    const getMedicineOptionLabel = (option) => `${option.name} (${option.ingredient})`;
     const getMedicineNameOptions = () => {
         Axios.get(GetMedicineNameOptionsUrl, config).then((response) => {
             const { status, data } = response;
@@ -818,27 +821,27 @@ const PrescriptionManagement = () => {
         });
     };
 
-    const ingredientOption = [{
-        label: '',
-        value: '',
-    }];
-    const [ingredientOptions, setIngredientOptions] = React.useState([ingredientOption]);
-    const getIngredientOptions = (index, medicineId) => {
-        const data = ingredients.filter(i => i.medicineId === medicineId);
-        if (!_.isEmpty(data)) {
-            const options = [];
-            data.map(({ name }) => options.push({
-                label: name,
-                value: name,
-            }));
-            ingredientOptions[index] = options;
-            setIngredientOptions([...ingredientOptions]);
+    // const ingredientOption = [{
+    //     label: '',
+    //     value: '',
+    // }];
+    // const [ingredientOptions, setIngredientOptions] = React.useState([ingredientOption]);
+    // const getIngredientOptions = (index, medicineId) => {
+    //     const data = ingredients.filter(i => i.medicineId === medicineId);
+    //     if (!_.isEmpty(data)) {
+    //         const options = [];
+    //         data.map(({ name }) => options.push({
+    //             label: name,
+    //             value: name,
+    //         }));
+    //         ingredientOptions[index] = options;
+    //         setIngredientOptions([...ingredientOptions]);
 
-            const { 0: ingredient } = data;
-            medicines[index].Ingredient = ingredient.name;
-            setMedicines([...medicines]);
-        }
-    };
+    //         const { 0: ingredient } = data;
+    //         medicines[index].Ingredient = ingredient.name;
+    //         setMedicines([...medicines]);
+    //     }
+    // };
 
     const [openPrescriptionList, setOpenPrescriptionList] = React.useState(false);
     const onOpenPrescriptionList = () => {
@@ -887,7 +890,7 @@ const PrescriptionManagement = () => {
             if (status === 200) {
                 const ms = [];
                 const mns = [];
-                const ios = [];
+                // const ios = [];
                 const rms = [];
                 data.forEach((m) => {
                     const {
@@ -924,20 +927,20 @@ const PrescriptionManagement = () => {
                         value,
                     });
 
-                    let data = ingredients.filter(i => i.medicineId === medicineId);
-                    let options = [];
-                    if (_.isEmpty(data)) {
-                        options.push({
-                            label: '',
-                            name: '',
-                        });
-                    } else {
-                        data.map(({ name }) => options.push({
-                            label: name,
-                            value: name,
-                        }));
-                    }
-                    ios.push(options);
+                    // let data = ingredients.filter(i => i.medicineId === medicineId);
+                    // let options = [];
+                    // if (_.isEmpty(data)) {
+                    //     options.push({
+                    //         label: '',
+                    //         name: '',
+                    //     });
+                    // } else {
+                    //     data.map(({ name }) => options.push({
+                    //         label: name,
+                    //         value: name,
+                    //     }));
+                    // }
+                    // ios.push(options);
 
                     rms.push({
                         Id: medicineId,
@@ -946,7 +949,7 @@ const PrescriptionManagement = () => {
                 });
                 if (!_.isEmpty(data)) {
                     setMedicineNames(mns);
-                    setIngredientOptions(ios);
+                    // setIngredientOptions(ios);
                     setMedicines(ms);
                     setMedicineRestoreModels(rms);
                 }
@@ -960,25 +963,25 @@ const PrescriptionManagement = () => {
         });
     };
 
-    const [ingredients, setIngredients] = React.useState([{
-        medicineId: '',
-        name: '',
-    }]);
-    const getIngredients = () => {
-        Axios.get(GetIngredientOptionsUrl, config).then((response) => {
-            const { status, data } = response;
-            if (status === 200) {
-                setIngredients(data);
-                setStopLoadingIngredientName(true);
-            }
-        }).catch((reason) => {
-            handleError(reason, getIngredientsErrorMsg);
-        });
-    };
+    // const [ingredients, setIngredients] = React.useState([{
+    //     medicineId: '',
+    //     name: '',
+    // }]);
+    // const getIngredients = () => {
+    //     Axios.get(GetIngredientOptionsUrl, config).then((response) => {
+    //         const { status, data } = response;
+    //         if (status === 200) {
+    //             setIngredients(data);
+    //             setStopLoadingIngredientName(true);
+    //         }
+    //     }).catch((reason) => {
+    //         handleError(reason, getIngredientsErrorMsg);
+    //     });
+    // };
 
     React.useEffect(() => {
         getPatientNameOptions();
-        getIngredients();
+        // getIngredients();
         getMedicineNameOptions();
         getDiagnosisOptions();
         getUnitOptions();
@@ -990,7 +993,7 @@ const PrescriptionManagement = () => {
             stopLoadingMedicineName &&
             stopLoadingDiagnosisName &&
             stopLoadingUnitName &&
-            stopLoadingIngredientName &&
+            // stopLoadingIngredientName &&
             updateMode) {
             getPatient(patientId);
             getPrescription(prescriptionId);
@@ -999,7 +1002,7 @@ const PrescriptionManagement = () => {
         stopLoadingMedicineName,
         stopLoadingDiagnosisName,
         stopLoadingUnitName,
-        stopLoadingIngredientName,
+        // stopLoadingIngredientName,
         updateMode]);
 
     return (
@@ -1115,7 +1118,7 @@ const PrescriptionManagement = () => {
                                             id="Diagnosis"
                                             label="Chẩn đoán"
                                             options={diagnosisOptions}
-                                            getOptionLabel={option => getOptionLabel(option)}
+                                            getOptionLabel={(option) => option.name}
                                             value={diagnosisValue}
                                             onChange={handleDiagnosisValueChange}
                                             onBlur={handleDiagnosisValueBlur}
@@ -1185,19 +1188,9 @@ const PrescriptionManagement = () => {
                                                         id={`MedicineId${index}`}
                                                         label="Mặt hàng thuốc"
                                                         options={medicineNameOptions}
-                                                        getOptionLabel={(option) => getOptionLabel(option)}
+                                                        getOptionLabel={(option) => getMedicineOptionLabel(option)}
                                                         value={medicineNames[index] ? medicineNames[index].value : null}
                                                         onChange={handleMedicineNameChange(index)}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                                    <Select
-                                                        fullWidth
-                                                        id={`Ingredient${index}`}
-                                                        label="Hoạt chất"
-                                                        value={medicine.Ingredient}
-                                                        options={ingredientOptions[index]}
-                                                        onChange={handleMedicinesChange(index, 'Ingredient')}
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
@@ -1218,6 +1211,16 @@ const PrescriptionManagement = () => {
                                                         options={unitOptions}
                                                         onChange={handleMedicinesChange(index, 'Unit')}
                                                     />
+                                                </Grid>
+                                                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                                    {/* <Select
+                                                        fullWidth
+                                                        id={`Ingredient${index}`}
+                                                        label="Hoạt chất"
+                                                        value={medicine.Ingredient}
+                                                        options={ingredientOptions[index]}
+                                                        onChange={handleMedicinesChange(index, 'Ingredient')}
+                                                    /> */}
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                                     <Select

@@ -40,10 +40,27 @@ namespace ClinicAPI.Controllers
         public IActionResult GetMedicines()
         {
             var medicines = _unitOfWork.Medicines
-                .Where(m => !m.IsDeleted)
-                .Select(m => new { m.Id, m.Name, m.NetWeight, m.Quantity, m.Unit });
+                .GetMedicines();
 
-            return Ok(medicines);
+            var medicineOptions = new List<MedicineOptionModel>();
+            foreach (var medicine in medicines)
+            {
+                foreach (var ingredient in medicine.Ingredients)
+                {
+                    var option = new MedicineOptionModel()
+                    {
+                        Id = medicine.Id,
+                        Name = medicine.Name,
+                        Ingredient = ingredient.Name,
+                        NetWeight = medicine.NetWeight,
+                        Quantity = medicine.Quantity,
+                        Unit = medicine.Unit
+                    };
+                    medicineOptions.Add(option);
+                }
+            }
+
+            return Ok(medicineOptions);
         }
 
         [HttpGet("diagnoses")]
