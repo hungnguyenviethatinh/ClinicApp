@@ -11,13 +11,13 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 const styles = {
-    root: { },
+    root: {},
 };
 
 const TextFieldComponent = props => {
-    const { 
+    const {
         classes, className, autoFocus, error, fullWidth, helperText, style,
-        id, label, name, onChange, required, readOnly, value, maxLength,
+        id, label, name, onChange, required, readOnly, value,
         placeholder, multiline, rows, onBlur, onKeyPress, margin,
     } = props;
 
@@ -54,9 +54,6 @@ const TextFieldComponent = props => {
                 onBlur={onBlur}
                 onChange={onChange}
                 onKeyPress={onKeyPress}
-                inputProps={{
-                    maxLength,
-                }}
                 InputProps={{
                     endAdornment: (type === 'password' || showPassword) && (
                         <InputAdornment position="end">
@@ -100,7 +97,6 @@ TextFieldComponent.propTypes = {
     readOnly: PropTypes.bool,
     type: PropTypes.string,
     value: PropTypes.any,
-    maxLength: PropTypes.number,
     style: PropTypes.object,
     placeholder: PropTypes.string,
     multiline: PropTypes.bool,
@@ -124,7 +120,6 @@ TextFieldComponent.defaultProps = {
     readOnly: false,
     type: 'text',
     value: '',
-    maxLength: 100,
     style: null,
     placeholder: '',
     multiline: false,

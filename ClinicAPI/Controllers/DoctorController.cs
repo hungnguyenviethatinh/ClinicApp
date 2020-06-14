@@ -526,6 +526,26 @@ namespace ClinicAPI.Controllers
             return BadRequest(ModelState);
         }
 
+        [HttpDelete("medicines/{prescriptionId}")]
+        [Authorize(Policies.ManageAllPrescriptionsPolicy)]
+        public async Task<IActionResult> DeleteMedicines(int prescriptionId)
+        {
+            var medicines = _unitOfWork.PrescriptionMedicines.Where(pm => pm.PrescriptionId == prescriptionId);
+            if (!medicines.Any())
+            {
+                return Ok();
+            }
+
+            _unitOfWork.PrescriptionMedicines.RemoveRange(medicines);
+            int result = await _unitOfWork.SaveChangesAsync();
+            if (result < 1)
+            {
+                return NoContent();
+            }
+
+            return Ok();
+        }
+
         [HttpDelete("prescriptions/{id}")]
         [Authorize(Policies.ManageAllPrescriptionsPolicy)]
         public async Task<IActionResult> DeletePrescription(int id)

@@ -26,8 +26,7 @@ namespace DAL.Repositories
                 .Include(h => h.Doctors).ThenInclude(d => d.Doctor)
                 .Include(h => h.Prescriptions).ThenInclude(p => p.Patient)
                 .Include(h => h.XRayImages)
-                .Where(h => h.PatientId == patientId)
-                .OrderBy(h => h.Id);
+                .Where(h => h.PatientId == patientId);
         }
 
         public async Task<History> GetHistory(int id)

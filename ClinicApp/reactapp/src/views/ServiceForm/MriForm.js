@@ -813,7 +813,7 @@ const MriForm = () => {
                                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                             <CheckBox
                                                 id="IsOther"
-                                                label="Các yêu cầu khác (xin nghi rõ)"
+                                                label="Các yêu cầu khác (xin ghi rõ)"
                                                 labelPlacement="end"
                                                 checked={mriForm.IsOther}
                                                 disabled={viewMode}

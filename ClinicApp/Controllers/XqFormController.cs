@@ -96,11 +96,11 @@ namespace ClinicApp.Controllers
                 "...............................................................................";
             html = html.Replace("{diagnosisName}", diagnosisName);
 
-            string requestName = xqForm.Request;
+            string requestName = xqForm.Request.Replace("\n", "<br />");
             html = html.Replace("{request}", requestName);
 
             string note = !string.IsNullOrWhiteSpace(xqForm.Note) ?
-                xqForm.Note :
+                xqForm.Note.Replace("\n", "<br />") :
                 "............................................................................................ " +
                 "...................................................................................................................... " +
                 "......................................................................................................................";

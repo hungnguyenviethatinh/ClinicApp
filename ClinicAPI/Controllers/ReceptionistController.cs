@@ -490,12 +490,14 @@ namespace ClinicAPI.Controllers
                         (query.Contains($"{p.IdCode}{p.Id}", StringComparison.OrdinalIgnoreCase)) ||
                         p.Patient.FullName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         p.Doctor.FullName.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .OrderByDescending(p => p.DateCreated)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }
             else
             {
                 prescriptions = prescriptions
+                    .OrderByDescending(p => p.DateCreated)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize);
             }

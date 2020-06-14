@@ -363,8 +363,10 @@ const PatientManagement = () => {
         setLoadingDone(true);
 
         const Age = _.toNumber(patient.Age);
-        const AppointmentDate = moment(patient.AppointmentDate).isValid() ? patient.AppointmentDate.format() : null;
-        const CheckedDate = moment(patient.CheckedDate).isValid() ? patient.CheckedDate.format() : moment().format();
+        const AppointmentDate = moment(patient.AppointmentDate).isValid() ?
+            patient.AppointmentDate.format() : null;
+        const CheckedDate = moment(patient.CheckedDate).isValid() ?
+            patient.CheckedDate.format() : moment().format();
 
         let Status = PatientStatusEnum[patient.Status];
         if (updateMode &&
@@ -462,7 +464,8 @@ const PatientManagement = () => {
                     Doctors: _doctors,
                 });
 
-                const CheckedDate = moment(patient.CheckedDate).isValid() ? patient.CheckedDate.format() : moment().format();
+                const CheckedDate = moment(patient.CheckedDate).isValid() ?
+                    patient.CheckedDate.format() : moment().format();
                 const historyModel = {
                     ...history,
                     CheckedDate,
@@ -587,7 +590,8 @@ const PatientManagement = () => {
                     Doctors: _doctors,
                 });
 
-                const CheckedDate = moment(patient.CheckedDate).isValid() ? patient.CheckedDate.format() : moment().format();
+                const CheckedDate = moment(patient.CheckedDate).isValid() ?
+                    patient.CheckedDate.format() : moment().format();
                 const historyModel = {
                     ...history,
                     CheckedDate,
@@ -812,7 +816,9 @@ const PatientManagement = () => {
                     moment(appointmentDate).isValid() &&
                         (Status !== PatientStatus.IsChecked || moment(appointmentDate) > moment())
                         ? moment(appointmentDate) : null;
-                const CheckedDate = moment(checkedDate).isValid() ? moment(checkedDate) : moment();
+                const CheckedDate =
+                    moment(checkedDate).isValid() && moment(checkedDate).isSame(moment(), 'day')
+                        ? moment(checkedDate) : moment();
 
                 setPatient({
                     ...patient,

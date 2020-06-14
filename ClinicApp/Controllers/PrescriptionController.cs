@@ -205,7 +205,7 @@ namespace ClinicApp.Controllers
             html = html.Replace("{dateCreated}", dateCreatedHtml);
 
             string prescriptionNote = !string.IsNullOrWhiteSpace(prescription.Note) ?
-                prescription.Note :
+                prescription.Note.Replace("\n", "<br />") :
                 "....................................................................................." +
                 ".....................................................................................";
             html = html.Replace("{prescriptionNote}", prescriptionNote);

@@ -32,7 +32,9 @@ namespace ClinicAPI.Controllers
         [Authorize(Policies.ViewAllPatientsPolicy)]
         public IActionResult GetHistoriesByPatientId(int patientId)
         {
-            var histories = _unitOfWork.Histories.GetPatientHistories(patientId);
+            var histories = _unitOfWork.Histories
+                .GetPatientHistories(patientId)
+                .OrderByDescending(h => h.CheckedDate);
 
             var historyVMs = _mapper.Map<IEnumerable<HistoryFullViewModel>>(histories);
             foreach (var history in histories)

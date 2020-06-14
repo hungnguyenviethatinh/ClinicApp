@@ -79,7 +79,14 @@ MySnackbarContentWrapper.propTypes = {
 
 const CustomizedSnackbars = props => {
 
-    const { message, variant, vertical, horizontal, open, handleClose } = props;
+    const {
+        message,
+        variant,
+        vertical,
+        horizontal,
+        open,
+        autoHideDuration,
+        handleClose } = props;
 
     return (
         <React.Fragment>
@@ -89,7 +96,7 @@ const CustomizedSnackbars = props => {
                     horizontal,
                 }}
                 open={open}
-                autoHideDuration={1500}
+                autoHideDuration={autoHideDuration}
                 onClose={handleClose}
             >
                 <MySnackbarContentWrapper
@@ -108,6 +115,7 @@ CustomizedSnackbars.propTypes = {
     variant: PropTypes.string,
     message: PropTypes.string,
     open: PropTypes.bool,
+    autoHideDuration: PropTypes.number,
     handleClose: PropTypes.func,
 };
 
@@ -117,6 +125,7 @@ CustomizedSnackbars.defaultProps = {
     variant: 'success',
     message: '',
     open: false,
+    autoHideDuration: null,
     handleClose: () => { }
 };
 

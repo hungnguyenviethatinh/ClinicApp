@@ -124,13 +124,15 @@ export const SnackbarMessage = {
     CreatePrescriptionSuccess: 'Đơn thuốc mới đã được tạo thành công!',
 };
 
-export const takePeriodValue = {
+export const TakePeriodValue = {
     Day: 'Ngày',
     Week: 'Tuần',
     Month: 'Tháng',
 };
 
 export const CurrentCheckingPatientId = 'currentCheckingPatientId';
+
+export const NewPrescriptionId = 'newPrescriptionId';
 
 export const FormMode = {
     Add: 'add',

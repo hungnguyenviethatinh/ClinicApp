@@ -43,6 +43,7 @@ export const DeletePrescriptionsUrl = 'api/doctor/prescriptions';
 export const AddMedicinesUrl = 'api/doctor/medicines';
 export const UpdatePatientHistoryUrl = 'api/doctor/patients';
 export const UpdateMedicinesUrl = 'api/doctor/medicines';
+export const DeleteMedicinesUrl = 'api/doctor/medicines';
 export const UpdateMedicinesQuantityUrl = 'api/doctor/medicines/quantity';
 export const RestoreMedicinesQuantityUrl = 'api/doctor/medicines/restore';
 export const GetIngredientOptionsUrl = 'api/doctor/ingredients';

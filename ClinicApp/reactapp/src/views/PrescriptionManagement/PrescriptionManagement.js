@@ -18,6 +18,7 @@ import { Snackbar } from '../../components/Snackbar';
 import { Button, FabButton } from '../../components/Button';
 import { Autocomplete } from '../../components/Autocomplete';
 import { DatePicker } from '../../components/DatePicker';
+import { CheckBox } from '../../components/CheckBox';
 import { PrescriptionListView } from './PrescriptionList';
 
 import Axios, {
@@ -34,7 +35,8 @@ import {
     PatientStatus,
     RouteConstants,
     SnackbarMessage,
-    takePeriodValue,
+    TakePeriodValue,
+    NewPrescriptionId,
 } from '../../constants';
 
 import {
@@ -49,6 +51,7 @@ import {
     AddMedicinesUrl,
     UpdatePatientHistoryUrl,
     UpdateMedicinesUrl,
+    DeleteMedicinesUrl,
     UpdateMedicinesQuantityUrl,
     RestoreMedicinesQuantityUrl,
     GetMedicineListUrl,
@@ -76,8 +79,8 @@ const useStyles = makeStyles(theme => ({
 
 const getPatientErrorMsg = '[Get Patient Error] ';
 const updatePatientHistoryErrorMsg = '[Update Patient Error] ';
-const updateMedicinesQuantityErrorMsg = '[Update Medicines Error] ';
-const restoreMedicinesQuantityErrorMsg = '[Restore Medicines Error] ';
+const updateMedicinesQuantityErrorMsg = '[Update Medicines Quantity Error] ';
+const restoreMedicinesQuantityErrorMsg = '[Restore Medicines Quantity Error] ';
 const getMedicineErrorMsg = '[Get Medicines Error] ';
 const getPatientsErrorMsg = '[Get Patients Error] ';
 const getPrescriptionErrorMsg = '[Get Prescription Error] ';
@@ -85,15 +88,16 @@ const addPrescriptionErrorMsg = '[Add Prescription Error] ';
 const updatePrescriptionErrorMsg = '[Update Prescription Error] ';
 const addMedicineErrorMsg = '[Add Medicines Error] ';
 const updateMedicineErrorMsg = '[Update Medicines Error] ';
+const deleteMedicineErrorMsg = '[Delete Medicines Error] ';
 const getDiagnosesErrMsg = '[Get Diagnoses Error] ';
 const getUnitsErrorMsg = '[Get Units Error] ';
 const getIngredientsErrorMsg = '[Get Ingredients Error] ';
 const getMedicineListErrorMsg = '[Get Medicine List Error] ';
 
 const takePeriodOptions = [
-    { label: takePeriodValue.Day, value: takePeriodValue.Day },
-    { label: takePeriodValue.Week, value: takePeriodValue.Week },
-    { label: takePeriodValue.Month, value: takePeriodValue.Month },
+    { label: TakePeriodValue.Day, value: TakePeriodValue.Day },
+    { label: TakePeriodValue.Week, value: TakePeriodValue.Week },
+    { label: TakePeriodValue.Month, value: TakePeriodValue.Month },
 ];
 
 const mealTimeOptions = [
@@ -241,6 +245,11 @@ const PrescriptionManagement = () => {
         });
     };
 
+    const [noMedicine, setNoMedicine] = React.useState(false);
+    const handleNoMedicineChange = (event) => {
+        setNoMedicine(event.target.checked);
+    };
+
     const [medicines, setMedicines] = React.useState([{
         PrescriptionId: '',
         MedicineId: '',
@@ -248,7 +257,7 @@ const PrescriptionManagement = () => {
         NetWeight: '',
         Quantity: '',
         Unit: '',
-        TakePeriod: takePeriodValue.Day,
+        TakePeriod: TakePeriodValue.Day,
         TakeMethod: '',
         TakeTimes: '',
         AmountPerTime: '',
@@ -338,7 +347,7 @@ const PrescriptionManagement = () => {
             NetWeight: '',
             Quantity: '',
             Unit: '',
-            TakePeriod: takePeriodValue.Day,
+            TakePeriod: TakePeriodValue.Day,
             TakeMethod: '',
             TakeTimes: '',
             AmountPerTime: '',
@@ -378,7 +387,7 @@ const PrescriptionManagement = () => {
             NetWeight: '',
             Quantity: '',
             Unit: '',
-            TakePeriod: takePeriodValue.Day,
+            TakePeriod: TakePeriodValue.Day,
             TakeMethod: '',
             TakeTimes: '',
             AmountPerTime: '',
@@ -405,26 +414,28 @@ const PrescriptionManagement = () => {
             handleSnackbarOption('error', 'Yêu cầu nhập ngày kê đơn hợp lệ!');
             return;
         }
-        for (let medicine of medicines) {
-            if (!_.isFinite(medicine.MedicineId)) {
-                handleSnackbarOption('error', 'Yêu cầu chọn mặt hàng thuốc!');
-                return;
-            }
-            if (!_.toString(medicine.Quantity).trim() && !_.isFinite(_.toNumber(medicine.Quantity))) {
-                handleSnackbarOption('error', 'Yêu cầu nhập số cho trường Số lượng!');
-                return;
-            }
-            if (!medicine.Unit.trim()) {
-                handleSnackbarOption('error', 'Yêu cầu chọn đơn vị thuốc!');
-                return;
-            }
-            if (_.toString(medicine.TakeTimes).trim() && !_.isFinite(_.toNumber(medicine.TakeTimes))) {
-                handleSnackbarOption('error', 'Yêu cầu nhập số cho trường Mỗi ngày!');
-                return;
-            }
-            if (_.toString(medicine.AmountPerTime).trim() && !_.isFinite(_.toNumber(medicine.AmountPerTime))) {
-                handleSnackbarOption('error', 'Yêu cầu nhập số cho trường Mỗi lần dùng!');
-                return;
+        if (!noMedicine) {
+            for (let medicine of medicines) {
+                if (!_.isFinite(medicine.MedicineId)) {
+                    handleSnackbarOption('error', 'Yêu cầu chọn mặt hàng thuốc!');
+                    return;
+                }
+                if (!_.toString(medicine.Quantity).trim() && !_.isFinite(_.toNumber(medicine.Quantity))) {
+                    handleSnackbarOption('error', 'Yêu cầu nhập số cho trường Số lượng!');
+                    return;
+                }
+                if (!medicine.Unit.trim()) {
+                    handleSnackbarOption('error', 'Yêu cầu chọn đơn vị thuốc!');
+                    return;
+                }
+                if (_.toString(medicine.TakeTimes).trim() && !_.isFinite(_.toNumber(medicine.TakeTimes))) {
+                    handleSnackbarOption('error', 'Yêu cầu nhập số cho trường Mỗi ngày!');
+                    return;
+                }
+                if (_.toString(medicine.AmountPerTime).trim() && !_.isFinite(_.toNumber(medicine.AmountPerTime))) {
+                    handleSnackbarOption('error', 'Yêu cầu nhập số cho trường Mỗi lần dùng!');
+                    return;
+                }
             }
         }
 
@@ -450,7 +461,8 @@ const PrescriptionManagement = () => {
             const { status, data } = response;
             if (status === 200) {
                 const { id } = data;
-                if (!_.isEmpty(medicines)) {
+                localStorage.setItem(NewPrescriptionId, `${id}`);
+                if (!noMedicine) {
                     const medicineModels = [];
                     medicines.map((medicine) => {
                         medicineModels.push({
@@ -459,17 +471,14 @@ const PrescriptionManagement = () => {
                         })
                     });
                     addMedicines(medicineModels);
+                } else {
+                    updatePatientHistory();
                 }
             } else {
-                handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-                setDisabled(false);
-                setLoadingDone(false);
+                handleAddError(response, addPrescriptionErrorMsg);
             }
         }).catch((reason) => {
-            handleError(reason, addPrescriptionErrorMsg);
-            handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-            setDisabled(false);
-            setLoadingDone(false);
+            handleAddError(reason, addPrescriptionErrorMsg);
         });
     };
 
@@ -480,16 +489,22 @@ const PrescriptionManagement = () => {
                 handleSnackbarOption('success', SnackbarMessage.CreatePrescriptionSuccess);
                 updatePatientHistory();
             } else {
-                handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-                setDisabled(false);
-                setLoadingDone(false);
+                handleAddError(response, addMedicineErrorMsg);
             }
         }).catch((reason) => {
-            handleError(reason, addMedicineErrorMsg);
-            handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-            setDisabled(false);
-            setLoadingDone(false);
+            handleAddError(reason, addMedicineErrorMsg);
         });
+    };
+
+    const enableButtons = () => {
+        setDisabled(false);
+        setLoadingDone(false);
+    };
+
+    const handleAddError = (message, error) => {
+        handleError(message, error);
+        handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
+        enableButtons();
     };
 
     const updatePatientHistory = () => {
@@ -503,22 +518,25 @@ const PrescriptionManagement = () => {
         Axios.patch(url, updatePatientHistoryModel, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                if (!updateMode) {
+                if (!updateMode && !noMedicine) {
                     updateMedicinesQuantity();
-                } else {
+                } else if (updateMode) {
                     restoreMedicinesQuantity();
+                } else {
+                    handleRedirectToPrescriptionDetail();
                 }
             } else {
-                handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-                setDisabled(false);
-                setLoadingDone(false);
+                handleUpdatePHError(response, updatePatientHistoryErrorMsg);
             }
         }).catch((reason) => {
-            handleError(reason, updatePatientHistoryErrorMsg);
-            handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
-            setDisabled(false);
-            setLoadingDone(false);
+            handleUpdatePHError(reason, updatePatientHistoryErrorMsg);
         });
+    };
+
+    const handleUpdatePHError = (message, error) => {
+        handleError(message, error);
+        handleSnackbarOption('error', SnackbarMessage.CreatePrescriptionError);
+        enableButtons();
     };
 
     const updateMedicinesQuantity = () => {
@@ -533,44 +551,51 @@ const PrescriptionManagement = () => {
             if (status === 200) {
                 console.log('[Update Medicines Quantity: - OK!');
             } else {
-                console.log('[Update Medicines Quantity: - Error!');
                 handleError(response, updateMedicinesQuantityErrorMsg);
             }
-            handleReset();
-
-            setDisabled(false);
-            setLoadingDone(false);
-            setTimeout(() => {
-                browserHistory.push(RouteConstants.DashboardView);
-            }, 1000);
+            handleRedirectToPrescriptionDetail();
         }).catch((reason) => {
             handleError(reason, updateMedicinesQuantityErrorMsg);
-            setDisabled(false);
-            setLoadingDone(false);
-            setTimeout(() => {
-                browserHistory.push(RouteConstants.DashboardView);
-            }, 1000);
+            handleRedirectToPrescriptionDetail();
         });
     };
 
-    const [medicineRestoreModels, setMedicineRestoreModels] = React.useState([{
-        Id: '',
-        Quantity: '',
-    }]);
+    const [medicineRestoreModels, setMedicineRestoreModels] = React.useState([]);
     const restoreMedicinesQuantity = () => {
+        if (_.isEmpty(medicineRestoreModels)) {
+            handleRedirectToPrescriptionDetail();
+            return;
+        }
         Axios.patch(RestoreMedicinesQuantityUrl, medicineRestoreModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
                 console.log('[Restore Medicines Quantity: - OK!');
             } else {
-                console.log('[Restore Medicines Quantity: - Error!');
                 handleError(response, restoreMedicinesQuantityErrorMsg);
             }
-            updateMedicinesQuantity();
+            handleUpdateMedicinesQuantity();
         }).catch((reason) => {
             handleError(reason, restoreMedicinesQuantityErrorMsg);
-            updateMedicinesQuantity();
+            handleUpdateMedicinesQuantity();
         });
+    };
+
+    const handleUpdateMedicinesQuantity = () => {
+        if (!noMedicine) {
+            updateMedicinesQuantity();
+        } else {
+            handleRedirectToPrescriptionDetail();
+        }
+    };
+
+    const handleRedirectToPrescriptionDetail = () => {
+        const newPrescriptionId = localStorage.getItem(NewPrescriptionId);
+        enableButtons();
+        setTimeout(() => {
+            browserHistory
+                .push(RouteConstants.PrescriptionDetailView
+                    .replace(':id', prescriptionId || newPrescriptionId));
+        }, 1000);
     };
 
     const updatePrescription = (prescriptionModel) => {
@@ -578,7 +603,7 @@ const PrescriptionManagement = () => {
         Axios.put(url, prescriptionModel, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                if (!_.isEmpty(medicines)) {
+                if (!noMedicine) {
                     const medicineModels = [];
                     medicines.map((medicine) => {
                         medicineModels.push({
@@ -587,18 +612,14 @@ const PrescriptionManagement = () => {
                         })
                     });
                     updateMedicines(medicineModels);
+                } else {
+                    deleteMedicines();
                 }
             } else {
-                handleSnackbarOption('error', 'Có lỗi khi cập nhật đơn thuốc. Vui lòng thử lại sau!');
-                handleError(response, updatePrescriptionErrorMsg);
-                setDisabled(false);
-                setLoadingDone(false);
+                handleUpdateError(response, updatePrescriptionErrorMsg);
             }
         }).catch((reason) => {
-            handleSnackbarOption('error', 'Có lỗi khi cập nhật đơn thuốc. Vui lòng thử lại sau!');
-            handleError(reason, updatePrescriptionErrorMsg);
-            setDisabled(false);
-            setLoadingDone(false);
+            handleUpdateError(reason, updatePrescriptionErrorMsg);
         });
     };
 
@@ -607,20 +628,38 @@ const PrescriptionManagement = () => {
         Axios.put(url, medicineModels, config).then((response) => {
             const { status } = response;
             if (status === 200) {
-                handleSnackbarOption('success', 'Cập nhật đơn thuốc thành công!');
-                updatePatientHistory();
+                handleUpdateSuccess();
             } else {
-                handleSnackbarOption('error', 'Có lỗi khi cập nhật đơn thuốc. Vui lòng thử lại sau!');
-                handleError(response, updateMedicineErrorMsg);
-                setDisabled(false);
-                setLoadingDone(false);
+                handleUpdateError(response, updateMedicineErrorMsg);
             }
         }).catch((reason) => {
-            handleSnackbarOption('error', 'Có lỗi khi cập nhật đơn thuốc. Vui lòng thử lại sau!');
-            handleError(reason, updateMedicineErrorMsg);
-            setDisabled(false);
-            setLoadingDone(false);
+            handleUpdateError(reason, updateMedicineErrorMsg);
         });
+    };
+
+    const deleteMedicines = () => {
+        const url = `${DeleteMedicinesUrl}/${prescriptionId}`;
+        Axios.delete(url, config).then((response) => {
+            const { status } = response;
+            if (status === 200) {
+                handleUpdateSuccess();
+            } else {
+                handleUpdateError(response, deleteMedicineErrorMsg);
+            }
+        }).catch((reason) => {
+            handleUpdateError(reason, deleteMedicineErrorMsg);
+        });
+    };
+
+    const handleUpdateSuccess = () => {
+        handleSnackbarOption('success', 'Cập nhật đơn thuốc thành công!');
+        updatePatientHistory();
+    };
+
+    const handleUpdateError = (message, error) => {
+        handleSnackbarOption('error', 'Có lỗi khi cập nhật đơn thuốc. Vui lòng thử lại sau!');
+        handleError(message, error);
+        enableButtons();
     };
 
     const getPatient = (selectedPatientId) => {
@@ -815,7 +854,7 @@ const PrescriptionManagement = () => {
             id: '',
             name: diagnosis,
         };
-        
+
         calculateAppointmentDay(patient.AppointmentDate, dateCreated);
         getMedicineList(id);
         setDiagnosisValue(value);
@@ -850,7 +889,7 @@ const PrescriptionManagement = () => {
                 const mns = [];
                 const ios = [];
                 const rms = [];
-                data.map((m) => {
+                data.forEach((m) => {
                     const {
                         medicineId,
                         ingredient,
@@ -905,10 +944,12 @@ const PrescriptionManagement = () => {
                         Quantity: _.toString(quantity),
                     });
                 });
-                setMedicineNames(mns);
-                setIngredientOptions(ios);
-                setMedicines(ms);
-                setMedicineRestoreModels(rms);
+                if (!_.isEmpty(data)) {
+                    setMedicineNames(mns);
+                    setIngredientOptions(ios);
+                    setMedicines(ms);
+                    setMedicineRestoreModels(rms);
+                }
             } else {
                 handleSnackbarOption('error', SnackbarMessage.GetMedicineListError);
                 handleError(response, getMedicineListErrorMsg);
@@ -1127,6 +1168,14 @@ const PrescriptionManagement = () => {
                                 </Grid>
 
                                 <Grid container item xs={12} sm={12} md={6} lg={6} xl={6} spacing={1}>
+                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        <CheckBox
+                                            id="NoMedicine"
+                                            label="Không kê thuốc"
+                                            checked={noMedicine}
+                                            onChange={handleNoMedicineChange}
+                                        />
+                                    </Grid>
                                     {
                                         medicines.map((medicine, index) => (
                                             <React.Fragment key={index}>

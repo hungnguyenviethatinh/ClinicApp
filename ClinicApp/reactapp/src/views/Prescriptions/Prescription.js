@@ -34,7 +34,7 @@ import {
     Gender,
     DisplayDateFormat,
     PrescriptionStatus,
-    takePeriodValue,
+    TakePeriodValue,
 } from '../../constants';
 
 import { logo } from '../../components/Logo';
@@ -147,7 +147,7 @@ const Prescription = () => {
         NetWeight: '',
         Quantity: '',
         Unit: '',
-        TakePeriod: takePeriodValue.Day,
+        TakePeriod: TakePeriodValue.Day,
         TakeMethod: '',
         TakeTimes: '',
         AmountPerTime: '',
@@ -747,7 +747,7 @@ const Prescription = () => {
                                                     fontWeight: 600,
                                                     textTransform: 'uppercase',
                                                 }}
-                                            />\
+                                            />
                                                 <Typography
                                                 align="center"
                                                 component="h5"
