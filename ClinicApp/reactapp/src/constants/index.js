@@ -153,3 +153,13 @@ export const CtRequestTypeEnum = {
     'Khẩn cấp': 2,
     'Không': 3,
 }
+
+export const UrlParamConstants = {
+    Cid: 'cid',
+    CPid: 'cpid',
+    Hid: 'hid',
+    Pid: 'pid',
+    UHid: 'uhid',
+    Uid: 'uid',
+    UPid: 'upid',
+};

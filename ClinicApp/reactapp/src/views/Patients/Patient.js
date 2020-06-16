@@ -28,6 +28,7 @@ import {
     RouteConstants,
     RoleConstants,
     AccessTokenKey,
+    UrlParamConstants,
 } from '../../constants';
 import Axios, {
     axiosRequestConfig,
@@ -254,7 +255,7 @@ const Patient = () => {
     const [disabled, setDisabled] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const handleUpdate = () => {
-        const queryParams = `?pId=${patient.Id}&hId=${history.Id}`;
+        const queryParams = `?${UrlParamConstants.Pid}=${patient.Id}&${UrlParamConstants.Hid}=${history.Id}`;
         const redirectUrl = RouteConstants.PatientManagementView + queryParams;
         browserHistory.push(redirectUrl);
     };
@@ -354,7 +355,7 @@ const Patient = () => {
         } = rowData;
 
         const handleHistoryCopy = () => {
-            const queryParams = `?pId=${patientId}&hId=${id}`;
+            const queryParams = `?${UrlParamConstants.Pid}=${patientId}&${UrlParamConstants.Hid}=${id}`;
             const redirectUrl = RouteConstants.PatientManagementView + queryParams;
             browserHistory.push(redirectUrl);
         };
@@ -371,9 +372,9 @@ const Patient = () => {
                     >
                         <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
                             <Button
-                                color="info"
+                                color="primary"
                                 children="Sao chép"
-                                iconName="edit"
+                                iconName="copy"
                                 onClick={handleHistoryCopy}
                             />
                         </Grid>

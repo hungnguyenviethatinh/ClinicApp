@@ -124,7 +124,7 @@ const PrescriptionList = (props) => {
                 />
                 <Button
                     disabled={!selectedRow}
-                    color="info"
+                    color="primary"
                     children="Sao chép"
                     iconName="copy"
                     onClick={handleDone}

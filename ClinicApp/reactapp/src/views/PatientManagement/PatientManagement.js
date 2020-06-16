@@ -43,6 +43,7 @@ import {
     NotFoundMsg,
     RouteConstants,
     DisplayDateFormat,
+    UrlParamConstants,
 } from '../../constants';
 import {
     GetDoctorsUrl,
@@ -170,12 +171,12 @@ const PatientManagement = () => {
     const [_historyId, setHistoryId] = React.useState(null);
     const handleUpdatePatientHistory = () => {
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('pId') && urlParams.has('hId')) {
-            const pId = urlParams.get('pId');
-            const hId = urlParams.get('hId');
+        if (urlParams.has(UrlParamConstants.Pid) && urlParams.has(UrlParamConstants.Hid)) {
+            const updatePatientId = urlParams.get(UrlParamConstants.Pid);
+            const updateHistoryId = urlParams.get(UrlParamConstants.Hid);
             setExternalUpdateMode(true);
-            setPatientId(pId);
-            setHistoryId(hId);
+            setPatientId(updatePatientId);
+            setHistoryId(updateHistoryId);
         }
     };
 

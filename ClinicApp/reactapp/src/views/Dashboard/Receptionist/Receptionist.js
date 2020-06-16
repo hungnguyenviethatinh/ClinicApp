@@ -36,6 +36,7 @@ import {
     PrescriptionStatus,
     RouteConstants,
     DisplayDateFormat,
+    UrlParamConstants,
 } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -236,7 +237,7 @@ const ReceptionistView = () => {
 
     const handleUpdate = () => {
         const { id } = selectedRow;
-        const queryParams = `?pId=${id}&hId=current`;
+        const queryParams = `?${UrlParamConstants.Pid}=${id}&${UrlParamConstants.Hid}=current`;
         const redirectUrl = RouteConstants.PatientManagementView + queryParams;
         browserHistory.push(redirectUrl);
     };

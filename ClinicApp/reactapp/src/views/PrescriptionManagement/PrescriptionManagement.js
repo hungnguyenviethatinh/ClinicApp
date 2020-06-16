@@ -38,6 +38,7 @@ import {
     TakePeriodValue,
     CurrentCheckingPatientId,
     NewPrescriptionId,
+    UrlParamConstants,
 } from '../../constants';
 
 import {
@@ -156,28 +157,44 @@ const PrescriptionManagement = () => {
     };
 
     // [End] Common.
+    const [stopLoadingPatient, setStopLoadingPatient] = React.useState(false);
     const [stopLoadingPatientName, setStopLoadingPatientName] = React.useState(false);
+    const [stopLoadingUnitName, setStopLoadingUnitName] = React.useState(false);
     const [stopLoadingMedicineName, setStopLoadingMedicineName] = React.useState(false);
     const [stopLoadingDiagnosisName, setStopLoadingDiagnosisName] = React.useState(false);
-    const [stopLoadingUnitName, setStopLoadingUnitName] = React.useState(false);
     // const [stopLoadingIngredientName, setStopLoadingIngredientName] = React.useState(false);
 
     const [disabled, setDisabled] = React.useState(false);
     const [loadingDone, setLoadingDone] = React.useState(false);
+
+    const [copyMode, setCopyMode] = React.useState(false);
     const [updateMode, setUpdateMode] = React.useState(false);
+
     const [patientId, setPatientId] = React.useState(null);
     const [prescriptionId, setPrescriptionId] = React.useState(null);
     const [historyId, setHistoryId] = React.useState(null);
-    const handleUpdate = () => {
+
+    const setMode = () => {
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('uId') && urlParams.has('uPId') && urlParams.has('uHId')) {
-            const uId = urlParams.get('uId');
-            const uPId = urlParams.get('uPId');
-            const uHId = urlParams.get('uHId');
+        if (
+            urlParams.has(UrlParamConstants.Uid) &&
+            urlParams.has(UrlParamConstants.UPid) &&
+            urlParams.has(UrlParamConstants.UHid)
+        ) {
+            const updateId = urlParams.get(UrlParamConstants.Uid);
+            const updatePatientId = urlParams.get(UrlParamConstants.UPid);
+            const updateHistoryId = urlParams.get(UrlParamConstants.UHid);
             setUpdateMode(true);
-            setPrescriptionId(uId);
-            setPatientId(uPId)
-            setHistoryId(uHId);
+            setPrescriptionId(updateId);
+            setPatientId(updatePatientId);
+            setHistoryId(updateHistoryId);
+        }
+        if (urlParams.has(UrlParamConstants.Cid) && urlParams.has(UrlParamConstants.CPid)) {
+            const copyId = urlParams.get(UrlParamConstants.Cid);
+            const copyPatientId = urlParams.get(UrlParamConstants.CPid);
+            setCopyMode(true);
+            setPrescriptionId(copyId);
+            setPatientId(copyPatientId);
         }
     };
 
@@ -452,10 +469,11 @@ const PrescriptionManagement = () => {
             ...prescription,
             DateCreated,
         };
-        if (!updateMode) {
-            addPrescription(prescriptionModel);
-        } else {
+
+        if (updateMode) {
             updatePrescription(prescriptionModel);
+        } else {
+            addPrescription(prescriptionModel);
         }
     };
 
@@ -595,10 +613,18 @@ const PrescriptionManagement = () => {
         const newPrescriptionId = localStorage.getItem(NewPrescriptionId);
         enableButtons();
         cleanLocalStorage();
+        if (updateMode) {
+            redirectToPrescriptionDetail(prescriptionId);
+        } else {
+            redirectToPrescriptionDetail(newPrescriptionId);
+        }
+    };
+
+    const redirectToPrescriptionDetail = (id) => {
         setTimeout(() => {
             browserHistory
                 .push(RouteConstants.PrescriptionDetailView
-                    .replace(':id', prescriptionId || newPrescriptionId));
+                    .replace(':id', id));
         }, 1000);
     };
 
@@ -716,6 +742,7 @@ const PrescriptionManagement = () => {
                         HistoryId: currentHistoryId,
                     });
                 }
+                setStopLoadingPatient(true);
             }
             setDisabled(false);
         }).catch((reason) => {
@@ -872,7 +899,6 @@ const PrescriptionManagement = () => {
         if (!updateMode) {
             setPrescription({
                 ...prescription,
-                IdCode: idCode,
                 Diagnosis: diagnosis,
                 OtherDiagnosis: otherDiagnosis,
                 Note: note,
@@ -993,21 +1019,39 @@ const PrescriptionManagement = () => {
         getMedicineNameOptions();
         getDiagnosisOptions();
         getUnitOptions();
-        handleUpdate();
+        setMode();
     }, []);
 
     React.useEffect(() => {
         const currentCheckingPatientId = localStorage.getItem(CurrentCheckingPatientId);
-        if (stopLoadingPatientName && currentCheckingPatientId) {
+        if (
+            stopLoadingPatientName &&
+            currentCheckingPatientId &&
+            !updateMode
+        ) {
             getPatient(currentCheckingPatientId);
         }
     }, [stopLoadingPatientName]);
 
     React.useEffect(() => {
-        if (stopLoadingPatientName &&
+        if (stopLoadingPatient &&
+            stopLoadingUnitName &&
             stopLoadingMedicineName &&
             stopLoadingDiagnosisName &&
+            copyMode) {
+            getPrescription(prescriptionId);
+        }
+    }, [stopLoadingPatient,
+        stopLoadingMedicineName,
+        stopLoadingDiagnosisName,
+        stopLoadingUnitName,
+        copyMode]);
+
+    React.useEffect(() => {
+        if (stopLoadingPatientName &&
             stopLoadingUnitName &&
+            stopLoadingMedicineName &&
+            stopLoadingDiagnosisName &&
             // stopLoadingIngredientName &&
             updateMode) {
             getPatient(patientId);
@@ -1038,7 +1082,7 @@ const PrescriptionManagement = () => {
                         }}
                         action={
                             <Button
-                                color="info"
+                                color="primary"
                                 children="Sao chép"
                                 iconName="copy"
                                 disabled={disabled}

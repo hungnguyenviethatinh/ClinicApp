@@ -39,6 +39,7 @@ import {
     RouteConstants,
     RoleConstants,
     AccessTokenKey,
+    UrlParamConstants,
 } from '../../constants';
 
 import { logo } from '../../components/Logo';
@@ -170,9 +171,17 @@ const Prescription = () => {
         const token = localStorage.getItem(AccessTokenKey);
         verifyJWT(token, RoleConstants.DoctorRoleName) && setCanEditOrCopy(true);
     };
-
+    const handleCopy = () => {
+        const queryParams = `?${UrlParamConstants.Cid}=${id}&${UrlParamConstants.CPid}=${patient.Id}`;
+        handleRedirect(queryParams);
+    };
     const handleUpdate = () => {
-        const queryParams = `?uId=${id}&uPId=${patient.Id}&uHId=${currentHistoryId}`;
+        const queryParams = `?${UrlParamConstants.Uid}=${id}
+        &${UrlParamConstants.UPid}=${patient.Id}
+        &${UrlParamConstants.UHid}=${currentHistoryId}`;
+        handleRedirect(queryParams);
+    };
+    const handleRedirect = (queryParams) => {
         const redirectUrl = RouteConstants.PrescriptionManagementView + queryParams;
         setTimeout(() => {
             browserHistory.push(redirectUrl);
@@ -362,30 +371,6 @@ const Prescription = () => {
                     style={{ height: '100%' }}
                 >
                     <CardHeader
-                        action={
-                            <React.Fragment>
-                                {canEditOrCopy &&
-                                    <Button
-                                        color="info"
-                                        disabled={disabled || loading}
-                                        children="Sửa"
-                                        iconName="edit"
-                                        onClick={handleUpdate}
-                                        style={{
-                                            marginRight: '5px',
-                                        }}
-                                    />
-                                }
-                                <Button
-                                    color="warning"
-                                    disabled={disabled}
-                                    loading={loading}
-                                    children="In"
-                                    iconName="print"
-                                    onClick={handlePrint}
-                                />
-                            </React.Fragment>
-                        }
                         title="ĐƠN THUỐC"
                         subheader="Xem chi tiết thuốc và in"
                     />
@@ -837,6 +822,40 @@ const Prescription = () => {
                     </CardContent>
                 </Card>
             </Grid>
+            <div style={{
+                position: 'fixed',
+                right: '20px',
+                display: 'flex',
+                bottom: '10px',
+                flexDirection: 'column',
+            }}>
+                {canEditOrCopy &&
+                    <React.Fragment>
+                        <Button
+                            color="primary"
+                            disabled={disabled || loading}
+                            children="Sao chép"
+                            iconName="copy"
+                            onClick={handleCopy}
+                        />
+                        <Button
+                            color="info"
+                            disabled={disabled || loading}
+                            children="Sửa"
+                            iconName="edit"
+                            onClick={handleUpdate}
+                        />
+                    </React.Fragment>
+                }
+                <Button
+                    color="warning"
+                    disabled={disabled}
+                    loading={loading}
+                    children="In"
+                    iconName="print"
+                    onClick={handlePrint}
+                />
+            </div>
             <Snackbar
                 vertical="bottom"
                 horizontal="right"

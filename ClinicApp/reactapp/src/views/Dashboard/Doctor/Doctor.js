@@ -34,6 +34,7 @@ import {
     PatientStatus,
     PrescriptionStatus,
     RouteConstants,
+    UrlParamConstants,
 } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -199,7 +200,9 @@ const DoctorView = () => {
     };
     const handleUpdate = () => {
         const { id, patientId, historyId } = selectedPrescriptionRow;
-        const queryParams = `?uId=${id}&uPId=${patientId}&uHId=${historyId}`;
+        const queryParams = `?${UrlParamConstants.Uid}=${id}
+        &${UrlParamConstants.UPid}=${patientId}
+        &${UrlParamConstants.UHid}=${historyId}`;
         const redirectUrl = RouteConstants.PrescriptionManagementView + queryParams;
         setOpenActionOption(false);
         setTimeout(() => {
