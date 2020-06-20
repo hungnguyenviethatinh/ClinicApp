@@ -4,9 +4,11 @@ import { ApiUrl, Audience, ClientId } from '../config';
 import { AccessTokenKey } from '../constants';
 
 export const axiosRequestConfig = () => {
+    const token = localStorage.getItem(AccessTokenKey);
     const headers = {
-        'Authorization': `Bearer ${localStorage.getItem(AccessTokenKey)}`,
+        'Authorization': `Bearer ${token}`,
     };
+
     return { headers };
 };
 
@@ -14,47 +16,30 @@ export const decodeJWT = (token) => jwt.decode(token);
 
 export const verifyJWT = (token, role = null) => {
     const decoded = decodeJWT(token);
-    if (!decoded) {
+    if (!decoded || !decoded.exp) {
         return false;
     }
-    if (!decoded.hasOwnProperty('exp')) {
+
+    const expiredDate = new Date(0).setUTCSeconds(decoded.exp);
+    const now = new Date().getTime();
+    if (expiredDate < now) {
         return false;
-    } else {
-        const date = new Date(0);
-        date.setUTCSeconds(decoded.exp);
-        if (date < new Date().getTime()) {
-            return false;
-        }
     }
-    if (!decoded.hasOwnProperty('iss')) {
+
+    if (!decoded.iss || decoded.iss !== ApiUrl) {
         return false;
-    } else {
-        if (ApiUrl !== decoded.iss) {
-            return false;
-        }
     }
-    if (!decoded.hasOwnProperty('aud')) {
+
+    if (!decoded.aud || decoded.aud !== Audience) {
         return false;
-    } else {
-        if (Audience !== decoded.aud) {
-            return false;
-        }
     }
-    if (!decoded.hasOwnProperty('client_id')) {
+
+    if (!decoded.client_id || decoded.client_id !== ClientId) {
         return false;
-    } else {
-        if (ClientId !== decoded.client_id) {
-            return false;
-        }
     }
-    if (role) {
-        if (!decoded.hasOwnProperty('role')) {
-            return false;
-        } else {
-            if (role !== decoded.role) {
-                return false;
-            }
-        }
+
+    if (role && (!decoded.role || decoded.role !== role)) {
+        return false;
     }
 
     return true;

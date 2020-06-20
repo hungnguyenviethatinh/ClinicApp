@@ -23,7 +23,16 @@ import _ from 'lodash';
 import moment from 'moment';
 
 const PatientPreview = (props) => {
-    const { disabled, disabledPrint, loading, loadingPrint, open, patient, handleCancel, handlePrint, handleSave } = props;
+    const {
+        disabled,
+        disabledPrint,
+        loading,
+        loadingPrint,
+        open,
+        patient,
+        handleCancel,
+        handlePrint,
+        handleSave } = props;
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -31,6 +40,7 @@ const PatientPreview = (props) => {
 
     return (
         <Dialog
+            disableBackdropClick={true}
             maxWidth={maxWidth}
             fullScreen={fullScreen}
             open={open}
@@ -39,7 +49,9 @@ const PatientPreview = (props) => {
         >
             <DialogTitle id="responsive-dialog-title" >THÔNG TIN TIẾP NHẬN BỆNH NHÂN</DialogTitle>
             <DialogContent>
-                <DialogContentText>Xem lại thông tin tiếp nhận của bệnh nhân trước khi lưu trữ và in phiếu.</DialogContentText>
+                <DialogContentText>
+                    Xem lại thông tin tiếp nhận của bệnh nhân trước khi lưu trữ và in phiếu.
+                </DialogContentText>
                 {
                     _.isEmpty(patient) ?
                         <Typography

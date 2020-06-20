@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Snackbar } from '../../components/Snackbar';
 
 import axios from 'axios';
 
@@ -49,12 +50,34 @@ const useStyles = makeStyles(theme => ({
 const LogoutButton = withRouter((props) => {
     const { classes, history } = props;
 
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
+
+    const [snackbarOption, setSnackbarOption] = React.useState({
+        variant: 'success',
+        message: '',
+    });
+    const handleSnackbarOption = (variant, message) => {
+        setSnackbarOption({
+            variant,
+            message,
+        });
+        setOpenSnackbar(true);
+    };
+
     const handleLogout = () => {
         const url = ApiUrl + SetUserStatusUrl;
+        const token = localStorage.getItem(AccessTokenKey);
 
         axios.get(url, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem(AccessTokenKey)}`,
+                'Authorization': `Bearer ${token}`,
             },
             params: {
                 active: false,
@@ -62,26 +85,49 @@ const LogoutButton = withRouter((props) => {
         }).then((response) => {
             const { status } = response;
             if (status === 200) {
-                console.log('[Set User Status] - OK!');
-                localStorage.removeItem(AccessTokenKey);
-                history.push(RouteConstants.LoginView);
+                console.log('[Set User Status Success]: ', response);
+                handleSnackbarOption('success', 'Đã đăng xuất!');
+                handleRedirectToLoginPage();
             }
         }).catch((reason) => {
-            console.log('[Set User Status] ', reason);
+            console.log('[Set User Status Failed]: ', reason);
+            handleSnackbarOption('error', 'Không thể đăng xuất. Vui lòng thử lại!');
+
             if (reason.response) {
                 const { status } = reason.response;
                 if (status === 401) {
-                    localStorage.removeItem(AccessTokenKey);
+                    handleRedirectToLoginPage();
                 }
             }
         });
     };
 
+    const handleRedirectToLoginPage = () => {
+        localStorage.removeItem(AccessTokenKey);
+        setTimeout(() => {
+            history.push(RouteConstants.LoginView);
+        }, 1000);
+    };
+
     return (
-        <Button color="inherit" variant="text" className={classes.signOutButton} onClick={handleLogout}>
-            Đăng xuất
-            <ExitToAppIcon className={classes.signOutIcon} />
-        </Button>
+        <React.Fragment>
+            <Button
+                color="inherit"
+                variant="text"
+                className={classes.signOutButton}
+                onClick={handleLogout}>
+                Đăng xuất <ExitToAppIcon className={classes.signOutIcon} />
+            </Button>
+
+            <Snackbar
+                vertical="bottom"
+                horizontal="right"
+                variant={snackbarOption.variant}
+                message={snackbarOption.message}
+                open={openSnackbar}
+                handleClose={handleSnackbarClose}
+            />
+        </React.Fragment>
     );
 });
 

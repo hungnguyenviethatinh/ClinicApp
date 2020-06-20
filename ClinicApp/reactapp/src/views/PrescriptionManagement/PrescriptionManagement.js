@@ -101,16 +101,16 @@ const takePeriodOptions = [
 ];
 
 const mealTimeOptions = [
-    'sau',
-    'trước',
-    'cùng',
+    'SAU',
+    'TRƯỚC',
+    'CÙNG',
 ];
 
 const medicineNoteOptions = [
-    'sáng',
-    'trưa',
-    'chiều',
-    'tối',
+    'SÁNG',
+    'TRƯA',
+    'CHIỀU',
+    'TỐI',
 ];
 
 const PrescriptionManagement = () => {
