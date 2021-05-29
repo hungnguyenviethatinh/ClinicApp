@@ -1,76 +1,84 @@
-ClinicAPI:
 
-ASP .NET Core API 3.0
-Entity FrameWork Core 3.0
-Repository & Unit Of Work Design Pattern
+## Introduction
+This is a freelance project that I got the deal from a doctor. He'd just opened his own clinic, so he wanna have a software to help him manage and operate his clinic.
 
-ClinicApp:
+Firstly, he needed a desktop application that would be used by him and his staff: a receptionist and his assistants. 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+He played a role as an admin. He could view a list of patients, a list of prescription, a list  of staff and a list of medicine in store through a dashboard. He could manage staff, medicine and medicine unit with CRUD functions. More, he might also print the prescription. He had a statistics screen that helped him view the reports of his current business.
 
-## Available Scripts
+The receptionist had a screen to proceed procedures to check in patients. He would input the patients' information: name, address, phone, current height, weight, temperature and other images, then he addressed the patients to a doctor. He could print prescriptions which pushed from doctor to his screen.
+His assistants in a role as a doctor, he would check the patient and then create a prescription. Besides, he could create other paper forms as CT, MRI and XQ to ask the patient to go to other clinic to get these checked.
 
-In the project directory, you can run:
+As his request to build a desktop app, I would have used Window Forms. However, I am basically a web application developer, Window Forms was rather not familiar to me. So I chose other frameworks more familiar to me.
+Those were ASP .NET Core API and [Chromely](https://chromely.net/) to build a desktop app using [Reactjs](https://reactjs.org/).
 
-### `npm start`
+I built an Web API called ClinicAPI using ASP .NET Core 3.0, recently upgraded to 3.1. This API could run independently on Window without hosting in IIS. And I built a desktop app call ClinicApp using Chromely and Reactjs. This app interacted with the API as a client web.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+This project lasted in an discontinuous period from mid October 2019 to May 2020 split into 2 stages: main development (Oct 2019 - Dec 2019) and new changes enhancement and maintenance (Jan 2020 - May 2020) as customer made requests and feedback.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Demo
+Login Screen:
+![Login Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/LoginScreen.PNG?raw=true)
 
-### `npm test`
+Admin Dashboard Screen:
+![Admin Dashboard Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/AdminDashboardScreen.PNG?raw=true)
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+User Management Screen:
+![User Management Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/UserManagementScreen.PNG?raw=true)
 
-### `npm run build`
+Medicine Management Screen:
+![Medicine Management Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/MedicineManagementScreen.PNG?raw=true)
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Input Unit Management Screen:
+![Input Unit Management Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/UnitManagementScreen.PNG?raw=true)
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Active Time Management Screen:
+![Active Time Management Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/ActiveTimeManagementScreen.PNG?raw=true)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Statistics Screen:
+![Statistics Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/StatisticsScreen.PNG?raw=true)
 
-### `npm run eject`
+Doctor Dashboard Screen:
+![Doctor Dashboard Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/DoctorDashboardScreen.PNG?raw=true)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+List of Patients:
+![List of Patients](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/PatientListScreen.PNG?raw=true)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Patient Profile Screen:
+![Patient Profile Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/PatientProfileScreen.PNG?raw=true)
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Patient Checked History Screen:
+![Patient Checked History Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/PatientHistoryScreen.PNG?raw=true)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Create New Prescription Screen:
+![Create New Prescription Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/NewPrescriptionScreen.PNG?raw=true)
 
-## Learn More
+Create New Request Papers Screen:
+![Create New Request Papers Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/NewRequestFormScreen.PNG?raw=true)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Create New CT Form Screen:
+![Create New CT Form Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/NewCTFormScreen.PNG?raw=true)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Create New MRI Form Screen:
+![Create New MRI Form Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/NewMRIFormScreen.PNG?raw=true)
 
-### Code Splitting
+Create New Test Form Screen:
+![Create New Test Form Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/NewTestFormScreen.PNG?raw=true)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+Create New XQ Form Screen:
+![Create New XQ Form Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/NewXQFormScreen.PNG?raw=true)
 
-### Analyzing the Bundle Size
+Receptionist Dashboard Screen:
+![Receptionist Dashboard Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/ReceptionDashboardScreen.PNG?raw=true)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+Patient Management and Checkin:
+![Patient Management and Checkin](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/ReceptionManagementScreen.PNG?raw=true)
 
-### Making a Progressive Web App
+List of Prescriptions:
+![List of Prescriptions](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/PrescriptionListScreen.PNG?raw=true)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+Prescription Detail Screen:
+![Prescription Detail Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/PrescriptionDetailScreen.PNG?raw=true)
 
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Full Mode Screen:
+![Full Mode Screen](https://github.com/hungnguyenviethatinh/ClinicApp/blob/master/Screenshots/FullModeScreen.PNG?raw=true)
