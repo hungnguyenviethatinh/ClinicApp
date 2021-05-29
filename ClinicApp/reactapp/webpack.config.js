@@ -22,7 +22,8 @@ module.exports = (env, argv) => {
     const CleanWebpack = new CleanWebpackPlugin();
 
     const CopyWebPack = new CopyWebPackPlugin([
-        { from: 'public/app.ico', to: 'static/images/' }
+        { from: 'public/app.ico', to: 'static/images/' },
+        { from: 'public/config.js', to: 'static/js/' }
     ]);
 
     const DotEnv = new webpack.EnvironmentPlugin(localEnv);

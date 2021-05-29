@@ -1,6 +1,6 @@
 // App configuration:
-export const ApiUrl = process.env.DRKHOACLINICAPP_APIURL;
-export const ClientSecret = process.env.DRKHOACLINICAPP_SECRET;
+export const ApiUrl = window.DRKHOACLINICAPP_APIURL || process.env.DRKHOACLINICAPP_APIURL;
+export const ClientSecret = window.DRKHOACLINICAPP_SECRET || process.env.DRKHOACLINICAPP_SECRET;
 
 export const Audience = 'DrKhoaClinicApi';
 export const ClientId = 'DrKhoaClinicApp';
